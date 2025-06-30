@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="autofillIcon">#C6C5D0</color>
+    <color name="autofillBg">#1B1B1F</color>
+    <color name="autofillTextPrimary">#E4E1E6</color>
+    <color name="autofillTextSecondary">#A5A4AD</color>
+</resources>

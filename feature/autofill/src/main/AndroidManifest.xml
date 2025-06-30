@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".ui.AutofillActivity"
+            android:configChanges="screenSize|orientation"
+            android:launchMode="singleInstance"
+            android:noHistory="false"
+            android:theme="@style/AppThemeTransparent"
+            android:windowSoftInputMode="adjustResize" />
+
+        <service
+            android:name=".service.PassAutofillService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.autofill"
+                android:resource="@xml/autofill_service_configuration" />
+        </service>
+    </application>
+</manifest>

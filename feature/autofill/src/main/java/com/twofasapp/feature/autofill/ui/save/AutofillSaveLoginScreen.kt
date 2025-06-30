@@ -1,0 +1,94 @@
+/*
+ * SPDX-License-Identifier: BUSL-1.1
+ *
+ * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Licensed under the Business Source License 1.1
+ * See LICENSE file for full terms
+ */
+
+package com.twofasapp.feature.autofill.ui.save
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.ktx.currentActivity
+import com.twofasapp.core.android.ktx.getSafelyParcelable
+import com.twofasapp.core.android.ktx.toastShort
+import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.design.foundation.button.Button
+import com.twofasapp.core.design.foundation.button.ButtonStyle
+import com.twofasapp.core.design.foundation.topbar.TopAppBar
+import com.twofasapp.core.locale.MdtLocale
+import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_SAVE_LOGIN_DATA
+import com.twofasapp.feature.autofill.service.domain.SaveLoginData
+import com.twofasapp.feature.loginform.ui.LoginForm
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+internal fun AutofillSaveLoginScreen(
+    viewModel: AutofillSaveLoginViewModel = koinViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val activity = LocalContext.currentActivity
+    val saveLoginData = activity.intent.extras.getSafelyParcelable<SaveLoginData>(EXTRA_SAVE_LOGIN_DATA)
+
+    LaunchedEffect(Unit) {
+        viewModel.initLogin(saveLoginData)
+    }
+
+    uiState.initialLogin?.let {
+        Content(
+            uiState = uiState,
+            onLoginUpdated = viewModel::updateLogin,
+            onIsValidUpdated = viewModel::updateIsValid,
+            onSaveClick = {
+                viewModel.save(
+                    onComplete = {
+                        activity.finishAndRemoveTask()
+                        activity.toastShort("Login saved!")
+                    },
+                )
+            },
+        )
+    }
+}
+
+@Composable
+private fun Content(
+    uiState: AutofillSaveLoginUiState,
+    onLoginUpdated: (Login) -> Unit = {},
+    onIsValidUpdated: (Boolean) -> Unit = {},
+    onSaveClick: () -> Unit = {},
+) {
+    val strings = MdtLocale.strings
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = "Save Login",
+                actions = {
+                    Button(
+                        text = strings.commonSave,
+                        style = ButtonStyle.Text,
+                        onClick = onSaveClick,
+                        enabled = uiState.isValid,
+                    )
+                },
+            )
+        },
+    ) { padding ->
+        uiState.initialLogin?.let {
+            LoginForm(
+                modifier = Modifier.padding(top = padding.calculateTopPadding()),
+                initialLogin = it,
+                onLoginUpdated = onLoginUpdated,
+                onIsValidUpdated = onIsValidUpdated,
+            )
+        }
+    }
+}
