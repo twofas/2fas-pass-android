@@ -68,7 +68,7 @@ internal fun ImportExportScreen(
         uri?.let { viewModel.readBackup(it) }
     }
 
-    val directoryPicker = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+    val directoryPicker = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/2faspass+json")) { uri ->
         uri?.let { fileUri ->
             context.contentResolver.openOutputStream(fileUri)?.use { outputStream ->
                 outputStream.write(backupContent.toByteArray(Charsets.UTF_8))
