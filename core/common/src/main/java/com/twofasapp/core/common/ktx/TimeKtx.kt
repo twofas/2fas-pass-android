@@ -14,8 +14,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 fun Instant.formatDate(): String {
-    val dt = atZone(ZoneId.systemDefault())
-    return "${dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}"
+    return atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 }
 
 fun Instant.formatDateTime(): String {
