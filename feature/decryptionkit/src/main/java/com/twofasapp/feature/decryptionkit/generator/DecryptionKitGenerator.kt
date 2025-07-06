@@ -34,8 +34,6 @@ import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
 
 object DecryptionKitGenerator {
     private const val templateFilename = "vault-decryption-kit-template.pdf"
@@ -125,16 +123,10 @@ object DecryptionKitGenerator {
         contentStream: PDPageContentStream,
         font: PDType0Font,
     ) {
-        val x = 552f
+        val x = 580f
         val y = 1020f
 
-        val formattedDateTime = "Created on ${
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))
-        } at ${
-            LocalDateTime.now().toLocalTime().format(
-                DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(Locale.getDefault()),
-            )
-        }"
+        val formattedDateTime = "Created on ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}"
 
         contentStream.beginText()
         contentStream.setFont(font, 12f)
