@@ -116,7 +116,7 @@ private fun Content(
                             loginEncryptionMapper.withHiddenPassword(
                                 login = login,
                                 vaultCipher = this,
-                            )!!.password
+                            )?.password
                         }
                     }
                 }
@@ -190,14 +190,14 @@ private fun Content(
                                                     loginEncryptionMapper.withVisiblePassword(
                                                         login = login,
                                                         vaultCipher = this,
-                                                    )!!.password
+                                                    )?.password
                                                 }
 
                                                 is SecretField.Visible -> {
                                                     loginEncryptionMapper.withHiddenPassword(
                                                         login = login,
                                                         vaultCipher = this,
-                                                    )!!.password
+                                                    )?.password
                                                 }
 
                                                 null -> null
