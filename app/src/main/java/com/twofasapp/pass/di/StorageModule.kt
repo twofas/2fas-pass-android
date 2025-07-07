@@ -20,6 +20,7 @@ import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
+import com.twofasapp.data.main.local.dao.ItemsDao
 import com.twofasapp.data.main.local.dao.LoginsDao
 import com.twofasapp.data.main.local.dao.TagsDao
 import com.twofasapp.data.main.local.dao.VaultKeysDao
@@ -78,6 +79,7 @@ class StorageModule : KoinModule {
 
         single<VaultsDao> { get<AppDatabase>().vaultsDao() }
         single<VaultKeysDao> { get<AppDatabase>().vaultKeysDao() }
+        single<ItemsDao> { get<AppDatabase>().itemsDao() }
         single<LoginsDao> { get<AppDatabase>().loginsDao() }
         single<DeletedItemsDao> { get<AppDatabase>().deletedItemsDao() }
         single<ConnectedBrowsersDao> { get<AppDatabase>().connectedBrowsersDao() }
