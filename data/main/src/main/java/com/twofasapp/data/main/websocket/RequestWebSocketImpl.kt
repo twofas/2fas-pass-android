@@ -21,10 +21,10 @@ import com.twofasapp.core.common.crypto.SharedKeyGenerator
 import com.twofasapp.core.common.crypto.decrypt
 import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.LoginUri
 import com.twofasapp.core.common.domain.PasswordGenerator
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeString
@@ -39,7 +39,7 @@ import com.twofasapp.data.main.domain.BrowserRequestAction
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
 import com.twofasapp.data.main.domain.RequestWebSocketResult
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.LoginMapper
 import com.twofasapp.data.main.mapper.LoginSecurityTypeMapper
 import com.twofasapp.data.main.mapper.LoginUriMatcherMapper
@@ -66,7 +66,7 @@ internal class RequestWebSocketImpl(
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
     override val loginsRepository: LoginsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
-    override val loginDecryptionMapper: LoginEncryptionMapper,
+    override val loginDecryptionMapper: ItemEncryptionMapper,
     private val settingsRepository: SettingsRepository,
     private val dispatchers: Dispatchers,
     private val androidKeyStore: AndroidKeyStore,
@@ -350,9 +350,9 @@ internal class RequestWebSocketImpl(
                                     inputKeyMaterial = sessionKey,
                                     salt = hkdfSalt,
                                     contextInfo = when (data.securityType.let(loginSecurityTypeMapper::mapToDomainFromJson)) {
-                                        LoginSecurityType.Tier1 -> "PassT1"
-                                        LoginSecurityType.Tier2 -> "PassT2"
-                                        LoginSecurityType.Tier3 -> "PassT3"
+                                        SecurityType.Tier1 -> "PassT1"
+                                        SecurityType.Tier2 -> "PassT2"
+                                        SecurityType.Tier3 -> "PassT3"
                                     },
                                 )
 
@@ -395,17 +395,17 @@ internal class RequestWebSocketImpl(
             is BrowserRequestResponse.DeleteLoginAccept -> "accept"
             is BrowserRequestResponse.AddLoginAccept -> {
                 when (response.login.securityType) {
-                    LoginSecurityType.Tier1 -> "addedInT1"
-                    LoginSecurityType.Tier2 -> "added"
-                    LoginSecurityType.Tier3 -> "added"
+                    SecurityType.Tier1 -> "addedInT1"
+                    SecurityType.Tier2 -> "added"
+                    SecurityType.Tier3 -> "added"
                 }
             }
 
             is BrowserRequestResponse.UpdateLoginAccept -> {
                 when (response.login.securityType) {
-                    LoginSecurityType.Tier1 -> "addedInT1"
-                    LoginSecurityType.Tier2 -> "updated"
-                    LoginSecurityType.Tier3 -> "updated"
+                    SecurityType.Tier1 -> "addedInT1"
+                    SecurityType.Tier2 -> "updated"
+                    SecurityType.Tier3 -> "updated"
                 }
             }
 
@@ -437,9 +437,9 @@ internal class RequestWebSocketImpl(
                 is BrowserRequestResponse.DeleteLoginAccept -> Unit
                 is BrowserRequestResponse.AddLoginAccept -> {
                     when (response.login.securityType) {
-                        LoginSecurityType.Tier1 -> Unit
-                        LoginSecurityType.Tier2,
-                        LoginSecurityType.Tier3,
+                        SecurityType.Tier1 -> Unit
+                        SecurityType.Tier2,
+                        SecurityType.Tier3,
                         -> {
                             val loginData = createLoginAcceptData(login = response.login, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
                             put("login", loginData)
@@ -449,9 +449,9 @@ internal class RequestWebSocketImpl(
 
                 is BrowserRequestResponse.UpdateLoginAccept -> {
                     when (response.login.securityType) {
-                        LoginSecurityType.Tier1 -> Unit
-                        LoginSecurityType.Tier2,
-                        LoginSecurityType.Tier3,
+                        SecurityType.Tier1 -> Unit
+                        SecurityType.Tier2,
+                        SecurityType.Tier3,
                         -> {
                             val loginData = createLoginAcceptData(login = response.login, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
                             put("login", loginData)
@@ -477,9 +477,9 @@ internal class RequestWebSocketImpl(
             inputKeyMaterial = sessionKey,
             salt = hkdfSalt,
             contextInfo = when (login.securityType) {
-                LoginSecurityType.Tier1 -> "PassT1"
-                LoginSecurityType.Tier2 -> "PassT2"
-                LoginSecurityType.Tier3 -> "PassT3"
+                SecurityType.Tier1 -> "PassT1"
+                SecurityType.Tier2 -> "PassT2"
+                SecurityType.Tier3 -> "PassT3"
             },
         )
         val passwordEnc = password?.let {

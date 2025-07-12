@@ -13,6 +13,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 
 @Entity(
     tableName = "items",
@@ -46,9 +47,9 @@ data class ItemEntity(
     @ColumnInfo("content_type")
     val contentType: String,
     @ColumnInfo("content_version")
-    val contentVersion: String,
+    val contentVersion: Int,
     @ColumnInfo("content")
-    val content: String,
+    val content: EncryptedBytes,
     @ColumnInfo("tag_ids")
     val tagIds: List<String>?,
 )

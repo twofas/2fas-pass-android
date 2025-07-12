@@ -22,7 +22,7 @@ import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.data.settings.SessionRepository
@@ -45,7 +45,7 @@ internal class HomeViewModel(
     private val vaultCryptoScope: VaultCryptoScope,
     private val cloudRepository: CloudRepository,
     private val purchasesRepository: PurchasesRepository,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(HomeUiState())
@@ -109,7 +109,7 @@ internal class HomeViewModel(
                                 if (matchingLoginUiState?.updatedAt == login.updatedAt) {
                                     matchingLoginUiState
                                 } else {
-                                    loginEncryptionMapper.decryptLogin(login, this)
+                                    itemEncryptionMapper.decryptLogin(login, this)
                                 }
                             }
                             .sortedWith(
@@ -156,7 +156,7 @@ internal class HomeViewModel(
     fun copyPasswordToClipboard(login: Login) {
         launchScoped {
             vaultCryptoScope.withVaultCipher(login.vaultId) {
-                loginEncryptionMapper.decryptPassword(
+                itemEncryptionMapper.decryptPassword(
                     login = login,
                     vaultCipher = this,
                 )?.let {

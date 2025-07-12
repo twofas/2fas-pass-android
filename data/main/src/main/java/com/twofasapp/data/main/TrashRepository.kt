@@ -8,11 +8,11 @@
 
 package com.twofasapp.data.main
 
-import com.twofasapp.core.common.domain.EncryptedLogin
+import com.twofasapp.core.common.domain.ItemEncrypted
 import kotlinx.coroutines.flow.Flow
 
 interface TrashRepository {
-    fun observeDeleted(): Flow<List<EncryptedLogin>>
+    fun observeDeleted(): Flow<List<ItemEncrypted>>
     suspend fun trash(vararg id: String)
     suspend fun restore(vararg id: String)
     suspend fun delete(vararg id: String)

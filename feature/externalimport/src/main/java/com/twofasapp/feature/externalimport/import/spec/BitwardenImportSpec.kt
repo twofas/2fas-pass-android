@@ -13,10 +13,10 @@ import android.net.Uri
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.LoginUri
 import com.twofasapp.core.common.domain.LoginUriMatcher
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
@@ -49,7 +49,7 @@ internal class BitwardenImportSpec(
                 vaultId = vaultsRepository.getVault().id,
                 username = item.login?.username,
                 password = item.login?.password?.let { SecretField.Visible(it) },
-                securityType = LoginSecurityType.Tier3,
+                securityType = SecurityType.Tier3,
                 uris = item.login?.uris.orEmpty().map { uri ->
                     LoginUri(
                         text = uri.uri.orEmpty(),
@@ -65,7 +65,7 @@ internal class BitwardenImportSpec(
                 iconType = IconType.Icon,
                 iconUriIndex = if (item.login?.uris.isNullOrEmpty()) null else 0,
                 notes = item.notes,
-                tags = emptyList(),
+                tagIds = emptyList(),
             )
         }
 

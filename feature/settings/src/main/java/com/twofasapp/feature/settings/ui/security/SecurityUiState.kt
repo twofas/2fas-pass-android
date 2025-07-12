@@ -8,10 +8,10 @@
 
 package com.twofasapp.feature.settings.ui.security
 
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 
 internal data class SecurityUiState(
     val biometricsEnabled: Boolean = false,
     val screenCaptureEnabled: Boolean = false,
-    val defaultSecurityType: LoginSecurityType = LoginSecurityType.Tier1,
+    val defaultSecurityType: SecurityType = SecurityType.Tier1,
 )

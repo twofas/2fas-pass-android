@@ -18,7 +18,7 @@ import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.domain.ConnectedBrowser
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.remote.WebSocketInterface
 import com.twofasapp.data.main.websocket.messages.IncomingMessageJson
 import com.twofasapp.data.main.websocket.messages.OutgoingMessageJson
@@ -34,7 +34,7 @@ internal interface WebSocketDelegate {
     val connectedBrowsersRepository: ConnectedBrowsersRepository
     val loginsRepository: LoginsRepository
     val vaultCryptoScope: VaultCryptoScope
-    val loginDecryptionMapper: LoginEncryptionMapper
+    val loginDecryptionMapper: ItemEncryptionMapper
 
     suspend fun WebSocketInterface.sendHelloMessage() {
         sendMessage(
@@ -154,7 +154,7 @@ internal interface WebSocketDelegate {
 
         return vaultCryptoScope.withVaultCipher(login.vaultId) {
             loginDecryptionMapper.decryptLogin(
-                encryptedLogin = login,
+                itemEncrypted = login,
                 vaultCipher = this,
                 decryptPassword = true,
             )

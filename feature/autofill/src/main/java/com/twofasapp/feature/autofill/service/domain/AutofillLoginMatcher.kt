@@ -8,9 +8,10 @@
 
 package com.twofasapp.feature.autofill.service.domain
 
-import com.twofasapp.core.common.domain.EncryptedLogin
+import com.twofasapp.core.common.domain.ItemEncrypted
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,8 +19,9 @@ import kotlinx.coroutines.withContext
 internal object AutofillLoginMatcher {
 
     suspend fun matchByUri(
+        loginsRepository: LoginsRepository,
         vaultCryptoScope: VaultCryptoScope,
-        logins: List<EncryptedLogin>,
+        logins: List<ItemEncrypted>,
         packageName: String?,
         webDomain: String?,
     ): List<AutofillLogin> {
@@ -32,18 +34,20 @@ internal object AutofillLoginMatcher {
             logins.asSequence()
                 .filter {
                     when (it.securityType) {
-                        LoginSecurityType.Tier1 -> false
-                        LoginSecurityType.Tier2 -> true
-                        LoginSecurityType.Tier3 -> true
+                        SecurityType.Tier1 -> false
+                        SecurityType.Tier2 -> true
+                        SecurityType.Tier3 -> true
                     }
                 }
                 .groupBy { it.vaultId }
                 .mapNotNull { (vaultId, encryptedLogins) ->
-                    vaultCryptoScope.withVaultCipher(vaultId) {
-                        encryptedLogins.map { encryptedLogin ->
-                            encryptedLogin.asAutofillLogin(this)
-                        }
-                    }
+                    val vaultCipher = vaultCryptoScope.getVaultCipher(vaultId)
+
+                    loginsRepository.decrypt(
+                        vaultCipher = vaultCipher,
+                        itemsEncrypted = encryptedLogins,
+                        decryptPassword = true,
+                    ).map { it.asSecretAutofillLogin() }
                 }
                 .flatten()
                 .map { autofillLogin ->
@@ -73,9 +77,9 @@ internal object AutofillLoginMatcher {
             logins
                 .filter {
                     when (it.securityType) {
-                        LoginSecurityType.Tier1 -> false
-                        LoginSecurityType.Tier2 -> true
-                        LoginSecurityType.Tier3 -> true
+                        SecurityType.Tier1 -> false
+                        SecurityType.Tier2 -> true
+                        SecurityType.Tier3 -> true
                     }
                 }
                 .groupBy { login ->

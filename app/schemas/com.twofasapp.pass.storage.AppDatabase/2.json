@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "33a4f30e727b0f826760f485079d2369",
+    "identityHash": "e5a79ac1718bc41564503998d8ec3482",
     "entities": [
       {
         "tableName": "vaults",
@@ -78,7 +78,7 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `vault_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `deleted_at` INTEGER, `deleted` INTEGER NOT NULL, `security_type` INTEGER NOT NULL, `content_type` TEXT NOT NULL, `content_version` TEXT NOT NULL, `content` TEXT NOT NULL, `tag_ids` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`vault_id`) REFERENCES `vaults`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `vault_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, `deleted_at` INTEGER, `deleted` INTEGER NOT NULL, `security_type` INTEGER NOT NULL, `content_type` TEXT NOT NULL, `content_version` INTEGER NOT NULL, `content` TEXT NOT NULL, `tag_ids` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`vault_id`) REFERENCES `vaults`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -130,7 +130,7 @@
           {
             "fieldPath": "contentVersion",
             "columnName": "content_version",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -480,7 +480,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '33a4f30e727b0f826760f485079d2369')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5a79ac1718bc41564503998d8ec3482')"
     ]
   }
 }

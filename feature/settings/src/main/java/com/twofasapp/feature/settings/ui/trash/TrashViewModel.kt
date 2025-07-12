@@ -17,7 +17,7 @@ import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.purchases.PurchasesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,7 +27,7 @@ internal class TrashViewModel(
     private val trashRepository: TrashRepository,
     private val loginsRepository: LoginsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
     val uiState = MutableStateFlow(TrashUiState())
     val screenState = MutableStateFlow(ScreenState.Loading)
@@ -57,7 +57,7 @@ internal class TrashViewModel(
                                 if (matchingLoginUiState?.updatedAt == login.updatedAt) {
                                     matchingLoginUiState
                                 } else {
-                                    loginEncryptionMapper.decryptLogin(login, this)
+                                    itemEncryptionMapper.decryptLogin(login, this)
                                 }
                             }
                         }

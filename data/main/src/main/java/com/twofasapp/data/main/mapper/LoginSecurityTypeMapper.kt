@@ -8,41 +8,41 @@
 
 package com.twofasapp.data.main.mapper
 
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 
 internal class LoginSecurityTypeMapper {
 
-    fun mapToEntity(domain: LoginSecurityType): Int {
+    fun mapToEntity(domain: SecurityType): Int {
         return when (domain) {
-            LoginSecurityType.Tier1 -> 0
-            LoginSecurityType.Tier2 -> 1
-            LoginSecurityType.Tier3 -> 2
+            SecurityType.Tier1 -> 0
+            SecurityType.Tier2 -> 1
+            SecurityType.Tier3 -> 2
         }
     }
 
-    fun mapToJson(domain: LoginSecurityType): Int {
+    fun mapToJson(domain: SecurityType): Int {
         return when (domain) {
-            LoginSecurityType.Tier1 -> 0
-            LoginSecurityType.Tier2 -> 1
-            LoginSecurityType.Tier3 -> 2
+            SecurityType.Tier1 -> 0
+            SecurityType.Tier2 -> 1
+            SecurityType.Tier3 -> 2
         }
     }
 
-    fun mapToDomainFromEntity(entity: Int): LoginSecurityType {
+    fun mapToDomainFromEntity(entity: Int): SecurityType {
         return when (entity) {
-            0 -> LoginSecurityType.Tier1
-            1 -> LoginSecurityType.Tier2
-            2 -> LoginSecurityType.Tier3
-            else -> LoginSecurityType.Tier3
+            0 -> SecurityType.Tier1
+            1 -> SecurityType.Tier2
+            2 -> SecurityType.Tier3
+            else -> SecurityType.Tier3
         }
     }
 
-    fun mapToDomainFromJson(json: Int): LoginSecurityType {
+    fun mapToDomainFromJson(json: Int): SecurityType {
         return when (json) {
-            0 -> LoginSecurityType.Tier1
-            1 -> LoginSecurityType.Tier2
-            2 -> LoginSecurityType.Tier3
-            else -> LoginSecurityType.Tier3
+            0 -> SecurityType.Tier1
+            1 -> SecurityType.Tier2
+            2 -> SecurityType.Tier3
+            else -> SecurityType.Tier3
         }
     }
 }
