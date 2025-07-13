@@ -23,7 +23,7 @@ class AppBuildImpl : AppBuild {
 
     override val versionName: String = BuildConfig.VERSION_NAME
 
-    override val versionCode: Int = BuildConfig.VERSION_CODE
+    override val versionCode: Long = BuildConfig.VERSION_CODE.toLong()
 
     override val buildVariant: BuildVariant = when (BuildConfig.BUILD_TYPE.lowercase()) {
         "release" -> BuildVariant.Release

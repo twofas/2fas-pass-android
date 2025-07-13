@@ -80,7 +80,7 @@ internal class BackupRepositoryImpl(
             VaultBackup(
                 schemaVersion = VaultBackup.CurrentSchema,
                 originOs = appBuild.os,
-                originAppVersionCode = appBuild.versionCode,
+                originAppVersionCode = appBuild.versionCode.toInt(),
                 originAppVersionName = appBuild.versionName,
                 originDeviceId = device.uniqueId(),
                 originDeviceName = device.name(),

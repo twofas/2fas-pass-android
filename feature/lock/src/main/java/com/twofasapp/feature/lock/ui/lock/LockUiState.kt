@@ -22,6 +22,7 @@ internal data class LockUiState(
     val biometricsPrompted: Boolean = false,
     val masterKeyEncryptedWithBiometrics: EncryptedBytes? = null,
     val passwordError: String? = null,
+    val appUpdateError: Throwable? = null,
     val failedAppUnlocks: FailedAppUnlocks? = null,
     val locked: Boolean = true,
 )

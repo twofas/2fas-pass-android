@@ -13,7 +13,7 @@ interface AppBuild {
     val debuggable: Boolean
     val os: String
     val versionName: String
-    val versionCode: Int
+    val versionCode: Long
     val buildVariant: BuildVariant
     val systemSdkVersion: Int
 }

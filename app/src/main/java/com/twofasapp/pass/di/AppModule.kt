@@ -13,6 +13,7 @@ import com.instacart.truetime.time.TrueTimeImpl
 import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.common.auth.AuthStatusTracker
 import com.twofasapp.core.common.build.AppBuild
+import com.twofasapp.core.common.build.AppUpdateExecutor
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.build.LocalConfig
 import com.twofasapp.core.common.coroutines.Dispatchers
@@ -25,6 +26,7 @@ import com.twofasapp.data.push.notifications.NotificationsHandler
 import com.twofasapp.feature.settings.ui.opensource.OpenSourceLibrariesProvider
 import com.twofasapp.pass.auth.AuthStatusTrackerImpl
 import com.twofasapp.pass.build.AppBuildImpl
+import com.twofasapp.pass.build.AppUpdateExecutorImpl
 import com.twofasapp.pass.build.DeviceImpl
 import com.twofasapp.pass.build.LocalConfigImpl
 import com.twofasapp.pass.coroutines.AppDispatchers
@@ -49,6 +51,7 @@ class AppModule : KoinModule {
         singleOf(::Strings)
         singleOf(::AppDispatchers) { bind<Dispatchers>() }
         singleOf(::AppBuildImpl) { bind<AppBuild>() }
+        singleOf(::AppUpdateExecutorImpl) { bind<AppUpdateExecutor>() }
         singleOf(::LocalConfigImpl) { bind<LocalConfig>() }
         singleOf(::AuthStatusTrackerImpl) { bind<AuthStatusTracker>() }
         singleOf(::AppLifecycleObserver)
