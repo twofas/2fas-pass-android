@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 30 Jun 2025 07:50:08 -0700
+ Exported at: Sun, 13 Jul 2025 13:24:43 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -196,7 +196,7 @@
     <string name="settings_entry_app_lock_attempts">Max failed attempts</string>
     <string name="settings_entry_app_lock_attempts_description">After this number of failed attempts, the application will be locked for 1 minute. It will increase progressively to 3 minutes, 5 minutes, 15 minutes, up to 1 hour.</string>
     <string name="settings_entry_autofill_lock_time">Autofill lockout time</string>
-    <string name="settings_entry_autofill_lock_time_description">Set the duration after which the autofill service will require the Master Password again. This is only relevant for Tier 3 services.</string>
+    <string name="settings_entry_autofill_lock_time_description">Set the duration after which the autofill service will require the Master Password again. This is only relevant for services assigned to the Secret Tier.</string>
     <string name="settings_entry_protection_level">Security Tier</string>
     <string name="settings_entry_protection_level_description">With Security Tiers, you decide how to use individual Items with Autofill and share them with the 2FAS Pass Browser Extension.</string>
     <string name="settings_header_protection_level">Choose Security Tier</string>
@@ -233,7 +233,7 @@
     <string name="about_section_general">General</string>
     <string name="about_rate_us">Rate us on Play Store</string>
     <string name="about_privacy_policy">Privacy Policy</string>
-    <string name="about_terms_of_use">Terms of Service (EULA)</string>
+    <string name="about_terms_of_use">Terms of Use</string>
     <string name="about_open_source_licenses">Open source licenses</string>
     <string name="about_section_share">Share</string>
     <string name="about_invite_friends">Invite friends to use 2FAS Pass</string>
@@ -757,4 +757,7 @@
     <string name="recovery_error_forbidden">User is forbidden to access this path.</string>
     <string name="recovery_error_index_not_found">Index file not found. The backup folder is empty.</string>
     <string name="recovery_error_vault_not_found">Vault file not found. The backup folder is empty.</string>
+    <string name="open_external_file_error_body">Opening a 2FAS Pass backup file is not supported. Go to 2FAS Pass Settings to import it.</string>
+    <string name="migration_error_title">Migration failed</string>
+    <string name="migration_error_body">We ran into a problem while updating your data. Please restart the app and try again.</string>
 </resources>
