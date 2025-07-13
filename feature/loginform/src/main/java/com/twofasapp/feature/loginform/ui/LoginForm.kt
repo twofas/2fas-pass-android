@@ -120,19 +120,19 @@ private fun LoginFormInternal(
         viewModel.initLogin(initialLogin)
     }
 
-    LaunchedEffect(uiState.login) {
-        onLoginUpdated(uiState.login)
-    }
-
-    LaunchedEffect(uiState.valid) {
-        onIsValidUpdated(uiState.valid)
-    }
-
-    LaunchedEffect(uiState.hasUnsavedChanges) {
-        onHasUnsavedChangesUpdated(uiState.hasUnsavedChanges)
-    }
-
     if (uiState.initialised) {
+        LaunchedEffect(uiState.login) {
+            onLoginUpdated(uiState.login)
+        }
+
+        LaunchedEffect(uiState.valid) {
+            onIsValidUpdated(uiState.valid)
+        }
+
+        LaunchedEffect(uiState.hasUnsavedChanges) {
+            onHasUnsavedChangesUpdated(uiState.hasUnsavedChanges)
+        }
+
         Content(
             modifier = modifier,
             uiState = uiState,

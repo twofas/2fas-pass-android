@@ -276,7 +276,6 @@ internal class LoginsRepositoryImpl(
     }
 
     override suspend fun getMostCommonUsernames(): List<String> {
-        // Take 6 most common usernames
         return withContext(dispatchers.io) {
             getLoginsDecrypted()
                 .groupingBy { it.username }
@@ -284,7 +283,7 @@ internal class LoginsRepositoryImpl(
                 .filter { it.key != null }
                 .entries
                 .sortedByDescending { it.value }
-                .take(6)
+                .take(8)
                 .mapNotNull { it.key }
         }
     }

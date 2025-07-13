@@ -72,14 +72,16 @@ private fun Content(
             )
         },
     ) { padding ->
-        LoginForm(
-            modifier = Modifier.padding(top = padding.calculateTopPadding()),
-            initialLogin = uiState.initialLogin,
-            onLoginUpdated = onLoginUpdated,
-            onIsValidUpdated = onIsValidUpdated,
-            onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
-            onCloseWithoutSaving = onCloseWithoutSaving,
-        )
+        if (uiState.initialLogin != null) {
+            LoginForm(
+                modifier = Modifier.padding(top = padding.calculateTopPadding()),
+                initialLogin = uiState.initialLogin,
+                onLoginUpdated = onLoginUpdated,
+                onIsValidUpdated = onIsValidUpdated,
+                onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
+                onCloseWithoutSaving = onCloseWithoutSaving,
+            )
+        }
     }
 }
 
