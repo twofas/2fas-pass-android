@@ -12,6 +12,8 @@ import com.twofasapp.data.settings.domain.FailedAppUnlocks
 import kotlinx.coroutines.flow.Flow
 
 interface SessionRepository {
+    suspend fun getAppVersionCode(): Long
+    suspend fun setAppVersionCode(versionCode: Long)
     fun observeStartupCompleted(): Flow<Boolean>
     suspend fun setStartupCompleted(completed: Boolean)
     fun observeBiometricsPrompted(): Flow<Boolean>

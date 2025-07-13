@@ -21,7 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -48,7 +48,7 @@ internal fun SecurityTierScreen(
 @Composable
 private fun Content(
     uiState: SecurityTierUiState,
-    onChange: (LoginSecurityType) -> Unit = {},
+    onChange: (SecurityType) -> Unit = {},
 ) {
     val strings = MdtLocale.strings
 
@@ -67,27 +67,27 @@ private fun Content(
                 contentPadding = OptionHeaderContentPaddingFirst,
             )
             listOf(
-                LoginSecurityType.Tier3,
-                LoginSecurityType.Tier2,
-                LoginSecurityType.Tier1,
+                SecurityType.Tier3,
+                SecurityType.Tier2,
+                SecurityType.Tier1,
             ).forEach { type ->
                 OptionEntry(
                     title = when (type) {
-                        LoginSecurityType.Tier1 -> strings.settingsEntrySecurityTier1
-                        LoginSecurityType.Tier2 -> strings.settingsEntrySecurityTier2
-                        LoginSecurityType.Tier3 -> strings.settingsEntrySecurityTier3
+                        SecurityType.Tier1 -> strings.settingsEntrySecurityTier1
+                        SecurityType.Tier2 -> strings.settingsEntrySecurityTier2
+                        SecurityType.Tier3 -> strings.settingsEntrySecurityTier3
                     },
                     subtitleAnnotated = richText(
                         when (type) {
-                            LoginSecurityType.Tier1 -> strings.settingsEntrySecurityTier1Desc
-                            LoginSecurityType.Tier2 -> strings.settingsEntrySecurityTier2Desc
-                            LoginSecurityType.Tier3 -> strings.settingsEntrySecurityTier3Desc
+                            SecurityType.Tier1 -> strings.settingsEntrySecurityTier1Desc
+                            SecurityType.Tier2 -> strings.settingsEntrySecurityTier2Desc
+                            SecurityType.Tier3 -> strings.settingsEntrySecurityTier3Desc
                         },
                     ),
                     icon = when (type) {
-                        LoginSecurityType.Tier3 -> MdtIcons.Tier3
-                        LoginSecurityType.Tier2 -> MdtIcons.Tier2
-                        LoginSecurityType.Tier1 -> MdtIcons.Tier1
+                        SecurityType.Tier3 -> MdtIcons.Tier3
+                        SecurityType.Tier2 -> MdtIcons.Tier2
+                        SecurityType.Tier1 -> MdtIcons.Tier1
                     },
                     onClick = { onChange(type) },
                     content = {

@@ -65,6 +65,7 @@ internal class FillRequestHandler(
                 logins = when (fillRequestSpec.authenticated) {
                     true -> {
                         AutofillLoginMatcher.matchByUri(
+                            loginsRepository = loginsRepository,
                             vaultCryptoScope = vaultCryptoScope,
                             logins = loginsRepository.getLogins(),
                             packageName = nodeStructure.packageName,

@@ -11,6 +11,7 @@ package com.twofasapp.data.settings
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.common.storage.booleanPref
+import com.twofasapp.core.common.storage.longPref
 import com.twofasapp.core.common.storage.serializedPrefNullable
 import com.twofasapp.data.settings.domain.FailedAppUnlocks
 import com.twofasapp.data.settings.local.model.FailedAppUnlocksEntity
@@ -27,15 +28,24 @@ internal class SessionRepositoryImpl(
     dataStoreOwner: DataStoreOwner,
 ) : SessionRepository, DataStoreOwner by dataStoreOwner {
 
-    private val startupCompleted by booleanPref(false)
-    private val biometricsPrompted by booleanPref(false)
-    private val connectOnboardingPrompted by booleanPref(false)
+    private val appVersionCode by longPref(default = 0L)
+    private val startupCompleted by booleanPref(default = false)
+    private val biometricsPrompted by booleanPref(default = false)
+    private val connectOnboardingPrompted by booleanPref(default = false)
     private val failedAppUnlocks by serializedPrefNullable(
         serializer = FailedAppUnlocksEntity.serializer(),
         name = "failedAppUnlocks",
         encrypted = true,
     )
     private val scrollToSettingsTransferSection = MutableStateFlow(false)
+
+    override suspend fun getAppVersionCode(): Long {
+        return withContext(dispatchers.io) { appVersionCode.get() }
+    }
+
+    override suspend fun setAppVersionCode(versionCode: Long) {
+        withContext(dispatchers.io) { appVersionCode.set(versionCode) }
+    }
 
     override fun observeStartupCompleted(): Flow<Boolean> {
         return startupCompleted.asFlow()

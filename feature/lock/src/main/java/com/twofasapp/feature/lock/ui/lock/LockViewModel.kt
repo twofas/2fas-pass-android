@@ -13,6 +13,8 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.ktx.tickerFlow
 import com.twofasapp.core.common.auth.AuthStatusTracker
+import com.twofasapp.core.common.build.AppUpdateExecutor
+import com.twofasapp.core.common.build.AppUpdateResult
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.ktx.encodeHex
@@ -36,6 +38,7 @@ internal class LockViewModel(
     private val vaultKeysRepository: VaultKeysRepository,
     private val authStatusTracker: AuthStatusTracker,
     private val timeProvider: TimeProvider,
+    private val appUpdateExecutor: AppUpdateExecutor,
 ) : ViewModel() {
     val uiState = MutableStateFlow(LockUiState())
 
@@ -123,8 +126,19 @@ internal class LockViewModel(
             }
                 .onSuccess { masterKey ->
                     resetFailedAttempts()
-                    uiState.update { it.copy(loading = false) }
-                    onSuccess(masterKey.decodeHex())
+
+                    val appUpdateResult = appUpdateExecutor.execute()
+
+                    when (appUpdateResult) {
+                        is AppUpdateResult.Completed -> {
+                            uiState.update { it.copy(loading = false) }
+                            onSuccess(masterKey.decodeHex())
+                        }
+
+                        is AppUpdateResult.Failed -> {
+                            uiState.update { it.copy(loading = false, appUpdateError = appUpdateResult.error) }
+                        }
+                    }
                 }
                 .onFailure {
                     incrementFailedAttempt()
@@ -142,7 +156,19 @@ internal class LockViewModel(
             }
                 .onSuccess {
                     resetFailedAttempts()
-                    finishWithSuccess()
+
+                    val appUpdateResult = appUpdateExecutor.execute()
+
+                    when (appUpdateResult) {
+                        is AppUpdateResult.Completed -> {
+                            uiState.update { it.copy(loading = false) }
+                            finishWithSuccess()
+                        }
+
+                        is AppUpdateResult.Failed -> {
+                            uiState.update { it.copy(loading = false, appUpdateError = appUpdateResult.error) }
+                        }
+                    }
                 }
                 .onFailure {
                     incrementFailedAttempt()

@@ -10,7 +10,7 @@ package com.twofasapp.feature.settings.ui.securitytier
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -28,9 +28,9 @@ internal class SecurityTierViewModel(
         }
     }
 
-    fun onChange(loginSecurityType: LoginSecurityType) {
+    fun onChange(securityType: SecurityType) {
         launchScoped {
-            settingsRepository.setDefaultSecurityType(loginSecurityType)
+            settingsRepository.setDefaultSecurityType(securityType)
         }
     }
 }

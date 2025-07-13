@@ -12,13 +12,11 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.crypto.WordList
-import com.twofasapp.core.common.domain.EncryptedLogin
-import com.twofasapp.core.common.domain.EncryptedLoginUri
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.LoginUri
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
@@ -77,61 +75,54 @@ internal class DeveloperViewModel(
         }
     }
 
-    fun generateTestItems(loginSecurityType: LoginSecurityType) {
+    fun generateTestItems(securityType: SecurityType) {
         launchScoped {
             val vault = vaultsRepository.getVault()
             vaultCryptoScope.withVaultCipher(vault) {
                 repeat(1) {
                     launchScoped(Dispatchers.IO) {
-                        val id = Random.nextInt(9999)
+                        loginsRepository.importLogins(
+                            buildList {
+                                val id = Random.nextInt(9999)
+                                val tier = securityType
+                                val addNote = Random.nextBoolean()
 
-                        loginsRepository.saveLogin(
-                            EncryptedLogin(
-                                id = "",
-                                vaultId = vault.id,
-                                name = when (loginSecurityType) {
-                                    LoginSecurityType.Tier1 -> encryptWithSecretKey("Name $id (T1)")
-                                    LoginSecurityType.Tier2 -> encryptWithTrustedKey("Name $id (T2)")
-                                    LoginSecurityType.Tier3 -> encryptWithTrustedKey("Name $id (T3)")
-                                },
-                                username = when (loginSecurityType) {
-                                    LoginSecurityType.Tier1 -> encryptWithSecretKey("user1@mail$id.com")
-                                    LoginSecurityType.Tier2 -> encryptWithTrustedKey("user2@mail$id.com")
-                                    LoginSecurityType.Tier3 -> encryptWithTrustedKey("user3@mail$id.com")
-                                },
-                                password = when (loginSecurityType) {
-                                    LoginSecurityType.Tier1 -> encryptWithSecretKey("pass$id")
-                                    LoginSecurityType.Tier2 -> encryptWithSecretKey("pass$id")
-                                    LoginSecurityType.Tier3 -> encryptWithTrustedKey("pass$id")
-                                },
-                                securityType = loginSecurityType,
-                                uris = listOf(
-                                    EncryptedLoginUri(
-                                        text = when (loginSecurityType) {
-                                            LoginSecurityType.Tier1 -> encryptWithSecretKey("https://uri$id.com")
-                                            LoginSecurityType.Tier2 -> encryptWithTrustedKey("https://uri$id.com")
-                                            LoginSecurityType.Tier3 -> encryptWithTrustedKey("https://uri$id.com")
+                                add(
+                                    Login(
+                                        id = "",
+                                        vaultId = "",
+                                        name = when (tier) {
+                                            SecurityType.Tier1 -> "Name $id (T1)"
+                                            SecurityType.Tier2 -> "Name $id (T2)"
+                                            SecurityType.Tier3 -> "Name $id (T3)"
                                         },
+                                        username = buildString {
+                                            append("user")
+                                            append(
+                                                when (tier) {
+                                                    SecurityType.Tier1 -> 1
+                                                    SecurityType.Tier2 -> 2
+                                                    SecurityType.Tier3 -> 3
+                                                },
+                                            )
+                                            append("@mail$id.com")
+                                        },
+                                        password = SecretField.Visible("pass$id"),
+                                        securityType = tier,
+                                        uris = listOf(LoginUri("https://uri$id.com")),
+                                        iconType = IconType.Label,
+                                        customImageUrl = null,
+                                        labelText = id.toString().take(2),
+                                        labelColor = null,
+                                        deleted = false,
+                                        notes = if (addNote) "Lorem ipsum dolor sit amet $id" else null,
+                                        tagIds = emptyList(),
+                                        createdAt = 0L,
+                                        updatedAt = 0L,
                                     ),
-                                ),
-                                iconType = IconType.Label,
-                                customImageUrl = null,
-                                labelText = when (loginSecurityType) {
-                                    LoginSecurityType.Tier1 -> encryptWithSecretKey(id.toString().take(2))
-                                    LoginSecurityType.Tier2 -> encryptWithTrustedKey(id.toString().take(2))
-                                    LoginSecurityType.Tier3 -> encryptWithTrustedKey(id.toString().take(2))
-                                },
-                                labelColor = null,
-                                tags = emptyList(),
-                                deleted = false,
-                                notes = when (loginSecurityType) {
-                                    LoginSecurityType.Tier1 -> encryptWithSecretKey("Lorem ipsum dolor sit amet $id")
-                                    LoginSecurityType.Tier2 -> encryptWithTrustedKey("Lorem ipsum dolor sit amet $id")
-                                    LoginSecurityType.Tier3 -> encryptWithTrustedKey("Lorem ipsum dolor sit amet $id")
-                                },
-                                createdAt = 0L,
-                                updatedAt = 0L,
-                            ),
+                                )
+                            },
+
                         )
                     }
                 }
@@ -145,7 +136,7 @@ internal class DeveloperViewModel(
                 buildList {
                     repeat(count) {
                         val id = Random.nextInt(9999999)
-                        val tier = LoginSecurityType.entries.random()
+                        val tier = SecurityType.entries.random()
                         val addNote = Random.nextBoolean()
 
                         add(
@@ -153,17 +144,17 @@ internal class DeveloperViewModel(
                                 id = "",
                                 vaultId = "",
                                 name = when (tier) {
-                                    LoginSecurityType.Tier1 -> "Name $id (T1)"
-                                    LoginSecurityType.Tier2 -> "Name $id (T2)"
-                                    LoginSecurityType.Tier3 -> "Name $id (T3)"
+                                    SecurityType.Tier1 -> "Name $id (T1)"
+                                    SecurityType.Tier2 -> "Name $id (T2)"
+                                    SecurityType.Tier3 -> "Name $id (T3)"
                                 },
                                 username = buildString {
                                     append("user")
                                     append(
                                         when (tier) {
-                                            LoginSecurityType.Tier1 -> 1
-                                            LoginSecurityType.Tier2 -> 2
-                                            LoginSecurityType.Tier3 -> 3
+                                            SecurityType.Tier1 -> 1
+                                            SecurityType.Tier2 -> 2
+                                            SecurityType.Tier3 -> 3
                                         },
                                     )
                                     append("@mail$id.com")
@@ -177,7 +168,7 @@ internal class DeveloperViewModel(
                                 labelColor = null,
                                 deleted = false,
                                 notes = if (addNote) "Lorem ipsum dolor sit amet $id" else null,
-                                tags = emptyList(),
+                                tagIds = emptyList(),
                                 createdAt = 0L,
                                 updatedAt = 0L,
                             ),
@@ -193,7 +184,7 @@ internal class DeveloperViewModel(
             loginsRepository.importLogins(
                 buildList {
                     DevTopDomains.list.forEach { domain ->
-                        val tier = LoginSecurityType.Tier3
+                        val tier = SecurityType.Tier3
                         val addNote = Random.nextBoolean()
                         val rand = Random.nextInt(9999999)
 
@@ -206,9 +197,9 @@ internal class DeveloperViewModel(
                                     append("user")
                                     append(
                                         when (tier) {
-                                            LoginSecurityType.Tier1 -> 1
-                                            LoginSecurityType.Tier2 -> 2
-                                            LoginSecurityType.Tier3 -> 3
+                                            SecurityType.Tier1 -> 1
+                                            SecurityType.Tier2 -> 2
+                                            SecurityType.Tier3 -> 3
                                         },
                                     )
                                     append("@$domain")
@@ -222,7 +213,7 @@ internal class DeveloperViewModel(
                                 labelText = null,
                                 labelColor = null,
                                 notes = if (addNote) "Lorem ipsum dolor sit amet $rand" else null,
-                                tags = emptyList(),
+                                tagIds = emptyList(),
                                 deleted = false,
                                 createdAt = 0L,
                                 updatedAt = 0L,

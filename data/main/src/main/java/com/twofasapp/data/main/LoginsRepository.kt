@@ -8,20 +8,22 @@
 
 package com.twofasapp.data.main
 
-import com.twofasapp.core.common.domain.EncryptedLogin
+import com.twofasapp.core.common.domain.ItemEncrypted
 import com.twofasapp.core.common.domain.Login
 import com.twofasapp.data.main.domain.CloudMerge
 import kotlinx.coroutines.flow.Flow
 
 interface LoginsRepository {
-    fun observeLogins(vaultId: String): Flow<List<EncryptedLogin>>
-    suspend fun getLogin(id: String): EncryptedLogin
-    suspend fun getLogins(): List<EncryptedLogin>
+    fun observeLogins(vaultId: String): Flow<List<ItemEncrypted>>
+    suspend fun getLogin(id: String): ItemEncrypted
+    suspend fun getLogins(): List<ItemEncrypted>
     suspend fun getLoginsDecrypted(): List<Login>
     suspend fun getLoginsDecryptedWithDeleted(): List<Login>
     suspend fun getLoginsCount(): Int
-    suspend fun saveLogin(login: EncryptedLogin): String
-    suspend fun saveLogins(logins: List<EncryptedLogin>)
+    suspend fun decrypt(itemEncrypted: ItemEncrypted, decryptPassword: Boolean): Login?
+    suspend fun decrypt(vaultCipher: VaultCipher, itemsEncrypted: List<ItemEncrypted>, decryptPassword: Boolean): List<Login>
+    suspend fun saveLogin(login: ItemEncrypted): String
+    suspend fun saveLogins(logins: List<ItemEncrypted>)
     suspend fun importLogins(logins: List<Login>, triggerSync: Boolean = true)
     suspend fun getMostCommonUsernames(): List<String>
     suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Login>)

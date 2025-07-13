@@ -8,8 +8,8 @@
 
 package com.twofasapp.feature.settings.ui.securitytier
 
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 
 internal data class SecurityTierUiState(
-    val defaultSecurityLevel: LoginSecurityType = LoginSecurityType.Tier3,
+    val defaultSecurityLevel: SecurityType = SecurityType.Tier3,
 )

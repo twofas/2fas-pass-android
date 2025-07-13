@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 
 @Entity(
-    tableName = "logins",
+    tableName = "items",
     foreignKeys = [
         ForeignKey(
             entity = VaultEntity::class,
@@ -28,7 +28,7 @@ import com.twofasapp.core.common.domain.crypto.EncryptedBytes
     ],
     indices = [Index(value = ["vault_id"])],
 )
-data class LoginEntity(
+data class ItemEntity(
     @PrimaryKey
     @ColumnInfo("id")
     val id: String,
@@ -42,28 +42,14 @@ data class LoginEntity(
     val deletedAt: Long?,
     @ColumnInfo("deleted")
     val deleted: Boolean,
-    @ColumnInfo("name")
-    val name: EncryptedBytes,
-    @ColumnInfo("username")
-    val username: EncryptedBytes?,
-    @ColumnInfo("password")
-    val password: EncryptedBytes?,
     @ColumnInfo("security_type")
     val securityType: Int,
-    @ColumnInfo("uris")
-    val uris: List<String>?,
-    @ColumnInfo("icon_type")
-    val iconType: Int,
-    @ColumnInfo("icon_uri_index")
-    val iconUriIndex: Int?,
-    @ColumnInfo("custom_image_url")
-    val customImageUrl: EncryptedBytes?,
-    @ColumnInfo("label_text")
-    val labelText: EncryptedBytes?,
-    @ColumnInfo("label_color")
-    val labelColor: String?,
-    @ColumnInfo("notes")
-    val notes: EncryptedBytes?,
-    @ColumnInfo("tags")
-    val tags: List<String>?,
+    @ColumnInfo("content_type")
+    val contentType: String,
+    @ColumnInfo("content_version")
+    val contentVersion: Int,
+    @ColumnInfo("content")
+    val content: EncryptedBytes,
+    @ColumnInfo("tag_ids")
+    val tagIds: List<String>?,
 )

@@ -521,6 +521,9 @@ class Strings(private val c: Context) {
     val paywallNoticeItemsLimitRestoreTitle = c.getString(R.string.paywall_notice_items_limit_restore_title)
     val paywallNoticeItemsLimitRestoreMsg = c.getString(R.string.paywall_notice_items_limit_restore_msg)
 
+    val migrationErrorTitle = c.getString(R.string.migration_error_title)
+    val migrationErrorBody = c.getString(R.string.migration_error_body)
+
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis
         val diffSign = diff.sign

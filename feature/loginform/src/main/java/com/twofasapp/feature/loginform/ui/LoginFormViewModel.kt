@@ -12,10 +12,10 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.LoginUri
 import com.twofasapp.core.common.domain.PasswordGeneratorSettings
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -125,7 +125,7 @@ internal class LoginFormViewModel(
         }
     }
 
-    fun updateSecurityLevel(securityLevel: LoginSecurityType) {
+    fun updateSecurityLevel(securityLevel: SecurityType) {
         updateLogin { login -> login.copy(securityType = securityLevel) }
     }
 

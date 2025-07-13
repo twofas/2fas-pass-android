@@ -10,8 +10,8 @@ package com.twofasapp.data.settings
 
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.PasswordGeneratorSettings
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.common.storage.booleanPref
@@ -148,23 +148,23 @@ internal class SettingsRepositoryImpl(
         this.sendCrashLogs.set(enabled)
     }
 
-    override fun observeDefaultSecurityType(): Flow<LoginSecurityType> {
+    override fun observeDefaultSecurityType(): Flow<SecurityType> {
         return defaultSecurityType.asFlow().map {
             when (it) {
-                0 -> LoginSecurityType.Tier1
-                1 -> LoginSecurityType.Tier2
-                2 -> LoginSecurityType.Tier3
-                else -> LoginSecurityType.Tier3
+                0 -> SecurityType.Tier1
+                1 -> SecurityType.Tier2
+                2 -> SecurityType.Tier3
+                else -> SecurityType.Tier3
             }
         }
     }
 
-    override suspend fun setDefaultSecurityType(type: LoginSecurityType) {
+    override suspend fun setDefaultSecurityType(type: SecurityType) {
         defaultSecurityType.set(
             when (type) {
-                LoginSecurityType.Tier1 -> 0
-                LoginSecurityType.Tier2 -> 1
-                LoginSecurityType.Tier3 -> 2
+                SecurityType.Tier1 -> 0
+                SecurityType.Tier2 -> 1
+                SecurityType.Tier3 -> 2
             },
         )
     }

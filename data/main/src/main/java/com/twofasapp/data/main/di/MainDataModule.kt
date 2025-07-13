@@ -38,7 +38,7 @@ import com.twofasapp.data.main.VaultsRepositoryImpl
 import com.twofasapp.data.main.domain.CloudMerger
 import com.twofasapp.data.main.local.ConnectedBrowsersLocalSource
 import com.twofasapp.data.main.local.DeletedItemsLocalSource
-import com.twofasapp.data.main.local.LoginsLocalSource
+import com.twofasapp.data.main.local.ItemsLocalSource
 import com.twofasapp.data.main.local.SecurityLocalSource
 import com.twofasapp.data.main.local.TagsLocalSource
 import com.twofasapp.data.main.local.VaultKeysLocalSource
@@ -46,7 +46,7 @@ import com.twofasapp.data.main.local.VaultsLocalSource
 import com.twofasapp.data.main.mapper.CloudMapper
 import com.twofasapp.data.main.mapper.ConnectedBrowserMapper
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.LoginIconTypeMapper
 import com.twofasapp.data.main.mapper.LoginMapper
 import com.twofasapp.data.main.mapper.LoginSecurityTypeMapper
@@ -71,7 +71,7 @@ class MainDataModule : KoinModule {
     override fun provide(): Module = module {
         singleOf(::VaultMapper)
         singleOf(::LoginMapper)
-        singleOf(::LoginEncryptionMapper)
+        singleOf(::ItemEncryptionMapper)
         singleOf(::CloudMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)
@@ -83,7 +83,7 @@ class MainDataModule : KoinModule {
         singleOf(::VaultBackupMapper)
         singleOf(::VaultDataForBrowserMapper)
 
-        singleOf(::LoginsLocalSource)
+        singleOf(::ItemsLocalSource)
         singleOf(::LoginsRepositoryImpl) { bind<LoginsRepository>() }
 
         singleOf(::VaultsLocalSource)

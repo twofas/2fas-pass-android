@@ -106,4 +106,6 @@ dependencies {
     releaseImplementation(libs.plutoRoomNoOp)
     releaseImplementation(libs.plutoDataStoreNoOp)
     releaseImplementation(libs.plutoLoggerNoOp)
+
+    testImplementation(project(":testing:core"))
 }
