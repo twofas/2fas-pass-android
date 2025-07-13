@@ -48,6 +48,7 @@ internal class LoginFormViewModel(
         launchScoped {
             val login = if (initialLogin.id.isBlank()) {
                 initialLogin.copy(
+                    securityType = settingsRepository.observeDefaultSecurityType().first(),
                     username = if (initialLogin.username.isNullOrBlank()) {
                         loginsRepository.getMostCommonUsernames().firstOrNull()
                     } else {

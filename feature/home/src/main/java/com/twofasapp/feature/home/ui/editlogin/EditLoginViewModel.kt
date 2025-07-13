@@ -21,7 +21,6 @@ import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
@@ -44,11 +43,9 @@ internal class EditLoginViewModel(
         if (isNewLogin) {
             launchScoped {
                 uiState.update { state ->
-                    val emptyLogin = Login.Empty.copy(securityType = settingsRepository.observeDefaultSecurityType().first())
-
                     state.copy(
-                        initialLogin = emptyLogin,
-                        login = emptyLogin,
+                        initialLogin = Login.Empty,
+                        login = Login.Empty,
                     )
                 }
             }
