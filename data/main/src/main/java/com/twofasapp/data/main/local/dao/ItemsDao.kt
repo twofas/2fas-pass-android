@@ -55,17 +55,6 @@ interface ItemsDao {
     @Query("DELETE FROM items")
     suspend fun deleteAll()
 
-//    @Query(
-//        """
-//        SELECT vault_id, username, security_type, COUNT(*) AS occurrences
-//        FROM items
-//        GROUP BY security_type, username
-//        ORDER BY occurrences DESC
-//        LIMIT 20
-//        """,
-//    )
-//    suspend fun getUsernamesFrequency(): List<UsernameFrequencyEntity>
-
     @Query("SELECT * FROM items WHERE vault_id == :vaultId AND deleted == 0")
     fun getVaultLogins(vaultId: String): List<ItemEntity>
 
@@ -79,18 +68,18 @@ interface ItemsDao {
     @Transaction
     suspend fun executeCloudMerge(cloudMerge: CloudMergeEntity) {
         cloudMerge.loginsToAdd.chunked(500).forEach { chunk ->
-//            save(chunk)
+            save(chunk)
         }
 
         cloudMerge.loginsToUpdate.chunked(500).forEach { chunk ->
-//            save(chunk)
+            save(chunk)
         }
 
         cloudMerge.loginsToTrash.chunked(500).forEach { chunk ->
-//            save(chunk)
+            save(chunk)
         }
     }
 
-    @Query("SELECT MAX(updated_at) FROM logins")
+    @Query("SELECT MAX(updated_at) FROM items")
     suspend fun getMostRecentUpdateTime(): Long?
 }

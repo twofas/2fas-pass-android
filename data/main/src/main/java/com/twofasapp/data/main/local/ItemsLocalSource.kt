@@ -11,7 +11,6 @@ package com.twofasapp.data.main.local
 import com.twofasapp.data.main.local.dao.ItemsDao
 import com.twofasapp.data.main.local.model.CloudMergeEntity
 import com.twofasapp.data.main.local.model.ItemEntity
-import com.twofasapp.data.main.local.model.UsernameFrequencyEntity
 import kotlinx.coroutines.flow.Flow
 
 internal class ItemsLocalSource(
@@ -63,12 +62,6 @@ internal class ItemsLocalSource(
 
     suspend fun deleteAll() {
         itemsDao.deleteAll()
-    }
-
-    suspend fun getUsernamesFrequency(): List<UsernameFrequencyEntity> {
-        // todo
-        return emptyList()
-//        return itemsDao.getUsernamesFrequency()
     }
 
     suspend fun executeCloudMerge(cloudMerge: CloudMergeEntity) {

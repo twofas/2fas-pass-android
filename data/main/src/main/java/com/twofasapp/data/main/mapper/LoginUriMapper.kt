@@ -8,43 +8,29 @@
 
 package com.twofasapp.data.main.mapper
 
-import com.twofasapp.core.common.domain.EncryptedLoginUri
 import com.twofasapp.core.common.domain.LoginUri
-import com.twofasapp.core.common.domain.crypto.EncryptedBytes
-import com.twofasapp.core.common.ktx.decodeBase64
-import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.local.model.items.LoginContentEntityV1
 import com.twofasapp.data.main.remote.model.LoginUriJson
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 class LoginUriMapper(
     private val uriMatcherMapper: LoginUriMatcherMapper,
 ) {
-
-    @Deprecated("Legacy")
-    fun mapToEntity(domain: EncryptedLoginUri): String {
-        return with(domain) {
-            buildJsonObject {
-                put("text", JsonPrimitive(text.bytes.encodeBase64()))
-                put("matcher", JsonPrimitive(uriMatcherMapper.mapToEntity(matcher)))
-            }.toString()
+    fun mapToDomain(entity: LoginContentEntityV1.UriJson): LoginUri {
+        return with(entity) {
+            LoginUri(
+                text = text,
+                matcher = matcher.let { uriMatcherMapper.mapToDomainFromJson(it) },
+            )
         }
     }
 
-    @Deprecated("Legacy")
-    fun mapToDomain(entity: String): EncryptedLoginUri {
-        val jsonObject = Json.parseToJsonElement(entity).jsonObject
-        return EncryptedLoginUri(
-            text = EncryptedBytes(
-                jsonObject["text"]?.jsonPrimitive?.content.orEmpty().decodeBase64(),
-            ),
-            matcher = jsonObject["matcher"]?.jsonPrimitive?.content?.toInt()
-                .let { uriMatcherMapper.mapToDomainFromEntity(it) },
-        )
+    fun mapToEntity(domain: LoginUri): LoginContentEntityV1.UriJson {
+        return with(domain) {
+            LoginContentEntityV1.UriJson(
+                text = text,
+                matcher = matcher.let { uriMatcherMapper.mapToEntity(it) },
+            )
+        }
     }
 
     fun mapToJson(domain: LoginUri): LoginUriJson {
@@ -61,24 +47,6 @@ class LoginUriMapper(
             LoginUri(
                 text = text,
                 matcher = matcher.let { uriMatcherMapper.mapToDomainFromJson(it) },
-            )
-        }
-    }
-
-    fun mapToDomain(entity: LoginContentEntityV1.UriJson): LoginUri {
-        return with(entity) {
-            LoginUri(
-                text = text,
-                matcher = matcher.let { uriMatcherMapper.mapToDomainFromJson(it) },
-            )
-        }
-    }
-
-    fun mapToEntity(domain: LoginUri): LoginContentEntityV1.UriJson {
-        return with(domain) {
-            LoginContentEntityV1.UriJson(
-                text = text,
-                matcher = matcher.let { uriMatcherMapper.mapToEntity(it) },
             )
         }
     }

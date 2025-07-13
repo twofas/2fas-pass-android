@@ -21,12 +21,13 @@ import com.twofasapp.core.di.KoinModule
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
 import com.twofasapp.data.main.local.dao.ItemsDao
-import com.twofasapp.data.main.local.dao.LoginsDao
 import com.twofasapp.data.main.local.dao.TagsDao
 import com.twofasapp.data.main.local.dao.VaultKeysDao
 import com.twofasapp.data.main.local.dao.VaultsDao
 import com.twofasapp.pass.storage.AppDatabase
 import com.twofasapp.pass.storage.DataStoreOwnerImpl
+import com.twofasapp.pass.storage.migrations.data.MigrateLoginsToItems
+import com.twofasapp.pass.storage.migrations.schema.AppDatabaseMigrations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import org.koin.android.ext.koin.androidContext
@@ -53,6 +54,9 @@ class StorageModule : KoinModule {
                 AppDatabase::class.java,
                 "app-db",
             )
+                .addMigrations(
+                    AppDatabaseMigrations.MIGRATION_1_2,
+                )
                 .apply {
                     if (get<AppBuild>().debuggable) {
                         setQueryCallback(
@@ -80,9 +84,10 @@ class StorageModule : KoinModule {
         single<VaultsDao> { get<AppDatabase>().vaultsDao() }
         single<VaultKeysDao> { get<AppDatabase>().vaultKeysDao() }
         single<ItemsDao> { get<AppDatabase>().itemsDao() }
-        single<LoginsDao> { get<AppDatabase>().loginsDao() }
         single<DeletedItemsDao> { get<AppDatabase>().deletedItemsDao() }
         single<ConnectedBrowsersDao> { get<AppDatabase>().connectedBrowsersDao() }
         single<TagsDao> { get<AppDatabase>().tagsDao() }
+
+        singleOf(::MigrateLoginsToItems)
     }
 }

@@ -29,6 +29,8 @@ data class LoginContentEntityV1(
     @SerialName("notes")
     val notes: String?,
 ) : ContentEntity {
+    override val contentType: String = "login"
+    override val contentVersion: Int = 1
 
     @Serializable
     data class UriJson(

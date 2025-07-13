@@ -39,7 +39,6 @@ import com.twofasapp.data.main.domain.CloudMerger
 import com.twofasapp.data.main.local.ConnectedBrowsersLocalSource
 import com.twofasapp.data.main.local.DeletedItemsLocalSource
 import com.twofasapp.data.main.local.ItemsLocalSource
-import com.twofasapp.data.main.local.LoginsLocalSource
 import com.twofasapp.data.main.local.SecurityLocalSource
 import com.twofasapp.data.main.local.TagsLocalSource
 import com.twofasapp.data.main.local.VaultKeysLocalSource
@@ -84,7 +83,6 @@ class MainDataModule : KoinModule {
         singleOf(::VaultBackupMapper)
         singleOf(::VaultDataForBrowserMapper)
 
-        singleOf(::LoginsLocalSource)
         singleOf(::ItemsLocalSource)
         singleOf(::LoginsRepositoryImpl) { bind<LoginsRepository>() }
 

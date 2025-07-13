@@ -12,11 +12,9 @@ import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.ItemEncrypted
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.local.ItemsLocalSource
-import com.twofasapp.data.main.local.LoginsLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
 import com.twofasapp.data.main.local.model.CloudMergeEntity
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
@@ -39,7 +37,6 @@ internal class LoginsRepositoryImpl(
     private val timeProvider: TimeProvider,
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemsLocalSource: ItemsLocalSource,
-    private val loginsLocalSource: LoginsLocalSource,
     private val vaultsLocalSource: VaultsLocalSource,
     private val cloudRepository: CloudRepository,
     private val settingsRepository: SettingsRepository,
@@ -279,25 +276,16 @@ internal class LoginsRepositoryImpl(
     }
 
     override suspend fun getMostCommonUsernames(): List<String> {
+        // Take 6 most common usernames
         return withContext(dispatchers.io) {
-            // Take 6 most common usernames
-            itemsLocalSource.getUsernamesFrequency()
-                .mapNotNull { usernameFrequency ->
-                    usernameFrequency.username?.let {
-                        vaultCryptoScope.withVaultCipher(usernameFrequency.vaultId) {
-                            when (usernameFrequency.securityType.let(loginSecurityTypeMapper::mapToDomainFromEntity)) {
-                                SecurityType.Tier1 -> decryptWithSecretKey(it)
-                                SecurityType.Tier2 -> decryptWithTrustedKey(it)
-                                SecurityType.Tier3 -> decryptWithTrustedKey(it)
-                            }
-                        }
-                    }
-                }
-                .groupingBy { it }
+            getLoginsDecrypted()
+                .groupingBy { it.username }
                 .eachCount()
+                .filter { it.key != null }
                 .entries
                 .sortedByDescending { it.value }
-                .map { it.key }
+                .take(6)
+                .mapNotNull { it.key }
         }
     }
 
@@ -309,19 +297,15 @@ internal class LoginsRepositoryImpl(
 
             val cloudMergeEntity = vaultCryptoScope.withVaultCipher(vault.id) {
                 CloudMergeEntity(
-                    loginsToAdd = listOf(),
-                    loginsToUpdate = listOf(),
-                    loginsToTrash = listOf(),
-
-//                    loginsToAdd = cloudMerge.toAdd.map {
-//                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
-//                    },
-//                    loginsToUpdate = cloudMerge.toUpdate.map {
-//                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
-//                    },
-//                    loginsToTrash = cloudMerge.toDelete.map {
-//                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
-//                    },
+                    loginsToAdd = cloudMerge.toAdd.map {
+                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
+                    },
+                    loginsToUpdate = cloudMerge.toUpdate.map {
+                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
+                    },
+                    loginsToTrash = cloudMerge.toDelete.map {
+                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
+                    },
                 )
             }
 

@@ -134,8 +134,8 @@ class ItemEncryptionMapper(
             deleted = login.deleted,
             securityType = login.securityType,
             tagIds = login.tagIds,
-            contentType = "login",
-            contentVersion = 1,
+            contentType = contentLoginEntity.contentType,
+            contentVersion = contentLoginEntity.contentVersion,
             content = contentEncrypted,
         )
     }
