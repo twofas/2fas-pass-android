@@ -10,7 +10,7 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.LoginUriMatcher
 
-internal class LoginUriMatcherMapper {
+class LoginUriMatcherMapper {
 
     fun mapToEntity(domain: LoginUriMatcher): Int {
         return when (domain) {

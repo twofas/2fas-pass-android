@@ -3,7 +3,7 @@ package com.twofasapp.data.main.domain
 import com.twofasapp.core.common.domain.DeletedItem
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import java.time.Instant
 
 internal fun login(id: String, updatedAt: Long): Login =
@@ -13,10 +13,10 @@ internal fun login(id: String, updatedAt: Long): Login =
         name = "test",
         username = "user",
         password = null,
-        securityType = LoginSecurityType.Tier3,
+        securityType = SecurityType.Tier3,
         uris = emptyList(),
         iconType = IconType.Icon,
-        tags = emptyList(),
+        tagIds = emptyList(),
         updatedAt = updatedAt,
     )
 

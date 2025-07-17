@@ -27,7 +27,7 @@ import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultKeysRepository
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -43,7 +43,7 @@ internal class ProcessingNewPasswordViewModel(
     private val vaultKeysRepository: VaultKeysRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val cloudRepository: CloudRepository,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ProcessingNewPasswordUiState())
 
@@ -72,7 +72,7 @@ internal class ProcessingNewPasswordViewModel(
 
                 val newVaultKeys = vaultKeysRepository.generateVaultKeys(masterKeyHex = masterKey.hashHex, vaultId = vault.id)
                 val newLogins = vaultCryptoScope.withVaultCipher(vaultKeys = newVaultKeys) {
-                    loginEncryptionMapper.encryptLogins(logins = logins, vaultCipher = this)
+                    itemEncryptionMapper.encryptLogins(logins = logins, vaultCipher = this)
                 }
 
                 loginsRepository.lockLogins()

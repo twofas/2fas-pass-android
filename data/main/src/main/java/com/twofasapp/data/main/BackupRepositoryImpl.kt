@@ -24,7 +24,7 @@ import com.twofasapp.data.main.domain.InvalidSchemaVersion
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.domain.VaultKeys
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.LoginMapper
 import com.twofasapp.data.main.mapper.TagMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
@@ -49,7 +49,7 @@ internal class BackupRepositoryImpl(
     private val json: Json,
     private val loginMapper: LoginMapper,
     private val tagMapper: TagMapper,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
     private val vaultBackupMapper: VaultBackupMapper,
     private val deletedItemsMapper: DeletedItemsMapper,
     private val vaultDataForBrowserMapper: VaultDataForBrowserMapper,
@@ -67,8 +67,8 @@ internal class BackupRepositoryImpl(
             val vault = vaultsRepository.getVault(vaultId)
             val logins = vaultCryptoScope.withVaultCipher(vault) {
                 loginsRepository.getLogins().mapNotNull { login ->
-                    loginEncryptionMapper.decryptLogin(
-                        encryptedLogin = login,
+                    itemEncryptionMapper.decryptLogin(
+                        itemEncrypted = login,
                         vaultCipher = this,
                         decryptPassword = true,
                     )
@@ -80,7 +80,7 @@ internal class BackupRepositoryImpl(
             VaultBackup(
                 schemaVersion = VaultBackup.CurrentSchema,
                 originOs = appBuild.os,
-                originAppVersionCode = appBuild.versionCode,
+                originAppVersionCode = appBuild.versionCode.toInt(),
                 originAppVersionName = appBuild.versionName,
                 originDeviceId = device.uniqueId(),
                 originDeviceName = device.name(),

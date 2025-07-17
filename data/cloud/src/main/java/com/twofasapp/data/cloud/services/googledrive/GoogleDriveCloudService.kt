@@ -327,8 +327,8 @@ internal class GoogleDriveCloudService(
 
     private fun Exception.mapCommonExceptions(): CloudError? {
         return when (this) {
-            is UserRecoverableAuthIOException -> CloudError.NotAuthorized(this)
-            is UserRecoverableAuthException -> CloudError.NotAuthorized(this)
+            is UserRecoverableAuthIOException -> CloudError.NotAuthorized(this, intent)
+            is UserRecoverableAuthException -> CloudError.NotAuthorized(this, intent)
             else -> null
         }
     }

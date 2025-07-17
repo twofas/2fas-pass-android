@@ -27,10 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.compose.BiometricsState
 import com.twofasapp.core.android.compose.biometricsState
+import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.currentActivity
+import com.twofasapp.core.android.ktx.restartApp
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.LocalAppTheme
@@ -160,6 +163,23 @@ internal fun LockScreen(
                         title = strings.lockScreenBiometricsErrorTitle,
                         body = biometricsError,
                         shouldAutoHideOnLock = false,
+                    )
+                }
+
+                if (uiState.appUpdateError != null) {
+                    InfoDialog(
+                        onDismissRequest = {},
+                        title = strings.migrationErrorTitle,
+                        body = strings.migrationErrorBody,
+                        icon = MdtIcons.Error,
+                        positive = "Restart app",
+                        neutral = "Copy error",
+                        onPositive = { activity.restartApp() },
+                        onNeutral = { activity.copyToClipboard(uiState.appUpdateError!!.stackTraceToString()) },
+                        properties = DialogProperties(
+                            dismissOnBackPress = false,
+                            dismissOnClickOutside = false,
+                        ),
                     )
                 }
             }

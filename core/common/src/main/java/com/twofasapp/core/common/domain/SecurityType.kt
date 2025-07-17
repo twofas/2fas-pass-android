@@ -8,7 +8,7 @@
 
 package com.twofasapp.core.common.domain
 
-enum class LoginSecurityType {
+enum class SecurityType {
     Tier1,
     Tier2,
     Tier3,

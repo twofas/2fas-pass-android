@@ -8,46 +8,44 @@
 
 package com.twofasapp.feature.autofill.service.domain
 
-import com.twofasapp.core.common.domain.EncryptedLogin
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.SecretField
-import com.twofasapp.data.main.VaultCipher
+import com.twofasapp.core.common.domain.SecurityType
 
-internal fun EncryptedLogin.asAutofillLogin(vaultCipher: VaultCipher): AutofillLogin {
+internal fun Login.asSecretAutofillLogin(): AutofillLogin {
     return AutofillLogin(
         encrypted = when (securityType) {
-            LoginSecurityType.Tier1 -> true
-            LoginSecurityType.Tier2 -> true
-            LoginSecurityType.Tier3 -> false
+            SecurityType.Tier1 -> true
+            SecurityType.Tier2 -> true
+            SecurityType.Tier3 -> false
         },
+        updatedAt = 0,
         matchRank = null,
         id = id,
         name = when (securityType) {
-            LoginSecurityType.Tier1 -> null
-            LoginSecurityType.Tier2 -> vaultCipher.decryptWithTrustedKey(name)
-            LoginSecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(name)
+            SecurityType.Tier1 -> null
+            SecurityType.Tier2 -> name
+            SecurityType.Tier3 -> name
         },
         username = when (securityType) {
-            LoginSecurityType.Tier1 -> null
-            LoginSecurityType.Tier2 -> username?.let { vaultCipher.decryptWithTrustedKey(it) }
-            LoginSecurityType.Tier3 -> username?.let { vaultCipher.decryptWithTrustedKey(it) }
+            SecurityType.Tier1 -> null
+            SecurityType.Tier2 -> username
+            SecurityType.Tier3 -> username
         },
         password = password?.let {
             when (securityType) {
-                LoginSecurityType.Tier1 -> null
-                LoginSecurityType.Tier2 -> null
-                LoginSecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                SecurityType.Tier1 -> null
+                SecurityType.Tier2 -> null
+                SecurityType.Tier3 -> password?.let { (it as? SecretField.Visible)?.value }
             }
         },
         uris = uris.mapNotNull { loginUri ->
             when (securityType) {
-                LoginSecurityType.Tier1 -> null
-                LoginSecurityType.Tier2 -> vaultCipher.decryptWithTrustedKey(loginUri.text)
-                LoginSecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(loginUri.text)
+                SecurityType.Tier1 -> null
+                SecurityType.Tier2 -> loginUri.text
+                SecurityType.Tier3 -> loginUri.text
             }
         },
-        updatedAt = updatedAt,
     )
 }
 

@@ -11,12 +11,17 @@ package com.twofasapp.core.common.domain
 import java.time.Instant
 
 data class Login(
-    val id: String = "",
-    val vaultId: String,
+    override val id: String = "",
+    override val vaultId: String,
+    override val createdAt: Long = 0,
+    override val updatedAt: Long = 0,
+    override val deletedAt: Long? = null,
+    override val deleted: Boolean = false,
+    override val securityType: SecurityType,
+    override val tagIds: List<String>,
     val name: String,
     val username: String?,
     val password: SecretField?,
-    val securityType: LoginSecurityType,
     val uris: List<LoginUri>,
     val iconType: IconType,
     val iconUriIndex: Int? = null,
@@ -24,12 +29,7 @@ data class Login(
     val labelText: String? = null,
     val labelColor: String? = null,
     val notes: String? = null,
-    val tags: List<String>,
-    val deleted: Boolean = false,
-    val createdAt: Long = 0,
-    val updatedAt: Long = 0,
-    val deletedAt: Long? = null,
-) {
+) : Item {
 
     val iconUrl: String?
         get() = iconUriIndex?.let { uris.getOrNull(it)?.iconUrl }
@@ -52,14 +52,14 @@ data class Login(
                 name = "",
                 username = null,
                 password = SecretField.Visible(""),
-                securityType = LoginSecurityType.Tier3,
+                securityType = SecurityType.Tier3,
                 uris = listOf(LoginUri("")),
                 iconType = IconType.Icon,
                 iconUriIndex = 0,
                 customImageUrl = null,
                 labelText = null,
                 labelColor = null,
-                tags = emptyList(),
+                tagIds = emptyList(),
                 deleted = false,
                 createdAt = 0L,
                 updatedAt = 0L,
@@ -72,7 +72,7 @@ data class Login(
                 name = "Name",
                 username = "user@mail.com",
                 password = SecretField.Visible(""),
-                securityType = LoginSecurityType.Tier2,
+                securityType = SecurityType.Tier2,
                 uris = listOf(
                     LoginUri("https://2fas.com", LoginUriMatcher.Domain),
                     LoginUri("https://google.com", LoginUriMatcher.Host),
@@ -81,27 +81,10 @@ data class Login(
                 customImageUrl = null,
                 labelText = "NA",
                 labelColor = "#FF55FF",
-                tags = emptyList(),
+                tagIds = emptyList(),
                 deleted = false,
                 createdAt = Instant.now().toEpochMilli(),
                 updatedAt = Instant.now().toEpochMilli(),
             )
     }
-}
-
-fun Login.filterAndNormalizeUris(): Login {
-    if (uris.size == 1) {
-        return this
-    }
-
-    val normalizedUris = if (uris.all { it.text.isBlank() }) {
-        uris.take(1)
-    } else {
-        uris.filter { it.text.isNotBlank() }
-    }.map { it.copy(text = it.text.trim()) }
-
-    return copy(
-        uris = normalizedUris,
-        iconUriIndex = iconUriIndex?.let { minOf(it, normalizedUris.size - 1) },
-    )
 }

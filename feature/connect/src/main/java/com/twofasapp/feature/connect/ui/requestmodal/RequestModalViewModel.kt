@@ -22,7 +22,7 @@ import com.twofasapp.data.main.domain.BrowserRequestAction
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
 import com.twofasapp.data.main.domain.RequestWebSocketResult
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.websocket.RequestWebSocket
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
@@ -43,7 +43,7 @@ internal class RequestModalViewModel(
     private val purchasesRepository: PurchasesRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val requestWebSocket: RequestWebSocket,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(RequestModalUiState())
@@ -176,13 +176,13 @@ internal class RequestModalViewModel(
                                                         val loginId = loginsRepository.saveLogin(
                                                             login
                                                                 .copy(vaultId = vaultId)
-                                                                .let { loginEncryptionMapper.encryptLogin(it, this) },
+                                                                .let { itemEncryptionMapper.encryptLogin(it, this) },
                                                         )
 
                                                         updateState(RequestState.InsideFrame.Loading)
 
                                                         val updatedLogin = loginsRepository.getLogin(loginId).let {
-                                                            loginEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
+                                                            itemEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
                                                         }
 
                                                         continuation.sendResponse(BrowserRequestResponse.AddLoginAccept(updatedLogin!!))
@@ -216,13 +216,13 @@ internal class RequestModalViewModel(
                                                 launchScoped {
                                                     vaultCryptoScope.withVaultCipher(login.vaultId) {
                                                         val loginId = loginsRepository.saveLogin(
-                                                            loginEncryptionMapper.encryptLogin(login, this),
+                                                            itemEncryptionMapper.encryptLogin(login, this),
                                                         )
 
                                                         updateState(RequestState.InsideFrame.Loading)
 
                                                         val updatedLogin = loginsRepository.getLogin(loginId).let {
-                                                            loginEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
+                                                            itemEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
                                                         }
 
                                                         continuation.sendResponse(BrowserRequestResponse.UpdateLoginAccept(updatedLogin!!))

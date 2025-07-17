@@ -8,6 +8,9 @@
 
 package com.twofasapp.feature.cloudsync.ui.common
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -134,7 +138,13 @@ private fun ErrorStatus(
     onChangePasswordClick: () -> Unit = {},
     onReplaceBackupClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
+    val authLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            onReSync()
+        }
+    }
     var showPaywall by remember { mutableStateOf(false) }
 
     Column(
@@ -168,6 +178,12 @@ private fun ErrorStatus(
                         modifier = Modifier.padding(top = 8.dp),
                         onClick = onShowErrorDetailsClick,
                     )
+                }
+
+                (errorType as? CloudError.NotAuthorized)?.intent?.let { authIntent ->
+                    LaunchedEffect(Unit) {
+                        authLauncher.launch(authIntent)
+                    }
                 }
             }
 

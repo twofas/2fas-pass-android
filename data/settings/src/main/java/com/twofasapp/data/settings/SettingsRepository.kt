@@ -8,8 +8,8 @@
 
 package com.twofasapp.data.settings
 
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.PasswordGeneratorSettings
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.data.settings.domain.AppLockAttempts
 import com.twofasapp.data.settings.domain.AppLockTime
@@ -38,8 +38,8 @@ interface SettingsRepository {
     suspend fun setAutofillLockTime(time: AutofillLockTime)
     fun observeSendCrashLogs(): Flow<Boolean>
     suspend fun setSendCrashLogs(enabled: Boolean)
-    fun observeDefaultSecurityType(): Flow<LoginSecurityType>
-    suspend fun setDefaultSecurityType(type: LoginSecurityType)
+    fun observeDefaultSecurityType(): Flow<SecurityType>
+    suspend fun setDefaultSecurityType(type: SecurityType)
     fun observeScreenCaptureEnabled(): Flow<Boolean>
     suspend fun setScreenCaptureEnabled(enabled: Boolean)
     fun observePasswordGeneratorSettings(): Flow<PasswordGeneratorSettings>

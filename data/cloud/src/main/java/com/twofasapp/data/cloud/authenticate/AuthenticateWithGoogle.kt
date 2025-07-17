@@ -33,6 +33,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.api.services.drive.DriveScopes
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.common.build.LocalConfig
+import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.data.cloud.domain.CloudConfig
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -68,12 +69,15 @@ internal fun AuthenticateWithGoogle(
                     if (token != null) {
                         authenticated = true
                     } else {
+                        CrashlyticsInstance.logException(IllegalStateException("Authorization token is empty."))
                         onDismissRequest()
                     }
                 } else {
+                    CrashlyticsInstance.logException(IllegalStateException("Authorization data is empty."))
                     onDismissRequest()
                 }
             } else {
+                CrashlyticsInstance.logException(IllegalStateException("Authorization result failed."))
                 onDismissRequest()
             }
         }
@@ -125,11 +129,14 @@ internal fun AuthenticateWithGoogle(
                         }
                     }
                     .addOnFailureListener { e ->
+                        CrashlyticsInstance.logException(e)
                         e.printStackTrace()
                         onError(e)
                         onDismissRequest()
                     }
             } catch (e: Exception) {
+                CrashlyticsInstance.logException(e)
+
                 e.printStackTrace()
 
                 if (e is GetCredentialCancellationException) {

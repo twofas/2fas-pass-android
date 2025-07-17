@@ -12,13 +12,15 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.LoginUri
+import com.twofasapp.core.common.domain.PasswordGenerator
 import com.twofasapp.core.common.domain.PasswordGeneratorSettings
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 
 internal class LoginFormViewModel(
@@ -43,12 +45,36 @@ internal class LoginFormViewModel(
     }
 
     fun initLogin(initialLogin: Login) {
-        uiState.update {
-            it.copy(
-                initialised = true,
-                initialLogin = initialLogin,
-                login = initialLogin,
-            )
+        launchScoped {
+            val login = if (initialLogin.id.isBlank()) {
+                initialLogin.copy(
+                    securityType = settingsRepository.observeDefaultSecurityType().first(),
+                    username = if (initialLogin.username.isNullOrBlank()) {
+                        loginsRepository.getMostCommonUsernames().firstOrNull()
+                    } else {
+                        initialLogin.username
+                    },
+                    password = if (initialLogin.password != null && !(initialLogin.password as? SecretField.Visible)?.value.isNullOrBlank()) {
+                        initialLogin.password
+                    } else {
+                        SecretField.Visible(
+                            PasswordGenerator.generatePassword(
+                                settingsRepository.observePasswordGeneratorSettings().first(),
+                            ),
+                        )
+                    },
+                )
+            } else {
+                initialLogin
+            }
+
+            uiState.update {
+                it.copy(
+                    initialised = true,
+                    initialLogin = login,
+                    login = login,
+                )
+            }
         }
     }
 
@@ -125,7 +151,7 @@ internal class LoginFormViewModel(
         }
     }
 
-    fun updateSecurityLevel(securityLevel: LoginSecurityType) {
+    fun updateSecurityLevel(securityLevel: SecurityType) {
         updateLogin { login -> login.copy(securityType = securityLevel) }
     }
 

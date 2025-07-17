@@ -27,7 +27,7 @@ import com.twofasapp.core.android.compose.BiometricsState
 import com.twofasapp.core.android.compose.biometricsState
 import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.navigation.Screen
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.design.MdtIcons
@@ -134,14 +134,14 @@ private fun Content(
             OptionEntry(
                 title = strings.settingsEntrySecurityTier,
                 subtitle = when (uiState.defaultSecurityType) {
-                    LoginSecurityType.Tier1 -> MdtLocale.strings.settingsEntrySecurityTier1
-                    LoginSecurityType.Tier2 -> MdtLocale.strings.settingsEntrySecurityTier2
-                    LoginSecurityType.Tier3 -> MdtLocale.strings.settingsEntrySecurityTier3
+                    SecurityType.Tier1 -> MdtLocale.strings.settingsEntrySecurityTier1
+                    SecurityType.Tier2 -> MdtLocale.strings.settingsEntrySecurityTier2
+                    SecurityType.Tier3 -> MdtLocale.strings.settingsEntrySecurityTier3
                 },
                 icon = when (uiState.defaultSecurityType) {
-                    LoginSecurityType.Tier1 -> MdtIcons.Tier1
-                    LoginSecurityType.Tier2 -> MdtIcons.Tier2
-                    LoginSecurityType.Tier3 -> MdtIcons.Tier3
+                    SecurityType.Tier1 -> MdtIcons.Tier1
+                    SecurityType.Tier2 -> MdtIcons.Tier2
+                    SecurityType.Tier3 -> MdtIcons.Tier3
                 },
                 onClick = { deeplinks.openScreen(Screen.ProtectionLevel) },
             )

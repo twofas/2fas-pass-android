@@ -27,7 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.checked.CheckIcon
@@ -41,8 +41,8 @@ import com.twofasapp.core.locale.MdtLocale
 @Composable
 fun SecurityTierModal(
     onDismissRequest: () -> Unit,
-    selected: LoginSecurityType,
-    onSelect: (LoginSecurityType) -> Unit = {},
+    selected: SecurityType,
+    onSelect: (SecurityType) -> Unit = {},
 ) {
     Modal(
         onDismissRequest = onDismissRequest,
@@ -57,14 +57,14 @@ fun SecurityTierModal(
 
 @Composable
 private fun Content(
-    selected: LoginSecurityType,
-    onSelect: (LoginSecurityType) -> Unit = {},
+    selected: SecurityType,
+    onSelect: (SecurityType) -> Unit = {},
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(1.dp),
     ) {
-        LoginSecurityType.entries.reversed().forEachIndexed { _, isFirst, isLast, item ->
+        SecurityType.entries.reversed().forEachIndexed { _, isFirst, isLast, item ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -114,29 +114,29 @@ private fun Content(
 }
 
 @Composable
-internal fun LoginSecurityType.asIcon(): Painter {
+internal fun SecurityType.asIcon(): Painter {
     return when (this) {
-        LoginSecurityType.Tier1 -> MdtIcons.Tier1
-        LoginSecurityType.Tier2 -> MdtIcons.Tier2
-        LoginSecurityType.Tier3 -> MdtIcons.Tier3
+        SecurityType.Tier1 -> MdtIcons.Tier1
+        SecurityType.Tier2 -> MdtIcons.Tier2
+        SecurityType.Tier3 -> MdtIcons.Tier3
     }
 }
 
 @Composable
-fun LoginSecurityType.asTitle(): String {
+fun SecurityType.asTitle(): String {
     return when (this) {
-        LoginSecurityType.Tier1 -> MdtLocale.strings.settingsEntrySecurityTier1
-        LoginSecurityType.Tier2 -> MdtLocale.strings.settingsEntrySecurityTier2
-        LoginSecurityType.Tier3 -> MdtLocale.strings.settingsEntrySecurityTier3
+        SecurityType.Tier1 -> MdtLocale.strings.settingsEntrySecurityTier1
+        SecurityType.Tier2 -> MdtLocale.strings.settingsEntrySecurityTier2
+        SecurityType.Tier3 -> MdtLocale.strings.settingsEntrySecurityTier3
     }
 }
 
 @Composable
-internal fun LoginSecurityType.asDescription(): String {
+internal fun SecurityType.asDescription(): String {
     return when (this) {
-        LoginSecurityType.Tier1 -> MdtLocale.strings.settingsEntrySecurityTier1Desc
-        LoginSecurityType.Tier2 -> MdtLocale.strings.settingsEntrySecurityTier2Desc
-        LoginSecurityType.Tier3 -> MdtLocale.strings.settingsEntrySecurityTier3Desc
+        SecurityType.Tier1 -> MdtLocale.strings.settingsEntrySecurityTier1Desc
+        SecurityType.Tier2 -> MdtLocale.strings.settingsEntrySecurityTier2Desc
+        SecurityType.Tier3 -> MdtLocale.strings.settingsEntrySecurityTier3Desc
     }
 }
 
@@ -145,7 +145,7 @@ internal fun LoginSecurityType.asDescription(): String {
 private fun Preview() {
     PreviewColumn {
         Content(
-            selected = LoginSecurityType.Tier2,
+            selected = SecurityType.Tier2,
         )
     }
 }

@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.toastShort
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
@@ -64,7 +64,7 @@ internal fun DeveloperScreen(
 @Composable
 private fun Content(
     uiState: DeveloperUiState,
-    onGenerateItems: (LoginSecurityType) -> Unit = {},
+    onGenerateItems: (SecurityType) -> Unit = {},
     onGenerateMultipleItems: (Int) -> Unit = {},
     onGenerateTopDomainItems: () -> Unit = {},
     onSetSubscriptionOverride: (String?) -> Unit = {},

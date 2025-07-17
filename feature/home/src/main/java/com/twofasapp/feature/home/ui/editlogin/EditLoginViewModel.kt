@@ -18,10 +18,9 @@ import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.filterAndNormalizeUris
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.VaultCryptoScope
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
@@ -31,7 +30,7 @@ internal class EditLoginViewModel(
     private val loginsRepository: LoginsRepository,
     private val settingsRepository: SettingsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
 
     private val id: String = savedStateHandle.toRoute<Screen.EditLogin>().loginId
@@ -44,11 +43,9 @@ internal class EditLoginViewModel(
         if (isNewLogin) {
             launchScoped {
                 uiState.update { state ->
-                    val emptyLogin = Login.Empty.copy(securityType = settingsRepository.observeDefaultSecurityType().first())
-
                     state.copy(
-                        initialLogin = emptyLogin,
-                        login = emptyLogin,
+                        initialLogin = Login.Empty,
+                        login = Login.Empty,
                     )
                 }
             }
@@ -58,8 +55,8 @@ internal class EditLoginViewModel(
                     val login = loginsRepository.getLogin(id)
                     val initialLogin = login
                         .let {
-                            loginEncryptionMapper.decryptLogin(
-                                encryptedLogin = it,
+                            itemEncryptionMapper.decryptLogin(
+                                itemEncrypted = it,
                                 vaultCipher = this,
                                 decryptPassword = true,
                             )
@@ -97,7 +94,7 @@ internal class EditLoginViewModel(
                     )
                     .filterAndNormalizeUris()
                     .let {
-                        loginEncryptionMapper.encryptLogin(
+                        itemEncryptionMapper.encryptLogin(
                             login = it,
                             vaultCipher = vaultCryptoScope.getVaultCipher(vaultId),
                         )

@@ -18,7 +18,7 @@ import com.twofasapp.core.common.domain.filterAndNormalizeUris
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ internal class AutofillSaveLoginViewModel(
     private val settingsRepository: SettingsRepository,
     private val loginsRepository: LoginsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
     val uiState = MutableStateFlow(AutofillSaveLoginUiState())
 
@@ -78,7 +78,7 @@ internal class AutofillSaveLoginViewModel(
                         vaultId = vaultId,
                     )
                     .filterAndNormalizeUris()
-                    .let { loginEncryptionMapper.encryptLogin(it, vaultCryptoScope.getVaultCipher(vaultId)) }
+                    .let { itemEncryptionMapper.encryptLogin(it, vaultCryptoScope.getVaultCipher(vaultId)) }
             }
 
             loginsRepository.saveLogin(login)

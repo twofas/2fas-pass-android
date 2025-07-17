@@ -10,15 +10,14 @@ package com.twofasapp.data.main
 
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.crypto.Uuid
-import com.twofasapp.core.common.domain.EncryptedLogin
+import com.twofasapp.core.common.domain.ItemEncrypted
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
-import com.twofasapp.data.main.local.LoginsLocalSource
+import com.twofasapp.data.main.local.ItemsLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
 import com.twofasapp.data.main.local.model.CloudMergeEntity
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.LoginMapper
 import com.twofasapp.data.main.mapper.LoginSecurityTypeMapper
 import com.twofasapp.data.main.mapper.VaultMapper
@@ -37,21 +36,21 @@ internal class LoginsRepositoryImpl(
     private val dispatchers: Dispatchers,
     private val timeProvider: TimeProvider,
     private val vaultCryptoScope: VaultCryptoScope,
-    private val loginsLocalSource: LoginsLocalSource,
+    private val itemsLocalSource: ItemsLocalSource,
     private val vaultsLocalSource: VaultsLocalSource,
     private val cloudRepository: CloudRepository,
     private val settingsRepository: SettingsRepository,
     private val vaultMapper: VaultMapper,
     private val loginMapper: LoginMapper,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
     private val loginSecurityTypeMapper: LoginSecurityTypeMapper,
 ) : LoginsRepository {
 
     private val lockLogins = MutableStateFlow(false)
 
-    override fun observeLogins(vaultId: String): Flow<List<EncryptedLogin>> {
+    override fun observeLogins(vaultId: String): Flow<List<ItemEncrypted>> {
         return combine(
-            loginsLocalSource.observe(vaultId),
+            itemsLocalSource.observe(vaultId),
             lockLogins,
             { a, b -> Pair(a, b) },
         )
@@ -64,19 +63,19 @@ internal class LoginsRepositoryImpl(
 
     override suspend fun permanentlyDeleteAll() {
         withContext(dispatchers.io) {
-            loginsLocalSource.deleteAll()
+            itemsLocalSource.deleteAll()
         }
     }
 
-    override suspend fun getLogin(id: String): EncryptedLogin {
+    override suspend fun getLogin(id: String): ItemEncrypted {
         return withContext(dispatchers.io) {
-            loginsLocalSource.getLogin(id).let(loginMapper::mapToDomain)
+            itemsLocalSource.getLogin(id).let(loginMapper::mapToDomain)
         }
     }
 
-    override suspend fun getLogins(): List<EncryptedLogin> {
+    override suspend fun getLogins(): List<ItemEncrypted> {
         return withContext(dispatchers.io) {
-            loginsLocalSource.getLogins().map { loginMapper.mapToDomain(it) }
+            itemsLocalSource.getLogins().map { loginMapper.mapToDomain(it) }
         }
     }
 
@@ -87,7 +86,7 @@ internal class LoginsRepositoryImpl(
                 .map { (vaultId, logins) ->
                     vaultCryptoScope.withVaultCipher(vaultId) {
                         logins.map {
-                            loginEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
+                            itemEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
                         }
                     }
                 }
@@ -98,14 +97,14 @@ internal class LoginsRepositoryImpl(
 
     override suspend fun getLoginsDecryptedWithDeleted(): List<Login> {
         return withContext(dispatchers.io) {
-            loginsLocalSource.getLoginsWithDeleted()
+            itemsLocalSource.getLoginsWithDeleted()
                 .asSequence()
                 .map { loginMapper.mapToDomain(it) }
                 .groupBy { it.vaultId }
                 .map { (vaultId, logins) ->
                     vaultCryptoScope.withVaultCipher(vaultId) {
                         logins.map {
-                            loginEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
+                            itemEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
                         }
                     }
                 }
@@ -115,7 +114,7 @@ internal class LoginsRepositoryImpl(
         }
     }
 
-    override suspend fun saveLogin(login: EncryptedLogin): String {
+    override suspend fun saveLogin(login: ItemEncrypted): String {
         return withContext(dispatchers.io) {
             val exists = login.id.isNotBlank()
             val now = timeProvider.currentTimeUtc()
@@ -124,7 +123,7 @@ internal class LoginsRepositoryImpl(
             if (exists) {
                 loginId = login.id
 
-                loginsLocalSource.saveLogin(
+                itemsLocalSource.saveLogin(
                     login.copy(
                         updatedAt = now,
                     ).let(loginMapper::mapToEntity),
@@ -132,7 +131,7 @@ internal class LoginsRepositoryImpl(
             } else {
                 loginId = generateLoginUuid()
 
-                loginsLocalSource.saveLogin(
+                itemsLocalSource.saveLogin(
                     login.copy(
                         id = loginId,
                         createdAt = now,
@@ -149,7 +148,7 @@ internal class LoginsRepositoryImpl(
         }
     }
 
-    override suspend fun saveLogins(logins: List<EncryptedLogin>) {
+    override suspend fun saveLogins(logins: List<ItemEncrypted>) {
         withContext(dispatchers.io) {
             if (logins.isEmpty()) return@withContext
 
@@ -168,7 +167,7 @@ internal class LoginsRepositoryImpl(
                 }
             }
 
-            loginsLocalSource.saveLogins(entities)
+            itemsLocalSource.saveLogins(entities)
             vaultsLocalSource.updateLastModificationTime(entities.first().vaultId, now)
 
             cloudRepository.sync()
@@ -224,16 +223,20 @@ internal class LoginsRepositoryImpl(
                     vaultCryptoScope.withVaultCipher(vaultId) {
                         logins
                             .map { login ->
-                                loginEncryptionMapper.encryptLogin(login, this).let(loginMapper::mapToEntity)
+                                itemEncryptionMapper.encryptLogin(login, this)
+                                    .let(loginMapper::mapToEntity)
                             }
                     }
                 }
                 .flatten()
                 .also {
-                    loginsLocalSource.saveLogins(it)
+                    itemsLocalSource.saveLogins(it)
 
-                    val mostRecentModificationTime = loginsLocalSource.getMostRecentUpdatedAt()
-                    vaultsLocalSource.updateLastModificationTime(vault.id, mostRecentModificationTime)
+                    val mostRecentModificationTime = itemsLocalSource.getMostRecentUpdatedAt()
+                    vaultsLocalSource.updateLastModificationTime(
+                        vault.id,
+                        mostRecentModificationTime,
+                    )
 
                     if (triggerSync) {
                         cloudRepository.sync()
@@ -244,30 +247,44 @@ internal class LoginsRepositoryImpl(
 
     override suspend fun getLoginsCount(): Int {
         return withContext(dispatchers.io) {
-            loginsLocalSource.countLogins()
+            itemsLocalSource.countLogins()
+        }
+    }
+
+    override suspend fun decrypt(itemEncrypted: ItemEncrypted, decryptPassword: Boolean): Login? {
+        return withContext(dispatchers.io) {
+            vaultCryptoScope.withVaultCipher(itemEncrypted.vaultId) {
+                itemEncryptionMapper.decryptLogin(
+                    itemEncrypted = itemEncrypted,
+                    vaultCipher = this,
+                    decryptPassword = decryptPassword,
+                )
+            }
+        }
+    }
+
+    override suspend fun decrypt(vaultCipher: VaultCipher, itemsEncrypted: List<ItemEncrypted>, decryptPassword: Boolean): List<Login> {
+        return withContext(dispatchers.io) {
+            itemsEncrypted.mapNotNull { itemEncrypted ->
+                itemEncryptionMapper.decryptLogin(
+                    itemEncrypted = itemEncrypted,
+                    vaultCipher = vaultCipher,
+                    decryptPassword = decryptPassword,
+                )
+            }
         }
     }
 
     override suspend fun getMostCommonUsernames(): List<String> {
         return withContext(dispatchers.io) {
-            // Take 6 most common usernames
-            loginsLocalSource.getUsernamesFrequency()
-                .mapNotNull { usernameFrequency ->
-                    usernameFrequency.username?.let {
-                        vaultCryptoScope.withVaultCipher(usernameFrequency.vaultId) {
-                            when (usernameFrequency.securityType.let(loginSecurityTypeMapper::mapToDomainFromEntity)) {
-                                LoginSecurityType.Tier1 -> decryptWithSecretKey(it)
-                                LoginSecurityType.Tier2 -> decryptWithTrustedKey(it)
-                                LoginSecurityType.Tier3 -> decryptWithTrustedKey(it)
-                            }
-                        }
-                    }
-                }
-                .groupingBy { it }
+            getLoginsDecrypted()
+                .groupingBy { it.username }
                 .eachCount()
+                .filter { it.key != null }
                 .entries
                 .sortedByDescending { it.value }
-                .map { it.key }
+                .take(8)
+                .mapNotNull { it.key }
         }
     }
 
@@ -280,20 +297,20 @@ internal class LoginsRepositoryImpl(
             val cloudMergeEntity = vaultCryptoScope.withVaultCipher(vault.id) {
                 CloudMergeEntity(
                     loginsToAdd = cloudMerge.toAdd.map {
-                        loginEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
+                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
                     },
                     loginsToUpdate = cloudMerge.toUpdate.map {
-                        loginEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
+                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
                     },
                     loginsToTrash = cloudMerge.toDelete.map {
-                        loginEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
+                        itemEncryptionMapper.encryptLogin(it, this).let(loginMapper::mapToEntity)
                     },
                 )
             }
 
-            loginsLocalSource.executeCloudMerge(cloudMergeEntity)
+            itemsLocalSource.executeCloudMerge(cloudMergeEntity)
 
-            val mostRecentModificationTime = loginsLocalSource.getMostRecentUpdatedAt()
+            val mostRecentModificationTime = itemsLocalSource.getMostRecentUpdatedAt()
             if (mostRecentModificationTime > vault.updatedAt) {
                 vaultsLocalSource.updateLastModificationTime(vault.id, mostRecentModificationTime)
             }

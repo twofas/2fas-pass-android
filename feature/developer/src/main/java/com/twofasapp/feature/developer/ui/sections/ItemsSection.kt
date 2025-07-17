@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -28,7 +28,7 @@ import com.twofasapp.feature.developer.ui.DeveloperUiState
 @Composable
 internal fun ItemsSection(
     uiState: DeveloperUiState,
-    onGenerateItems: (LoginSecurityType) -> Unit = {},
+    onGenerateItems: (SecurityType) -> Unit = {},
     onGenerateMultipleItems: (Int) -> Unit = {},
     onGenerateTopDomainItems: () -> Unit = {},
     onDeleteAll: () -> Unit = {},
@@ -51,19 +51,19 @@ internal fun ItemsSection(
         OptionEntry(
             title = "Generate Tier 1 item",
             icon = MdtIcons.Refresh,
-            onClick = { onGenerateItems(LoginSecurityType.Tier1) },
+            onClick = { onGenerateItems(SecurityType.Tier1) },
         )
 
         OptionEntry(
             title = "Generate Tier 2 item",
             icon = MdtIcons.Refresh,
-            onClick = { onGenerateItems(LoginSecurityType.Tier2) },
+            onClick = { onGenerateItems(SecurityType.Tier2) },
         )
 
         OptionEntry(
             title = "Generate Tier 3 item",
             icon = MdtIcons.Refresh,
-            onClick = { onGenerateItems(LoginSecurityType.Tier3) },
+            onClick = { onGenerateItems(SecurityType.Tier3) },
         )
 
         OptionEntry(

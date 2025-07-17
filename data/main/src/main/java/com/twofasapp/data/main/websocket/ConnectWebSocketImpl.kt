@@ -33,7 +33,7 @@ import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.main.domain.ConnectWebSocketResult
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
 import com.twofasapp.data.main.websocket.messages.IncomingMessageJson
 import com.twofasapp.data.main.websocket.messages.OutgoingPayloadJson
@@ -51,7 +51,7 @@ internal class ConnectWebSocketImpl(
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
     override val loginsRepository: LoginsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
-    override val loginDecryptionMapper: LoginEncryptionMapper,
+    override val loginDecryptionMapper: ItemEncryptionMapper,
     private val dispatchers: Dispatchers,
     private val androidKeyStore: AndroidKeyStore,
     private val pushTokenProvider: PushTokenProvider,

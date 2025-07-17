@@ -14,15 +14,15 @@ import com.twofasapp.core.android.ktx.uriPrefixAndroidApp
 import com.twofasapp.core.android.ktx.uriPrefixWebsite
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginSecurityType
 import com.twofasapp.core.common.domain.LoginUri
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.feature.autofill.service.domain.AutofillLogin
 import com.twofasapp.feature.autofill.service.domain.AutofillLoginMatcher
 import com.twofasapp.feature.autofill.service.domain.asAutofillLogin
@@ -37,7 +37,7 @@ internal class AutofillPickerViewModel(
     private val loginsRepository: LoginsRepository,
     private val vaultsRepository: VaultsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
-    private val loginEncryptionMapper: LoginEncryptionMapper,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
     val uiState = MutableStateFlow(AutofillPickerUiState())
     val screenState = MutableStateFlow(ScreenState.Loading)
@@ -54,14 +54,14 @@ internal class AutofillPickerViewModel(
                         logins
                             .filter {
                                 when (it.securityType) {
-                                    LoginSecurityType.Tier1 -> false
-                                    LoginSecurityType.Tier2 -> true
-                                    LoginSecurityType.Tier3 -> true
+                                    SecurityType.Tier1 -> false
+                                    SecurityType.Tier2 -> true
+                                    SecurityType.Tier3 -> true
                                 }
                             }
                             .mapNotNull { login ->
-                                loginEncryptionMapper.decryptLogin(
-                                    encryptedLogin = login,
+                                itemEncryptionMapper.decryptLogin(
+                                    itemEncrypted = login,
                                     vaultCipher = this,
                                     decryptPassword = true,
                                 )
@@ -126,7 +126,7 @@ internal class AutofillPickerViewModel(
                         ).distinct(),
                     )
                     .let {
-                        loginEncryptionMapper.encryptLogin(
+                        itemEncryptionMapper.encryptLogin(
                             login = it,
                             vaultCipher = vaultCryptoScope.getVaultCipher(vaultsRepository.getVault().id),
                         )

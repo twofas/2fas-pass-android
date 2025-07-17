@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -38,9 +38,9 @@ import com.twofasapp.feature.loginform.ui.modal.asTitle
 @Composable
 internal fun SecurityTypePicker(
     modifier: Modifier = Modifier,
-    securityType: LoginSecurityType,
+    securityType: SecurityType,
     onOpened: () -> Unit = {},
-    onSelect: (LoginSecurityType) -> Unit = {},
+    onSelect: (SecurityType) -> Unit = {},
 ) {
     var showSecurityLevelModal by remember { mutableStateOf(false) }
 
@@ -85,7 +85,7 @@ private fun Preview() {
     PreviewTheme {
         SecurityTypePicker(
             modifier = Modifier.fillMaxWidth(),
-            securityType = LoginSecurityType.Tier3,
+            securityType = SecurityType.Tier3,
         )
     }
 }

@@ -9,7 +9,7 @@
 package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.crypto.encrypt
-import com.twofasapp.core.common.domain.LoginSecurityType
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataJson
@@ -27,11 +27,11 @@ internal class VaultDataForBrowserMapper(
         return with(vaultBackup) {
             BrowserExtensionVaultDataJson(
                 logins = logins.orEmpty()
-                    .filter { it.securityType != LoginSecurityType.Tier1 }
+                    .filter { it.securityType != SecurityType.Tier1 }
                     .map { login ->
                         val loginJson = loginMapper.mapToJson(login)
 
-                        if (login.securityType == LoginSecurityType.Tier2) {
+                        if (login.securityType == SecurityType.Tier2) {
                             loginJson.copy(
                                 deviceId = deviceId,
                                 password = null,

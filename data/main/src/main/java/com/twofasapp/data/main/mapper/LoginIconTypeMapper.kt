@@ -10,7 +10,7 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.IconType
 
-internal class LoginIconTypeMapper {
+class LoginIconTypeMapper {
 
     fun mapToEntity(domain: IconType): Int {
         return when (domain) {

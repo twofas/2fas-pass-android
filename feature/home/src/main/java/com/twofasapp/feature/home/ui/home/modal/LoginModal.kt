@@ -57,7 +57,7 @@ import com.twofasapp.core.design.theme.ButtonHeight
 import com.twofasapp.core.design.theme.RoundedShapeIndexed
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.main.VaultCryptoScope
-import com.twofasapp.data.main.mapper.LoginEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.feature.loginform.ui.modal.asTitle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,7 +66,7 @@ import org.koin.compose.koinInject
 @Composable
 internal fun LoginModal(
     vaultCryptoScope: VaultCryptoScope = koinInject(),
-    loginEncryptionMapper: LoginEncryptionMapper = koinInject(),
+    itemEncryptionMapper: ItemEncryptionMapper = koinInject(),
     login: Login,
     onDismissRequest: () -> Unit,
     onEditClick: () -> Unit = {},
@@ -77,7 +77,7 @@ internal fun LoginModal(
     ) {
         Content(
             vaultCryptoScope = vaultCryptoScope,
-            loginEncryptionMapper = loginEncryptionMapper,
+            itemEncryptionMapper = itemEncryptionMapper,
             login = login,
             onEditClick = onEditClick,
             onCopyPasswordToClipboard = onCopyPasswordToClipboard,
@@ -88,7 +88,7 @@ internal fun LoginModal(
 @Composable
 private fun Content(
     vaultCryptoScope: VaultCryptoScope,
-    loginEncryptionMapper: LoginEncryptionMapper,
+    itemEncryptionMapper: ItemEncryptionMapper,
     login: Login,
     onEditClick: () -> Unit = {},
     onCopyPasswordToClipboard: (Login) -> Unit = {},
@@ -113,7 +113,7 @@ private fun Content(
                 scope.launch(Dispatchers.IO) {
                     vaultCryptoScope.withVaultCipher(login.vaultId) {
                         password = password?.let {
-                            loginEncryptionMapper.withHiddenPassword(
+                            itemEncryptionMapper.withHiddenPassword(
                                 login = login,
                                 vaultCipher = this,
                             )?.password
@@ -187,14 +187,14 @@ private fun Content(
                                         vaultCryptoScope.withVaultCipher(login.vaultId) {
                                             password = when (password) {
                                                 is SecretField.Hidden -> {
-                                                    loginEncryptionMapper.withVisiblePassword(
+                                                    itemEncryptionMapper.withVisiblePassword(
                                                         login = login,
                                                         vaultCipher = this,
                                                     )?.password
                                                 }
 
                                                 is SecretField.Visible -> {
-                                                    loginEncryptionMapper.withHiddenPassword(
+                                                    itemEncryptionMapper.withHiddenPassword(
                                                         login = login,
                                                         vaultCipher = this,
                                                     )?.password
