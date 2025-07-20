@@ -61,6 +61,11 @@ internal fun AutofillPickerScreen(
 
     val nodeStructure = activity.intent.extras.getSafelyParcelable<NodeStructure>(EXTRA_NODE_STRUCTURE)
 
+    if (nodeStructure == null) {
+        activity.finishAffinity()
+        return
+    }
+
     LaunchedEffect(Unit) {
         viewModel.init(nodeStructure)
     }

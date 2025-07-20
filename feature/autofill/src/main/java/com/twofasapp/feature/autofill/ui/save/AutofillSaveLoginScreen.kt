@@ -37,6 +37,11 @@ internal fun AutofillSaveLoginScreen(
     val activity = LocalContext.currentActivity
     val saveLoginData = activity.intent.extras.getSafelyParcelable<SaveLoginData>(EXTRA_SAVE_LOGIN_DATA)
 
+    if (saveLoginData == null) {
+        activity.finishAffinity()
+        return
+    }
+
     LaunchedEffect(Unit) {
         viewModel.initLogin(saveLoginData)
     }

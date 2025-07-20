@@ -18,6 +18,22 @@
 }
 
 # -------------------------------------
+# Parcelable
+# -------------------------------------
+
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+-keep class com.twofasapp.feature.autofill.service.domain.AutofillLogin
+-keep class com.twofasapp.feature.autofill.service.domain.SaveLoginData
+-keep class com.twofasapp.feature.autofill.service.domain.SaveRequestSpec
+-keep class com.twofasapp.feature.autofill.service.domain.FillRequestSpec
+
+-keep class com.twofasapp.feature.autofill.service.parser.NodeStructure
+-keep class com.twofasapp.feature.autofill.service.parser.MatchConfidence
+-keep class com.twofasapp.feature.autofill.service.parser.AutofillInput
+# -------------------------------------
 # Kotlin Serialization
 # -------------------------------------
 

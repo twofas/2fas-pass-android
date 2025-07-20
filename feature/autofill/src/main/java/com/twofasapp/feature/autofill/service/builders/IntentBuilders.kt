@@ -17,7 +17,6 @@ import android.content.Intent
 import android.view.autofill.AutofillManager.EXTRA_AUTHENTICATION_RESULT
 import android.widget.inline.InlinePresentationSpec
 import com.twofasapp.core.android.ktx.getSafelyParcelable
-import com.twofasapp.core.android.ktx.getSafelyParcelableNullable
 import com.twofasapp.feature.autofill.service.domain.AutofillLogin
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import com.twofasapp.feature.autofill.service.parser.NodeStructure
@@ -38,7 +37,7 @@ internal object IntentBuilders {
     @SuppressLint("NewApi")
     fun createAutofillAuthIntent(
         context: Context,
-        nodeStructure: NodeStructure,
+        nodeStructure: NodeStructure?,
         inlinePresentationSpec: InlinePresentationSpec?,
         login: AutofillLogin,
     ): PendingIntent {
@@ -102,7 +101,7 @@ internal object IntentBuilders {
 
     fun Activity.replyWithSuccess(autofillLogin: AutofillLogin) {
         val nodeStructure = intent.extras.getSafelyParcelable<NodeStructure>(EXTRA_NODE_STRUCTURE)
-        val inlinePresentationSpec = intent.extras.getSafelyParcelableNullable<InlinePresentationSpec>(EXTRA_INLINE_PRESENTATION_SPEC)
+        val inlinePresentationSpec = intent.extras.getSafelyParcelable<InlinePresentationSpec>(EXTRA_INLINE_PRESENTATION_SPEC)
 
         val replyIntent = Intent().apply {
             putExtra(
