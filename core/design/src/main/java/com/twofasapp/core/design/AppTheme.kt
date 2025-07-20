@@ -16,11 +16,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
-import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.common.domain.AuthStatus
 import com.twofasapp.core.design.theme.ColorTokens
 import com.twofasapp.core.design.theme.DarkColors
@@ -28,6 +25,7 @@ import com.twofasapp.core.design.theme.LightColors
 import com.twofasapp.core.design.theme.seed
 import com.twofasapp.core.design.theme.successDark
 import com.twofasapp.core.design.theme.successLight
+import com.twofasapp.core.design.window.ScreenOrientation
 
 val LocalAppTheme = staticCompositionLocalOf { AppTheme.Auto }
 val LocalColorTokens = staticCompositionLocalOf { ColorTokens() }
@@ -43,7 +41,7 @@ enum class AppTheme {
 fun AppTheme(
     content: @Composable () -> Unit,
 ) {
-    LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+    ScreenOrientation(compactOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
     val isDynamicColorEnabled = LocalDynamicColors.current
 
@@ -108,20 +106,5 @@ fun AppTheme(
             colorScheme = colorScheme,
             content = content,
         )
-    }
-}
-
-@Composable
-fun LockScreenOrientation(orientation: Int) {
-    if (LocalInspectionMode.current.not()) {
-        val activity = LocalContext.currentActivity
-
-        DisposableEffect(Unit) {
-            val originalOrientation = activity.requestedOrientation
-            activity.requestedOrientation = orientation
-            onDispose {
-                activity.requestedOrientation = originalOrientation
-            }
-        }
     }
 }

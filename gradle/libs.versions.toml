@@ -45,6 +45,7 @@ composeAnimation = { module = "androidx.compose.animation:animation" }
 composeMaterial2 = { module = "androidx.compose.material:material" }
 composeMaterial3 = { module = "androidx.compose.material3:material3" }
 composeMaterial3Window = { module = "androidx.compose.material3:material3-window-size-class" }
+composeMaterial3Adaptive = "androidx.compose.material3.adaptive:adaptive:1.1.0"
 composeUi = { module = "androidx.compose.ui:ui" }
 composeUiTooling = { module = "androidx.compose.ui:ui-tooling" }
 credentialsPlayServices = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
@@ -149,6 +150,7 @@ compose = [
     "composeMaterial2",
     "composeMaterial3",
     "composeMaterial3Window",
+    "composeMaterial3Adaptive",
     "composeNavigation",
     "composeUi",
     "composeUiTooling",
