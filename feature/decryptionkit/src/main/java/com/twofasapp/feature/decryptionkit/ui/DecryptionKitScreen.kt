@@ -191,7 +191,7 @@ fun DecryptionKitScreen(
             decryptionKit = decryptionKit,
             includeMasterKey = includeMasterKey,
             onFileSaved = { onComplete() },
-            onShareTriggered = {
+            onShowConfirmation = {
                 if (requireSaveConfirmation) {
                     showConfirmDialog = true
                 }
