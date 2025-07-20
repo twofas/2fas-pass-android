@@ -13,7 +13,7 @@ import android.content.Context
 import android.service.autofill.SaveCallback
 import android.service.autofill.SaveRequest
 import android.view.autofill.AutofillId
-import com.twofasapp.core.android.ktx.getSafelyParcelable
+import com.twofasapp.core.android.ktx.getSafelyParcelableNullable
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
@@ -32,10 +32,13 @@ internal class SaveRequestHandler(
         saveRequest: SaveRequest,
         saveCallback: SaveCallback,
     ) {
-        val saveRequestSpec = saveRequest.clientState.getSafelyParcelable<SaveRequestSpec>(SaveRequestSpec.BundleKey)
+        val saveRequestSpec = saveRequest.clientState.getSafelyParcelableNullable<SaveRequestSpec>(SaveRequestSpec.BundleKey)
         Timber.tag(AutofillTag).d("\uD83D\uDCBE $saveRequestSpec")
 
-        if (saveRequestSpec.inputs.isEmpty()) {
+        if (saveRequestSpec == null) {
+            saveCallback.onFailure("Save request has no payload")
+        }
+        if (saveRequestSpec!!.inputs.isEmpty()) {
             saveCallback.onFailure("No inputs found")
             return
         }
