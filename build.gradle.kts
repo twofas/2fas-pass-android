@@ -17,8 +17,8 @@ plugins {
     alias(libs.plugins.versionCatalogUpdate)
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.aboutLibraries) apply false
-    id("com.google.gms.google-services") version "4.4.2" apply false
-    id("com.google.firebase.crashlytics") version "3.0.3" apply false
+    id("com.google.gms.google-services") version "4.4.3" apply false
+    id("com.google.firebase.crashlytics") version "3.0.5" apply false
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
 
     alias(libs.plugins.kotlinComposeCompiler) apply false
