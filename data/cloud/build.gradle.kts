@@ -34,7 +34,17 @@ dependencies {
     implementation(libs.credentialsPlayServices)
 
     implementation(libs.googleId)
-    implementation(libs.googleAuth)
-    implementation(libs.googleDrive)
-    implementation(libs.googleApiClientAndroid)
+    implementation(libs.googleAuth){
+        exclude("org.apache.httpcomponents", "guava-jdk5")
+        exclude("com.google.http-client", "google-http-client")
+    }
+    implementation(libs.googleDrive){
+        exclude("org.apache.httpcomponents", "guava-jdk5")
+        exclude("com.google.http-client", "google-http-client")
+    }
+    implementation(libs.googleApiClientAndroid){
+        exclude("org.apache.httpcomponents", "guava-jdk5")
+        exclude("com.google.http-client", "google-http-client")
+    }
+    implementation(libs.googleApiHttpClientFork)
 }

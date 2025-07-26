@@ -16,7 +16,7 @@ ktor = "3.2.2"
 ktlint = "5.1.1"
 lifecycle = "2.9.2"
 room = "2.7.2"
-pluto = "2.2.2"
+pluto = "3.0.1"
 revenuecat = "9.1.2"
 junit = "4.13.2"
 kotest = "5.9.1"
@@ -61,10 +61,10 @@ firebaseMessaging = { module = "com.google.firebase:firebase-messaging" }
 elmyrCore = { module = "com.github.xgouchet.Elmyr:core", version.ref = "elmyr" }
 elmyrJunit4 = { module = "com.github.xgouchet.Elmyr:junit4", version.ref = "elmyr" }
 googleApiClientAndroid = "com.google.api-client:google-api-client-android:2.8.0"
-#googleApiClientGson = "com.github.rafakob.google-http-java-client:google-http-client-gson:1.43.0"
 googleAuth = "com.google.android.gms:play-services-auth:21.4.0"
-googleDrive = "com.google.apis:google-api-services-drive:v3-rev20240327-2.0.0"
+googleDrive = "com.google.apis:google-api-services-drive:v3-rev20250717-2.0.0"
 googleId = "com.google.android.libraries.identity.googleid:googleid:1.1.1"
+googleApiHttpClientFork = "com.github.cryptomator:google-http-java-client:1.44.2-dev.0001"
 javaxInject = "javax.inject:javax.inject:1"
 koinCompose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 kotlinCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
@@ -96,14 +96,14 @@ truetime = "com.github.instacart:truetime-android:4.0.0.alpha"
 workManager = "androidx.work:work-runtime-ktx:2.10.2"
 webkit = "androidx.webkit:webkit:1.14.0"
 pdfbox = "com.tom-roush:pdfbox-android:2.0.27.0"
-pluto = { module = "com.plutolib:pluto", version.ref = "pluto" }
-plutoNoOp = { module = "com.plutolib:pluto-no-op", version.ref = "pluto" }
-plutoRoom = { module = "com.plutolib.plugins:rooms-db", version.ref = "pluto" }
-plutoRoomNoOp = { module = "com.plutolib.plugins:rooms-db-no-op", version.ref = "pluto" }
-plutoDataStore = { module = "com.plutolib.plugins:datastore-pref", version.ref = "pluto" }
-plutoDataStoreNoOp = { module = "com.plutolib.plugins:datastore-pref-no-op", version.ref = "pluto" }
-plutoLogger = { module = "com.plutolib.plugins:logger", version.ref = "pluto" }
-plutoLoggerNoOp = { module = "com.plutolib.plugins:logger-no-op", version.ref = "pluto" }
+pluto = { module = "com.androidpluto:pluto", version.ref = "pluto" }
+plutoNoOp = { module = "com.androidpluto:pluto-no-op", version.ref = "pluto" }
+plutoRoom = { module = "com.androidpluto.plugins:rooms-db", version.ref = "pluto" }
+plutoRoomNoOp = { module = "com.androidpluto.plugins:rooms-db-no-op", version.ref = "pluto" }
+plutoDataStore = { module = "com.androidpluto.plugins:datastore-pref", version.ref = "pluto" }
+plutoDataStoreNoOp = { module = "com.androidpluto.plugins:datastore-pref-no-op", version.ref = "pluto" }
+plutoLogger = { module = "com.androidpluto.plugins:logger", version.ref = "pluto" }
+plutoLoggerNoOp = { module = "com.androidpluto.plugins:logger-no-op", version.ref = "pluto" }
 mockk = "io.mockk:mockk:1.14.5"
 junit = { module = "junit:junit", version.ref = "junit" }
 kotest = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }

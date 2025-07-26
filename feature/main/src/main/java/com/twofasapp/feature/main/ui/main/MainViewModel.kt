@@ -130,7 +130,7 @@ internal class MainViewModel(
 
         syncJob = launchScoped {
             authStatusTracker.observeIsAuthenticated().distinctUntilChanged().collect { isAuthenticated ->
-                if (isAuthenticated) {
+                if (isAuthenticated && cloudRepository.getSyncInfo().lastSuccessfulSyncTime > 0) {
                     runSafely { cloudRepository.sync() }
                         .onSuccess { fetchNotificationsJob?.cancel() }
                         .onFailure { fetchNotificationsJob?.cancel() }
