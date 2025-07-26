@@ -4,14 +4,14 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sun, 13 Jul 2025 13:24:43 -0700
+ Exported at: Sat, 26 Jul 2025 12:11:53 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
     <string name="common_ok">OK</string>
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
-    <string name="common_edit">Edit Item</string>
+    <string name="common_edit">Edit</string>
     <string name="common_error">Error</string>
     <string name="common_delete">Delete</string>
     <string name="common_cancel">Cancel</string>
@@ -759,5 +759,11 @@
     <string name="recovery_error_vault_not_found">Vault file not found. The backup folder is empty.</string>
     <string name="open_external_file_error_body">Opening a 2FAS Pass backup file is not supported. Go to 2FAS Pass Settings to import it.</string>
     <string name="migration_error_title">Migration failed</string>
-    <string name="migration_error_body">We ran into a problem while updating your data. Please restart the app and try again.</string>
+    <string name="migration_error_body">Please restart the app and try again</string>
+    <string name="login_delete_cta">Remove this Item from 2FAS Pass</string>
+    <string name="login_edit">Edit item</string>
+    <string name="common_done">Done</string>
+    <string name="cloud_vault_delete_confirm_title">Delete backup?</string>
+    <string name="cloud_vault_delete_confirm_body">Are you sure you want to delete this backup? You cannot restore it later.</string>
+    <string name="cloud_vault_removing_failure">Vault deletion failed</string>
 </resources>
