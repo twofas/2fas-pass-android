@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "com.twofasapp.pass"
-        versionName = "1.1.0"
-        versionCode = 23
+        versionName = "1.1.1"
+        versionCode = 24
     }
 
     applicationVariants.all {
