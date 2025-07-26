@@ -42,6 +42,7 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
+import kotlin.time.ExperimentalTime
 
 class App : Application(), SingletonImageLoader.Factory {
 
@@ -93,7 +94,7 @@ class App : Application(), SingletonImageLoader.Factory {
             .install()
     }
 
-    @OptIn(ExperimentalCoilApi::class)
+    @OptIn(ExperimentalCoilApi::class, ExperimentalTime::class)
     override fun newImageLoader(context: PlatformContext): ImageLoader {
         return ImageLoader.Builder(context)
             .components {

@@ -51,12 +51,13 @@ internal object InlinePresentationBuilder {
         val builder = InlineSuggestionUi.newContentBuilder(pendingIntent)
             .setContentDescription(title ?: "Pinned")
 
-        if (title.isNullOrBlank().not()) {
-            builder.setTitle(title.orEmpty().take(16))
-        }
+        val sliceSubtitle = subtitle.orEmpty().take(16)
+        val sliceTitle = title.orEmpty().take(16).ifBlank { sliceSubtitle.ifBlank { "Item" } }
 
-        if (subtitle.isNullOrBlank().not()) {
-            builder.setSubtitle(subtitle.orEmpty().take(16))
+        builder.setTitle(sliceTitle)
+
+        if (sliceTitle != sliceSubtitle) {
+            builder.setSubtitle(sliceSubtitle)
         }
 
         if (icon != null) {

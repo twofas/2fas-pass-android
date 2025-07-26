@@ -33,6 +33,11 @@ internal fun AutofillAuthScreen(
     val activity = LocalContext.currentActivity
     val login = activity.intent.extras.getSafelyParcelable<AutofillLogin>(EXTRA_LOGIN)
 
+    if (login == null) {
+        activity.finishAffinity()
+        return
+    }
+
     LaunchedEffect(Unit) {
         viewModel.initLogin(login)
     }

@@ -35,7 +35,10 @@ internal class SaveRequestHandler(
         val saveRequestSpec = saveRequest.clientState.getSafelyParcelable<SaveRequestSpec>(SaveRequestSpec.BundleKey)
         Timber.tag(AutofillTag).d("\uD83D\uDCBE $saveRequestSpec")
 
-        if (saveRequestSpec.inputs.isEmpty()) {
+        if (saveRequestSpec == null) {
+            saveCallback.onFailure("Save request has no payload")
+        }
+        if (saveRequestSpec!!.inputs.isEmpty()) {
             saveCallback.onFailure("No inputs found")
             return
         }

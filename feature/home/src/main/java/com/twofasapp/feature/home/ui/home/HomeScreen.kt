@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,6 +57,8 @@ import com.twofasapp.core.design.foundation.screen.ScreenLoading
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.theme.ScreenPadding
+import com.twofasapp.core.design.window.DeviceType
+import com.twofasapp.core.design.window.currentDeviceType
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.SortingMethod
 import com.twofasapp.feature.home.ui.home.composable.HomeFab
@@ -113,6 +116,12 @@ private fun Content(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
     var showFilterModal by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
+    val deviceType = currentDeviceType()
+    val loginsPerRow = when (deviceType) {
+        DeviceType.Compact -> 1
+        DeviceType.Medium -> 2
+        DeviceType.Expanded -> 3
+    }
 
     uiState.events.firstOrNull()?.let { uiEvent ->
         LaunchedEffect(Unit) {
@@ -201,17 +210,39 @@ private fun Content(
                         )
                     }
 
-                    uiState.loginsFiltered.forEach { login ->
-                        listItem(HomeListItem.Login(id = login.id)) {
-                            LoginItem(
-                                login = login,
-                                loginClickAction = uiState.loginClickAction,
-                                query = uiState.searchQuery,
-                                modifier = Modifier.animateItem(),
-                                onEditClick = { onEditLoginClick(login.id, login.vaultId) },
-                                onTrashConfirmed = { onTrashConfirmed(login.id) },
-                                onCopyPasswordToClipboard = onCopyPasswordToClipboard,
-                            )
+                    if (loginsPerRow > 1) {
+                        uiState.loginsFiltered.chunked(loginsPerRow).forEachIndexed { index, logins ->
+                            listItem(HomeListItem.LoginsRow(index = index, ids = logins.map { it.id })) {
+                                Row(
+                                    modifier = Modifier.animateItem(),
+                                ) {
+                                    logins.forEach { login ->
+                                        LoginItem(
+                                            login = login,
+                                            loginClickAction = uiState.loginClickAction,
+                                            query = uiState.searchQuery,
+                                            modifier = Modifier.weight(1f),
+                                            onEditClick = { onEditLoginClick(login.id, login.vaultId) },
+                                            onTrashConfirmed = { onTrashConfirmed(login.id) },
+                                            onCopyPasswordToClipboard = onCopyPasswordToClipboard,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        uiState.loginsFiltered.forEach { login ->
+                            listItem(HomeListItem.Login(id = login.id)) {
+                                LoginItem(
+                                    login = login,
+                                    loginClickAction = uiState.loginClickAction,
+                                    query = uiState.searchQuery,
+                                    modifier = Modifier.animateItem(),
+                                    onEditClick = { onEditLoginClick(login.id, login.vaultId) },
+                                    onTrashConfirmed = { onTrashConfirmed(login.id) },
+                                    onCopyPasswordToClipboard = onCopyPasswordToClipboard,
+                                )
+                            }
                         }
                     }
                 }

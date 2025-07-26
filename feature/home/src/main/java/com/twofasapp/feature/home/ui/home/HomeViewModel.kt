@@ -63,10 +63,6 @@ internal class HomeViewModel(
         }
 
         launchScoped {
-            cloudRepository.sync()
-        }
-
-        launchScoped {
             settingsRepository.observeLoginClickAction().collect { action ->
                 uiState.update { it.copy(loginClickAction = action) }
             }

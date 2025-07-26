@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
+import com.twofasapp.core.android.ktx.isRunningCustomOs
 import com.twofasapp.core.android.ktx.showShareFilePicker
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.design.MdtIcons
@@ -48,7 +49,7 @@ fun DecryptionKitSaveModal(
     decryptionKit: DecryptionKit,
     includeMasterKey: Boolean,
     onFileSaved: () -> Unit = {},
-    onShareTriggered: () -> Unit = {},
+    onShowConfirmation: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -64,7 +65,7 @@ fun DecryptionKitSaveModal(
             decryptionKit = decryptionKit,
             includeMasterKey = includeMasterKey,
             onFileSaved = { dismiss { onFileSaved() } },
-            onShareTriggered = { dismiss { onShareTriggered() } },
+            onShowConfirmation = { dismiss { onShowConfirmation() } },
         )
     }
 }
@@ -74,13 +75,15 @@ private fun Content(
     decryptionKit: DecryptionKit,
     includeMasterKey: Boolean,
     onFileSaved: () -> Unit = {},
-    onShareTriggered: () -> Unit = {},
+    onShowConfirmation: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val strings = MdtLocale.strings
     val scope = rememberCoroutineScope()
+    val isRunningCustomOs = remember { isRunningCustomOs() }
 
     var shareClicked by remember { mutableStateOf(false) }
+    var saveClicked by remember { mutableStateOf(false) }
 
     val directoryPicker = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
         scope.launch {
@@ -93,7 +96,13 @@ private fun Content(
                 )
 
                 context.toastShort(strings.decryptionKitSaveToast)
-                onFileSaved()
+
+                if (isRunningCustomOs.not()) {
+                    onFileSaved()
+                } else {
+                    saveClicked = false
+                    onShowConfirmation()
+                }
             }
         }
     }
@@ -101,7 +110,14 @@ private fun Content(
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         if (shareClicked) {
             shareClicked = false
-            onShareTriggered()
+            onShowConfirmation()
+            return@LifecycleEventEffect
+        }
+
+        if (saveClicked && isRunningCustomOs) {
+            saveClicked = false
+            onShowConfirmation()
+            return@LifecycleEventEffect
         }
     }
 
@@ -144,7 +160,11 @@ private fun Content(
         OptionEntry(
             title = strings.decryptionKitSaveModalCta2,
             icon = MdtIcons.Save,
-            onClick = { directoryPicker.launch(DecryptionKitGenerator.generateFilename()) },
+            onClick = {
+                saveClicked = true
+
+                directoryPicker.launch(DecryptionKitGenerator.generateFilename())
+            },
         )
     }
 }

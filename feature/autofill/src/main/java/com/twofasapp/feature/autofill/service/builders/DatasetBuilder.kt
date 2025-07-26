@@ -28,7 +28,7 @@ internal object DatasetBuilder {
 
     fun createLoginItem(
         context: Context,
-        nodeStructure: NodeStructure,
+        nodeStructure: NodeStructure?,
         inlinePresentationSpec: InlinePresentationSpec?,
         login: AutofillLogin,
     ): Dataset {
@@ -55,7 +55,7 @@ internal object DatasetBuilder {
             pendingIntent = pendingIntent,
         )
 
-        nodeStructure.inputs.forEach { input ->
+        nodeStructure?.inputs.orEmpty().forEach { input ->
             when (input) {
                 is AutofillInput.Username -> {
                     datasetBuilder.setField(

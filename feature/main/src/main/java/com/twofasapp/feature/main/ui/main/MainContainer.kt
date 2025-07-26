@@ -49,9 +49,11 @@ internal fun MainContainer(
             viewModel.startObservingLocalPushes()
             viewModel.fetchBrowserRequests()
             viewModel.fetchSubscriptionInfo()
+            viewModel.sync()
         },
         onPause = {
             viewModel.stopObservingLocalPushes()
+            viewModel.sync()
         },
         onEventConsumed = { viewModel.consumeEvent(it) },
     )
