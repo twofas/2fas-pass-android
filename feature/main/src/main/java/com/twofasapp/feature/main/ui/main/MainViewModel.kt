@@ -25,6 +25,7 @@ import com.twofasapp.data.push.PushRepository
 import com.twofasapp.data.push.domain.Push
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 
 internal class MainViewModel(
@@ -42,6 +43,7 @@ internal class MainViewModel(
 
     private var observeLocalPushesJob: Job? = null
     private var fetchNotificationsJob: Job? = null
+    private var syncJob: Job? = null
 
     init {
         launchScoped {
@@ -120,6 +122,20 @@ internal class MainViewModel(
     fun fetchSubscriptionInfo() {
         launchScoped {
             runSafely { purchasesRepository.fetchSubscriptionInfo() }
+        }
+    }
+
+    fun sync() {
+        syncJob?.cancel()
+
+        syncJob = launchScoped {
+            authStatusTracker.observeIsAuthenticated().distinctUntilChanged().collect { isAuthenticated ->
+                if (isAuthenticated) {
+                    runSafely { cloudRepository.sync() }
+                        .onSuccess { fetchNotificationsJob?.cancel() }
+                        .onFailure { fetchNotificationsJob?.cancel() }
+                }
+            }
         }
     }
 
