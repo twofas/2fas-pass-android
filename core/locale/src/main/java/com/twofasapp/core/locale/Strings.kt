@@ -34,6 +34,7 @@ class Strings(private val c: Context) {
     val commonOther = c.getString(R.string.common_other)
     val commonTryAgain = c.getString(R.string.common_try_again)
     val commonCreated = c.getString(R.string.common_created)
+    val commonClose = c.getString(R.string.common_close)
 
     // Permissions
     val permissionCameraTitle = c.getString(R.string.permission_camera_title)
@@ -165,8 +166,6 @@ class Strings(private val c: Context) {
     val homeItemOpenUri = c.getString(R.string.login_view_action_open_uri)
     val homeItemDelete = c.getString(R.string.login_view_action_delete)
     val homeEmptyTitle = c.getString(R.string.home_empty_title)
-    val homeEmptyMsg = c.getString(R.string.home_empty_msg)
-    val homeEmptyMsgImport = c.getString(R.string.home_empty_import_description)
     val homeEmptyImportCta = c.getString(R.string.home_empty_import_cta)
 
     // Login
@@ -523,6 +522,19 @@ class Strings(private val c: Context) {
 
     val migrationErrorTitle = c.getString(R.string.migration_error_title)
     val migrationErrorBody = c.getString(R.string.migration_error_body)
+
+    val quickSetupTitle = c.getString(R.string.quick_setup_title)
+    val quickSetupDescription = c.getString(R.string.quick_setup_subtitle)
+    val quickSetupRecommended = c.getString(R.string.quick_setup_recommended)
+    val quickSetupAutofillTitle = c.getString(R.string.quick_setup_autofill_title)
+    val quickSetupAutofillDescription = c.getString(R.string.quick_setup_autofill_description)
+    val quickSetupSyncTitle = c.getString(R.string.quick_setup_drive_sync_title)
+    val quickSetupSyncDescription = c.getString(R.string.quick_setup_drive_sync_description)
+    val quickSetupSecurityTierTitle = c.getString(R.string.quick_setup_security_tier_title)
+    val quickSetupSecurityTierDescription = c.getString(R.string.quick_setup_security_tier_description)
+    val quickSetupSecurityTierDefault = c.getString(R.string.quick_setup_security_tier_default_label)
+    val quickSetupImportItemsCta = c.getString(R.string.quick_setup_import_items_cta)
+    val quickSetupTransferItemsCta = c.getString(R.string.quick_setup_transfer_items_cta)
 
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis

@@ -9,6 +9,7 @@
 package com.twofasapp.feature.cloudsync.ui.googledrive
 
 internal data class GoogleDriveSyncUiState(
+    val openedFromQuickSetup: Boolean = false,
     val startAuth: Boolean = false,
     val enabled: Boolean = false,
     val syncing: Boolean = false,

@@ -8,8 +8,11 @@
 
 package com.twofasapp.feature.cloudsync.ui.googledrive
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
 import com.twofasapp.core.android.ktx.launchScoped
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.main.CloudRepository
@@ -19,12 +22,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 
 internal class GoogleDriveSyncViewModel(
+    savedStateHandle: SavedStateHandle,
     private val cloudRepository: CloudRepository,
     private val strings: Strings,
 ) : ViewModel() {
+
+    private val openedFromQuickSetup = savedStateHandle.toRoute<Screen.GoogleDriveSync>().openedFromQuickSetup
+    private val startAuth = savedStateHandle.toRoute<Screen.GoogleDriveSync>().startAuth
+
     val uiState = MutableStateFlow(
         GoogleDriveSyncUiState(
-            startAuth = false,
+            openedFromQuickSetup = openedFromQuickSetup,
+            startAuth = startAuth,
         ),
     )
 

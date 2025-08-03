@@ -18,9 +18,7 @@ import com.twofasapp.data.settings.local.model.FailedAppUnlocksEntity
 import com.twofasapp.data.settings.mapper.asDomain
 import com.twofasapp.data.settings.mapper.asEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
 internal class SessionRepositoryImpl(
@@ -32,12 +30,12 @@ internal class SessionRepositoryImpl(
     private val startupCompleted by booleanPref(default = false)
     private val biometricsPrompted by booleanPref(default = false)
     private val connectOnboardingPrompted by booleanPref(default = false)
+    private val quickSetupPrompted by booleanPref(default = false)
     private val failedAppUnlocks by serializedPrefNullable(
         serializer = FailedAppUnlocksEntity.serializer(),
         name = "failedAppUnlocks",
         encrypted = true,
     )
-    private val scrollToSettingsTransferSection = MutableStateFlow(false)
 
     override suspend fun getAppVersionCode(): Long {
         return withContext(dispatchers.io) { appVersionCode.get() }
@@ -79,11 +77,11 @@ internal class SessionRepositoryImpl(
         withContext(dispatchers.io) { this@SessionRepositoryImpl.failedAppUnlocks.set(failedAppUnlocks?.asEntity()) }
     }
 
-    override fun observeScrollToSettingsTransferSection(): Flow<Boolean> {
-        return scrollToSettingsTransferSection
+    override fun observeQuickSetupPrompted(): Flow<Boolean> {
+        return quickSetupPrompted.asFlow()
     }
 
-    override suspend fun setScrollToSettingsTransferSection(scroll: Boolean) {
-        scrollToSettingsTransferSection.update { scroll }
+    override suspend fun setQuickSetupPrompted(prompted: Boolean) {
+        withContext(dispatchers.io) { quickSetupPrompted.set(prompted) }
     }
 }

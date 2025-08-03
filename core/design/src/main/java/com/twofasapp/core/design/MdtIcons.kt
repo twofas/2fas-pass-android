@@ -51,6 +51,7 @@ object MdtIcons {
     val CircleUncheck @Composable get() = painterResource(R.drawable.ic_circle_uncheck)
     val Help @Composable get() = painterResource(R.drawable.ic_help)
     val Info @Composable get() = painterResource(R.drawable.ic_info)
+    val InfoFilled @Composable get() = painterResource(R.drawable.ic_info_filled)
     val Warning @Composable get() = painterResource(R.drawable.ic_warning)
     val WarningShield @Composable get() = painterResource(R.drawable.ic_warning_shield)
     val Error @Composable get() = painterResource(R.drawable.ic_error)
@@ -106,4 +107,6 @@ object MdtIcons {
     val RotateLeft @Composable get() = painterResource(R.drawable.ic_rotate_left)
     val Tag @Composable get() = painterResource(R.drawable.ic_tag)
     val Hashtag @Composable get() = painterResource(R.drawable.ic_hashtag)
+    val Rocket @Composable get() = painterResource(R.drawable.ic_rocket)
+    val RocketLaunch @Composable get() = painterResource(R.drawable.ic_rocket_launch)
 }

@@ -42,7 +42,7 @@ internal fun CloudSyncScreen(
 
     Content(
         uiState = uiState,
-        onGoogleDriveClick = { deeplinks.openScreen(Screen.GoogleDriveSync) },
+        onGoogleDriveClick = { deeplinks.openScreen(Screen.GoogleDriveSync(openedFromQuickSetup = false, startAuth = false)) },
         onWebDavClick = { deeplinks.openScreen(Screen.WebDavSync) },
     )
 }

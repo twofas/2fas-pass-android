@@ -74,6 +74,9 @@ sealed class Screen(
     class Settings : Screen(screenType = ScreenType.TopLevel)
 
     @Serializable
+    data object QuickSetup : Screen()
+
+    @Serializable
     data object Developer : Screen()
 
     @Serializable
@@ -98,7 +101,7 @@ sealed class Screen(
     data class SaveDecryptionKit(val masterKeyHex: String) : Screen()
 
     @Serializable
-    data object ProtectionLevel : Screen()
+    data object SecurityType : Screen()
 
     @Serializable
     data object Autofill : Screen()
@@ -116,7 +119,10 @@ sealed class Screen(
     data object CloudSync : Screen()
 
     @Serializable
-    data object GoogleDriveSync : Screen()
+    data class GoogleDriveSync(
+        val openedFromQuickSetup: Boolean,
+        val startAuth: Boolean,
+    ) : Screen()
 
     @Serializable
     data object WebDavSync : Screen()

@@ -13,14 +13,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,12 +44,14 @@ import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
+import com.twofasapp.core.design.foundation.button.Button
+import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.button.IconButton
-import com.twofasapp.core.design.foundation.button.TextButton
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.lazy.isScrollingUp
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.lazy.stickyListItem
+import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.screen.EmptySearchResults
 import com.twofasapp.core.design.foundation.screen.ScreenLoading
@@ -74,6 +75,7 @@ internal fun HomeScreen(
     openAddLogin: (String) -> Unit,
     openEditLogin: (String, String) -> Unit,
     openSettings: () -> Unit,
+    openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -86,7 +88,7 @@ internal fun HomeScreen(
         onAddLoginClick = openAddLogin,
         onEditLoginClick = openEditLogin,
         onCopyPasswordToClipboard = { viewModel.copyPasswordToClipboard(it) },
-        onOpenSettingsClick = { viewModel.openSettingsAndScrollToTransferSection { openSettings() } },
+        onOpenQuickSetupClick = openQuickSetup,
         onTrashConfirmed = { viewModel.trash(it) },
         onSearchQueryChange = { viewModel.search(it) },
         onSearchFocusChange = { viewModel.focusSearch(it) },
@@ -103,7 +105,7 @@ private fun Content(
     onAddLoginClick: (String) -> Unit = {},
     onEditLoginClick: (String, String) -> Unit = { _, _ -> },
     onCopyPasswordToClipboard: (Login) -> Unit = {},
-    onOpenSettingsClick: () -> Unit = {},
+    onOpenQuickSetupClick: () -> Unit = {},
     onTrashConfirmed: (String) -> Unit = {},
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
@@ -126,6 +128,7 @@ private fun Content(
     uiState.events.firstOrNull()?.let { uiEvent ->
         LaunchedEffect(Unit) {
             when (uiEvent) {
+                is HomeUiEvent.OpenQuickSetup -> onOpenQuickSetupClick()
                 is HomeUiEvent.CopyPasswordToClipboard -> {
                     context.copyToClipboard(text = uiEvent.text, isSensitive = true)
                 }
@@ -188,7 +191,7 @@ private fun Content(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(ScreenPadding),
-                    onOpenSettingsClick = onOpenSettingsClick,
+                    onOpenQuickSetupClick = onOpenQuickSetupClick,
                 )
             }
 
@@ -284,49 +287,42 @@ private fun Content(
 @Composable
 private fun EmptyState(
     modifier: Modifier = Modifier,
-    onOpenSettingsClick: () -> Unit,
+    onOpenQuickSetupClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        Space(1f)
+
         Icon(
             painter = MdtIcons.Key,
             contentDescription = null,
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier.size(70.dp),
             tint = MdtTheme.color.secondary,
         )
 
+        Space(24.dp)
+
         Text(
             text = MdtLocale.strings.homeEmptyTitle,
-            style = MdtTheme.typo.bold.lg,
+            style = MdtTheme.typo.titleLarge,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Space(36.dp)
 
-        Text(
-            text = MdtLocale.strings.homeEmptyMsg,
-            style = MdtTheme.typo.regular.sm,
-            color = MdtTheme.color.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 24.dp),
-        )
-
-        Spacer(modifier = Modifier.height(36.dp))
-
-        Text(
-            text = MdtLocale.strings.homeEmptyMsgImport,
-            style = MdtTheme.typo.regular.sm,
-            color = MdtTheme.color.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 24.dp),
-        )
-
-        TextButton(
+        Button(
             text = MdtLocale.strings.homeEmptyImportCta,
-            onClick = onOpenSettingsClick,
+            onClick = onOpenQuickSetupClick,
+            leadingIcon = MdtIcons.RocketLaunch,
+            style = ButtonStyle.Text,
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(MdtTheme.color.surfaceContainerLow),
         )
+
+        Space(1f)
     }
 }
 

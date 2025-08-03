@@ -8,7 +8,12 @@
 
 package com.twofasapp.feature.main.ui.main
 
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -23,6 +28,7 @@ import com.twofasapp.feature.developer.navigation.DeveloperRoute
 import com.twofasapp.feature.externalimport.navigation.ExternalImportRoute
 import com.twofasapp.feature.home.navigation.EditLoginRoute
 import com.twofasapp.feature.home.navigation.HomeRoute
+import com.twofasapp.feature.quicksetup.ui.QuickSetupRoute
 import com.twofasapp.feature.settings.navigation.AboutRoute
 import com.twofasapp.feature.settings.navigation.AutofillRoute
 import com.twofasapp.feature.settings.navigation.ChangePasswordRoute
@@ -76,6 +82,9 @@ internal fun MainNavHost(
                 openSettings = {
                     navController.navigateTopLevel(Screen.Settings())
                 },
+                openQuickSetup = {
+                    navController.navigate(Screen.QuickSetup)
+                },
                 openDeveloper = {
                     navController.navigateTopLevel(Screen.Developer)
                 },
@@ -94,6 +103,20 @@ internal fun MainNavHost(
 
         composable<Screen.Settings> {
             SettingsRoute()
+        }
+
+        composable<Screen.QuickSetup>(
+            enterTransition = { slideInVertically { it } + expandVertically(expandFrom = Alignment.Bottom) },
+            exitTransition = { shrinkVertically(shrinkTowards = Alignment.Bottom) + slideOutVertically { it } },
+        ) {
+            QuickSetupRoute(
+                openAutofill = { navController.navigate(Screen.Autofill) },
+                openSync = { syncEnabled -> navController.navigate(Screen.GoogleDriveSync(openedFromQuickSetup = true, startAuth = syncEnabled.not())) },
+                openSecurityType = { navController.navigate(Screen.SecurityType) },
+                openImport = { navController.navigate(Screen.ImportExport) },
+                openTransfer = { navController.navigate(Screen.TransferFromOtherApps) },
+                close = { navController.popBackStack() },
+            )
         }
 
         composable<Screen.Developer> {
@@ -147,7 +170,7 @@ internal fun MainNavHost(
             SaveDecryptionKitRoute()
         }
 
-        composable<Screen.ProtectionLevel> {
+        composable<Screen.SecurityType> {
             ProtectionLevelRoute()
         }
 
@@ -173,13 +196,14 @@ internal fun MainNavHost(
 
         composable<Screen.GoogleDriveSync> {
             GoogleDriveSyncRoute(
+                goBackToQuickSetup = { navController.popBackStack<Screen.QuickSetup>(false) },
+                goBackToSettings = { navController.popBackStack<Screen.Settings>(false) },
                 goBackToSync = {
                     if (navController.popBackStack<Screen.CloudSync>(false).not()) {
                         navController.popBackStack()
                         navController.navigate(Screen.CloudSync)
                     }
                 },
-                goBackToSettings = { navController.popBackStack<Screen.Settings>(false) },
             )
         }
 

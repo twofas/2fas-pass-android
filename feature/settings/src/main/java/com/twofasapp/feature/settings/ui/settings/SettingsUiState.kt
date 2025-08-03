@@ -15,5 +15,4 @@ internal data class SettingsUiState(
     val cloudSyncError: Boolean = false,
     val cloudConfig: CloudConfig? = null,
     val subscriptionPlan: SubscriptionPlan = SubscriptionPlan.Free(),
-    val scrollToTransferSection: Boolean = false,
 )

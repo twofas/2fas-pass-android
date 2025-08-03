@@ -47,17 +47,5 @@ internal class SettingsViewModel(
                 uiState.update { it.copy(subscriptionPlan = plan) }
             }
         }
-
-        launchScoped {
-            sessionRepository.observeScrollToSettingsTransferSection().collect { autoScroll ->
-                uiState.update { it.copy(scrollToTransferSection = autoScroll) }
-            }
-        }
-    }
-
-    fun consumeScrollToTransferSection() {
-        launchScoped {
-            sessionRepository.setScrollToSettingsTransferSection(false)
-        }
     }
 }

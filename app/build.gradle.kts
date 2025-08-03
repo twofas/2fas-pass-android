@@ -69,6 +69,7 @@ dependencies {
     implementation(project(":feature:loginform"))
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))
+    implementation(project(":feature:quicksetup"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

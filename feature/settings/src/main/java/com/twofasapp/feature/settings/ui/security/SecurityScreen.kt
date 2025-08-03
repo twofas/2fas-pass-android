@@ -143,7 +143,7 @@ private fun Content(
                     SecurityType.Tier2 -> MdtIcons.Tier2
                     SecurityType.Tier3 -> MdtIcons.Tier3
                 },
-                onClick = { deeplinks.openScreen(Screen.ProtectionLevel) },
+                onClick = { deeplinks.openScreen(Screen.SecurityType) },
             )
 
             OptionSwitch(

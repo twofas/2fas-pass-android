@@ -46,13 +46,16 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun GoogleDriveSyncScreen(
     viewModel: GoogleDriveSyncViewModel = koinViewModel(),
+    goBackToQuickSetup: () -> Unit = {},
     goBackToSync: () -> Unit = {},
     goBackToSettings: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     BackHandler {
-        if (uiState.enabled) {
+        if (uiState.openedFromQuickSetup) {
+            goBackToQuickSetup()
+        } else if (uiState.enabled) {
             goBackToSettings()
         } else {
             goBackToSync()
@@ -62,7 +65,6 @@ internal fun GoogleDriveSyncScreen(
     Content(
         uiState = uiState,
         onCloudAuthenticated = { viewModel.enableSync(it) },
-//        onCloudAuthenticationError = { viewModel.authenticationError(it) },
         onDisableSync = { viewModel.disableSync() },
         onSyncClick = { viewModel.sync() },
     )
