@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sat, 26 Jul 2025 12:11:53 -0700
+ Exported at: Sun, 03 Aug 2025 13:23:42 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -225,9 +225,8 @@
     <string name="push_browser_request_title">2FAS Pass request</string>
     <string name="push_browser_request_message">New request from %s</string>
     <string name="home_title">Items</string>
-    <string name="home_empty_title">Add first Item</string>
-    <string name="home_empty_msg">Tap the + button to begin</string>
-    <string name="home_empty_import_cta">Open Settings</string>
+    <string name="home_empty_title">No Items available</string>
+    <string name="home_empty_import_cta">Start with quick setup</string>
     <string name="about_tagline">About 2FAS Pass</string>
     <string name="about_version_prefix">Version:</string>
     <string name="about_section_general">General</string>
@@ -404,8 +403,6 @@
     <string name="connect_setup_push_warning_ios__0025_0040">Using push notifications makes communicating with the browser extension much more convenient. Go to **[System Settings](%s)**.</string>
     <string name="connect_setup_steps_header">2FAS Pass Browser Extension setup</string>
     <string name="decryption_kit_settings_secret_words_ios">**Secret Words** (15-word phrase),</string>
-    <string name="home_empty_import_description">Do you want to import a backup file or transfer data from another password manager?</string>
-    <string name="home_empty_msg_ios__0025_0040">Tap %s to begin</string>
     <string name="known_browsers_header">Connected Browser Extensions</string>
     <string name="lock_screen_too_many_attempts_description">2FAS Pass access temporarily blocked due to failed master password attempts</string>
     <string name="lock_screen_try_again__0025_0040">Try again in: %s</string>
@@ -744,7 +741,7 @@
     <string name="restore_error_general">Error. Something went wrong. Try again.</string>
     <string name="master_password_define">Now, define a Master Password and remember it by heart.</string>
     <string name="master_password_create_new">Now, define a new Master Password and remember it by heart.</string>
-    <string name="sync_status_error_password_changed">Master Password was changed. To access this vault use Restore and Recovery Kit.</string>
+    <string name="sync_status_error_password_changed">Master Password was changed. To access this Vault use Restore and Recovery Kit.</string>
     <string name="onboarding_guide_1">Look around and select 3 objects (e.g.: Flower, Candle, Bookshelf).</string>
     <string name="onboarding_guide_2">Think about short story that connects these 3 objects (for example: A Flower and a Candle lays on the Bookshelf.)</string>
     <string name="onboarding_guide_3">Selected objects are the words in your password. The story helps you remember them. Now think about the separator between the words (e.g.: # or $).</string>
@@ -766,4 +763,20 @@
     <string name="cloud_vault_delete_confirm_title">Delete backup?</string>
     <string name="cloud_vault_delete_confirm_body">Are you sure you want to delete this backup? You cannot restore it later.</string>
     <string name="cloud_vault_removing_failure">Vault deletion failed</string>
+    <string name="settings_manage_tokens_title">Manage 2FA Tokens</string>
+    <string name="settings_2fas_open">Open 2FAS Auth</string>
+    <string name="settings_2fas_get">Get 2FAS Auth</string>
+    <string name="quick_setup_title">Quick setup</string>
+    <string name="quick_setup_subtitle">Personlize your security and usability preferences.</string>
+    <string name="quick_setup_recommended">Recommended</string>
+    <string name="quick_setup_autofill_title">AutoFill</string>
+    <string name="quick_setup_autofill_description">Select 2FAS Pass to automatically fill in Item details in other apps.</string>
+    <string name="quick_setup_icloud_sync_title">Vault Sync</string>
+    <string name="quick_setup_icloud_sync_description">Securely sync your data using iCloud in case this device gets lost or damaged.</string>
+    <string name="quick_setup_security_tier_title">Security Tier</string>
+    <string name="quick_setup_security_tier_description">Decide how to use individual Items with Autofill and share them with the Browser Extension.</string>
+    <string name="quick_setup_security_tier_default_label">Default</string>
+    <string name="quick_setup_import_items_cta">Import Items from 2FAS Pass Backup</string>
+    <string name="quick_setup_transfer_items_cta">Transfer passwords from other apps</string>
+    <string name="quick_setup_icloud_sync_failure">Failed to enable Vault Sync</string>
 </resources>
