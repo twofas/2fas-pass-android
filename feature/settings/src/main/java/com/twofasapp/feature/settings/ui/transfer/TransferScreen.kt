@@ -98,6 +98,7 @@ private fun Content(
                             ImportType.DashlaneMobile -> R.drawable.external_logo_dashlane
                             ImportType.AppleDesktop -> R.drawable.external_logo_apple
                             ImportType.AppleMobile -> R.drawable.external_logo_apple
+                            ImportType.Firefox -> R.drawable.external_logo_firefox
                         },
                     ),
                     onClick = {

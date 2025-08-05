@@ -25,6 +25,7 @@ import com.twofasapp.feature.externalimport.import.spec.BitwardenImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ChromeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneMobileImportSpec
+import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ProtonPassImportSpec
@@ -45,6 +46,7 @@ internal class ExternalImportViewModel(
     private val dashlaneMobileImportSpec: DashlaneMobileImportSpec,
     private val appleDesktopImportSpec: AppleDesktopImportSpec,
     private val appleMobileImportSpec: AppleMobileImportSpec,
+    private val firefoxImportSpec: FirefoxImportSpec,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ExternalImportUiState())
     private val importType = savedStateHandle.toRoute<Screen.ExternalImport>().importType
@@ -62,6 +64,7 @@ internal class ExternalImportViewModel(
                     ImportType.DashlaneMobile -> dashlaneMobileImportSpec
                     ImportType.AppleDesktop -> appleDesktopImportSpec
                     ImportType.AppleMobile -> appleMobileImportSpec
+                    ImportType.Firefox -> firefoxImportSpec
                 },
             )
         }
