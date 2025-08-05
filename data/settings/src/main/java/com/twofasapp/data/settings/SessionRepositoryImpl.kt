@@ -30,7 +30,7 @@ internal class SessionRepositoryImpl(
     private val startupCompleted by booleanPref(default = false)
     private val biometricsPrompted by booleanPref(default = false)
     private val connectOnboardingPrompted by booleanPref(default = false)
-    private val quickSetupPrompted by booleanPref(default = false)
+    private val quickSetupPrompted by booleanPref(default = true)
     private val failedAppUnlocks by serializedPrefNullable(
         serializer = FailedAppUnlocksEntity.serializer(),
         name = "failedAppUnlocks",
