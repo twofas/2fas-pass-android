@@ -32,6 +32,7 @@ internal class VaultSetupCompletedViewModel(
 
             startupConfig.finishStartup()
             authStatusTracker.authenticate()
+            sessionRepository.setQuickSetupPrompted(false)
             sessionRepository.setStartupCompleted(true)
         }
     }

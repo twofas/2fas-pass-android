@@ -28,6 +28,7 @@ import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.data.settings.SessionRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.data.settings.domain.SortingMethod
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
@@ -129,6 +130,15 @@ internal class HomeViewModel(
                     uiState.update { it.copy(logins = logins) }
                 }
         }
+
+        launchScoped {
+            sessionRepository.observeQuickSetupPrompted().collect { quickSetupPrompted ->
+                if (quickSetupPrompted.not()) {
+                    delay(500)
+                    publishEvent(HomeUiEvent.OpenQuickSetup)
+                }
+            }
+        }
     }
 
     fun search(query: String) {
@@ -160,12 +170,6 @@ internal class HomeViewModel(
                 }
             }
         }
-    }
-
-    fun openSettingsAndScrollToTransferSection(onComplete: () -> Unit) {
-        launchScoped {
-            sessionRepository.setScrollToSettingsTransferSection(true)
-        }.invokeOnCompletion { onComplete() }
     }
 
     fun consumeEvent(event: HomeUiEvent) {

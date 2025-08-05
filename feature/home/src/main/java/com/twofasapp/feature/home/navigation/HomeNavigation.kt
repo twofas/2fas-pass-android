@@ -17,12 +17,14 @@ fun HomeRoute(
     openAddLogin: (String) -> Unit,
     openEditLogin: (String, String) -> Unit,
     openSettings: () -> Unit,
+    openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
 ) {
     HomeScreen(
         openAddLogin = openAddLogin,
         openEditLogin = openEditLogin,
         openSettings = openSettings,
+        openQuickSetup = openQuickSetup,
         openDeveloper = openDeveloper,
     )
 }

@@ -234,12 +234,16 @@ val uriPrefixWebsite = "https://"
 
 inline fun <reified T> Bundle?.getSafelyParcelable(key: String): T? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        this?.classLoader = T::class.java.classLoader
-        this?.getParcelable(key, T::class.java) ?: try {
-            @Suppress("DEPRECATION")
-            this?.getParcelable(key)
+        try {
+            this?.classLoader = T::class.java.classLoader
+            this?.getParcelable(key, T::class.java)
         } catch (e: Exception) {
-            null
+            try {
+                @Suppress("DEPRECATION")
+                this?.getParcelable(key)
+            } catch (e: Exception) {
+                null
+            }
         }
     } else {
         @Suppress("DEPRECATION")

@@ -8,6 +8,11 @@
 
 package com.twofasapp.feature.main.ui.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -130,7 +136,11 @@ private fun Content(
             modifier = Modifier.weight(1f),
         )
 
-        if (bottomBarVisible) {
+        AnimatedVisibility(
+            visible = bottomBarVisible,
+            enter = slideInVertically { it } + expandVertically(expandFrom = Alignment.Bottom),
+            exit = shrinkVertically(shrinkTowards = Alignment.Bottom) + slideOutVertically { it },
+        ) {
             MainBottomBar(
                 navController = navController,
                 cloudSyncError = uiState.cloudSyncError,

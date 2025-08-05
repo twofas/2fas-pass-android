@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +43,6 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.feature.purchases.PurchasesDialog
-import kotlinx.coroutines.android.awaitFrame
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -58,7 +56,6 @@ internal fun SettingsScreen(
     Content(
         uiState = uiState,
         deeplinks = deeplinks,
-        onConsumeScrollEvent = viewModel::consumeScrollToTransferSection,
     )
 }
 
@@ -66,20 +63,11 @@ internal fun SettingsScreen(
 private fun Content(
     uiState: SettingsUiState,
     deeplinks: Deeplinks,
-    onConsumeScrollEvent: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
     var showPaywall by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val lazyListState: LazyListState = rememberLazyListState()
-
-    LaunchedEffect(uiState.scrollToTransferSection) {
-        if (uiState.scrollToTransferSection) {
-            awaitFrame()
-            lazyListState.scrollToItem(8)
-            onConsumeScrollEvent()
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -180,7 +168,7 @@ private fun Content(
                     icon = MdtIcons.CloudSync,
                     onClick = {
                         when (uiState.cloudConfig) {
-                            is CloudConfig.GoogleDrive -> deeplinks.openScreen(Screen.GoogleDriveSync)
+                            is CloudConfig.GoogleDrive -> deeplinks.openScreen(Screen.GoogleDriveSync(openedFromQuickSetup = false, startAuth = false))
                             is CloudConfig.WebDav -> deeplinks.openScreen(Screen.WebDavSync)
                             null -> deeplinks.openScreen(Screen.CloudSync)
                         }

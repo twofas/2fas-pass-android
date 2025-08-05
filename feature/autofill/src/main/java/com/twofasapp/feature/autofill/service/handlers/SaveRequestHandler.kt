@@ -51,10 +51,8 @@ internal class SaveRequestHandler(
         val sessionContext = saveRequest.fillContexts.firstOrNull { it.requestId == saveRequestSpec.autofillSessionId }
 
         if (sessionContext == null) {
-            if (saveRequestSpec.inputs.isEmpty()) {
-                saveCallback.onFailure("Session fill context not found")
-                return
-            }
+            saveCallback.onFailure("Session fill context not found")
+            return
         }
 
         if (loginsRepository.getLoginsCount() >= purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit) {
@@ -63,7 +61,7 @@ internal class SaveRequestHandler(
         }
 
         try {
-            val structure = sessionContext!!.structure
+            val structure = sessionContext.structure
             val windowNodes = (0 until structure.windowNodeCount).map { structure.getWindowNodeAt(it) }
 
             val username = saveRequestSpec.inputs

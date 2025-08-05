@@ -27,6 +27,7 @@ import com.twofasapp.feature.lock.di.LockModule
 import com.twofasapp.feature.loginform.di.LoginFormModule
 import com.twofasapp.feature.main.di.MainModule
 import com.twofasapp.feature.purchases.di.PurchasesModule
+import com.twofasapp.feature.quicksetup.di.QuickSetupModule
 import com.twofasapp.feature.settings.di.SettingsModule
 import com.twofasapp.feature.startup.di.StartupModule
 import org.koin.core.module.Module
@@ -62,6 +63,7 @@ object Modules {
         CloudSyncModule(),
         LoginFormModule(),
         PurchasesModule(),
+        QuickSetupModule(),
     )
 
     fun provide(): List<Module> =

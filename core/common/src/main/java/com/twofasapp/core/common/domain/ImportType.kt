@@ -18,4 +18,5 @@ enum class ImportType(val displayName: String) {
     DashlaneMobile("Dashlane (Mobile)"),
     AppleDesktop("Apple Passwords (Desktop)"),
     AppleMobile("Apple Passwords (Mobile)"),
+    Firefox("Firefox"),
 }

@@ -10,10 +10,11 @@ plugins {
     alias(libs.plugins.twofasAndroidLibrary)
     alias(libs.plugins.twofasCompose)
     alias(libs.plugins.twofasLint)
+    alias(libs.plugins.kotlinParcelize)
 }
 
 android {
-    namespace = "com.twofasapp.feature.main"
+    namespace = "com.twofasapp.feature.quicksetup"
 }
 
 dependencies {
@@ -23,20 +24,11 @@ dependencies {
     implementation(project(":core:di"))
     implementation(project(":core:locale"))
 
+    implementation(project(":data:settings"))
     implementation(project(":data:main"))
-    implementation(project(":data:push"))
-    implementation(project(":data:purchases"))
-
-    implementation(project(":feature:home"))
-    implementation(project(":feature:connect"))
-    implementation(project(":feature:settings"))
-    implementation(project(":feature:externalimport"))
-    implementation(project(":feature:cloudsync"))
-    implementation(project(":feature:developer"))
-    implementation(project(":feature:purchases"))
-    implementation(project(":feature:quicksetup"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.viewModel)
+
 }

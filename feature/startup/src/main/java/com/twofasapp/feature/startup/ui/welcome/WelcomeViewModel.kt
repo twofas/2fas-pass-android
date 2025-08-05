@@ -50,6 +50,7 @@ internal class WelcomeViewModel(
 
             startupConfig.finishStartup()
             authStatusTracker.authenticate()
+            sessionRepository.setQuickSetupPrompted(true)
             sessionRepository.setStartupCompleted(true)
         }
     }

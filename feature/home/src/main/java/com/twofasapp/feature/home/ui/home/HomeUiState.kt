@@ -33,5 +33,6 @@ internal data class HomeUiState(
 }
 
 internal sealed interface HomeUiEvent {
+    data object OpenQuickSetup : HomeUiEvent
     data class CopyPasswordToClipboard(val text: String) : HomeUiEvent
 }

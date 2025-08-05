@@ -14,10 +14,12 @@ import com.twofasapp.feature.cloudsync.ui.webdav.WebDavSyncScreen
 
 @Composable
 fun GoogleDriveSyncRoute(
+    goBackToQuickSetup: () -> Unit,
     goBackToSync: () -> Unit,
     goBackToSettings: () -> Unit,
 ) {
     GoogleDriveSyncScreen(
+        goBackToQuickSetup = goBackToQuickSetup,
         goBackToSync = goBackToSync,
         goBackToSettings = goBackToSettings,
     )

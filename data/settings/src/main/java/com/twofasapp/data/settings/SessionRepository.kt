@@ -22,6 +22,6 @@ interface SessionRepository {
     suspend fun setConnectOnboardingPrompted(prompted: Boolean)
     fun observeFailedAppUnlocks(): Flow<FailedAppUnlocks?>
     suspend fun setFailedAppUnlocks(failedAppUnlocks: FailedAppUnlocks?)
-    fun observeScrollToSettingsTransferSection(): Flow<Boolean>
-    suspend fun setScrollToSettingsTransferSection(scroll: Boolean)
+    fun observeQuickSetupPrompted(): Flow<Boolean>
+    suspend fun setQuickSetupPrompted(prompted: Boolean)
 }

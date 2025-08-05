@@ -326,6 +326,7 @@ internal class DecryptVaultViewModel(
     fun finishWithSuccess() {
         launchScoped {
             authStatusTracker.authenticate()
+            sessionRepository.setQuickSetupPrompted(true)
             sessionRepository.setStartupCompleted(true)
         }
     }
