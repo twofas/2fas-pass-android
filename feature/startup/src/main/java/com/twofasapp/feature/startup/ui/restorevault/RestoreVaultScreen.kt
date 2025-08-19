@@ -46,7 +46,7 @@ import com.twofasapp.core.design.theme.RoundedShape16
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.cloud.authenticate.AuthenticateCloudService
-import com.twofasapp.data.cloud.authenticate.CloudServiceType
+import com.twofasapp.data.cloud.authenticate.DefaultCloudServiceType
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -83,7 +83,7 @@ internal fun RestoreVaultScreen(
 
     if (showCloudAuthentication) {
         AuthenticateCloudService(
-            type = CloudServiceType.GoogleDrive,
+            type = DefaultCloudServiceType,
             onDismissRequest = { showCloudAuthentication = false },
             onSuccess = {
                 viewModel.updateRestoreCloudConfig(it)

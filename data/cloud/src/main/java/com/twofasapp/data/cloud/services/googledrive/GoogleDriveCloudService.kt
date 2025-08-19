@@ -13,6 +13,9 @@ import android.content.Context
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import com.google.android.gms.auth.UserRecoverableAuthException
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.client.http.ByteArrayContent
@@ -21,6 +24,8 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
+import com.twofasapp.data.cloud.authenticate.CloudServiceType
+import com.twofasapp.data.cloud.authenticate.DefaultCloudServiceType
 import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.cloud.domain.CloudFileInfo
 import com.twofasapp.data.cloud.domain.CloudResult
@@ -301,9 +306,23 @@ internal class GoogleDriveCloudService(
     }
 
     override suspend fun disconnect() {
-        CredentialManager.create(context).clearCredentialState(
-            ClearCredentialStateRequest(),
-        )
+        when (DefaultCloudServiceType) {
+            CloudServiceType.GoogleDrive -> {
+                CredentialManager.create(context).clearCredentialState(
+                    ClearCredentialStateRequest(),
+                )
+            }
+
+            CloudServiceType.LegacyGoogleDrive -> {
+                GoogleSignIn.getClient(
+                    context,
+                    GoogleSignInOptions.Builder()
+                        .requestEmail()
+                        .requestScopes(Scope(DriveScopes.DRIVE_APPDATA))
+                        .build(),
+                ).signOut()
+            }
+        }
     }
 
     private fun CloudConfig.GoogleDrive.drive(): Drive {
