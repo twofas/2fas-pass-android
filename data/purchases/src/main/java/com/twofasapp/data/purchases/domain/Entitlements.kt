@@ -15,7 +15,7 @@ data class Entitlements(
 ) {
     companion object {
         val Free = Entitlements(
-            itemsLimit = 50,
+            itemsLimit = 200,
             unlimitedConnectedBrowsers = false,
             multiDeviceSync = false,
         )
