@@ -38,7 +38,7 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.cloud.authenticate.AuthenticateCloudService
-import com.twofasapp.data.cloud.authenticate.CloudServiceType
+import com.twofasapp.data.cloud.authenticate.DefaultCloudServiceType
 import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.feature.cloudsync.ui.common.SyncStatus
 import org.koin.androidx.compose.koinViewModel
@@ -144,7 +144,7 @@ private fun Content(
 
     if (showCloudAuthentication) {
         AuthenticateCloudService(
-            type = CloudServiceType.GoogleDrive,
+            type = DefaultCloudServiceType,
             onDismissRequest = { showCloudAuthentication = false },
             onSuccess = onCloudAuthenticated,
             onError = onCloudAuthenticationError,
