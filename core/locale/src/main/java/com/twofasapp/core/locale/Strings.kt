@@ -35,6 +35,7 @@ class Strings(private val c: Context) {
     val commonTryAgain = c.getString(R.string.common_try_again)
     val commonCreated = c.getString(R.string.common_created)
     val commonClose = c.getString(R.string.common_close)
+    val commonConfirm = c.getString(R.string.common_confirm)
 
     // Permissions
     val permissionCameraTitle = c.getString(R.string.permission_camera_title)
@@ -167,6 +168,7 @@ class Strings(private val c: Context) {
     val homeItemDelete = c.getString(R.string.login_view_action_delete)
     val homeEmptyTitle = c.getString(R.string.home_empty_title)
     val homeEmptyImportCta = c.getString(R.string.home_empty_import_cta)
+    val homeListOptionsModalTitle = c.getString(R.string.home_list_options_modal_title)
 
     // Login
     val loginPassword = c.getString(R.string.login_password_label)
@@ -269,6 +271,8 @@ class Strings(private val c: Context) {
     val settingsEntryPushNotificationDesc = c.getString(R.string.settings_entry_push_notifications_description)
     val settingsEntryHelpCenter = c.getString(R.string.settings_entry_help_center)
     val settingsEntryDiscord = c.getString(R.string.settings_entry_discord)
+    val settingsEntryManageTags = c.getString(R.string.settings_entry_manage_tags)
+    val settingsEntryManageTagsDescription = c.getString(R.string.settings_entry_manage_tags_description)
 
     val webdavServerUrl = c.getString(R.string.webdav_server_url)
     val webdavAllowUntrustedCertificates = c.getString(R.string.webdav_allow_untrusted_certificates)
@@ -535,6 +539,24 @@ class Strings(private val c: Context) {
     val quickSetupSecurityTierDefault = c.getString(R.string.quick_setup_security_tier_default_label)
     val quickSetupImportItemsCta = c.getString(R.string.quick_setup_import_items_cta)
     val quickSetupTransferItemsCta = c.getString(R.string.quick_setup_transfer_items_cta)
+
+    // Tags
+    val tagDeleteCta = c.getString(R.string.tag_delete_cta)
+    val tagDescription = c.getString(R.string.tag_description)
+    val tagDeleteConfirmTitle = c.getString(R.string.tag_delete_confirm_title)
+    val tagDeleteConfirmDescription = c.getString(R.string.tag_delete_confirm_description)
+    val tagsEmptyList = c.getString(R.string.tags_empty_list)
+    val tagsTitle = c.getString(R.string.tags_title)
+    val selectTagsTitle = c.getString(R.string.select_tags_title)
+    val tagsAddNewCta = c.getString(R.string.tags_add_new_cta)
+    val tagEditorPlaceholder = c.getString(R.string.tag_editor_placeholder)
+    val tagEditorDescription = c.getString(R.string.tag_editor_description)
+    val tagEditorEditTitle = c.getString(R.string.tag_editor_edit_title)
+    val tagEditorNewTitle = c.getString(R.string.tag_editor_new_title)
+    val loginTagsHeader = c.getString(R.string.login_tags_header)
+    val loginTags = c.getString(R.string.login_tags)
+    val loginTagsDescription = c.getString(R.string.login_tags_description)
+    val loginSelectedTags = c.getString(R.string.login_selected_tags)
 
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis

@@ -110,6 +110,9 @@ sealed class Screen(
     data object Customization : Screen()
 
     @Serializable
+    data object ManageTags : Screen()
+
+    @Serializable
     data object KnownBrowsers : Screen()
 
     @Serializable

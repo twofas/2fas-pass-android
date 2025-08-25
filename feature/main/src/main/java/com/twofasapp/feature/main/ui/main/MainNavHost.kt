@@ -38,6 +38,7 @@ import com.twofasapp.feature.settings.navigation.ImportExportRoute
 import com.twofasapp.feature.settings.navigation.KnownBrowsersRoute
 import com.twofasapp.feature.settings.navigation.LockoutSettingsRoute
 import com.twofasapp.feature.settings.navigation.ManageSubscriptionRoute
+import com.twofasapp.feature.settings.navigation.ManageTagsRoute
 import com.twofasapp.feature.settings.navigation.OpenSourceLibrariesRoute
 import com.twofasapp.feature.settings.navigation.ProcessingNewPasswordRoute
 import com.twofasapp.feature.settings.navigation.ProtectionLevelRoute
@@ -79,8 +80,8 @@ internal fun MainNavHost(
                         ),
                     )
                 },
-                openSettings = {
-                    navController.navigateTopLevel(Screen.Settings())
+                openManageTags = {
+                    navController.navigateTopLevel(Screen.ManageTags)
                 },
                 openQuickSetup = {
                     navController.navigate(Screen.QuickSetup)
@@ -255,6 +256,10 @@ internal fun MainNavHost(
 
         composable<Screen.ManageSubscription> {
             ManageSubscriptionRoute()
+        }
+
+        composable<Screen.ManageTags> {
+            ManageTagsRoute()
         }
     }
 }

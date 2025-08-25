@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Loco xml export: Android string resources
+ Loco xml export: Android strings
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 05 Aug 2025 13:56:08 -0700
+ Exported at: Sat, 23 Aug 2025 09:00:15 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -153,7 +153,7 @@
     <string name="settings_entry_dynamic_colors">Dynamic Theme</string>
     <string name="settings_entry_dynamic_colors_description">Change the app theme based on your wallpaper for a more dynamic experience.</string>
     <string name="settings_entry_login_click_action">Default action on tap</string>
-    <string name="settings_entry_login_click_action_description">Select what action to perform when you tap an Item.</string>
+    <string name="settings_entry_login_click_action_description">Select the action that happens when you tap an Item.</string>
     <string name="settings_entry_device_nickname">Device nickname</string>
     <string name="settings_entry_device_nickname_description">Set the nickname used to identify this device.</string>
     <string name="settings_autofill_service">Setup Autofill</string>
@@ -226,7 +226,7 @@
     <string name="push_browser_request_message">New request from %s</string>
     <string name="home_title">Items</string>
     <string name="home_empty_title">No Items available</string>
-    <string name="home_empty_import_cta">Start with Quick Setup</string>
+    <string name="home_empty_import_cta">Start with quick setup</string>
     <string name="about_tagline">About 2FAS Pass</string>
     <string name="about_version_prefix">Version:</string>
     <string name="about_section_general">General</string>
@@ -317,7 +317,7 @@
     <string name="password_length_requirement">At least 9 characters</string>
     <string name="passwords_match_text">Passwords match</string>
     <string name="login_search_no_results_title">Item not found</string>
-    <string name="login_search_no_results_description">Take another try with a different search term</string>
+    <string name="login_search_no_results_description">Take another try with a different filter</string>
     <string name="scan_decryption_kit_title">Scan QR code</string>
     <string name="scan_decryption_kit_description">Point your camera at the QR code found in your Decryption Kit.</string>
     <string name="security_biometrics_enable_title">Enable Biometrics</string>
@@ -650,7 +650,7 @@
     <string name="toast_username_copied">Username copied</string>
     <string name="manage_subscription_multi_device_sync_title">Multi-Device Sync</string>
     <string name="sync_status_synced">Synced</string>
-    <string name="sync_status_syncing">Syncing…</string>
+    <string name="sync_status_syncing">Syncing...</string>
     <string name="sync_status_idle">Idle</string>
     <string name="sync_status_error_forbidden">Forbidden</string>
     <string name="sync_status_error_method_not_allowed">Method Not Allowed</string>
@@ -757,7 +757,7 @@
     <string name="open_external_file_error_body">Opening a 2FAS Pass backup file is not supported. Go to 2FAS Pass Settings to import it.</string>
     <string name="migration_error_title">Migration failed</string>
     <string name="migration_error_body">Please restart the app and try again</string>
-    <string name="login_delete_cta">Remove this Item from 2FAS Pass</string>
+    <string name="login_delete_cta">Remove Item</string>
     <string name="login_edit">Edit item</string>
     <string name="common_done">Done</string>
     <string name="cloud_vault_delete_confirm_title">Delete backup?</string>
@@ -766,8 +766,8 @@
     <string name="settings_manage_tokens_title">Manage 2FA Tokens</string>
     <string name="settings_2fas_open">Open 2FAS Auth</string>
     <string name="settings_2fas_get">Get 2FAS Auth</string>
-    <string name="quick_setup_title">Quick Setup</string>
-    <string name="quick_setup_subtitle">Personalize your security and usability preferences.</string>
+    <string name="quick_setup_title">Quick setup</string>
+    <string name="quick_setup_subtitle">Personlize your security and usability preferences.</string>
     <string name="quick_setup_recommended">Recommended</string>
     <string name="quick_setup_autofill_title">AutoFill</string>
     <string name="quick_setup_autofill_description">Select 2FAS Pass to automatically fill in Item details in other apps.</string>
@@ -786,4 +786,23 @@
     <string name="vault_recovery_wrong_decryption_kit_description">Please use the correct Decryption Kit for this Vault, or use another backup file</string>
     <string name="vault_recovery_wrong_decryption_kit_another_backup_cta">Use another backup file</string>
     <string name="vault_recovery_wrong_decryption_kit_another_decryption_kit_cta">Use another Decryption Kit</string>
+    <string name="settings_entry_manage_tags">Manage Tags</string>
+    <string name="settings_entry_manage_tags_description">Tags enable you to assign and filter your Items.</string>
+    <string name="tag_delete_cta">Remove permanently</string>
+    <string name="tag_description">Items assigned: %s</string>
+    <string name="tag_delete_confirm_title">Delete Tag</string>
+    <string name="tag_delete_confirm_description">Are you sure you want to delete \"%s\"? This action cannot be undone.</string>
+    <string name="tags_empty_list">You don\'t have any Tags yet</string>
+    <string name="tags_title">Manage Tags</string>
+    <string name="select_tags_title">Manage Tags</string>
+    <string name="tags_add_new_cta">Add new Tag</string>
+    <string name="tag_editor_placeholder">Tag Name</string>
+    <string name="tag_editor_description">Enter the name of the new Tag and confirm</string>
+    <string name="tag_editor_edit_title">Edit Tag</string>
+    <string name="tag_editor_new_title">New Tag</string>
+    <string name="login_tags_header">Tags</string>
+    <string name="login_tags">Tags</string>
+    <string name="login_tags_description">Assign Tags to find your Items more easily.</string>
+    <string name="login_selected_tags">Selected Tags</string>
+    <string name="home_list_options_modal_title">List Options</string>
 </resources>

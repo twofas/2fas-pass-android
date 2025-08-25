@@ -16,14 +16,14 @@ import com.twofasapp.feature.home.ui.home.HomeScreen
 fun HomeRoute(
     openAddLogin: (String) -> Unit,
     openEditLogin: (String, String) -> Unit,
-    openSettings: () -> Unit,
+    openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
 ) {
     HomeScreen(
         openAddLogin = openAddLogin,
         openEditLogin = openEditLogin,
-        openSettings = openSettings,
+        openManageTags = openManageTags,
         openQuickSetup = openQuickSetup,
         openDeveloper = openDeveloper,
     )

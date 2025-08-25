@@ -15,13 +15,15 @@ import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.local.ItemsLocalSource
+import com.twofasapp.data.main.local.TagsLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
 import com.twofasapp.data.main.local.model.CloudMergeEntity
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.LoginMapper
-import com.twofasapp.data.main.mapper.LoginSecurityTypeMapper
 import com.twofasapp.data.main.mapper.VaultMapper
 import com.twofasapp.data.settings.SettingsRepository
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -38,12 +41,12 @@ internal class LoginsRepositoryImpl(
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemsLocalSource: ItemsLocalSource,
     private val vaultsLocalSource: VaultsLocalSource,
+    private val tagsLocalSource: TagsLocalSource,
     private val cloudRepository: CloudRepository,
     private val settingsRepository: SettingsRepository,
     private val vaultMapper: VaultMapper,
     private val loginMapper: LoginMapper,
     private val itemEncryptionMapper: ItemEncryptionMapper,
-    private val loginSecurityTypeMapper: LoginSecurityTypeMapper,
 ) : LoginsRepository {
 
     private val lockLogins = MutableStateFlow(false)
@@ -182,6 +185,26 @@ internal class LoginsRepositoryImpl(
         lockLogins.emit(false)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    override suspend fun deleteTag(tagId: String) {
+        GlobalScope.launch(dispatchers.io) {
+            val now = timeProvider.currentTimeUtc()
+            val items = itemsLocalSource.getLoginsWithDeleted()
+            val itemsToUpdate = items
+                .filter { item ->
+                    item.tagIds.orEmpty().map { it.lowercase() }.contains(tagId.lowercase())
+                }
+                .map { item ->
+                    item.copy(
+                        tagIds = item.tagIds.orEmpty().map { it.lowercase() }.minus(tagId.lowercase()),
+                        updatedAt = now,
+                    )
+                }
+
+            itemsLocalSource.saveLogins(itemsToUpdate)
+        }
+    }
+
     override suspend fun importLogins(logins: List<Login>, triggerSync: Boolean) {
         withContext(dispatchers.io) {
             val now = timeProvider.currentTimeUtc()
@@ -310,7 +333,10 @@ internal class LoginsRepositoryImpl(
 
             itemsLocalSource.executeCloudMerge(cloudMergeEntity)
 
-            val mostRecentModificationTime = itemsLocalSource.getMostRecentUpdatedAt()
+            val mostRecentModificationTime = maxOf(
+                itemsLocalSource.getMostRecentUpdatedAt(),
+                tagsLocalSource.getMostRecentUpdatedAt(),
+            )
             if (mostRecentModificationTime > vault.updatedAt) {
                 vaultsLocalSource.updateLastModificationTime(vault.id, mostRecentModificationTime)
             }

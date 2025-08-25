@@ -44,6 +44,7 @@ import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.login.LoginImage
@@ -68,6 +69,7 @@ internal fun LoginModal(
     vaultCryptoScope: VaultCryptoScope = koinInject(),
     itemEncryptionMapper: ItemEncryptionMapper = koinInject(),
     login: Login,
+    tags: List<Tag>,
     onDismissRequest: () -> Unit,
     onEditClick: () -> Unit = {},
     onCopyPasswordToClipboard: (Login) -> Unit = {},
@@ -79,6 +81,7 @@ internal fun LoginModal(
             vaultCryptoScope = vaultCryptoScope,
             itemEncryptionMapper = itemEncryptionMapper,
             login = login,
+            tags = tags,
             onEditClick = onEditClick,
             onCopyPasswordToClipboard = onCopyPasswordToClipboard,
         )
@@ -90,6 +93,7 @@ private fun Content(
     vaultCryptoScope: VaultCryptoScope,
     itemEncryptionMapper: ItemEncryptionMapper,
     login: Login,
+    tags: List<Tag>,
     onEditClick: () -> Unit = {},
     onCopyPasswordToClipboard: (Login) -> Unit = {},
 ) {
@@ -241,8 +245,16 @@ private fun Content(
                 Entry(
                     title = MdtLocale.strings.loginSecurityLevel,
                     subtitle = login.securityType.asTitle(),
-                    isLast = true,
+                    isLast = login.tagIds.isEmpty(),
                 )
+
+                if (login.tagIds.isNotEmpty()) {
+                    Entry(
+                        title = MdtLocale.strings.loginTags,
+                        subtitle = tags.filter { login.tagIds.contains(it.id) }.joinToString(", ") { it.name },
+                        isLast = true,
+                    )
+                }
             }
         }
 
@@ -269,7 +281,7 @@ private fun Entry(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MdtTheme.color.surfaceContainer, RoundedShapeIndexed(isFirst, isLast))
+            .background(MdtTheme.color.surfaceContainerHigh, RoundedShapeIndexed(isFirst, isLast))
             .padding(start = 16.dp, end = 0.dp, top = 16.dp, bottom = 16.dp)
             .animateContentSize(),
     ) {

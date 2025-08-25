@@ -73,6 +73,7 @@ import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.loginform.ui.composables.PasswordSuggestionsBar
 import com.twofasapp.feature.loginform.ui.composables.SecurityTypePicker
+import com.twofasapp.feature.loginform.ui.composables.TagsPicker
 import com.twofasapp.feature.loginform.ui.composables.UriField
 import com.twofasapp.feature.loginform.ui.composables.UsernameSuggestionsBar
 import com.twofasapp.feature.loginform.ui.modal.ChangeIconModal
@@ -149,6 +150,7 @@ private fun LoginFormInternal(
             onImageUrlChange = { viewModel.updateImageUrl(it) },
             onUriChange = { index, uri -> viewModel.updateUri(index, uri) },
             onSecurityLevelChange = { viewModel.updateSecurityLevel(it) },
+            onTagsChange = { viewModel.updateTags(it) },
             onNotesChange = { viewModel.updateNotes(it) },
             onAddUriClick = { viewModel.addUri() },
             onDeleteUriClick = { viewModel.deleteUri(it) },
@@ -174,6 +176,7 @@ private fun Content(
     onImageUrlChange: (String?) -> Unit = {},
     onUriChange: (Int, LoginUri) -> Unit = { _, _ -> },
     onSecurityLevelChange: (SecurityType) -> Unit = {},
+    onTagsChange: (List<String>) -> Unit = {},
     onNotesChange: (String) -> Unit = {},
     onAddUriClick: () -> Unit = {},
     onDeleteUriClick: (Int) -> Unit = {},
@@ -325,11 +328,20 @@ private fun Content(
 
             listItem(LoginFormListItem.SecurityType) {
                 SecurityTypePicker(
-                    modifier = Modifier
-                        .animateItem(),
+                    modifier = Modifier.animateItem(),
                     securityType = uiState.login.securityType,
                     onSelect = onSecurityLevelChange,
                     onOpened = { focusManager.clearFocus() },
+                )
+            }
+
+            listItem(LoginFormListItem.Tags) {
+                TagsPicker(
+                    modifier = Modifier.animateItem(),
+                    tags = uiState.tags,
+                    selectedTagIds = uiState.login.tagIds,
+                    onOpened = { focusManager.clearFocus() },
+                    onConfirmTagsSelections = onTagsChange,
                 )
             }
 

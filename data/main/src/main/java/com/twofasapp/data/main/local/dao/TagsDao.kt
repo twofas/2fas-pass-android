@@ -34,4 +34,7 @@ interface TagsDao {
 
     @Query("SELECT * FROM tags WHERE vault_id = :vaultId")
     fun observe(vaultId: String): Flow<List<TagEntity>>
+
+    @Query("SELECT MAX(updated_at) FROM items")
+    suspend fun getMostRecentUpdateTime(): Long?
 }

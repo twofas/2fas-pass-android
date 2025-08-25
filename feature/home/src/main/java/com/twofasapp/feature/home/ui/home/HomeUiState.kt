@@ -9,6 +9,7 @@
 package com.twofasapp.feature.home.ui.home
 
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.Vault
 import com.twofasapp.core.common.ktx.filterBySearchQuery
 import com.twofasapp.data.settings.domain.LoginClickAction
@@ -18,6 +19,8 @@ internal data class HomeUiState(
     val developerModeEnabled: Boolean = false,
     val vault: Vault = Vault.Empty,
     val logins: List<Login> = emptyList(),
+    val tags: List<Tag> = emptyList(),
+    val selectedTag: Tag? = null,
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
     val loginClickAction: LoginClickAction = LoginClickAction.View,
@@ -26,7 +29,15 @@ internal data class HomeUiState(
     val events: List<HomeUiEvent> = emptyList(),
 ) {
     val loginsFiltered: List<Login>
-        get() = logins.filterBySearchQuery(searchQuery)
+        get() = logins
+            .filter { login ->
+                if (selectedTag == null) {
+                    true
+                } else {
+                    login.tagIds.contains(selectedTag.id)
+                }
+            }
+            .filterBySearchQuery(searchQuery)
 
     val isItemsLimitReached: Boolean
         get() = logins.size >= maxItems

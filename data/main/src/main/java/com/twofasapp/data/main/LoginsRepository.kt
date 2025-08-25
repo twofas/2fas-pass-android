@@ -29,5 +29,6 @@ interface LoginsRepository {
     suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Login>)
     suspend fun lockLogins()
     suspend fun unlockLogins()
+    suspend fun deleteTag(tagId: String)
     suspend fun permanentlyDeleteAll()
 }

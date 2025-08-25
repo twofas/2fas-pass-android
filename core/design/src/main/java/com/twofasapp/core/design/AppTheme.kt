@@ -79,6 +79,7 @@ fun AppTheme(
         background = colorScheme.background,
         onBackground = colorScheme.onBackground,
         success = if (isInDarkTheme) successDark else successLight,
+        notice = colorScheme.error,
         surface = colorScheme.surface,
         onSurface = colorScheme.onSurface,
         surfaceVariant = colorScheme.surfaceVariant,

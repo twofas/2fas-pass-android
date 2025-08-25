@@ -10,6 +10,7 @@ package com.twofasapp.feature.loginform.ui
 
 import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.PasswordGeneratorSettings
+import com.twofasapp.core.common.domain.Tag
 
 internal data class LoginFormUiState(
     val initialised: Boolean = false,
@@ -17,6 +18,7 @@ internal data class LoginFormUiState(
     val login: Login = Login.Empty,
     val usernameSuggestions: List<String> = emptyList(),
     val passwordGeneratorSettings: PasswordGeneratorSettings = PasswordGeneratorSettings(),
+    val tags: List<Tag> = emptyList(),
 ) {
     val valid: Boolean
         get() = login.name.isNotEmpty() && login.notes.orEmpty().length <= 2048

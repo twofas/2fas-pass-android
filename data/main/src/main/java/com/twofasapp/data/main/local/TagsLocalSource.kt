@@ -38,4 +38,8 @@ internal class TagsLocalSource(
     suspend fun deleteAll(vaultId: String) {
         dao.deleteAll(vaultId)
     }
+
+    suspend fun getMostRecentUpdatedAt(): Long {
+        return dao.getMostRecentUpdateTime() ?: 0
+    }
 }

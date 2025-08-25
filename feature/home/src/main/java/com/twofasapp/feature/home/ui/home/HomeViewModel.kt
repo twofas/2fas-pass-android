@@ -14,11 +14,13 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
@@ -42,6 +44,7 @@ internal class HomeViewModel(
     private val sessionRepository: SessionRepository,
     private val vaultsRepository: VaultsRepository,
     private val loginsRepository: LoginsRepository,
+    private val tagsRepository: TagsRepository,
     private val trashRepository: TrashRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val cloudRepository: CloudRepository,
@@ -72,6 +75,18 @@ internal class HomeViewModel(
         launchScoped {
             settingsRepository.observeSortingMethod().collect { sortingMethod ->
                 uiState.update { it.copy(sortingMethod = sortingMethod) }
+            }
+        }
+
+        launchScoped {
+            tagsRepository.observeSelectedTag(vaultId = vaultsRepository.getVault().id).collect { selectedTag ->
+                uiState.update { it.copy(selectedTag = selectedTag) }
+            }
+        }
+
+        launchScoped {
+            tagsRepository.observeTags(vaultId = vaultsRepository.getVault().id).collect { tags ->
+                uiState.update { it.copy(tags = tags) }
             }
         }
 
@@ -157,6 +172,16 @@ internal class HomeViewModel(
 
     fun updateSortingMethod(sortingMethod: SortingMethod) {
         launchScoped { settingsRepository.setSortingMethod(sortingMethod) }
+    }
+
+    fun toggleTag(tag: Tag) {
+        launchScoped { tagsRepository.toggleSelectedTag(uiState.value.vault.id, tag) }
+    }
+
+    fun clearTag() {
+        launchScoped {
+            tagsRepository.clearSelectedTag(uiState.value.vault.id)
+        }
     }
 
     fun copyPasswordToClipboard(login: Login) {

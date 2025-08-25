@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -47,6 +48,7 @@ import com.twofasapp.feature.home.ui.home.modal.LoginModal
 internal fun LoginItem(
     modifier: Modifier = Modifier,
     login: Login,
+    tags: List<Tag>,
     loginClickAction: LoginClickAction,
     query: String = "",
     onEditClick: (Login) -> Unit = {},
@@ -165,6 +167,7 @@ internal fun LoginItem(
     if (showLoginModal) {
         LoginModal(
             login = login,
+            tags = tags,
             onDismissRequest = {
                 showLoginModal = false
             },
@@ -197,6 +200,7 @@ private fun Previews() {
             LoginItem(
                 modifier = Modifier.fillMaxWidth(),
                 login = Login.Preview,
+                tags = emptyList(),
                 loginClickAction = LoginClickAction.View,
             )
         }
@@ -205,6 +209,7 @@ private fun Previews() {
             LoginItem(
                 modifier = Modifier.fillMaxWidth(),
                 login = Login.Preview,
+                tags = emptyList(),
                 loginClickAction = LoginClickAction.View,
             )
         }

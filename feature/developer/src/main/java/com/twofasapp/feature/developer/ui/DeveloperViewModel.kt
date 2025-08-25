@@ -17,12 +17,12 @@ import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.LoginUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.domain.Tag
 import com.twofasapp.data.purchases.PurchasesOverrideRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import kotlinx.coroutines.Dispatchers
@@ -234,15 +234,14 @@ internal class DeveloperViewModel(
     fun insertRandomTag() {
         launchScoped {
             tagsRepository.saveTags(
-                listOf(
-                    Tag(
-                        id = "",
-                        vaultId = vaultsRepository.getVault().id,
-                        name = WordList.words.random().replaceFirstChar { it.uppercase() },
-                        position = Random.nextInt(1000),
-                        color = null,
-                        updatedAt = 0,
-                    ),
+                Tag(
+                    id = "",
+                    vaultId = vaultsRepository.getVault().id,
+                    name = WordList.words.random().replaceFirstChar { it.uppercase() },
+                    position = Random.nextInt(1000),
+                    color = null,
+                    updatedAt = 0,
+                    assignedItemsCount = 0,
                 ),
             )
         }
