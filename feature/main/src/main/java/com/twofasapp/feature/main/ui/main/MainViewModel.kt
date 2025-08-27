@@ -132,8 +132,8 @@ internal class MainViewModel(
             authStatusTracker.observeIsAuthenticated().distinctUntilChanged().collect { isAuthenticated ->
                 if (isAuthenticated && cloudRepository.getSyncInfo().lastSuccessfulSyncTime > 0) {
                     runSafely { cloudRepository.sync() }
-                        .onSuccess { fetchNotificationsJob?.cancel() }
-                        .onFailure { fetchNotificationsJob?.cancel() }
+                        .onSuccess { syncJob?.cancel() }
+                        .onFailure { syncJob?.cancel() }
                 }
             }
         }
