@@ -4,6 +4,7 @@ import com.twofasapp.core.common.domain.DeletedItem
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.Tag
 import java.time.Instant
 
 internal fun login(id: String, updatedAt: Long): Login =
@@ -60,6 +61,7 @@ internal fun tag(id: String, updatedAt: Long): Tag =
         position = 0,
         color = null,
         updatedAt = updatedAt,
+        assignedItemsCount = 0,
     )
 
 internal fun time(seconds: Long): Long = Instant.ofEpochSecond(seconds).toEpochMilli()

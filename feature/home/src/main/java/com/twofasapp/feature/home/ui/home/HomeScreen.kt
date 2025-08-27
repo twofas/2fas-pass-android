@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
@@ -66,6 +68,8 @@ import com.twofasapp.feature.home.ui.home.composable.HomeFab
 import com.twofasapp.feature.home.ui.home.composable.HomeSearchBar
 import com.twofasapp.feature.home.ui.home.composable.LoginItem
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
+import com.twofasapp.feature.home.ui.home.modal.ListOptionsModal
+import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,7 +78,7 @@ internal fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     openAddLogin: (String) -> Unit,
     openEditLogin: (String, String) -> Unit,
-    openSettings: () -> Unit,
+    openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
 ) {
@@ -93,6 +97,9 @@ internal fun HomeScreen(
         onSearchQueryChange = { viewModel.search(it) },
         onSearchFocusChange = { viewModel.focusSearch(it) },
         onSortingMethodSelect = { viewModel.updateSortingMethod(it) },
+        onToggleTag = { viewModel.toggleTag(it) },
+        onClearTag = { viewModel.clearTag() },
+        onManageTagsClick = openManageTags,
         onDeveloperClick = openDeveloper,
     )
 }
@@ -110,12 +117,17 @@ private fun Content(
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
     onSortingMethodSelect: (SortingMethod) -> Unit = {},
+    onToggleTag: (Tag) -> Unit = {},
+    onClearTag: () -> Unit = {},
+    onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
+    var showListOptionsModal by remember { mutableStateOf(false) }
+    var showSortModal by remember { mutableStateOf(false) }
     var showFilterModal by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
     val deviceType = currentDeviceType()
@@ -154,10 +166,24 @@ private fun Content(
                         }
 
                         if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
-                            IconButton(
-                                icon = MdtIcons.Filter,
-                                onClick = { showFilterModal = true },
-                            )
+                            Box {
+                                IconButton(
+                                    icon = MdtIcons.Filter,
+                                    onClick = { showListOptionsModal = true },
+                                )
+
+                                if (uiState.selectedTag != null) {
+                                    Icon(
+                                        painter = MdtIcons.CircleFilled,
+                                        contentDescription = null,
+                                        tint = MdtTheme.color.notice,
+                                        modifier = Modifier
+                                            .size(12.dp)
+                                            .align(Alignment.TopEnd)
+                                            .offset(x = (-6).dp, y = 6.dp),
+                                    )
+                                }
+                            }
                         }
                     }
                 },
@@ -208,9 +234,21 @@ private fun Content(
                                 .padding(bottom = 8.dp, top = 4.dp),
                             searchQuery = uiState.searchQuery,
                             searchFocused = uiState.searchFocused,
+                            selectedTag = uiState.selectedTag,
                             onSearchQueryChange = onSearchQueryChange,
                             onSearchFocusChange = onSearchFocusChange,
+                            onClearFilter = onClearTag,
                         )
+                    }
+
+                    if (uiState.loginsFiltered.isEmpty()) {
+                        listItem(HomeListItem.Empty) {
+                            EmptySearchResults(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = ScreenPadding, vertical = 32.dp),
+                            )
+                        }
                     }
 
                     if (loginsPerRow > 1) {
@@ -222,6 +260,7 @@ private fun Content(
                                     logins.forEach { login ->
                                         LoginItem(
                                             login = login,
+                                            tags = uiState.tags,
                                             loginClickAction = uiState.loginClickAction,
                                             query = uiState.searchQuery,
                                             modifier = Modifier.weight(1f),
@@ -238,6 +277,7 @@ private fun Content(
                             listItem(HomeListItem.Login(id = login.id)) {
                                 LoginItem(
                                     login = login,
+                                    tags = uiState.tags,
                                     loginClickAction = uiState.loginClickAction,
                                     query = uiState.searchQuery,
                                     modifier = Modifier.animateItem(),
@@ -267,11 +307,31 @@ private fun Content(
         }
     }
 
+    if (showListOptionsModal) {
+        ListOptionsModal(
+            selectedTag = uiState.selectedTag,
+            onDismissRequest = { showListOptionsModal = false },
+            onSortClick = { showSortModal = true },
+            onFilterClick = { showFilterModal = true },
+            onClearClick = { onClearTag() },
+        )
+    }
+
+    if (showSortModal) {
+        SortModal(
+            onDismissRequest = { showSortModal = false },
+            selected = uiState.sortingMethod,
+            onSelect = onSortingMethodSelect,
+        )
+    }
+
     if (showFilterModal) {
         FilterModal(
             onDismissRequest = { showFilterModal = false },
-            selected = uiState.sortingMethod,
-            onSelect = onSortingMethodSelect,
+            tags = uiState.tags,
+            selectedTag = uiState.selectedTag,
+            onToggle = { onToggleTag(it) },
+            onManageTagsClick = onManageTagsClick,
         )
     }
 

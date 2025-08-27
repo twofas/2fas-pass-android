@@ -27,6 +27,7 @@ data class ColorTokens(
     val tertiaryContainer: Color = Color.Unspecified,
     val onTertiaryContainer: Color = Color.Unspecified,
     val success: Color = Color.Unspecified,
+    val notice: Color = Color.Unspecified,
     val error: Color = Color.Unspecified,
     val onError: Color = Color.Unspecified,
     val errorContainer: Color = Color.Unspecified,

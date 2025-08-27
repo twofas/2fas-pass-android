@@ -88,7 +88,7 @@ fun PasswordGeneratorForm(
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
                 .heightIn(min = 100.dp)
-                .background(MdtTheme.color.surfaceContainer, RoundedShape12)
+                .background(MdtTheme.color.surfaceContainerHigh, RoundedShape12)
                 .padding(horizontal = 16.dp)
                 .animateContentSize(),
             horizontalAlignment = Alignment.CenterHorizontally,

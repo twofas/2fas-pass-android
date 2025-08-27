@@ -51,7 +51,7 @@ internal class LoginMapper(
                 contentType = contentType,
                 contentVersion = contentVersion,
                 content = content,
-                tagIds = tagIds,
+                tagIds = tagIds.ifEmpty { null },
             )
         }
     }

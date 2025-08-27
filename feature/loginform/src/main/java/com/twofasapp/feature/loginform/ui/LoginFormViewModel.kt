@@ -18,14 +18,18 @@ import com.twofasapp.core.common.domain.PasswordGeneratorSettings
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.TagsRepository
+import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 
 internal class LoginFormViewModel(
+    private val vaultsRepository: VaultsRepository,
     private val loginsRepository: LoginsRepository,
     private val settingsRepository: SettingsRepository,
+    private val tagsRepository: TagsRepository,
 ) : ViewModel() {
 
     private var labelChangedByUser = false
@@ -40,6 +44,12 @@ internal class LoginFormViewModel(
         launchScoped {
             settingsRepository.observePasswordGeneratorSettings().collect { settings ->
                 uiState.update { it.copy(passwordGeneratorSettings = settings) }
+            }
+        }
+
+        launchScoped {
+            tagsRepository.observeTags(vaultsRepository.getVault().id).collect { tags ->
+                uiState.update { it.copy(tags = tags) }
             }
         }
     }
@@ -153,6 +163,10 @@ internal class LoginFormViewModel(
 
     fun updateSecurityLevel(securityLevel: SecurityType) {
         updateLogin { login -> login.copy(securityType = securityLevel) }
+    }
+
+    fun updateTags(tags: List<String>) {
+        updateLogin { login -> login.copy(tagIds = tags) }
     }
 
     fun updateNotes(notes: String) {

@@ -9,8 +9,8 @@
 package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.DeletedItem
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.data.main.VaultCipher
-import com.twofasapp.data.main.domain.Tag
 import com.twofasapp.data.main.local.model.TagEntity
 import com.twofasapp.data.main.remote.model.TagJson
 
@@ -60,6 +60,7 @@ internal class TagMapper {
                 color = color,
                 position = position,
                 updatedAt = updatedAt,
+                assignedItemsCount = 0,
             )
         }
     }
@@ -76,6 +77,7 @@ internal class TagMapper {
                 color = color,
                 position = position,
                 updatedAt = updatedAt,
+                assignedItemsCount = 0,
             )
         }
     }

@@ -92,7 +92,7 @@ private fun Content(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedShapeIndexed(isFirst, isLast))
-                    .background(MdtTheme.color.surfaceContainer)
+                    .background(MdtTheme.color.surfaceContainerHigh)
                     .clickable { onSelect(item) }
                     .padding(start = 16.dp, end = 12.dp, top = 16.dp, bottom = 16.dp),
             ) {

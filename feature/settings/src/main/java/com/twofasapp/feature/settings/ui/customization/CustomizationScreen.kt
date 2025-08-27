@@ -34,6 +34,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.deeplinks.Deeplinks
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -52,10 +54,12 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.LoginClickAction
 import com.twofasapp.feature.settings.R
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun CustomizationScreen(
     viewModel: CustomizationViewModel = koinViewModel(),
+    deeplinks: Deeplinks = koinInject(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -66,6 +70,7 @@ internal fun CustomizationScreen(
         onLoginClickActionChange = { viewModel.updateLoginClickAction(it) },
         onDeviceNameChange = { viewModel.updateDeviceName(it) },
         onRestoreDefaultDeviceName = { viewModel.restoreDefaultDeviceName() },
+        onManageTagsClick = { deeplinks.openScreen(Screen.ManageTags) },
     )
 }
 
@@ -77,6 +82,7 @@ private fun Content(
     onLoginClickActionChange: (LoginClickAction) -> Unit = {},
     onDeviceNameChange: (String) -> Unit = {},
     onRestoreDefaultDeviceName: () -> Unit = {},
+    onManageTagsClick: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
     var showLoginClickActionDialog by remember { mutableStateOf(false) }
@@ -122,6 +128,17 @@ private fun Content(
                 subtitle = strings.settingsEntryDynamicColorsDesc,
                 icon = MdtIcons.Palette,
                 onToggle = onDynamicColorsChange,
+            )
+
+            OptionHeader(
+                text = "Tags",
+            )
+
+            OptionEntry(
+                title = strings.settingsEntryManageTags,
+                subtitle = strings.settingsEntryManageTagsDescription,
+                icon = MdtIcons.Tag,
+                onClick = onManageTagsClick,
             )
 
             OptionHeader(

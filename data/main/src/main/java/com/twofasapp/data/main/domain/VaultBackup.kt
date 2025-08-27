@@ -10,6 +10,7 @@ package com.twofasapp.data.main.domain
 
 import com.twofasapp.core.common.domain.DeletedItem
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.crypto.EncryptionSpec
 import java.time.Instant
 import java.time.ZoneId

@@ -26,6 +26,7 @@ import com.twofasapp.feature.settings.ui.security.SecurityScreen
 import com.twofasapp.feature.settings.ui.securitytier.SecurityTierScreen
 import com.twofasapp.feature.settings.ui.settings.SettingsScreen
 import com.twofasapp.feature.settings.ui.subscription.ManageSubscriptionScreen
+import com.twofasapp.feature.settings.ui.tags.ManageTagsScreen
 import com.twofasapp.feature.settings.ui.transfer.TransferScreen
 import com.twofasapp.feature.settings.ui.trash.TrashScreen
 
@@ -140,4 +141,9 @@ fun OpenSourceLibrariesRoute() {
 @Composable
 fun ManageSubscriptionRoute() {
     ManageSubscriptionScreen()
+}
+
+@Composable
+fun ManageTagsRoute() {
+    ManageTagsScreen()
 }

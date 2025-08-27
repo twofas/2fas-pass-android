@@ -26,6 +26,7 @@ import com.twofasapp.feature.settings.ui.security.SecurityViewModel
 import com.twofasapp.feature.settings.ui.securitytier.SecurityTierViewModel
 import com.twofasapp.feature.settings.ui.settings.SettingsViewModel
 import com.twofasapp.feature.settings.ui.subscription.ManageSubscriptionViewModel
+import com.twofasapp.feature.settings.ui.tags.ManageTagsViewModel
 import com.twofasapp.feature.settings.ui.transfer.TransferViewModel
 import com.twofasapp.feature.settings.ui.trash.TrashViewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -52,5 +53,6 @@ class SettingsModule : KoinModule {
         viewModelOf(::SecurityTierViewModel)
         viewModelOf(::SaveDecryptionKitViewModel)
         viewModelOf(::ManageSubscriptionViewModel)
+        viewModelOf(::ManageTagsViewModel)
     }
 }

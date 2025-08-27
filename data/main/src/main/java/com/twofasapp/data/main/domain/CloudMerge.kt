@@ -10,6 +10,7 @@ package com.twofasapp.data.main.domain
 
 import com.twofasapp.core.common.domain.DeletedItem
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 
 data class CloudMerge(
     val logins: Result<Login>,

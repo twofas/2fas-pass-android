@@ -13,11 +13,11 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.domain.Tag
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.purchases.PurchasesRepository
 import kotlinx.coroutines.Job

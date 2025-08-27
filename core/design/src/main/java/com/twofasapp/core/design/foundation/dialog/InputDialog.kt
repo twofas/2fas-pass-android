@@ -28,8 +28,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
@@ -67,6 +65,7 @@ fun InputDialog(
     neutralColor: Color = Color.Unspecified,
     actionsAlignment: ActionsAlignment = ActionsAlignment.Horizontal,
     properties: DialogProperties = DialogProperties(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val focusRequester = remember { FocusRequester() }
     var textFieldValue by remember {
@@ -77,8 +76,16 @@ fun InputDialog(
             ),
         )
     }
-    val inputValidation by remember { derivedStateOf { validate(textFieldValue.text) } }
     var startedTyping by remember { mutableStateOf(false) }
+    val inputValidation by remember {
+        derivedStateOf {
+            if (startedTyping.not() && textFieldValue.text.isEmpty()) {
+                InputValidation.Invalid(null)
+            } else {
+                validate(textFieldValue.text)
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         awaitFrame()
@@ -123,7 +130,7 @@ fun InputDialog(
                     maxLines = 1,
                     supportingText = (inputValidation as? InputValidation.Invalid)?.error.orEmpty(),
                     isError = startedTyping && inputValidation is InputValidation.Invalid,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    keyboardOptions = keyboardOptions,
                     keyboardActions = if (inputValidation is InputValidation.Valid) {
                         KeyboardActions(
                             onDone = { onPositive(textFieldValue.text) },
