@@ -15,4 +15,6 @@ import kotlinx.serialization.Serializable
 internal data class NotificationsJson(
     @SerialName("notifications")
     val notifications: List<NotificationJson>?,
+    @SerialName("compatibility")
+    val compatibility: CompatibilityJson?,
 )

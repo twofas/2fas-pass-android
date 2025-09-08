@@ -37,6 +37,7 @@ class AppUpdateExecutorImpl(
             }
 
             Timber.tag(Tag).d("App update completed with success")
+            sessionRepository.setAppUpdatePrompted(false)
             sessionRepository.setAppVersionCode(appBuild.versionCode)
             return@withContext AppUpdateResult.Completed
         }

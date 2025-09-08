@@ -570,6 +570,11 @@ class Strings(private val c: Context) {
     val importInvalidSchemaErrorCta = c.getString(R.string.import_invalid_schema_error_cta)
     val importInvalidSchemaErrorMsg = c.getString(R.string.import_invalid_schema_error_msg)
 
+    val appUpdateModalTitle = c.getString(R.string.app_update_modal_title)
+    val appUpdateModalSubtitle = c.getString(R.string.app_update_modal_subtitle)
+    val appUpdateModalCtaPositive = c.getString(R.string.app_update_modal_cta_positive)
+    val appUpdateModalCtaNegative = c.getString(R.string.app_update_modal_cta_negative)
+
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis
         val diffSign = diff.sign

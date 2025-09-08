@@ -26,14 +26,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.twofasapp.core.android.deeplinks.Deeplink
 import com.twofasapp.core.android.ktx.navigateTopLevel
+import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.android.navigation.ScreenType
+import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.foundation.dialog.InfoDialog
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.feature.connect.ui.connectmodal.ConnectModal
@@ -61,6 +66,9 @@ internal fun MainContainer(
             viewModel.stopObservingLocalPushes()
             viewModel.sync()
         },
+        markAppUpdatePrompted = {
+            viewModel.markAppUpdatePrompted()
+        },
         onEventConsumed = { viewModel.consumeEvent(it) },
     )
 }
@@ -70,15 +78,18 @@ private fun Content(
     uiState: MainUiState,
     onResume: () -> Unit = {},
     onPause: () -> Unit = {},
+    markAppUpdatePrompted: () -> Unit = {},
     onEventConsumed: (MainUiEvent) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
+    val uriHandler = LocalUriHandler.current
     var currentScreenRoute by remember { mutableStateOf<String?>(null) }
     var bottomBarVisible by remember { mutableStateOf(false) }
     var browserConnectData by remember { mutableStateOf<ConnectData?>(null) }
     var browserRequestData by remember { mutableStateOf<BrowserRequestData?>(null) }
     var showPaywall by remember { mutableStateOf(false) }
+    var showAppUpdateDialog by remember { mutableStateOf(false) }
 
     LifecycleResumeEffect(Unit) {
         onResume()
@@ -112,6 +123,10 @@ private fun Content(
 
                 is MainUiEvent.ShowBrowserRequest -> {
                     browserRequestData = uiEvent.browserRequestData
+                }
+
+                is MainUiEvent.ShowAppUpdateDialog -> {
+                    showAppUpdateDialog = true
                 }
             }
 
@@ -167,6 +182,24 @@ private fun Content(
     if (showPaywall) {
         PurchasesDialog(
             onDismissRequest = { showPaywall = false },
+        )
+    }
+
+    if (showAppUpdateDialog) {
+        InfoDialog(
+            onDismissRequest = { showAppUpdateDialog = false },
+            icon = MdtIcons.Upgrade,
+            title = MdtLocale.strings.appUpdateModalTitle,
+            body = MdtLocale.strings.appUpdateModalSubtitle,
+            negative = MdtLocale.strings.appUpdateModalCtaNegative,
+            positive = MdtLocale.strings.appUpdateModalCtaPositive,
+            onNegative = {
+                markAppUpdatePrompted()
+            },
+            onPositive = {
+                markAppUpdatePrompted()
+                uriHandler.openSafely(MdtLocale.links.playStore)
+            },
         )
     }
 }

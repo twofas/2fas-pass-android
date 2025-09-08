@@ -31,6 +31,7 @@ internal class SessionRepositoryImpl(
     private val biometricsPrompted by booleanPref(default = false)
     private val connectOnboardingPrompted by booleanPref(default = false)
     private val quickSetupPrompted by booleanPref(default = true)
+    private val appUpdatePrompted by booleanPref(default = false)
     private val failedAppUnlocks by serializedPrefNullable(
         serializer = FailedAppUnlocksEntity.serializer(),
         name = "failedAppUnlocks",
@@ -83,5 +84,13 @@ internal class SessionRepositoryImpl(
 
     override suspend fun setQuickSetupPrompted(prompted: Boolean) {
         withContext(dispatchers.io) { quickSetupPrompted.set(prompted) }
+    }
+
+    override suspend fun getAppUpdatePrompted(): Boolean {
+        return appUpdatePrompted.get()
+    }
+
+    override suspend fun setAppUpdatePrompted(prompted: Boolean) {
+        withContext(dispatchers.io) { appUpdatePrompted.set(prompted) }
     }
 }

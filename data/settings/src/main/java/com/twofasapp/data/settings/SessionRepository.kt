@@ -24,4 +24,6 @@ interface SessionRepository {
     suspend fun setFailedAppUnlocks(failedAppUnlocks: FailedAppUnlocks?)
     fun observeQuickSetupPrompted(): Flow<Boolean>
     suspend fun setQuickSetupPrompted(prompted: Boolean)
+    suspend fun getAppUpdatePrompted(): Boolean
+    suspend fun setAppUpdatePrompted(prompted: Boolean)
 }

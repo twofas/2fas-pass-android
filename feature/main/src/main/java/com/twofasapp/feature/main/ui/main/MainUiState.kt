@@ -21,4 +21,5 @@ internal sealed interface MainUiEvent {
     data class OpenDeeplink(val deeplink: Deeplink) : MainUiEvent
     data class ShowBrowserConnect(val browserConnectData: ConnectData) : MainUiEvent
     data class ShowBrowserRequest(val browserRequestData: BrowserRequestData) : MainUiEvent
+    data object ShowAppUpdateDialog : MainUiEvent
 }
