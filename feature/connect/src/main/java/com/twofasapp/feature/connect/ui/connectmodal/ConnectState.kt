@@ -12,6 +12,8 @@ internal sealed interface ConnectState {
     data object Loading : ConnectState
     data object ConfirmNewExtension : ConnectState
     data object UpgradePlan : ConnectState
+    data object AppUpdateRequired : ConnectState
+    data object BrowserExtensionUpdateRequired : ConnectState
     data object Success : ConnectState
     data class Error(
         val title: String,

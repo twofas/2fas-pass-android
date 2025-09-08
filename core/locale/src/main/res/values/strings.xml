@@ -818,4 +818,5 @@
     <string name="cloud_sync_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
     <string name="import_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
     <string name="import_invalid_schema_error_cta">Update app</string>
+    <string name="connect_modal_error_app_update_required_cta_android">Update app</string>
 </resources>

@@ -18,9 +18,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.design.MdtIcons
@@ -108,6 +110,7 @@ private fun Content(
     onDismiss: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(uiState.finishWithSuccess) {
         if (uiState.finishWithSuccess) {
@@ -126,6 +129,27 @@ private fun Content(
                 is ConnectState.Loading -> {
                     LoadingState(
                         text = MdtLocale.strings.connectModalLoading,
+                    )
+                }
+
+                is ConnectState.AppUpdateRequired -> {
+                    ErrorState(
+                        title = MdtLocale.strings.connectModalErrorAppUpdateRequiredTitle,
+                        subtitle = MdtLocale.strings.connectModalErrorAppUpdateRequiredSubtitle,
+                        cta = MdtLocale.strings.connectModalErrorAppUpdateRequiredCta,
+                        onCta = {
+                            uriHandler.openSafely(MdtLocale.links.playStore)
+                            onDismiss()
+                        },
+                    )
+                }
+
+                is ConnectState.BrowserExtensionUpdateRequired -> {
+                    ErrorState(
+                        title = MdtLocale.strings.connectModalErrorBrowserExtensionUpdateRequiredTitle,
+                        subtitle = MdtLocale.strings.connectModalErrorBrowserExtensionUpdateRequiredSubtitle,
+                        cta = MdtLocale.strings.connectModalErrorBrowserExtensionUpdateRequiredCta,
+                        onCta = { onDismiss() },
                     )
                 }
 

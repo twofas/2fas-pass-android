@@ -71,7 +71,7 @@ internal class ConnectViewModel(
             runSafely {
                 with(text.decodeBase64ToString().split(":")) {
                     ConnectData(
-                        version = this[0],
+                        version = this[0].toInt(),
                         sessionId = this[1],
                         pkPersBeHex = this[2],
                         pkEpheBeHex = this[3],
