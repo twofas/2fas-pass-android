@@ -20,7 +20,7 @@ internal data class ImportExportUiState(
 )
 
 internal sealed interface ImportExportUiEvent {
-    data object ShowInvalidSchemaWarning : ImportExportUiEvent
+    data object ShowInvalidSchemaError : ImportExportUiEvent
     data class ShowDecryptionDialog(
         val encryptionSpec: EncryptionSpec,
     ) : ImportExportUiEvent

@@ -18,7 +18,7 @@ import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.LoginsRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.domain.VaultBackup
+import com.twofasapp.data.main.domain.InvalidSchemaVersionException
 import com.twofasapp.data.purchases.PurchasesRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,17 +81,21 @@ internal class ImportExportViewModel(
             runSafely { backupRepository.readVaultBackup(fileUri) }
                 .onSuccess { backup ->
                     uiState.update { it.copy(vaultBackupToImport = backup) }
-
-                    if (backup.schemaVersion > VaultBackup.CurrentSchema) {
-                        showImportLoading(false)
-                        publishEvent(ImportExportUiEvent.ShowInvalidSchemaWarning)
-                    } else {
-                        tryToImport()
-                    }
+                    tryToImport()
                 }
                 .onFailure {
                     showImportLoading(false)
-                    publishEvent(ImportExportUiEvent.ShowErrorDialog)
+
+                    if (it is InvalidSchemaVersionException) {
+                        uiState.update { state ->
+                            state.copy(
+                                vaultBackupToImport = state.vaultBackupToImport.copy(schemaVersion = it.backupSchemaVersion),
+                            )
+                        }
+                        publishEvent(ImportExportUiEvent.ShowInvalidSchemaError)
+                    } else {
+                        publishEvent(ImportExportUiEvent.ShowErrorDialog)
+                    }
                 }
         }
     }

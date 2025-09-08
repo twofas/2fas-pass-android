@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 08 Sep 2025 12:31:27 -0700
+ Exported at: Mon, 08 Sep 2025 12:53:48 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -816,4 +816,6 @@
     <string name="connect_modal_error_browser_extension_update_required_subtitle">Update browser extension</string>
     <string name="cloud_sync_invalid_schema_error_cta">Update app</string>
     <string name="cloud_sync_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
+    <string name="import_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
+    <string name="import_invalid_schema_error_cta">Update app</string>
 </resources>

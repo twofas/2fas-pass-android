@@ -27,11 +27,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.clearTmpDir
 import com.twofasapp.core.android.ktx.currentActivity
+import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.android.ktx.showShareFilePicker
 import com.twofasapp.core.android.ktx.toastLong
 import com.twofasapp.core.android.ktx.toastShort
@@ -118,9 +120,10 @@ private fun Content(
 ) {
     val context = LocalContext.currentActivity
     val strings = MdtLocale.strings
+    val uriHandler = LocalUriHandler.current
     var showExportModal by remember { mutableStateOf(false) }
     var exportLoading by remember { mutableStateOf(false) }
-    var showInvalidSchemaWarningDialog by remember { mutableStateOf(false) }
+    var showInvalidSchemaErrorDialog by remember { mutableStateOf(false) }
     var showBackupDecryptionModal by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var showExportAuthenticationPrompt by remember { mutableStateOf(false) }
@@ -129,7 +132,7 @@ private fun Content(
     uiState.events.firstOrNull()?.let { event ->
         LaunchedEffect(Unit) {
             when (event) {
-                is ImportExportUiEvent.ShowInvalidSchemaWarning -> showInvalidSchemaWarningDialog = true
+                is ImportExportUiEvent.ShowInvalidSchemaError -> showInvalidSchemaErrorDialog = true
                 is ImportExportUiEvent.ShowDecryptionDialog -> showBackupDecryptionModal = true
                 is ImportExportUiEvent.ShowErrorDialog -> showErrorDialog = true
                 is ImportExportUiEvent.ResetExportModal -> {
@@ -201,14 +204,14 @@ private fun Content(
         )
     }
 
-    if (showInvalidSchemaWarningDialog) {
+    if (showInvalidSchemaErrorDialog) {
         InfoDialog(
-            onDismissRequest = { showInvalidSchemaWarningDialog = false },
+            onDismissRequest = { showInvalidSchemaErrorDialog = false },
             icon = MdtIcons.Warning,
-            title = "Import warning",
-            body = "Your current app version supports backups up to version ${VaultBackup.CurrentSchema}. The file you're trying to import is version ${uiState.vaultBackupToImport.schemaVersion}. While you can still attempt the import, there's a chance that some data may not be imported correctly.",
-            positive = "Try to import",
-            onPositive = { onTryToImportClick() },
+            title = "Import error",
+            body = strings.importInvalidSchemaErrorMsg.format(VaultBackup.CurrentSchema, uiState.vaultBackupToImport.schemaVersion),
+            positive = strings.importInvalidSchemaErrorCta,
+            onPositive = { uriHandler.openSafely(MdtLocale.links.playStore) },
         )
     }
 
