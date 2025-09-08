@@ -37,5 +37,6 @@ class ExternalImportModule : KoinModule {
         singleOf(::AppleDesktopImportSpec)
         singleOf(::AppleMobileImportSpec)
         singleOf(::FirefoxImportSpec)
+        singleOf(::KeepassImportSpec)
     }
 }

@@ -47,6 +47,7 @@ internal class ExternalImportViewModel(
     private val appleDesktopImportSpec: AppleDesktopImportSpec,
     private val appleMobileImportSpec: AppleMobileImportSpec,
     private val firefoxImportSpec: FirefoxImportSpec,
+    private val keepassImportSpec: KeepassImportSpec,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ExternalImportUiState())
     private val importType = savedStateHandle.toRoute<Screen.ExternalImport>().importType
@@ -65,6 +66,7 @@ internal class ExternalImportViewModel(
                     ImportType.AppleDesktop -> appleDesktopImportSpec
                     ImportType.AppleMobile -> appleMobileImportSpec
                     ImportType.Firefox -> firefoxImportSpec
+                    ImportType.KeePass -> keepassImportSpec
                 },
             )
         }

@@ -823,4 +823,6 @@
     <string name="app_update_modal_subtitle">You’re using an old version. Update now to get the latest features and improvements.</string>
     <string name="app_update_modal_cta_positive">Update app</string>
     <string name="app_update_modal_cta_negative">Not now</string>
+    <string name="transfer_instructions_keepass">transfer_instructions_keepass</string>
+    <string name="transfer_instructions_keepassxc">transfer_instructions_keepassxc</string>
 </resources>

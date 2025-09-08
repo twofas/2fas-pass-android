@@ -99,6 +99,7 @@ private fun Content(
                             ImportType.AppleDesktop -> R.drawable.external_logo_apple
                             ImportType.AppleMobile -> R.drawable.external_logo_apple
                             ImportType.Firefox -> R.drawable.external_logo_firefox
+                            ImportType.KeePass -> R.drawable.external_logo_keepass
                         },
                     ),
                     onClick = {

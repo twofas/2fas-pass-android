@@ -19,4 +19,5 @@ enum class ImportType(val displayName: String) {
     AppleDesktop("Apple Passwords (Desktop)"),
     AppleMobile("Apple Passwords (Mobile)"),
     Firefox("Firefox"),
+    KeePass("KeePass"),
 }
