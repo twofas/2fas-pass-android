@@ -34,7 +34,7 @@ internal class WebDavCloudService(
     )
 
     private fun generateFilename(request: VaultSyncRequest): String {
-        return "${request.vaultId}_v${request.backupSchemaVersion}.2faspass"
+        return "${request.vaultId}_v1.2faspass"
     }
 
     override suspend fun connect(config: CloudConfig): CloudResult {
@@ -87,7 +87,6 @@ internal class WebDavCloudService(
                     vaultId = info.vaultId,
                     vaultCreatedAt = info.vaultCreatedAt.toEpochMilli(),
                     vaultUpdatedAt = info.vaultUpdatedAt.toEpochMilli(),
-                    backupSchemaVersion = info.schemaVersion,
                 ),
             ),
         ) ?: throw RuntimeException("File not found!")
@@ -255,7 +254,7 @@ internal class WebDavCloudService(
                             vaultId = request.vaultId,
                             vaultCreatedAt = request.vaultCreatedAt,
                             vaultUpdatedAt = mergeResult.backupUpdatedAt,
-                            schemaVersion = request.backupSchemaVersion,
+                            schemaVersion = mergeResult.schemaVersion,
                         ),
                     ),
             ),

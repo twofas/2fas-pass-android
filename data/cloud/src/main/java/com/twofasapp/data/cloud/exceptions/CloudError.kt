@@ -24,4 +24,5 @@ sealed class CloudError(val cause: Throwable?) {
     class FileIsLocked(cause: Throwable? = null) : CloudError(cause)
     class MultiDeviceSyncNotAvailable(cause: Throwable? = null) : CloudError(cause)
     class CleartextNotPermitted(cause: Throwable? = null) : CloudError(cause)
+    class InvalidSchemaVersion(cause: Throwable? = null, val backupSchemaVersion: Int, val supportedSchemaVersion: Int) : CloudError(cause)
 }

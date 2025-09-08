@@ -35,6 +35,7 @@ import com.twofasapp.data.main.VaultKeysRepository
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.domain.CloudMerger
 import com.twofasapp.data.main.domain.CloudSyncStatus
+import com.twofasapp.data.main.domain.InvalidSchemaVersionException
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.purchases.PurchasesRepository
 import org.koin.core.component.KoinComponent
@@ -110,7 +111,6 @@ internal class CloudSyncWork(
                     vaultId = vault.id,
                     vaultCreatedAt = vault.createdAt,
                     vaultUpdatedAt = vault.updatedAt,
-                    backupSchemaVersion = VaultBackup.CurrentSchema,
                 ),
                 mergeVaultContent = { cloudBackupContent ->
                     if (cloudBackupContent == null || forceReplace) {
@@ -121,11 +121,22 @@ internal class CloudSyncWork(
                         VaultMergeResult.Success(
                             backupContent = backupRepository.serializeVaultBackup(localBackupEncrypted),
                             backupUpdatedAt = localBackupEncrypted.vaultUpdatedAt,
+                            schemaVersion = localBackupEncrypted.schemaVersion,
                         )
                     } else {
                         // Merge local backup with cloud backup
                         val cloudBackupEncrypted = runSafely { backupRepository.readVaultBackup(cloudBackupContent) }.getOrElse {
-                            return@sync VaultMergeResult.Failure(CloudError.FileParsing(it))
+                            if (it is InvalidSchemaVersionException) {
+                                return@sync VaultMergeResult.Failure(
+                                    CloudError.InvalidSchemaVersion(
+                                        cause = it,
+                                        backupSchemaVersion = it.backupSchemaVersion,
+                                        supportedSchemaVersion = VaultBackup.CurrentSchema,
+                                    ),
+                                )
+                            } else {
+                                return@sync VaultMergeResult.Failure(CloudError.FileParsing(it))
+                            }
                         }
 
                         if (isEligible(cloudDeviceId = cloudBackupEncrypted.originDeviceId).not()) {
@@ -171,6 +182,7 @@ internal class CloudSyncWork(
                         VaultMergeResult.Success(
                             backupContent = backupRepository.serializeVaultBackup(newBackupEncrypted),
                             backupUpdatedAt = newBackupEncrypted.vaultUpdatedAt,
+                            schemaVersion = newBackupEncrypted.schemaVersion,
                         )
                     }
                 },

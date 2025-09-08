@@ -557,6 +557,8 @@ class Strings(private val c: Context) {
     val loginTags = c.getString(R.string.login_tags)
     val loginTagsDescription = c.getString(R.string.login_tags_description)
     val loginSelectedTags = c.getString(R.string.login_selected_tags)
+    val cloudSyncInvalidSchemaErrorCta = c.getString(R.string.cloud_sync_invalid_schema_error_cta)
+    val cloudSyncInvalidSchemaErrorMsg = c.getString(R.string.cloud_sync_invalid_schema_error_msg)
 
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis

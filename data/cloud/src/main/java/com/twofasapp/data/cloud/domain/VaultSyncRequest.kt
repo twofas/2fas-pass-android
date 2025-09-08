@@ -15,5 +15,4 @@ data class VaultSyncRequest(
     val vaultId: String,
     val vaultCreatedAt: Long,
     val vaultUpdatedAt: Long,
-    val backupSchemaVersion: Int,
 )

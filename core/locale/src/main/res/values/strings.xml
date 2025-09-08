@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sat, 23 Aug 2025 09:00:15 -0700
+ Exported at: Mon, 08 Sep 2025 12:31:27 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -130,7 +130,7 @@
     <string name="login_password_label">Password</string>
     <string name="login_name_label">Name</string>
     <string name="login_username_label">Username</string>
-    <string name="login_notes_label">Secure Notes</string>
+    <string name="login_notes_label">Notes</string>
     <string name="login_security_level_label">Security Tier</string>
     <string name="login_uri_label">URL</string>
     <string name="login_add_uri_cta">+\u0020\u0020Add URL</string>
@@ -776,8 +776,6 @@
     <string name="quick_setup_security_tier_title">Security Tier</string>
     <string name="quick_setup_security_tier_description">Decide how to use individual Items with Autofill and share them with the Browser Extension.</string>
     <string name="quick_setup_security_tier_default_label">Default</string>
-    <string name="quick_setup_drive_sync_title">Vault Sync</string>
-    <string name="quick_setup_drive_sync_description">Securely sync your data using Google Drive in case this device gets lost or damaged.</string>
     <string name="quick_setup_import_items_cta">Import Items from 2FAS Pass Backup</string>
     <string name="quick_setup_transfer_items_cta">Transfer passwords from other apps</string>
     <string name="quick_setup_icloud_sync_failure">Failed to enable Vault Sync</string>
@@ -804,5 +802,18 @@
     <string name="login_tags">Tags</string>
     <string name="login_tags_description">Assign Tags to find your Items more easily.</string>
     <string name="login_selected_tags">Selected Tags</string>
+    <string name="quick_setup_drive_sync_title">Vault Sync</string>
+    <string name="quick_setup_drive_sync_description">Securely sync your data using Google Drive in case this device gets lost or damaged.</string>
     <string name="home_list_options_modal_title">List Options</string>
+    <string name="filter_tag_banner_ios">Showing %1$d items tagged: **%2$s**</string>
+    <string name="login_filter_modal_tag">Filter</string>
+    <string name="login_filter_modal_clear">Clear filters</string>
+    <string name="login_filter_modal_tag_all">All</string>
+    <string name="connect_modal_error_app_update_required_title">New app version required</string>
+    <string name="connect_modal_error_app_update_required_subtitle">Update the application in App Store</string>
+    <string name="connect_modal_error_app_update_required_cta">Go to App Store</string>
+    <string name="connect_modal_error_browser_extension_update_required_title">New browser extension version required</string>
+    <string name="connect_modal_error_browser_extension_update_required_subtitle">Update browser extension</string>
+    <string name="cloud_sync_invalid_schema_error_cta">Update app</string>
+    <string name="cloud_sync_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
 </resources>

@@ -8,4 +8,4 @@
 
 package com.twofasapp.data.main.domain
 
-class InvalidSchemaVersion(msg: String?) : RuntimeException(msg)
+class InvalidSchemaVersionException(msg: String, val backupSchemaVersion: Int) : RuntimeException(msg)

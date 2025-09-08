@@ -26,11 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.ktx.copyToClipboard
+import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -146,6 +148,7 @@ private fun ErrorStatus(
         }
     }
     var showPaywall by remember { mutableStateOf(false) }
+    val uriHandler = LocalUriHandler.current
 
     Column(
         modifier = modifier,
@@ -241,6 +244,22 @@ private fun ErrorStatus(
                         modifier = Modifier.weight(1f),
                         height = 40.dp,
                         onClick = { showPaywall = true },
+                    )
+                }
+            }
+
+            is CloudError.InvalidSchemaVersion -> {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Button(
+                        text = MdtLocale.strings.cloudSyncInvalidSchemaErrorCta,
+                        modifier = Modifier.weight(1f),
+                        height = 40.dp,
+                        onClick = { uriHandler.openSafely(MdtLocale.links.playStore) },
                     )
                 }
             }
