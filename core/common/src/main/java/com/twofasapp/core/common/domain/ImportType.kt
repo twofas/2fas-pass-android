@@ -20,4 +20,5 @@ enum class ImportType(val displayName: String) {
     AppleMobile("Apple Passwords (Mobile)"),
     Firefox("Firefox"),
     KeePass("KeePass"),
+    KeePassXC("KeePassXC"),
 }
