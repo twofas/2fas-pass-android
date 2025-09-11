@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.temporal.ChronoUnit
 
 internal class BrowserExtensionRepositoryImpl(
     private val appBuild: AppBuild,
@@ -164,6 +165,6 @@ internal class BrowserExtensionRepositoryImpl(
     private suspend fun shouldShowAppUpdate(response: NotificationsJson): Boolean {
         return response.notifications.isNullOrEmpty() &&
             (response.compatibility?.minimalAndroidVersion ?: 0) > appBuild.versionCode &&
-            sessionRepository.getAppUpdatePrompted().not()
+            timeProvider.currentTimeUtcInstant().isAfter(sessionRepository.getAppUpdatePromptedAt().plus(1, ChronoUnit.DAYS))
     }
 }

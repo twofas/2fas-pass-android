@@ -150,7 +150,7 @@ internal class MainViewModel(
 
     fun markAppUpdatePrompted() {
         launchScoped {
-            sessionRepository.setAppUpdatePrompted(true)
+            sessionRepository.markAppUpdatePrompted()
         }
     }
 

@@ -47,7 +47,6 @@ import com.twofasapp.core.design.foundation.dialog.LoadingDialog
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.feature.lock.ui.authentication.AuthenticationPrompt
 import com.twofasapp.feature.purchases.PurchasesDialog
 import com.twofasapp.feature.settings.ui.backupdecryption.BackupDecryptionModal
