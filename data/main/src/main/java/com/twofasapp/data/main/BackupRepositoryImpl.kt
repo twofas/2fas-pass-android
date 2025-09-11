@@ -160,7 +160,7 @@ internal class BackupRepositoryImpl(
 
         if (schemaVersion > VaultBackup.CurrentSchema) {
             throw InvalidSchemaVersionException(
-                msg = "Your current app version supports backups up to version ${VaultBackup.CurrentSchema}. The file you're trying to read is version $schemaVersion. Please update your application to latest version.",
+                msg = "Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version $schemaVersion, which is not supported in your current version. Please update your app to synchronize it.",
                 backupSchemaVersion = schemaVersion,
             )
         }

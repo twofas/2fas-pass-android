@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 08 Sep 2025 14:19:23 -0700
+ Exported at: Thu, 11 Sep 2025 11:52:55 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -809,20 +809,20 @@
     <string name="login_filter_modal_tag">Filter</string>
     <string name="login_filter_modal_clear">Clear filters</string>
     <string name="login_filter_modal_tag_all">All</string>
-    <string name="connect_modal_error_app_update_required_title">New app version required</string>
-    <string name="connect_modal_error_app_update_required_subtitle">Update the application in App Store</string>
-    <string name="connect_modal_error_app_update_required_cta">Go to App Store</string>
-    <string name="connect_modal_error_browser_extension_update_required_title">New browser extension version required</string>
+    <string name="connect_modal_error_app_update_required_title">App update required</string>
+    <string name="connect_modal_error_app_update_required_subtitle">Please update the app</string>
+    <string name="connect_modal_error_app_update_required_cta">Update</string>
+    <string name="connect_modal_error_browser_extension_update_required_title">Browser extension update required</string>
     <string name="connect_modal_error_browser_extension_update_required_subtitle">Update browser extension</string>
     <string name="cloud_sync_invalid_schema_error_cta">Update app</string>
-    <string name="cloud_sync_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
-    <string name="import_invalid_schema_error_msg">Your app supports backups up to version %1$d. The backup you’re trying to open is version %2$d. Please update your app to the latest version to restore it.</string>
+    <string name="cloud_sync_invalid_schema_error_msg">Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version %1$d, which is not supported in your current version. Please update your app to synchronize it.</string>
+    <string name="import_invalid_schema_error_msg">The backup you’re trying to import was created in a newer version %1$d, which is not supported in your current version. Please update your app to import it.</string>
     <string name="import_invalid_schema_error_cta">Update app</string>
     <string name="connect_modal_error_app_update_required_cta_android">Update app</string>
-    <string name="app_update_modal_title">App Update Recommended</string>
-    <string name="app_update_modal_subtitle">You’re using an old version. Update now to get the latest features and improvements.</string>
-    <string name="app_update_modal_cta_positive">Update app</string>
+    <string name="app_update_modal_title">Update recommended</string>
+    <string name="app_update_modal_subtitle">You’re using an old app version. Please update it to get the latest features and improvements.</string>
+    <string name="app_update_modal_cta_positive">Update</string>
     <string name="app_update_modal_cta_negative">Not now</string>
-    <string name="transfer_instructions_keepass">transfer_instructions_keepass</string>
-    <string name="transfer_instructions_keepassxc">transfer_instructions_keepassxc</string>
+    <string name="transfer_instructions_keepass">Open KeePass on your PC and log in to your database.\n\nClick **File** in the menu bar, and select **Export**.\n\nChoose the **KeePass CSV format**, the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
+    <string name="transfer_instructions_keepassxc">Open KeePassXC on your PC and log in to your database.\n\nClick **Database** in the menu bar, and select **Export**.\n\nChoose the **CSV format**, confirm and choose the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
 </resources>

@@ -209,7 +209,7 @@ private fun Content(
             onDismissRequest = { showInvalidSchemaErrorDialog = false },
             icon = MdtIcons.Warning,
             title = "Import error",
-            body = strings.importInvalidSchemaErrorMsg.format(VaultBackup.CurrentSchema, uiState.vaultBackupToImport.schemaVersion),
+            body = strings.importInvalidSchemaErrorMsg.format(uiState.vaultBackupToImport.schemaVersion),
             positive = strings.importInvalidSchemaErrorCta,
             onPositive = { uriHandler.openSafely(MdtLocale.links.playStore) },
         )

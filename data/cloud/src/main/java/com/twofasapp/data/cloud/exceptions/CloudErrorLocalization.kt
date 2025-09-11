@@ -23,7 +23,7 @@ fun CloudError?.asMessage(): String {
         is CloudError.FileIsLocked -> "Backup file is locked. Please try to restart sync."
         is CloudError.MultiDeviceSyncNotAvailable -> "Matching vault exists in the backup but is linked to another device. Upgrade your plan to enable multi-device sync."
         is CloudError.CleartextNotPermitted -> "HTTP traffic is not permitted for security reasons. Please use HTTPS instead."
-        is CloudError.InvalidSchemaVersion -> "Your current app version supports backups up to version $supportedSchemaVersion. The file you're trying to read is version $backupSchemaVersion. Please update your application to latest version."
+        is CloudError.InvalidSchemaVersion -> "Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version $backupSchemaVersion, which is not supported in your current version. Please update your app to synchronize it."
         null -> "Unknown error, please try again."
     }
 }
