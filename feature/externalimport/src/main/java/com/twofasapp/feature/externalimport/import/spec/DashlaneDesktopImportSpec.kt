@@ -11,7 +11,7 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvFile
@@ -36,7 +36,7 @@ internal class DashlaneDesktopImportSpec(
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val vaultId = vaultsRepository.getVault().id
-        val logins = mutableListOf<Login>()
+        val items = mutableListOf<Item>()
         val credentialsFilename = "credentials.csv"
         val notesFilename = "securenotes.csv"
 
@@ -65,7 +65,7 @@ internal class DashlaneDesktopImportSpec(
                 ),
             )
 
-            logins.addAll(csvFile.parse(vaultId))
+            items.addAll(csvFile.parse(vaultId))
         }
 
         zipFileContents[notesFilename]?.let { text ->
@@ -81,11 +81,11 @@ internal class DashlaneDesktopImportSpec(
                 ),
             )
 
-            logins.addAll(csvFile.parse(vaultId))
+            items.addAll(csvFile.parse(vaultId))
         }
 
         return ImportContent(
-            logins = logins,
+            items = items,
             skipped = 0,
         )
     }

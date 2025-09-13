@@ -27,7 +27,7 @@ import com.twofasapp.data.cloud.services.CloudServiceProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.DeletedItemsRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -50,7 +50,7 @@ internal class CloudSyncWork(
     private val vaultRepository: VaultsRepository by inject()
     private val vaultKeysRepository: VaultKeysRepository by inject()
     private val backupRepository: BackupRepository by inject()
-    private val loginsRepository: LoginsRepository by inject()
+    private val itemsRepository: ItemsRepository by inject()
     private val tagsRepository: TagsRepository by inject()
     private val deletedItemsRepository: DeletedItemsRepository by inject()
     private val securityRepository: SecurityRepository by inject()
@@ -169,7 +169,7 @@ internal class CloudSyncWork(
                             cloud = cloudBackup,
                         )
 
-                        loginsRepository.executeCloudMerge(cloudMerge.logins)
+                        itemsRepository.executeCloudMerge(cloudMerge.items)
                         tagsRepository.executeCloudMerge(cloudMerge.tags)
 
                         deletedItemsRepository.clearAll(vault.id)

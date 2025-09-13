@@ -11,11 +11,12 @@ package com.twofasapp.feature.autofill.ui.save
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.coroutines.Dispatchers
-import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginUri
+import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
-import com.twofasapp.core.common.domain.filterAndNormalizeUris
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.normalizeBeforeSaving
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
@@ -30,7 +31,7 @@ internal class AutofillSaveLoginViewModel(
     private val dispatchers: Dispatchers,
     private val vaultsRepository: VaultsRepository,
     private val settingsRepository: SettingsRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
@@ -38,31 +39,34 @@ internal class AutofillSaveLoginViewModel(
 
     fun initLogin(saveLoginData: SaveLoginData) {
         launchScoped {
-            val initialLogin = Login.Empty.copy(
-                name = saveLoginData.uri.orEmpty(),
-                username = saveLoginData.username,
-                password = saveLoginData.password?.let { it1 -> SecretField.Visible(it1) },
+            val initialItem = Item.create(
                 securityType = settingsRepository.observeDefaultSecurityType().first(),
-                uris = listOfNotNull(
-                    saveLoginData.uri?.let { it1 ->
-                        LoginUri(
-                            text = it1,
-                        )
-                    },
+                contentType = "login",
+                content = ItemContent.Login.Empty.copy(
+                    name = saveLoginData.uri.orEmpty(),
+                    username = saveLoginData.username,
+                    password = saveLoginData.password?.let { it1 -> SecretField.ClearText(it1) },
+                    uris = listOfNotNull(
+                        saveLoginData.uri?.let { it1 ->
+                            ItemUri(
+                                text = it1,
+                            )
+                        },
+                    ),
                 ),
             )
 
             uiState.update {
                 it.copy(
-                    initialLogin = initialLogin,
-                    login = initialLogin,
+                    initialItem = initialItem,
+                    item = initialItem,
                 )
             }
         }
     }
 
-    fun updateLogin(login: Login) {
-        uiState.update { it.copy(login = login) }
+    fun updateItem(item: Item) {
+        uiState.update { it.copy(item = item) }
     }
 
     fun updateIsValid(isValid: Boolean) {
@@ -72,16 +76,16 @@ internal class AutofillSaveLoginViewModel(
     fun save(onComplete: () -> Unit) {
         launchScoped {
             val vaultId = vaultsRepository.getVault().id
-            val login = withContext(dispatchers.io) {
-                uiState.value.login
-                    .copy(
-                        vaultId = vaultId,
-                    )
-                    .filterAndNormalizeUris()
-                    .let { itemEncryptionMapper.encryptLogin(it, vaultCryptoScope.getVaultCipher(vaultId)) }
+            val item = withContext(dispatchers.io) {
+                itemEncryptionMapper.encryptItem(
+                    item = uiState.value.item
+                        .copy(vaultId = vaultId)
+                        .normalizeBeforeSaving(),
+                    vaultCipher = vaultCryptoScope.getVaultCipher(vaultId),
+                )
             }
 
-            loginsRepository.saveLogin(login)
+            itemsRepository.saveItem(item)
         }.invokeOnCompletion { onComplete() }
     }
 }

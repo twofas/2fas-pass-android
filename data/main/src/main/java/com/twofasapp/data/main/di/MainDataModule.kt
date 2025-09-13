@@ -19,8 +19,8 @@ import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepositoryImpl
 import com.twofasapp.data.main.DeletedItemsRepository
 import com.twofasapp.data.main.DeletedItemsRepositoryImpl
-import com.twofasapp.data.main.LoginsRepository
-import com.twofasapp.data.main.LoginsRepositoryImpl
+import com.twofasapp.data.main.ItemsRepository
+import com.twofasapp.data.main.ItemsRepositoryImpl
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.SecurityRepositoryImpl
 import com.twofasapp.data.main.TagsRepository
@@ -46,13 +46,13 @@ import com.twofasapp.data.main.local.VaultsLocalSource
 import com.twofasapp.data.main.mapper.CloudMapper
 import com.twofasapp.data.main.mapper.ConnectedBrowserMapper
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
+import com.twofasapp.data.main.mapper.IconTypeMapper
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
-import com.twofasapp.data.main.mapper.LoginIconTypeMapper
-import com.twofasapp.data.main.mapper.LoginMapper
-import com.twofasapp.data.main.mapper.LoginSecurityTypeMapper
-import com.twofasapp.data.main.mapper.LoginUriMapper
-import com.twofasapp.data.main.mapper.LoginUriMatcherMapper
+import com.twofasapp.data.main.mapper.ItemMapper
+import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
+import com.twofasapp.data.main.mapper.ItemUriMapper
 import com.twofasapp.data.main.mapper.TagMapper
+import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
 import com.twofasapp.data.main.mapper.VaultMapper
@@ -70,21 +70,21 @@ import org.koin.dsl.module
 class MainDataModule : KoinModule {
     override fun provide(): Module = module {
         singleOf(::VaultMapper)
-        singleOf(::LoginMapper)
+        singleOf(::ItemMapper)
         singleOf(::ItemEncryptionMapper)
         singleOf(::CloudMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)
-        singleOf(::LoginIconTypeMapper)
-        singleOf(::LoginSecurityTypeMapper)
-        singleOf(::LoginUriMapper)
-        singleOf(::LoginUriMatcherMapper)
+        singleOf(::IconTypeMapper)
+        singleOf(::ItemSecurityTypeMapper)
+        singleOf(::ItemUriMapper)
+        singleOf(::UriMatcherMapper)
         singleOf(::TagMapper)
         singleOf(::VaultBackupMapper)
         singleOf(::VaultDataForBrowserMapper)
 
         singleOf(::ItemsLocalSource)
-        singleOf(::LoginsRepositoryImpl) { bind<LoginsRepository>() }
+        singleOf(::ItemsRepositoryImpl) { bind<ItemsRepository>() }
 
         singleOf(::VaultsLocalSource)
         singleOf(::VaultsRepositoryImpl) { bind<VaultsRepository>() }

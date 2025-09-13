@@ -106,7 +106,7 @@ private fun Content(
                             append("You are going to import ")
 
                             withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = MdtTheme.color.primary)) {
-                                append("${state.importContent.logins.size} services")
+                                append("${state.importContent.items.size} services")
                             }
 
                             append(" from ${uiState.importSpec.name}.")

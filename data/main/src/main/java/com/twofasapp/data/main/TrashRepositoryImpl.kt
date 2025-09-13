@@ -9,11 +9,11 @@
 package com.twofasapp.data.main
 
 import com.twofasapp.core.common.coroutines.Dispatchers
-import com.twofasapp.core.common.domain.ItemEncrypted
+import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.local.ItemsLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
-import com.twofasapp.data.main.mapper.LoginMapper
+import com.twofasapp.data.main.mapper.ItemMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -25,19 +25,19 @@ internal class TrashRepositoryImpl(
     private val vaultsLocalSource: VaultsLocalSource,
     private val deletedItemsRepository: DeletedItemsRepository,
     private val cloudRepository: CloudRepository,
-    private val loginMapper: LoginMapper,
+    private val itemMapper: ItemMapper,
 ) : TrashRepository {
 
     override fun observeDeleted(): Flow<List<ItemEncrypted>> {
         return itemsLocalSource.observeDeleted().map { list ->
-            list.map { entity -> loginMapper.mapToDomain(entity) }
+            list.map { entity -> itemMapper.mapToDomain(entity) }
         }
     }
 
     override suspend fun trash(vararg id: String) {
         withContext(dispatchers.io) {
             val now = timeProvider.currentTimeUtc()
-            val logins = itemsLocalSource.getLogins(id.toList()).map {
+            val logins = itemsLocalSource.getItems(id.toList()).map {
                 it.copy(
                     deleted = true,
                     updatedAt = now,
@@ -45,9 +45,9 @@ internal class TrashRepositoryImpl(
                 )
             }
 
-            itemsLocalSource.saveLogins(logins)
+            itemsLocalSource.saveItems(logins)
 
-            deletedItemsRepository.saveDeletedItems(logins.map { it.let(loginMapper::mapToDeletedItem) })
+            deletedItemsRepository.saveDeletedItems(logins.map { it.let(itemMapper::mapToDeletedItem) })
 
             vaultsLocalSource.updateLastModificationTime(logins.first().vaultId, now)
 
@@ -58,7 +58,7 @@ internal class TrashRepositoryImpl(
     override suspend fun restore(vararg id: String) {
         withContext(dispatchers.io) {
             val now = timeProvider.currentTimeUtc()
-            val logins = itemsLocalSource.getLoginsDeleted(id.toList()).map {
+            val logins = itemsLocalSource.getItemsDeleted(id.toList()).map {
                 it.copy(
                     deleted = false,
                     updatedAt = now,
@@ -66,7 +66,7 @@ internal class TrashRepositoryImpl(
                 )
             }
 
-            itemsLocalSource.saveLogins(logins)
+            itemsLocalSource.saveItems(logins)
 
             deletedItemsRepository.clearDeletedItems(logins.map { it.id })
 
@@ -78,10 +78,10 @@ internal class TrashRepositoryImpl(
 
     override suspend fun delete(vararg id: String) {
         withContext(dispatchers.io) {
-            val logins = itemsLocalSource.getLoginsDeleted(id.toList())
+            val logins = itemsLocalSource.getItemsDeleted(id.toList())
             itemsLocalSource.delete(id.toList())
 
-            deletedItemsRepository.saveDeletedItems(logins.map { it.let(loginMapper::mapToDeletedItem) })
+            deletedItemsRepository.saveDeletedItems(logins.map { it.let(itemMapper::mapToDeletedItem) })
         }
     }
 }

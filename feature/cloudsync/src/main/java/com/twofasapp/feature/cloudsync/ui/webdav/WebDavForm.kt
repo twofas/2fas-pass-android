@@ -34,8 +34,8 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.checked.Switch
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
-import com.twofasapp.core.design.foundation.textfield.Password
-import com.twofasapp.core.design.foundation.textfield.PasswordTrailingIcon
+import com.twofasapp.core.design.foundation.textfield.SecretField
+import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.locale.MdtLocale
 
@@ -137,11 +137,11 @@ fun WebDavForm(
                     focusManager.clearFocus()
                 },
             ),
-            visualTransformation = VisualTransformation.Password(passwordVisible),
+            visualTransformation = VisualTransformation.SecretField(passwordVisible),
             trailingIcon = {
                 if (enabled) {
-                    PasswordTrailingIcon(
-                        passwordVisible = passwordVisible,
+                    SecretFieldTrailingIcon(
+                        visible = passwordVisible,
                         onToggle = { passwordVisible = passwordVisible.not() },
                     )
                 }

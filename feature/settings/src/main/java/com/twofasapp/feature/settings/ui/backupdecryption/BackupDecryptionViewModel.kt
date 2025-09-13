@@ -22,7 +22,7 @@ import com.twofasapp.core.common.ktx.decodeUrlParam
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.readPdfAsBitmap
 import com.twofasapp.data.main.BackupRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -44,7 +44,7 @@ class BackupDecryptionViewModel(
     private val vaultCryptoScope: VaultCryptoScope,
     private val readQrFromImage: ReadQrFromImage,
     private val backupRepository: BackupRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val tagsRepository: TagsRepository,
 ) : ViewModel() {
     val uiState = MutableStateFlow(BackupDecryptionUiState())
@@ -256,10 +256,10 @@ class BackupDecryptionViewModel(
                         seed = seed,
                     )
 
-                    val logins = vaultBackupDecrypted.logins.orEmpty()
+                    val items = vaultBackupDecrypted.items.orEmpty()
                     val tags = vaultBackupDecrypted.tags.orEmpty()
 
-                    loginsRepository.importLogins(logins)
+                    itemsRepository.importItems(items)
                     tagsRepository.importTags(tags)
                 }
                     .onSuccess {

@@ -67,15 +67,15 @@ interface ItemsDao {
 
     @Transaction
     suspend fun executeCloudMerge(cloudMerge: CloudMergeEntity) {
-        cloudMerge.loginsToAdd.chunked(500).forEach { chunk ->
+        cloudMerge.itemsToAdd.chunked(500).forEach { chunk ->
             save(chunk)
         }
 
-        cloudMerge.loginsToUpdate.chunked(500).forEach { chunk ->
+        cloudMerge.itemsToUpdate.chunked(500).forEach { chunk ->
             save(chunk)
         }
 
-        cloudMerge.loginsToTrash.chunked(500).forEach { chunk ->
+        cloudMerge.itemsToTrash.chunked(500).forEach { chunk ->
             save(chunk)
         }
     }

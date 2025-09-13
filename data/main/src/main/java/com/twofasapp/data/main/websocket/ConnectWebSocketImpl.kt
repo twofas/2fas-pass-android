@@ -28,7 +28,7 @@ import com.twofasapp.core.common.push.PushTokenProvider
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.domain.ConnectData
@@ -49,7 +49,7 @@ internal class ConnectWebSocketImpl(
     override val device: Device,
     override val timeProvider: TimeProvider,
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
-    override val loginsRepository: LoginsRepository,
+    override val itemsRepository: ItemsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
     override val loginDecryptionMapper: ItemEncryptionMapper,
     private val dispatchers: Dispatchers,

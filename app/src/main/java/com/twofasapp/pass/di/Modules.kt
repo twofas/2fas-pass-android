@@ -23,8 +23,8 @@ import com.twofasapp.feature.developer.di.DeveloperModule
 import com.twofasapp.feature.di.QrScanModule
 import com.twofasapp.feature.externalimport.di.ExternalImportModule
 import com.twofasapp.feature.home.di.HomeModule
+import com.twofasapp.feature.itemform.di.ItemFormModule
 import com.twofasapp.feature.lock.di.LockModule
-import com.twofasapp.feature.loginform.di.LoginFormModule
 import com.twofasapp.feature.main.di.MainModule
 import com.twofasapp.feature.purchases.di.PurchasesModule
 import com.twofasapp.feature.quicksetup.di.QuickSetupModule
@@ -61,7 +61,7 @@ object Modules {
         ExternalImportModule(),
         QrScanModule(),
         CloudSyncModule(),
-        LoginFormModule(),
+        ItemFormModule(),
         PurchasesModule(),
         QuickSetupModule(),
     )

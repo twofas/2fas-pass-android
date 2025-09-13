@@ -31,10 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.android.ktx.getSafelyParcelable
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
+import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.feature.settings.OptionHeader
 import com.twofasapp.core.design.feature.settings.OptionHeaderContentPaddingFirst
 import com.twofasapp.core.design.foundation.lazy.listItem
@@ -94,10 +95,9 @@ private fun Content(
     screenState: ScreenState,
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
-    onFillAndRememberClick: (Login) -> Unit = {},
-    onFillClick: (Login) -> Unit = {},
+    onFillAndRememberClick: (Item) -> Unit = {},
+    onFillClick: (Item) -> Unit = {},
 ) {
-    val context = LocalContext.current
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
@@ -123,7 +123,7 @@ private fun Content(
                 )
             }
 
-            AnimatedFadeVisibility(visible = uiState.suggestedLoginsFiltered.isEmpty() && uiState.otherLoginsFiltered.isEmpty() && uiState.searchQuery.isNotEmpty()) {
+            AnimatedFadeVisibility(visible = uiState.suggestedItemsFiltered.isEmpty() && uiState.otherItemsFiltered.isEmpty() && uiState.searchQuery.isNotEmpty()) {
                 EmptySearchResults(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -160,7 +160,7 @@ private fun Content(
                         )
                     }
 
-                    if (uiState.suggestedLoginsFiltered.isNotEmpty()) {
+                    if (uiState.suggestedItemsFiltered.isNotEmpty()) {
                         listItem(AutofillPickerListItem.Header("Suggested")) {
                             OptionHeader(
                                 text = "Suggested",
@@ -170,10 +170,10 @@ private fun Content(
                         }
                     }
 
-                    uiState.suggestedLoginsFiltered.forEach { login ->
-                        listItem(AutofillPickerListItem.Login(id = login.id)) {
+                    uiState.suggestedItemsFiltered.forEach { item ->
+                        listItem(AutofillPickerListItem.AutofillItem(id = item.id)) {
                             AutofillLoginItem(
-                                login = login,
+                                item = item,
                                 query = uiState.searchQuery,
                                 suggested = true,
                                 modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
@@ -183,7 +183,7 @@ private fun Content(
                         }
                     }
 
-                    if (uiState.otherLoginsFiltered.isNotEmpty() && uiState.suggestedLoginsFiltered.isNotEmpty()) {
+                    if (uiState.otherItemsFiltered.isNotEmpty() && uiState.suggestedItemsFiltered.isNotEmpty()) {
                         listItem(AutofillPickerListItem.Header("Other")) {
                             OptionHeader(
                                 text = "Other",
@@ -192,10 +192,10 @@ private fun Content(
                         }
                     }
 
-                    uiState.otherLoginsFiltered.forEach { login ->
-                        listItem(AutofillPickerListItem.Login(id = login.id)) {
+                    uiState.otherItemsFiltered.forEach { item ->
+                        listItem(AutofillPickerListItem.AutofillItem(id = item.id)) {
                             AutofillLoginItem(
-                                login = login,
+                                item = item,
                                 query = uiState.searchQuery,
                                 suggested = false,
                                 modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
@@ -216,7 +216,7 @@ private fun Previews() {
     PreviewTheme {
         Content(
             uiState = AutofillPickerUiState(
-                suggestedLogins = listOf(Login.Preview),
+                suggestedItems = listOf(LoginItemPreview),
             ),
             screenState = ScreenState.Success,
         )

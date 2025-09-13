@@ -14,7 +14,7 @@ import android.service.autofill.SaveCallback
 import android.service.autofill.SaveRequest
 import android.view.autofill.AutofillId
 import com.twofasapp.core.android.ktx.getSafelyParcelable
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
 import com.twofasapp.feature.autofill.service.builders.IntentBuilders
@@ -24,7 +24,7 @@ import com.twofasapp.feature.autofill.service.parser.AutofillInput
 import timber.log.Timber
 
 internal class SaveRequestHandler(
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val purchasesRepository: PurchasesRepository,
 ) {
     suspend fun handleRequest(
@@ -55,7 +55,7 @@ internal class SaveRequestHandler(
             return
         }
 
-        if (loginsRepository.getLoginsCount() >= purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit) {
+        if (itemsRepository.getItemsCount() >= purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit) {
             saveCallback.onFailure("Logins limit reached")
             return
         }

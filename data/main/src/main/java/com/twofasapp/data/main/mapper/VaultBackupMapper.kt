@@ -13,10 +13,11 @@ import com.twofasapp.core.common.domain.crypto.asDomain
 import com.twofasapp.core.common.domain.crypto.asEntity
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.remote.model.EncryptionSpecJson
-import com.twofasapp.data.main.remote.model.VaultBackupJsonV1
+import com.twofasapp.data.main.remote.model.VaultBackupJsonV2
+import com.twofasapp.data.main.remote.model.deprecated.VaultBackupJsonV1
 
 internal class VaultBackupMapper(
-    private val loginMapper: LoginMapper,
+    private val itemMapper: ItemMapper,
     private val tagMapper: TagMapper,
     private val deletedItemsMapper: DeletedItemsMapper,
 ) {
@@ -38,8 +39,8 @@ internal class VaultBackupMapper(
                     name = vaultName,
                     createdAt = vaultCreatedAt,
                     updatedAt = vaultUpdatedAt,
-                    logins = logins?.let { loginMapper.mapToJson(it) },
-                    loginsEncrypted = loginsEncrypted,
+                    logins = items?.map { itemMapper.mapItemContentLoginToJson(it) },
+                    loginsEncrypted = itemsEncrypted,
                     tags = tags?.let { tagMapper.mapToJson(it) },
                     tagsEncrypted = tagsEncrypted,
                     deletedItems = deletedItems?.let { deletedItemsMapper.mapToJson(it) },
@@ -49,7 +50,7 @@ internal class VaultBackupMapper(
         }
     }
 
-    fun mapToDomain(json: VaultBackupJsonV1, deviceIdFallback: String): VaultBackup {
+    fun mapToDomainV1(json: VaultBackupJsonV1, deviceIdFallback: String): VaultBackup {
         return with(json) {
             VaultBackup(
                 schemaVersion = schemaVersion,
@@ -62,14 +63,39 @@ internal class VaultBackupMapper(
                 vaultName = vault.name,
                 vaultCreatedAt = vault.createdAt,
                 vaultUpdatedAt = vault.updatedAt,
-                logins = vault.logins?.map { loginMapper.mapToDomain(json = it, vaultId = vault.id) },
-                loginsEncrypted = vault.loginsEncrypted,
+                items = vault.logins?.map { itemMapper.mapItemContentLoginToDomain(json = it, vaultId = vault.id) },
+                itemsEncrypted = vault.loginsEncrypted,
                 tags = vault.tags?.map { tagMapper.mapToDomain(json = it, vaultId = vault.id) },
                 tagsEncrypted = vault.tagsEncrypted,
                 deletedItems = vault.deletedItems?.map { deletedItemsMapper.mapToDomain(json = it, vault.id) },
                 deletedItemsEncrypted = vault.deletedItemsEncrypted,
                 encryption = encryption?.let { mapToDomain(it) },
             )
+        }
+    }
+
+    fun mapToDomainV2(json: VaultBackupJsonV2, deviceIdFallback: String): VaultBackup {
+        return with(json) {
+//            VaultBackup(
+//                schemaVersion = schemaVersion,
+//                originOs = origin.os,
+//                originAppVersionCode = origin.appVersionCode,
+//                originAppVersionName = origin.appVersionName,
+//                originDeviceId = origin.deviceId ?: deviceIdFallback,
+//                originDeviceName = origin.deviceName,
+//                vaultId = vault.id,
+//                vaultName = vault.name,
+//                vaultCreatedAt = vault.createdAt,
+//                vaultUpdatedAt = vault.updatedAt,
+//                logins = vault.logins?.map { loginMapper.mapToDomain(json = it, vaultId = vault.id) },
+//                loginsEncrypted = vault.loginsEncrypted,
+//                tags = vault.tags?.map { tagMapper.mapToDomain(json = it, vaultId = vault.id) },
+//                tagsEncrypted = vault.tagsEncrypted,
+//                deletedItems = vault.deletedItems?.map { deletedItemsMapper.mapToDomain(json = it, vault.id) },
+//                deletedItemsEncrypted = vault.deletedItemsEncrypted,
+//                encryption = encryption?.let { mapToDomain(it) },
+//            )
+            VaultBackup.Empty
         }
     }
 

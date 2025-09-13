@@ -26,7 +26,7 @@ import com.twofasapp.feature.cloudsync.navigation.WebDavSyncRoute
 import com.twofasapp.feature.connect.navigation.ConnectRoute
 import com.twofasapp.feature.developer.navigation.DeveloperRoute
 import com.twofasapp.feature.externalimport.navigation.ExternalImportRoute
-import com.twofasapp.feature.home.navigation.EditLoginRoute
+import com.twofasapp.feature.home.navigation.EditItemRoute
 import com.twofasapp.feature.home.navigation.HomeRoute
 import com.twofasapp.feature.quicksetup.ui.QuickSetupRoute
 import com.twofasapp.feature.settings.navigation.AboutRoute
@@ -66,16 +66,16 @@ internal fun MainNavHost(
             HomeRoute(
                 openAddLogin = { vaultId ->
                     navController.navigate(
-                        Screen.EditLogin(
-                            loginId = "",
+                        Screen.EditItem(
+                            itemId = "",
                             vaultId = vaultId,
                         ),
                     )
                 },
                 openEditLogin = { loginId, vaultId ->
                     navController.navigate(
-                        Screen.EditLogin(
-                            loginId = loginId,
+                        Screen.EditItem(
+                            itemId = loginId,
                             vaultId = vaultId,
                         ),
                     )
@@ -124,8 +124,8 @@ internal fun MainNavHost(
             DeveloperRoute()
         }
 
-        composable<Screen.EditLogin> {
-            EditLoginRoute(
+        composable<Screen.EditItem> {
+            EditItemRoute(
                 close = { navController.popBackStack() },
             )
         }

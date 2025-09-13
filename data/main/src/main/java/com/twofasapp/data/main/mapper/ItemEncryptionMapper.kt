@@ -8,27 +8,31 @@
 
 package com.twofasapp.data.main.mapper
 
-import com.twofasapp.core.common.domain.ItemEncrypted
-import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.clearText
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.domain.VaultKeysExpiredException
 import com.twofasapp.data.main.local.model.items.LoginContentEntityV1
+import com.twofasapp.data.main.local.model.items.SecureNoteContentEntityV1
 import kotlinx.serialization.json.Json
 
 class ItemEncryptionMapper(
     private val json: Json,
-    private val iconTypeMapper: LoginIconTypeMapper,
-    private val uriMapper: LoginUriMapper,
+    private val iconTypeMapper: IconTypeMapper,
+    private val uriMapper: ItemUriMapper,
 ) {
-    fun decryptLogin(
+    fun decryptItem(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
-        decryptPassword: Boolean = false,
-    ): Login? {
+        decryptSecretFields: Boolean = false,
+    ): Item? {
         return try {
-            val contentJson = when (itemEncrypted.securityType) {
+            val contentEntityJson = when (itemEncrypted.securityType) {
                 SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(itemEncrypted.content)
                 SecurityType.Tier2 -> vaultCipher.decryptWithTrustedKey(itemEncrypted.content)
                 SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(itemEncrypted.content)
@@ -36,182 +40,193 @@ class ItemEncryptionMapper(
 
             val serializer = when (itemEncrypted.contentType) {
                 "login" -> LoginContentEntityV1.serializer()
-                else -> return null
+                "secureNote" -> SecureNoteContentEntityV1.serializer()
+                else -> return itemEncrypted.asDecrypted(content = ItemContent.Unknown(rawJson = contentEntityJson)) // TODO: Decrypt unknown item
             }
 
-            val content = json.decodeFromString(serializer, contentJson)
+            val contentEntity = json.decodeFromString(serializer, contentEntityJson)
 
-            return Login(
-                id = itemEncrypted.id,
-                vaultId = itemEncrypted.vaultId,
-                createdAt = itemEncrypted.createdAt,
-                updatedAt = itemEncrypted.updatedAt,
-                deletedAt = itemEncrypted.deletedAt,
-                deleted = itemEncrypted.deleted,
-                securityType = itemEncrypted.securityType,
-                tagIds = itemEncrypted.tagIds,
-                name = content.name,
-                username = content.username,
-                password = content.password?.let {
-                    if (decryptPassword) {
-                        SecretField.Visible(
+            val content = when (contentEntity) {
+                is LoginContentEntityV1 -> {
+                    ItemContent.Login(
+                        name = contentEntity.name,
+                        username = contentEntity.username,
+                        password = contentEntity.password?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        uris = contentEntity.uris.map { uriMapper.mapToDomain(it) },
+                        iconType = iconTypeMapper.mapToDomainFromEntity(contentEntity.iconType),
+                        iconUriIndex = contentEntity.iconUriIndex,
+                        customImageUrl = contentEntity.customImageUrl,
+                        labelText = contentEntity.labelText,
+                        labelColor = contentEntity.labelColor,
+                        notes = contentEntity.notes,
+                    )
+                }
+
+                is SecureNoteContentEntityV1 -> {
+                    ItemContent.SecureNote(
+                        name = contentEntity.name,
+                        text = contentEntity.text?.let {
                             when (itemEncrypted.securityType) {
                                 SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
                                 SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
                                 SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-                            },
-                        )
-                    } else {
-                        SecretField.Hidden(it)
-                    }
-                },
-                uris = content.uris.map { uriMapper.mapToDomain(it) },
-                iconType = iconTypeMapper.mapToDomainFromEntity(content.iconType),
-                iconUriIndex = content.iconUriIndex,
-                customImageUrl = content.customImageUrl,
-                labelText = content.labelText,
-                labelColor = content.labelColor,
-                notes = content.notes,
-            )
-        } catch (e: VaultKeysExpiredException) {
+                            }
+                        },
+                    )
+                }
+            }
+
+            itemEncrypted.asDecrypted(content = content)
+        } catch (_: VaultKeysExpiredException) {
             null
         }
     }
 
-    fun encryptLogins(
-        logins: List<Login>,
-        vaultCipher: VaultCipher,
-    ): List<ItemEncrypted> {
-        return logins.map { encryptLogin(login = it, vaultCipher = vaultCipher) }
-    }
-
-    fun encryptLogin(
-        login: Login,
+    fun encryptItem(
+        item: Item,
         vaultCipher: VaultCipher,
     ): ItemEncrypted {
-        val contentLoginEntity = LoginContentEntityV1(
-            name = login.name,
-            username = login.username,
-            password = when (login.password) {
-                is SecretField.Hidden -> (login.password as SecretField.Hidden).value
-                is SecretField.Visible -> {
-                    if ((login.password as SecretField.Visible).value.isBlank()) {
-                        null
-                    } else {
-                        when (login.securityType) {
-                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey((login.password as SecretField.Visible).value)
-                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey((login.password as SecretField.Visible).value)
-                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey((login.password as SecretField.Visible).value)
-                        }
-                    }
+        val contentEntityJson = item.content.let { content ->
+            when (content) {
+                is ItemContent.Unknown -> {
+                    // TODO: Encrypt unknown item
+                    content.rawJson
                 }
 
-                null -> null
-            },
-            uris = login.uris.map { uriMapper.mapToEntity(it) },
-            iconType = iconTypeMapper.mapToEntity(login.iconType),
-            iconUriIndex = login.iconUriIndex,
-            customImageUrl = login.customImageUrl,
-            labelText = login.labelText,
-            labelColor = login.labelColor,
-            notes = login.notes,
-        )
+                is ItemContent.Login -> {
+                    json.encodeToString(
+                        LoginContentEntityV1(
+                            name = content.name,
+                            username = content.username,
+                            password = when (content.password) {
+                                is SecretField.Encrypted -> (content.password as SecretField.Encrypted).value
+                                is SecretField.ClearText -> {
+                                    if (content.password.clearText.isBlank()) {
+                                        null
+                                    } else {
+                                        when (item.securityType) {
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.password.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.password.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.password.clearText)
+                                        }
+                                    }
+                                }
 
-        val contentJson = json.encodeToString(contentLoginEntity)
+                                null -> null
+                            },
+                            uris = content.uris.map { uriMapper.mapToEntity(it) },
+                            iconType = iconTypeMapper.mapToEntity(content.iconType),
+                            iconUriIndex = content.iconUriIndex,
+                            customImageUrl = content.customImageUrl,
+                            labelText = content.labelText,
+                            labelColor = content.labelColor,
+                            notes = content.notes,
+                        ),
+                    )
+                }
 
-        val contentEncrypted = when (login.securityType) {
-            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(contentJson)
-            SecurityType.Tier2 -> vaultCipher.encryptWithTrustedKey(contentJson)
-            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(contentJson)
+                is ItemContent.SecureNote -> {
+                    json.encodeToString(
+                        SecureNoteContentEntityV1(
+                            name = content.name,
+                            text = content.text?.let {
+                                when (item.securityType) {
+                                    SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(it)
+                                    SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(it)
+                                    SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(it)
+                                }
+                            },
+                        ),
+                    )
+                }
+            }
         }
 
-        return ItemEncrypted(
-            id = login.id,
-            vaultId = login.vaultId,
-            createdAt = login.createdAt,
-            updatedAt = login.updatedAt,
-            deletedAt = login.deletedAt,
-            deleted = login.deleted,
-            securityType = login.securityType,
-            tagIds = login.tagIds,
-            contentType = contentLoginEntity.contentType,
-            contentVersion = contentLoginEntity.contentVersion,
-            content = contentEncrypted,
-        )
+        val contentEntityJsonEncrypted = when (item.securityType) {
+            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(contentEntityJson)
+            SecurityType.Tier2 -> vaultCipher.encryptWithTrustedKey(contentEntityJson)
+            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(contentEntityJson)
+        }
+
+        return item.asEncrypted(content = contentEntityJsonEncrypted)
     }
 
-    fun decryptPassword(
-        login: Login,
+    fun encryptItems(
+        items: List<Item>,
+        vaultCipher: VaultCipher,
+    ): List<ItemEncrypted> {
+        return items.map { encryptItem(item = it, vaultCipher = vaultCipher) }
+    }
+
+    fun decryptSecretField(
+        secretField: SecretField?,
+        securityType: SecurityType,
         vaultCipher: VaultCipher,
     ): String? {
         return try {
-            val password = when (login.password) {
-                is SecretField.Hidden -> (login.password as SecretField.Hidden).value
-                is SecretField.Visible -> return (login.password as SecretField.Visible).value
-                null -> null
+            if (secretField == null) {
+                return null
             }
 
-            password?.let {
-                when (login.securityType) {
-                    SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-                    SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-                    SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+            when (secretField) {
+                is SecretField.Encrypted -> {
+                    when (securityType) {
+                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(secretField.value)
+                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(secretField.value)
+                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(secretField.value)
+                    }
+                }
+
+                is SecretField.ClearText -> {
+                    secretField.value
                 }
             }
-        } catch (e: VaultKeysExpiredException) {
+        } catch (_: VaultKeysExpiredException) {
             null
         }
     }
 
-    fun withVisiblePassword(
-        login: Login?,
-        vaultCipher: VaultCipher,
-    ): Login? {
-        return try {
-            login?.copy(
-                password = when (login.password) {
-                    is SecretField.Hidden -> {
-                        SecretField.Visible(
-                            when (login.securityType) {
-                                SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey((login.password as SecretField.Hidden).value)
-                                SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey((login.password as SecretField.Hidden).value)
-                                SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey((login.password as SecretField.Hidden).value)
-                            },
-                        )
-                    }
-
-                    is SecretField.Visible -> login.password
-                    null -> null
-                },
-            )
-        } catch (e: VaultKeysExpiredException) {
-            null
-        }
+    private fun Item.asEncrypted(content: EncryptedBytes): ItemEncrypted {
+        return ItemEncrypted(
+            id = id,
+            vaultId = vaultId,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            deletedAt = deletedAt,
+            deleted = deleted,
+            securityType = securityType,
+            contentType = contentType,
+            contentVersion = contentVersion,
+            content = content,
+            tagIds = tagIds,
+        )
     }
 
-    fun withHiddenPassword(
-        login: Login?,
-        vaultCipher: VaultCipher,
-    ): Login? {
-        return try {
-            login?.copy(
-                password = when (login.password) {
-                    is SecretField.Hidden -> login.password
-                    is SecretField.Visible -> {
-                        SecretField.Hidden(
-                            when (login.securityType) {
-                                SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey((login.password as SecretField.Visible).value)
-                                SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey((login.password as SecretField.Visible).value)
-                                SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey((login.password as SecretField.Visible).value)
-                            },
-                        )
-                    }
-
-                    null -> null
-                },
-            )
-        } catch (e: VaultKeysExpiredException) {
-            null
-        }
+    private fun ItemEncrypted.asDecrypted(content: ItemContent): Item {
+        return Item(
+            id = id,
+            vaultId = vaultId,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            deletedAt = deletedAt,
+            deleted = deleted,
+            securityType = securityType,
+            contentType = contentType,
+            contentVersion = contentVersion,
+            content = content,
+            tagIds = tagIds,
+        )
     }
 }

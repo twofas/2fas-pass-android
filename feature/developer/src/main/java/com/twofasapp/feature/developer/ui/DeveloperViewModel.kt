@@ -13,12 +13,13 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.crypto.WordList
 import com.twofasapp.core.common.domain.IconType
-import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginUri
+import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -33,7 +34,7 @@ import kotlin.random.Random
 internal class DeveloperViewModel(
     appBuild: AppBuild,
     private val vaultsRepository: VaultsRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val purchasesRepository: PurchasesRepository,
     private val purchasesOverrideRepository: PurchasesOverrideRepository,
     private val vaultCryptoScope: VaultCryptoScope,
@@ -49,7 +50,7 @@ internal class DeveloperViewModel(
 
     init {
         launchScoped {
-            loginsRepository.observeLogins(vaultsRepository.getVault().id).collect { logins ->
+            itemsRepository.observeItems(vaultsRepository.getVault().id).collect { logins ->
                 uiState.update { it.copy(loginItemsCount = logins.size) }
             }
         }
@@ -81,48 +82,44 @@ internal class DeveloperViewModel(
             vaultCryptoScope.withVaultCipher(vault) {
                 repeat(1) {
                     launchScoped(Dispatchers.IO) {
-                        loginsRepository.importLogins(
+                        itemsRepository.importItems(
                             buildList {
                                 val id = Random.nextInt(9999)
                                 val tier = securityType
                                 val addNote = Random.nextBoolean()
 
                                 add(
-                                    Login(
-                                        id = "",
-                                        vaultId = "",
-                                        name = when (tier) {
-                                            SecurityType.Tier1 -> "Name $id (T1)"
-                                            SecurityType.Tier2 -> "Name $id (T2)"
-                                            SecurityType.Tier3 -> "Name $id (T3)"
-                                        },
-                                        username = buildString {
-                                            append("user")
-                                            append(
-                                                when (tier) {
-                                                    SecurityType.Tier1 -> 1
-                                                    SecurityType.Tier2 -> 2
-                                                    SecurityType.Tier3 -> 3
-                                                },
-                                            )
-                                            append("@mail$id.com")
-                                        },
-                                        password = SecretField.Visible("pass$id"),
+                                    Item.create(
                                         securityType = tier,
-                                        uris = listOf(LoginUri("https://uri$id.com")),
-                                        iconType = IconType.Label,
-                                        customImageUrl = null,
-                                        labelText = id.toString().take(2),
-                                        labelColor = null,
-                                        deleted = false,
-                                        notes = if (addNote) "Lorem ipsum dolor sit amet $id" else null,
-                                        tagIds = emptyList(),
-                                        createdAt = 0L,
-                                        updatedAt = 0L,
+                                        contentType = "login",
+                                        content = ItemContent.Login.Empty.copy(
+                                            name = when (tier) {
+                                                SecurityType.Tier1 -> "Name $id (T1)"
+                                                SecurityType.Tier2 -> "Name $id (T2)"
+                                                SecurityType.Tier3 -> "Name $id (T3)"
+                                            },
+                                            username = buildString {
+                                                append("user")
+                                                append(
+                                                    when (tier) {
+                                                        SecurityType.Tier1 -> 1
+                                                        SecurityType.Tier2 -> 2
+                                                        SecurityType.Tier3 -> 3
+                                                    },
+                                                )
+                                                append("@mail$id.com")
+                                            },
+                                            password = SecretField.ClearText("pass$id"),
+                                            uris = listOf(ItemUri("https://uri$id.com")),
+                                            iconType = IconType.Label,
+                                            customImageUrl = null,
+                                            labelText = id.toString().take(2),
+                                            labelColor = null,
+                                            notes = if (addNote) "Lorem ipsum dolor sit amet $id" else null,
+                                        ),
                                     ),
                                 )
                             },
-
                         )
                     }
                 }
@@ -132,7 +129,7 @@ internal class DeveloperViewModel(
 
     fun generateRandomTestItems(count: Int, onComplete: () -> Unit) {
         launchScoped {
-            loginsRepository.importLogins(
+            itemsRepository.importItems(
                 buildList {
                     repeat(count) {
                         val id = Random.nextInt(9999999)
@@ -140,37 +137,34 @@ internal class DeveloperViewModel(
                         val addNote = Random.nextBoolean()
 
                         add(
-                            Login(
-                                id = "",
-                                vaultId = "",
-                                name = when (tier) {
-                                    SecurityType.Tier1 -> "Name $id (T1)"
-                                    SecurityType.Tier2 -> "Name $id (T2)"
-                                    SecurityType.Tier3 -> "Name $id (T3)"
-                                },
-                                username = buildString {
-                                    append("user")
-                                    append(
-                                        when (tier) {
-                                            SecurityType.Tier1 -> 1
-                                            SecurityType.Tier2 -> 2
-                                            SecurityType.Tier3 -> 3
-                                        },
-                                    )
-                                    append("@mail$id.com")
-                                },
-                                password = SecretField.Visible("pass$id"),
+                            Item.create(
                                 securityType = tier,
-                                uris = listOf(LoginUri("https://uri$id.com")),
-                                iconType = IconType.Label,
-                                customImageUrl = null,
-                                labelText = id.toString().take(2),
-                                labelColor = null,
-                                deleted = false,
-                                notes = if (addNote) "Lorem ipsum dolor sit amet $id" else null,
-                                tagIds = emptyList(),
-                                createdAt = 0L,
-                                updatedAt = 0L,
+                                contentType = "login",
+                                content = ItemContent.Login.Empty.copy(
+                                    name = when (tier) {
+                                        SecurityType.Tier1 -> "Name $id (T1)"
+                                        SecurityType.Tier2 -> "Name $id (T2)"
+                                        SecurityType.Tier3 -> "Name $id (T3)"
+                                    },
+                                    username = buildString {
+                                        append("user")
+                                        append(
+                                            when (tier) {
+                                                SecurityType.Tier1 -> 1
+                                                SecurityType.Tier2 -> 2
+                                                SecurityType.Tier3 -> 3
+                                            },
+                                        )
+                                        append("@mail$id.com")
+                                    },
+                                    password = SecretField.ClearText("pass$id"),
+                                    uris = listOf(ItemUri("https://uri$id.com")),
+                                    iconType = IconType.Label,
+                                    customImageUrl = null,
+                                    labelText = id.toString().take(2),
+                                    labelColor = null,
+                                    notes = if (addNote) "Lorem ipsum dolor sit amet $id" else null,
+                                ),
                             ),
                         )
                     }
@@ -181,7 +175,7 @@ internal class DeveloperViewModel(
 
     fun generateTopDomainItems(onComplete: () -> Unit) {
         launchScoped {
-            loginsRepository.importLogins(
+            itemsRepository.importItems(
                 buildList {
                     DevTopDomains.list.forEach { domain ->
                         val tier = SecurityType.Tier3
@@ -189,34 +183,31 @@ internal class DeveloperViewModel(
                         val rand = Random.nextInt(9999999)
 
                         add(
-                            Login(
-                                id = "",
-                                vaultId = "",
-                                name = domain,
-                                username = buildString {
-                                    append("user")
-                                    append(
-                                        when (tier) {
-                                            SecurityType.Tier1 -> 1
-                                            SecurityType.Tier2 -> 2
-                                            SecurityType.Tier3 -> 3
-                                        },
-                                    )
-                                    append("@$domain")
-                                },
-                                password = SecretField.Visible("pass$rand"),
+                            Item.create(
                                 securityType = tier,
-                                uris = listOf(LoginUri("https://$domain")),
-                                iconType = IconType.Icon,
-                                iconUriIndex = 0,
-                                customImageUrl = null,
-                                labelText = null,
-                                labelColor = null,
-                                notes = if (addNote) "Lorem ipsum dolor sit amet $rand" else null,
-                                tagIds = emptyList(),
-                                deleted = false,
-                                createdAt = 0L,
-                                updatedAt = 0L,
+                                contentType = "login",
+                                content = ItemContent.Login.Empty.copy(
+                                    name = domain,
+                                    username = buildString {
+                                        append("user")
+                                        append(
+                                            when (tier) {
+                                                SecurityType.Tier1 -> 1
+                                                SecurityType.Tier2 -> 2
+                                                SecurityType.Tier3 -> 3
+                                            },
+                                        )
+                                        append("@$domain")
+                                    },
+                                    password = SecretField.ClearText("pass$rand"),
+                                    uris = listOf(ItemUri("https://$domain")),
+                                    iconType = IconType.Icon,
+                                    iconUriIndex = 0,
+                                    customImageUrl = null,
+                                    labelText = null,
+                                    labelColor = null,
+                                    notes = if (addNote) "Lorem ipsum dolor sit amet $rand" else null,
+                                ),
                             ),
                         )
                     }
@@ -249,7 +240,7 @@ internal class DeveloperViewModel(
 
     fun deleteAll() {
         launchScoped {
-            loginsRepository.permanentlyDeleteAll()
+            itemsRepository.permanentlyDeleteAll()
         }
     }
 }

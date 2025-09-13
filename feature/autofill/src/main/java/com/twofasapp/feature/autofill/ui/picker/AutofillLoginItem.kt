@@ -24,9 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
-import com.twofasapp.core.design.feature.login.LoginEntry
+import com.twofasapp.core.design.feature.items.ItemEntry
+import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.dialog.ActionsAlignment
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
@@ -35,26 +36,26 @@ import com.twofasapp.core.locale.MdtLocale
 @Composable
 internal fun AutofillLoginItem(
     modifier: Modifier = Modifier,
-    login: Login,
+    item: Item,
     query: String = "",
     suggested: Boolean,
-    onFillAndRememberClick: (Login) -> Unit = {},
-    onFillClick: (Login) -> Unit = {},
+    onFillAndRememberClick: (Item) -> Unit = {},
+    onFillClick: (Item) -> Unit = {},
 ) {
     var showAutofillDialog by remember { mutableStateOf(false) }
 
-    LoginEntry(
+    ItemEntry(
         modifier = modifier
             .clickable {
                 if (suggested) {
-                    onFillClick(login)
+                    onFillClick(item)
                 } else {
                     showAutofillDialog = true
                 }
             }
             .height(72.dp)
             .padding(horizontal = 16.dp),
-        login = login,
+        item = item,
         query = query,
     )
 
@@ -65,7 +66,7 @@ internal fun AutofillLoginItem(
             bodyAnnotated = buildAnnotatedString {
                 append(MdtLocale.strings.autofillLoginDialogBodyPrefix)
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(login.name.ifEmpty { MdtLocale.strings.loginNoItemName })
+                    append(item.content.name.ifEmpty { MdtLocale.strings.loginNoItemName })
                 }
                 append(MdtLocale.strings.autofillLoginDialogBodySuffix)
             },
@@ -74,8 +75,8 @@ internal fun AutofillLoginItem(
             positive = MdtLocale.strings.autofillLoginDialogPositive,
             neutral = MdtLocale.strings.autofillLoginDialogNeutral,
             negative = MdtLocale.strings.commonCancel,
-            onPositive = { onFillAndRememberClick(login) },
-            onNeutral = { onFillClick(login) },
+            onPositive = { onFillAndRememberClick(item) },
+            onNeutral = { onFillClick(item) },
         )
     }
 }
@@ -86,7 +87,7 @@ private fun Previews() {
     PreviewColumn {
         AutofillLoginItem(
             modifier = Modifier.fillMaxWidth(),
-            login = Login.Preview,
+            item = LoginItemPreview,
             suggested = false,
         )
     }

@@ -1,23 +1,14 @@
 package com.twofasapp.data.main.domain
 
 import com.twofasapp.core.common.domain.DeletedItem
-import com.twofasapp.core.common.domain.IconType
-import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import java.time.Instant
 
-internal fun login(id: String, updatedAt: Long): Login =
-    Login(
+internal fun item(id: String, updatedAt: Long): Item =
+    Item.Empty.copy(
         id = id,
         vaultId = "vault1",
-        name = "test",
-        username = "user",
-        password = null,
-        securityType = SecurityType.Tier3,
-        uris = emptyList(),
-        iconType = IconType.Icon,
-        tagIds = emptyList(),
         updatedAt = updatedAt,
     )
 
@@ -30,7 +21,7 @@ internal fun deletedItem(id: String, deletedAt: Long): DeletedItem =
     )
 
 internal fun vaultBackup(
-    logins: List<Login>? = null,
+    items: List<Item>? = null,
     tags: List<Tag>? = null,
     deletedItems: List<DeletedItem>? = null,
 ) = VaultBackup(
@@ -44,8 +35,8 @@ internal fun vaultBackup(
     vaultName = "Main",
     vaultCreatedAt = 0L,
     vaultUpdatedAt = 0L,
-    logins = logins,
-    loginsEncrypted = null,
+    items = items,
+    itemsEncrypted = null,
     tags = tags,
     tagsEncrypted = null,
     deletedItems = deletedItems,

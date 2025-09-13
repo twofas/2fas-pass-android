@@ -17,12 +17,12 @@ class CloudMerger {
         val cloudDeletedItems = cloud.deletedItems.orEmpty().toMutableList()
 
         /**
-         * Merging logins
+         * Merging items
          */
-        val loginsMerge = mergeItems(
-            localItems = local.logins.orEmpty(),
+        val itemsMerge = mergeItems(
+            localItems = local.items.orEmpty(),
             localDeletedItems = localDeletedItems,
-            cloudItems = cloud.logins.orEmpty(),
+            cloudItems = cloud.items.orEmpty(),
             cloudDeletedItems = cloudDeletedItems,
             getId = { it.id },
             getUpdatedAt = { it.updatedAt },
@@ -53,7 +53,7 @@ class CloudMerger {
         )
 
         val cloudMerge = CloudMerge(
-            logins = loginsMerge,
+            items = itemsMerge,
             tags = tagsMerge,
             deletedItems = mutableListOf(),
         )
@@ -61,10 +61,10 @@ class CloudMerger {
         /**
          * Merging deleted items
          */
-        val addedLoginIds = loginsMerge.toAdd.map { it.id }
+        val addedItemIds = itemsMerge.toAdd.map { it.id }
         val addedTagIds = tagsMerge.toAdd.map { it.id }
 
-        val restoredItemIds = addedLoginIds + addedTagIds
+        val restoredItemIds = addedItemIds + addedTagIds
 
         cloudMerge.deletedItems.apply {
             // Add all local and cloud deleted items

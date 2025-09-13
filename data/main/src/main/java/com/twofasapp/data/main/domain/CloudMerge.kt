@@ -9,11 +9,11 @@
 package com.twofasapp.data.main.domain
 
 import com.twofasapp.core.common.domain.DeletedItem
-import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 
 data class CloudMerge(
-    val logins: Result<Login>,
+    val items: Result<Item>,
     val tags: Result<Tag>,
     val deletedItems: MutableList<DeletedItem> = mutableListOf(),
 ) {

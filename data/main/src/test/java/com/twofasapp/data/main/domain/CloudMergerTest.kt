@@ -9,33 +9,33 @@ class CloudMergerTest {
     private val merger = CloudMerger()
 
     @Test
-    fun `should update local login when cloud login is newer`() {
-        val local = vaultBackup(logins = listOf(login("1", updatedAt = time(1))))
-        val cloud = vaultBackup(logins = listOf(login("1", updatedAt = time(2))))
+    fun `should update local item when cloud item is newer`() {
+        val local = vaultBackup(items = listOf(item("1", updatedAt = time(1))))
+        val cloud = vaultBackup(items = listOf(item("1", updatedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toUpdate shouldContainExactly listOf(login("1", updatedAt = time(2)))
+        result.items.toUpdate shouldContainExactly listOf(item("1", updatedAt = time(2)))
     }
 
     @Test
-    fun `should not update local login when cloud login is older`() {
-        val local = vaultBackup(logins = listOf(login("1", updatedAt = time(5))))
-        val cloud = vaultBackup(logins = listOf(login("1", updatedAt = time(2))))
+    fun `should not update local item when cloud item is older`() {
+        val local = vaultBackup(items = listOf(item("1", updatedAt = time(5))))
+        val cloud = vaultBackup(items = listOf(item("1", updatedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toUpdate shouldBe emptyList()
+        result.items.toUpdate shouldBe emptyList()
     }
 
     @Test
-    fun `should trash local login when cloud deleted item is newer`() {
-        val local = vaultBackup(logins = listOf(login("1", updatedAt = time(1))))
+    fun `should trash local item when cloud deleted item is newer`() {
+        val local = vaultBackup(items = listOf(item("1", updatedAt = time(1))))
         val cloud = vaultBackup(deletedItems = listOf(deletedItem("1", deletedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        with(result.logins.toDelete.first()) {
+        with(result.items.toDelete.first()) {
             id shouldBe "1"
             deleted shouldBe true
             deletedAt shouldBe time(2)
@@ -43,83 +43,83 @@ class CloudMergerTest {
     }
 
     @Test
-    fun `should not trash local login when cloud deleted item is older`() {
-        val local = vaultBackup(logins = listOf(login("1", updatedAt = time(5))))
+    fun `should not trash local item when cloud deleted item is older`() {
+        val local = vaultBackup(items = listOf(item("1", updatedAt = time(5))))
         val cloud = vaultBackup(deletedItems = listOf(deletedItem("1", deletedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toDelete shouldBe emptyList()
+        result.items.toDelete shouldBe emptyList()
     }
 
     @Test
-    fun `should add cloud login when not present locally`() {
+    fun `should add cloud item when not present locally`() {
         val local = vaultBackup()
-        val cloud = vaultBackup(logins = listOf(login("1", updatedAt = time(1))))
+        val cloud = vaultBackup(items = listOf(item("1", updatedAt = time(1))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toAdd shouldContainExactly listOf(login("1", updatedAt = time(1)))
+        result.items.toAdd shouldContainExactly listOf(item("1", updatedAt = time(1)))
     }
 
     @Test
-    fun `should not add cloud login if deleted locally and older than deletion`() {
+    fun `should not add cloud item if deleted locally and older than deletion`() {
         val local = vaultBackup(deletedItems = listOf(deletedItem("1", deletedAt = time(3))))
-        val cloud = vaultBackup(logins = listOf(login("1", updatedAt = time(2))))
+        val cloud = vaultBackup(items = listOf(item("1", updatedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toAdd shouldBe emptyList()
+        result.items.toAdd shouldBe emptyList()
     }
 
     @Test
-    fun `should add cloud login if deleted locally but cloud is newer`() {
+    fun `should add cloud item if deleted locally but cloud is newer`() {
         val local = vaultBackup(deletedItems = listOf(deletedItem("1", deletedAt = time(1))))
-        val cloud = vaultBackup(logins = listOf(login("1", updatedAt = time(2))))
+        val cloud = vaultBackup(items = listOf(item("1", updatedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toAdd shouldContainExactly listOf(login("1", updatedAt = time(2)))
+        result.items.toAdd shouldContainExactly listOf(item("1", updatedAt = time(2)))
     }
 
     @Test
-    fun `should remove cloud deleted item if login was restored locally`() {
-        val local = vaultBackup(logins = listOf(login("1", updatedAt = time(5))))
+    fun `should remove cloud deleted item if item was restored locally`() {
+        val local = vaultBackup(items = listOf(item("1", updatedAt = time(5))))
         val cloud = vaultBackup(deletedItems = listOf(deletedItem("1", deletedAt = time(2))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toAdd.map { it.id } shouldBe emptyList()
-        result.logins.toUpdate.map { it.id } shouldBe emptyList()
-        result.logins.toDelete.map { it.id } shouldBe emptyList()
+        result.items.toAdd.map { it.id } shouldBe emptyList()
+        result.items.toUpdate.map { it.id } shouldBe emptyList()
+        result.items.toDelete.map { it.id } shouldBe emptyList()
         result.deletedItems.map { it.id } shouldBe emptyList()
     }
 
     @Test
-    fun `should add cloud login and remove local deleted item if cloud login is newer`() {
+    fun `should add cloud item and remove local deleted item if cloud item is newer`() {
         val local = vaultBackup(deletedItems = listOf(deletedItem("1", deletedAt = time(2))))
-        val cloud = vaultBackup(logins = listOf(login("1", updatedAt = time(4))))
+        val cloud = vaultBackup(items = listOf(item("1", updatedAt = time(4))))
 
         val result = merger.merge(local, cloud)
 
-        result.logins.toAdd.map { it.id } shouldContainExactly listOf("1")
+        result.items.toAdd.map { it.id } shouldContainExactly listOf("1")
         result.deletedItems.map { it.id } shouldBe emptyList()
     }
 
     @Test
-    fun `should merge deleted items from both sides and exclude added login ids`() {
+    fun `should merge deleted items from both sides and exclude added item ids`() {
         val local = vaultBackup(
             deletedItems = listOf(deletedItem("1", deletedAt = time(1)), deletedItem("2", deletedAt = time(2))),
         )
         val cloud = vaultBackup(
             deletedItems = listOf(deletedItem("3", deletedAt = time(3))),
-            logins = listOf(login("1", updatedAt = time(5))),
+            items = listOf(item("1", updatedAt = time(5))),
         )
 
         val result = merger.merge(local, cloud)
 
         result.deletedItems
-            .filter { result.logins.toAdd.map { it.id }.contains(it.id).not() }
+            .filter { result.items.toAdd.map { it.id }.contains(it.id).not() }
             .sortedByDescending { it.deletedAt }
             .distinctBy { it.id }
             .map { it.id } shouldContainExactly listOf("3", "2")

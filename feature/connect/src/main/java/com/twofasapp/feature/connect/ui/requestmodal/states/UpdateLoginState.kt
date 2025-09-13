@@ -8,10 +8,10 @@
 
 package com.twofasapp.feature.connect.ui.requestmodal.states
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 internal data class UpdateLoginState(
-    val login: Login = Login.Empty,
+    val item: Item = Item.Empty,
     val onContinueClick: () -> Unit = {},
     val onCancelClick: () -> Unit = {},
 )
