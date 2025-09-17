@@ -455,6 +455,14 @@ class Strings(private val c: Context) {
     val connectModalErrorExtensionsLimitSubtitle = c.getString(R.string.connect_modal_error_extensions_limit_subtitle)
     val connectModalErrorExtensionsLimitCta = c.getString(R.string.connect_modal_error_extensions_limit_cta)
 
+    val connectModalErrorAppUpdateRequiredTitle = c.getString(R.string.connect_modal_error_app_update_required_title)
+    val connectModalErrorAppUpdateRequiredSubtitle = c.getString(R.string.connect_modal_error_app_update_required_subtitle)
+    val connectModalErrorAppUpdateRequiredCta = c.getString(R.string.connect_modal_error_app_update_required_cta_android)
+
+    val connectModalErrorBrowserExtensionUpdateRequiredTitle = c.getString(R.string.connect_modal_error_browser_extension_update_required_title)
+    val connectModalErrorBrowserExtensionUpdateRequiredSubtitle = c.getString(R.string.connect_modal_error_browser_extension_update_required_subtitle)
+    val connectModalErrorBrowserExtensionUpdateRequiredCta = c.getString(R.string.common_close)
+
     // Request Modal
     val requestModalHeaderTitle = c.getString(R.string.request_modal_header_title)
     val requestModalLoading = c.getString(R.string.request_modal_loading)
@@ -557,6 +565,15 @@ class Strings(private val c: Context) {
     val loginTags = c.getString(R.string.login_tags)
     val loginTagsDescription = c.getString(R.string.login_tags_description)
     val loginSelectedTags = c.getString(R.string.login_selected_tags)
+    val cloudSyncInvalidSchemaErrorCta = c.getString(R.string.cloud_sync_invalid_schema_error_cta)
+    val cloudSyncInvalidSchemaErrorMsg = c.getString(R.string.cloud_sync_invalid_schema_error_msg)
+    val importInvalidSchemaErrorCta = c.getString(R.string.import_invalid_schema_error_cta)
+    val importInvalidSchemaErrorMsg = c.getString(R.string.import_invalid_schema_error_msg)
+
+    val appUpdateModalTitle = c.getString(R.string.app_update_modal_title)
+    val appUpdateModalSubtitle = c.getString(R.string.app_update_modal_subtitle)
+    val appUpdateModalCtaPositive = c.getString(R.string.app_update_modal_cta_positive)
+    val appUpdateModalCtaNegative = c.getString(R.string.app_update_modal_cta_negative)
 
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis

@@ -13,6 +13,7 @@ import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.common.storage.booleanPref
 import com.twofasapp.core.common.storage.longPref
 import com.twofasapp.core.common.storage.serializedPrefNullable
+import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.settings.domain.FailedAppUnlocks
 import com.twofasapp.data.settings.local.model.FailedAppUnlocksEntity
 import com.twofasapp.data.settings.mapper.asDomain
@@ -20,9 +21,11 @@ import com.twofasapp.data.settings.mapper.asEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.Instant
 
 internal class SessionRepositoryImpl(
     private val dispatchers: Dispatchers,
+    private val timeProvider: TimeProvider,
     dataStoreOwner: DataStoreOwner,
 ) : SessionRepository, DataStoreOwner by dataStoreOwner {
 
@@ -31,6 +34,7 @@ internal class SessionRepositoryImpl(
     private val biometricsPrompted by booleanPref(default = false)
     private val connectOnboardingPrompted by booleanPref(default = false)
     private val quickSetupPrompted by booleanPref(default = true)
+    private val appUpdatePromptedTimestamp by longPref(default = 0L)
     private val failedAppUnlocks by serializedPrefNullable(
         serializer = FailedAppUnlocksEntity.serializer(),
         name = "failedAppUnlocks",
@@ -83,5 +87,15 @@ internal class SessionRepositoryImpl(
 
     override suspend fun setQuickSetupPrompted(prompted: Boolean) {
         withContext(dispatchers.io) { quickSetupPrompted.set(prompted) }
+    }
+
+    override suspend fun getAppUpdatePromptedAt(): Instant {
+        return withContext(dispatchers.io) {
+            Instant.ofEpochMilli(appUpdatePromptedTimestamp.get())
+        }
+    }
+
+    override suspend fun markAppUpdatePrompted() {
+        withContext(dispatchers.io) { appUpdatePromptedTimestamp.set(timeProvider.currentTimeUtc()) }
     }
 }

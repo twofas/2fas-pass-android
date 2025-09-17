@@ -20,9 +20,11 @@ import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.CloudSyncStatus
+import com.twofasapp.data.main.domain.UpdateAppException
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.push.PushRepository
 import com.twofasapp.data.push.domain.Push
+import com.twofasapp.data.settings.SessionRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +39,7 @@ internal class MainViewModel(
     private val connectedBrowsersRepository: ConnectedBrowsersRepository,
     private val browserExtensionRepository: BrowserExtensionRepository,
     private val purchasesRepository: PurchasesRepository,
+    private val sessionRepository: SessionRepository,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(MainUiState())
@@ -113,7 +116,13 @@ internal class MainViewModel(
                 if (isAuthenticated) {
                     runSafely { browserExtensionRepository.fetchRequests() }
                         .onSuccess { fetchNotificationsJob?.cancel() }
-                        .onFailure { fetchNotificationsJob?.cancel() }
+                        .onFailure { exception ->
+                            fetchNotificationsJob?.cancel()
+
+                            if (exception is UpdateAppException) {
+                                publishEvent(MainUiEvent.ShowAppUpdateDialog)
+                            }
+                        }
                 }
             }
         }
@@ -136,6 +145,12 @@ internal class MainViewModel(
                         .onFailure { syncJob?.cancel() }
                 }
             }
+        }
+    }
+
+    fun markAppUpdatePrompted() {
+        launchScoped {
+            sessionRepository.markAppUpdatePrompted()
         }
     }
 

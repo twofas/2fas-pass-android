@@ -9,6 +9,7 @@
 package com.twofasapp.data.main
 
 import com.twofasapp.core.android.ktx.runSafely
+import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.crypto.AndroidKeyStore
@@ -19,9 +20,12 @@ import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.main.domain.ConnectedBrowser
+import com.twofasapp.data.main.domain.UpdateAppException
 import com.twofasapp.data.main.local.ConnectedBrowsersLocalSource
 import com.twofasapp.data.main.mapper.ConnectedBrowserMapper
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
+import com.twofasapp.data.main.remote.model.NotificationsJson
+import com.twofasapp.data.settings.SessionRepository
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -31,8 +35,10 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.temporal.ChronoUnit
 
 internal class BrowserExtensionRepositoryImpl(
+    private val appBuild: AppBuild,
     private val dispatchers: Dispatchers,
     private val device: Device,
     private val androidKeyStore: AndroidKeyStore,
@@ -40,6 +46,7 @@ internal class BrowserExtensionRepositoryImpl(
     private val browserRequestsRemoteSource: BrowserRequestsRemoteSource,
     private val connectedBrowsersLocalSource: ConnectedBrowsersLocalSource,
     private val connectedBrowserMapper: ConnectedBrowserMapper,
+    private val sessionRepository: SessionRepository,
 ) : BrowserExtensionRepository {
 
     private val browserConnectFlow: MutableSharedFlow<ConnectData?> = MutableSharedFlow(
@@ -71,10 +78,14 @@ internal class BrowserExtensionRepositoryImpl(
 
     override suspend fun fetchRequests() {
         withContext(dispatchers.io) {
-            val response = browserRequestsRemoteSource
-                .fetchNotifications(deviceId = device.uniqueId()).notifications.orEmpty()
+            val response = browserRequestsRemoteSource.fetchNotifications(deviceId = device.uniqueId())
 
-            val notification = response
+            if (shouldShowAppUpdate(response)) {
+                throw UpdateAppException("You’re using an old app version. Update now to get the latest features and improvements.")
+            }
+
+            val notifications = response.notifications.orEmpty()
+            val notification = notifications
                 .maxByOrNull { it.data.timestamp }
 
             if (notification?.data?.messageType != "be_request") {
@@ -149,5 +160,11 @@ internal class BrowserExtensionRepositoryImpl(
         return connectedBrowsersLocalSource.getConnectedBrowsers()
             .map { connectedBrowserMapper.mapToDomain(entity = it, appKey = androidKeyStore.appKey) }
             .firstOrNull { it.publicKey.contentEquals(publicKey) }
+    }
+
+    private suspend fun shouldShowAppUpdate(response: NotificationsJson): Boolean {
+        return response.notifications.isNullOrEmpty() &&
+            (response.compatibility?.minimalAndroidVersion ?: 0) > appBuild.versionCode &&
+            timeProvider.currentTimeUtcInstant().isAfter(sessionRepository.getAppUpdatePromptedAt().plus(1, ChronoUnit.DAYS))
     }
 }

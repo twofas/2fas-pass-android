@@ -14,6 +14,7 @@ sealed interface VaultMergeResult {
     data class Success(
         val backupContent: String,
         val backupUpdatedAt: Long,
+        val schemaVersion: Int,
     ) : VaultMergeResult
 
     data class Failure(val error: CloudError) : VaultMergeResult

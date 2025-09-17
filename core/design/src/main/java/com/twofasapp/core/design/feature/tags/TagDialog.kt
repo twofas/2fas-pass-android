@@ -45,8 +45,8 @@ fun TagDialog(
         validate = { text ->
             if (text.isBlank()) {
                 InputValidation.Invalid("Name can not be empty")
-            } else if (text.length > 1000) {
-                InputValidation.Invalid("Max length is 1000 characters")
+            } else if (text.length > 64) {
+                InputValidation.Invalid("Max length is 64 characters")
             } else {
                 InputValidation.Valid
             }

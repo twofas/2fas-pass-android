@@ -10,6 +10,7 @@ package com.twofasapp.data.settings
 
 import com.twofasapp.data.settings.domain.FailedAppUnlocks
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
 
 interface SessionRepository {
     suspend fun getAppVersionCode(): Long
@@ -24,4 +25,6 @@ interface SessionRepository {
     suspend fun setFailedAppUnlocks(failedAppUnlocks: FailedAppUnlocks?)
     fun observeQuickSetupPrompted(): Flow<Boolean>
     suspend fun setQuickSetupPrompted(prompted: Boolean)
+    suspend fun getAppUpdatePromptedAt(): Instant
+    suspend fun markAppUpdatePrompted()
 }

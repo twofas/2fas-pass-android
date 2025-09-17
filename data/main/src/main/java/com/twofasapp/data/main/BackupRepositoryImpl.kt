@@ -20,7 +20,7 @@ import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.readTextFile
-import com.twofasapp.data.main.domain.InvalidSchemaVersion
+import com.twofasapp.data.main.domain.InvalidSchemaVersionException
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.domain.VaultKeys
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
@@ -158,25 +158,22 @@ internal class BackupRepositoryImpl(
         val jsonElement = json.parseToJsonElement(content)
         val schemaVersion = jsonElement.jsonObject["schemaVersion"]!!.jsonPrimitive.int
 
-        return withContext(dispatchers.io) {
-            try {
-                val serializer = when (schemaVersion) {
-                    1 -> VaultBackupJsonV1.serializer()
-                    else -> VaultBackupJsonV1.serializer()
-                }
-
-                vaultBackupMapper.mapToDomain(
-                    json = json.decodeFromString(serializer, content),
-                    deviceIdFallback = device.uniqueId(),
-                )
-            } catch (e: Exception) {
-                if (VaultBackup.CurrentSchema != schemaVersion) {
-                    throw InvalidSchemaVersion("Your current app version supports backups up to version ${VaultBackup.CurrentSchema}. The file you're trying to read is version $schemaVersion. Please update your application to latest version.")
-                } else {
-                    throw e
-                }
-            }
+        if (schemaVersion > VaultBackup.CurrentSchema) {
+            throw InvalidSchemaVersionException(
+                msg = "Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version $schemaVersion, which is not supported in your current version. Please update your app to synchronize it.",
+                backupSchemaVersion = schemaVersion,
+            )
         }
+
+        val serializer = when (schemaVersion) {
+            1 -> VaultBackupJsonV1.serializer()
+            else -> VaultBackupJsonV1.serializer()
+        }
+
+        return vaultBackupMapper.mapToDomain(
+            json = json.decodeFromString(serializer, content),
+            deviceIdFallback = device.uniqueId(),
+        )
     }
 
     override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys): VaultBackup {

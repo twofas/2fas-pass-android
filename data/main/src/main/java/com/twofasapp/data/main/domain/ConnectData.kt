@@ -12,12 +12,16 @@ import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.ktx.encodeByteArray
 
 data class ConnectData(
-    val version: String,
+    val version: Int,
     val sessionId: String,
     private val pkPersBeHex: String,
     private val pkEpheBeHex: String,
     private val signatureHex: String,
 ) {
+    companion object {
+        const val CurrentSchema = 1
+    }
+
     val data: ByteArray
         get() = "${sessionId}${pkPersBeHex}$pkEpheBeHex".encodeByteArray()
 

@@ -52,6 +52,7 @@ internal class GoogleDriveCloudService(
         val deviceName: String,
         val createdAt: Long,
         val updatedAt: Long,
+        val schemaVersion: Int,
     ) {
         companion object {
             const val Prefix = "vault-backup"
@@ -60,11 +61,12 @@ internal class GoogleDriveCloudService(
             const val PropertyDeviceName = "deviceName"
             const val PropertyUpdatedAt = "vaultUpdatedAt"
             const val PropertyCreatedAt = "vaultCreatedAt"
+            const val PropertySchemaVersion = "schemaVersion"
         }
     }
 
     private fun generateFilename(request: VaultSyncRequest): String {
-        return "${BackupFileMetadata.Prefix}_${request.seedHashHex}_${request.vaultId}_v${request.backupSchemaVersion}.2faspass"
+        return "${BackupFileMetadata.Prefix}_${request.seedHashHex}_${request.vaultId}_v1.2faspass"
     }
 
     override suspend fun connect(config: CloudConfig): CloudResult {
@@ -85,7 +87,7 @@ internal class GoogleDriveCloudService(
                 vaultId = file.name.split("_")[2],
                 vaultCreatedAt = Instant.ofEpochMilli(file.properties?.get(BackupFileMetadata.PropertyCreatedAt)?.toLongOrNull() ?: 0L),
                 vaultUpdatedAt = Instant.ofEpochMilli(file.properties?.get(BackupFileMetadata.PropertyUpdatedAt)?.toLongOrNull() ?: 0L),
-                schemaVersion = file.name.split("_")[3].replace(".faspass", "").replace("v", "").toIntOrNull() ?: 1,
+                schemaVersion = file.properties?.get(BackupFileMetadata.PropertySchemaVersion)?.toIntOrNull() ?: 1,
             )
         }
     }
@@ -124,6 +126,7 @@ internal class GoogleDriveCloudService(
                                 content = mergeResult.backupContent,
                                 createdAt = request.vaultCreatedAt,
                                 updatedAt = mergeResult.backupUpdatedAt,
+                                schemaVersion = mergeResult.schemaVersion,
                             )
 
                             CloudResult.Success
@@ -154,6 +157,7 @@ internal class GoogleDriveCloudService(
                                 content = mergeResult.backupContent,
                                 createdAt = request.vaultCreatedAt,
                                 updatedAt = mergeResult.backupUpdatedAt,
+                                schemaVersion = mergeResult.schemaVersion,
                             )
 
                             CloudResult.Success
@@ -175,7 +179,7 @@ internal class GoogleDriveCloudService(
     private fun Drive.getAllFiles(): List<File> {
         return files()
             .list()
-            .setFields("files(id, name, properties(${BackupFileMetadata.PropertyUpdatedAt}, ${BackupFileMetadata.PropertyDeviceName}, ${BackupFileMetadata.PropertyDeviceId}, ${BackupFileMetadata.PropertyCreatedAt}))")
+            .setFields("files(id, name, properties(${BackupFileMetadata.PropertyUpdatedAt}, ${BackupFileMetadata.PropertyDeviceName}, ${BackupFileMetadata.PropertyDeviceId}, ${BackupFileMetadata.PropertyCreatedAt}, ${BackupFileMetadata.PropertySchemaVersion}))")
             .setSpaces("appDataFolder")
             .execute()
             ?.files
@@ -206,6 +210,7 @@ internal class GoogleDriveCloudService(
                         deviceName = file.properties?.get(BackupFileMetadata.PropertyDeviceName) ?: UnknownDevice,
                         createdAt = file.properties?.get(BackupFileMetadata.PropertyCreatedAt)?.toLongOrNull() ?: 0L,
                         updatedAt = file.properties?.get(BackupFileMetadata.PropertyUpdatedAt)?.toLongOrNull() ?: 0L,
+                        schemaVersion = file.properties?.get(BackupFileMetadata.PropertySchemaVersion)?.toIntOrNull() ?: 1,
                     )
                 }
             }
@@ -221,6 +226,7 @@ internal class GoogleDriveCloudService(
         content: String,
         createdAt: Long,
         updatedAt: Long,
+        schemaVersion: Int,
     ) {
         try {
             Timber.d("CreateFile -> Starting...")
@@ -235,6 +241,7 @@ internal class GoogleDriveCloudService(
                         BackupFileMetadata.PropertyDeviceName to deviceName,
                         BackupFileMetadata.PropertyCreatedAt to createdAt.toString(),
                         BackupFileMetadata.PropertyUpdatedAt to updatedAt.toString(),
+                        BackupFileMetadata.PropertySchemaVersion to schemaVersion.toString(),
                     ),
                 )
 
@@ -257,6 +264,7 @@ internal class GoogleDriveCloudService(
         content: String,
         createdAt: Long,
         updatedAt: Long,
+        schemaVersion: Int,
     ) {
         try {
             Timber.d("UpdateFile -> Starting...")
@@ -272,6 +280,7 @@ internal class GoogleDriveCloudService(
                                 BackupFileMetadata.PropertyDeviceName to deviceName,
                                 BackupFileMetadata.PropertyCreatedAt to createdAt.toString(),
                                 BackupFileMetadata.PropertyUpdatedAt to updatedAt.toString(),
+                                BackupFileMetadata.PropertySchemaVersion to schemaVersion.toString(),
                             ),
                         ),
                     ByteArrayContent.fromString("text/plain", content),

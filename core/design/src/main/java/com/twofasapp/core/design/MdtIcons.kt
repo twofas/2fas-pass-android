@@ -112,4 +112,5 @@ object MdtIcons {
     val Hashtag @Composable get() = painterResource(R.drawable.ic_hashtag)
     val Rocket @Composable get() = painterResource(R.drawable.ic_rocket)
     val RocketLaunch @Composable get() = painterResource(R.drawable.ic_rocket_launch)
+    val Upgrade @Composable get() = painterResource(R.drawable.ic_upgrade)
 }

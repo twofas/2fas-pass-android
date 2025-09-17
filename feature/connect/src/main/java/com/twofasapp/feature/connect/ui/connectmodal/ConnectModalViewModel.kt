@@ -44,6 +44,17 @@ internal class ConnectModalViewModel(
         launchScoped {
             val connectedBrowser = connectedBrowsersRepository.getBrowser(connectData.pkPersBe)
 
+            if (ConnectData.CurrentSchema < connectData.version) {
+                updateState(ConnectState.AppUpdateRequired)
+                return@launchScoped
+            }
+
+            if (ConnectData.CurrentSchema - 1 > connectData.version) {
+                // Always support 1 version behind
+                updateState(ConnectState.BrowserExtensionUpdateRequired)
+                return@launchScoped
+            }
+
             if (connectedBrowser == null && confirmed.not()) {
                 isNewBrowser = true
 
