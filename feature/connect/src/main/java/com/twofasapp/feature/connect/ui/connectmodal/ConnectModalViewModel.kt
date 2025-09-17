@@ -44,13 +44,12 @@ internal class ConnectModalViewModel(
         launchScoped {
             val connectedBrowser = connectedBrowsersRepository.getBrowser(connectData.pkPersBe)
 
-            if (connectData.version > ConnectData.CurrentSchema + 1) {
-                // Always support 1 version behind
+            if (ConnectData.CurrentSchema < connectData.version) {
                 updateState(ConnectState.AppUpdateRequired)
                 return@launchScoped
             }
 
-            if (connectData.version + 1 < ConnectData.CurrentSchema) {
+            if (ConnectData.CurrentSchema - 1 > connectData.version) {
                 // Always support 1 version behind
                 updateState(ConnectState.BrowserExtensionUpdateRequired)
                 return@launchScoped
