@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.data.main.remote.model.deprecated
+package com.twofasapp.data.main.remote.model.vaultbackup
 
 import com.twofasapp.data.main.remote.model.DeletedItemJson
 import com.twofasapp.data.main.remote.model.EncryptionSpecJson
@@ -15,7 +15,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VaultBackupJsonV1(
+internal data class VaultBackupJsonV1(
     @SerialName("schemaVersion")
     val schemaVersion: Int,
     @SerialName("origin")
@@ -63,3 +63,47 @@ data class VaultBackupJsonV1(
         val deletedItemsEncrypted: List<String>?,
     )
 }
+
+@Serializable
+internal data class LoginJson(
+    @SerialName("id")
+    val id: String,
+    @SerialName("deviceId")
+    val deviceId: String? = null,
+    @SerialName("createdAt")
+    val createdAt: Long,
+    @SerialName("updatedAt")
+    val updatedAt: Long,
+    @SerialName("name")
+    val name: String,
+    @SerialName("username")
+    val username: String?,
+    @SerialName("password")
+    val password: String?,
+    @SerialName("securityType")
+    val securityType: Int,
+    @SerialName("uris")
+    val uris: List<LoginUriJson>,
+    @SerialName("iconType")
+    val iconType: Int,
+    @SerialName("iconUriIndex")
+    val iconUriIndex: Int?,
+    @SerialName("labelText")
+    val labelText: String?,
+    @SerialName("labelColor")
+    val labelColor: String?,
+    @SerialName("customImageUrl")
+    val customImageUrl: String?,
+    @SerialName("notes")
+    val notes: String?,
+    @SerialName("tags")
+    val tags: List<String>?,
+)
+
+@Serializable
+internal data class LoginUriJson(
+    @SerialName("text")
+    val text: String,
+    @SerialName("matcher")
+    val matcher: Int,
+)

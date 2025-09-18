@@ -51,6 +51,6 @@ sealed interface ItemContent {
 
     data class SecureNote(
         override val name: String,
-        val text: String?,
+        val text: SecretField?,
     ) : ItemContent
 }

@@ -16,6 +16,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import java.io.StringReader
 
 internal data class CsvFile(
@@ -82,7 +83,7 @@ internal data class CsvFile(
 
             Item.create(
                 vaultId = vaultId,
-                contentType = "login",
+                contentType = ItemContentType.Login,
                 content = ItemContent.Login.Empty.copy(
                     name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
                     username = usernameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },

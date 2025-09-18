@@ -16,13 +16,16 @@ internal data class AutofillPickerUiState(
     val nodeStructure: NodeStructure = NodeStructure.Empty,
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
-    val allItems: List<Item> = emptyList(),
     val suggestedItems: List<Item> = emptyList(),
     val otherItems: List<Item> = emptyList(),
 ) {
     val suggestedItemsFiltered: List<Item>
-        get() = suggestedItems.filterBySearchQuery(searchQuery)
+        get() = suggestedItems
+            .filter { it.contentType.fillable }
+            .filterBySearchQuery(searchQuery)
 
     val otherItemsFiltered: List<Item>
-        get() = otherItems.filterBySearchQuery(searchQuery)
+        get() = otherItems
+            .filter { it.contentType.fillable }
+            .filterBySearchQuery(searchQuery)
 }

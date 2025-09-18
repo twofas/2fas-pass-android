@@ -28,6 +28,7 @@ import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeString
 import com.twofasapp.core.common.ktx.encodeBase64
@@ -289,7 +290,7 @@ internal class RequestWebSocketImpl(
 
             is BrowserRequestActionJson.AddLogin -> {
                 val newItem = Item.create(
-                    contentType = "login",
+                    contentType = ItemContentType.Login,
                     content = ItemContent.Login.Empty.copy(
                         name = (data.url.toUri().host ?: data.url).removePrefix("www."),
                         uris = listOf(ItemUri(text = data.url)),
@@ -505,7 +506,7 @@ internal class RequestWebSocketImpl(
         )
 
         return json.encodeToJsonElement(
-            itemMapper.mapItemContentLoginToJson(domain = updatedItem, deviceId = deviceId),
+            itemMapper.mapToJsonV1(domain = updatedItem, deviceId = deviceId),
         )
     }
 

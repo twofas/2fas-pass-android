@@ -30,7 +30,7 @@ val LoginItemContentPreview: ItemContent.Login = ItemContent.Login(
 
 val SecureNoteItemContentPreview: ItemContent.SecureNote = ItemContent.SecureNote(
     name = "Secure Note Name",
-    text = PreviewTextLong,
+    text = SecretField.ClearText(PreviewTextLong),
 )
 
 val LoginItemPreview = itemPreview(LoginItemContentPreview)

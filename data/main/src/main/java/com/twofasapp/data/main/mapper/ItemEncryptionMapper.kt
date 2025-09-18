@@ -9,11 +9,15 @@
 package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecretField.ClearText
+import com.twofasapp.core.common.domain.SecretField.Encrypted
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.clearText
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContent.Login
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.domain.VaultKeysExpiredException
@@ -25,6 +29,7 @@ class ItemEncryptionMapper(
     private val json: Json,
     private val iconTypeMapper: IconTypeMapper,
     private val uriMapper: ItemUriMapper,
+    private val unknownItemEncryptionMapper: UnknownItemEncryptionMapper,
 ) {
     fun decryptItem(
         itemEncrypted: ItemEncrypted,
@@ -38,22 +43,16 @@ class ItemEncryptionMapper(
                 SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(itemEncrypted.content)
             }
 
-            val serializer = when (itemEncrypted.contentType) {
-                "login" -> LoginContentEntityV1.serializer()
-                "secureNote" -> SecureNoteContentEntityV1.serializer()
-                else -> return itemEncrypted.asDecrypted(content = ItemContent.Unknown(rawJson = contentEntityJson)) // TODO: Decrypt unknown item
-            }
+            val content = when (itemEncrypted.contentType) {
+                is ItemContentType.Login -> {
+                    val contentEntity = json.decodeFromString(LoginContentEntityV1.serializer(), contentEntityJson)
 
-            val contentEntity = json.decodeFromString(serializer, contentEntityJson)
-
-            val content = when (contentEntity) {
-                is LoginContentEntityV1 -> {
-                    ItemContent.Login(
+                    Login(
                         name = contentEntity.name,
                         username = contentEntity.username,
                         password = contentEntity.password?.let {
                             if (decryptSecretFields) {
-                                SecretField.ClearText(
+                                ClearText(
                                     when (itemEncrypted.securityType) {
                                         SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
                                         SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
@@ -61,7 +60,7 @@ class ItemEncryptionMapper(
                                     },
                                 )
                             } else {
-                                SecretField.Encrypted(it)
+                                Encrypted(it)
                             }
                         },
                         uris = contentEntity.uris.map { uriMapper.mapToDomain(it) },
@@ -74,18 +73,41 @@ class ItemEncryptionMapper(
                     )
                 }
 
-                is SecureNoteContentEntityV1 -> {
-                    ItemContent.SecureNote(
-                        name = contentEntity.name,
-                        text = contentEntity.text?.let {
-                            when (itemEncrypted.securityType) {
-                                SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-                                SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-                                SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-                            }
-                        },
-                    )
-                }
+                is ItemContentType.SecureNote -> unknownItemEncryptionMapper.decrypt(
+                    rawJson = contentEntityJson,
+                    securityType = itemEncrypted.securityType,
+                    vaultCipher = vaultCipher,
+                    decryptSecretFields = decryptSecretFields,
+                )
+
+                // TODO: Uncomment when SecureNote is implemented
+//                is ItemContentType.SecureNote -> {
+//                    val contentEntity = json.decodeFromString(SecureNoteContentEntityV1.serializer(), contentEntityJson)
+//
+//                    ItemContent.SecureNote(
+//                        name = contentEntity.name,
+//                        text = contentEntity.text?.let {
+//                            if (decryptSecretFields) {
+//                                SecretField.ClearText(
+//                                    when (itemEncrypted.securityType) {
+//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+//                                    },
+//                                )
+//                            } else {
+//                                SecretField.Encrypted(it)
+//                            }
+//                        },
+//                    )
+//                }
+
+                is ItemContentType.Unknown -> unknownItemEncryptionMapper.decrypt(
+                    rawJson = contentEntityJson,
+                    securityType = itemEncrypted.securityType,
+                    vaultCipher = vaultCipher,
+                    decryptSecretFields = decryptSecretFields,
+                )
             }
 
             itemEncrypted.asDecrypted(content = content)
@@ -100,10 +122,11 @@ class ItemEncryptionMapper(
     ): ItemEncrypted {
         val contentEntityJson = item.content.let { content ->
             when (content) {
-                is ItemContent.Unknown -> {
-                    // TODO: Encrypt unknown item
-                    content.rawJson
-                }
+                is ItemContent.Unknown -> unknownItemEncryptionMapper.encrypt(
+                    rawJson = content.rawJson,
+                    securityType = item.securityType,
+                    vaultCipher = vaultCipher,
+                )
 
                 is ItemContent.Login -> {
                     json.encodeToString(
@@ -141,12 +164,21 @@ class ItemEncryptionMapper(
                     json.encodeToString(
                         SecureNoteContentEntityV1(
                             name = content.name,
-                            text = content.text?.let {
-                                when (item.securityType) {
-                                    SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(it)
-                                    SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(it)
-                                    SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(it)
+                            text = when (content.text) {
+                                is SecretField.Encrypted -> (content.text as SecretField.Encrypted).value
+                                is SecretField.ClearText -> {
+                                    if (content.text.clearText.isBlank()) {
+                                        null
+                                    } else {
+                                        when (item.securityType) {
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.text.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.text.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.text.clearText)
+                                        }
+                                    }
                                 }
+
+                                null -> null
                             },
                         ),
                     )
@@ -208,7 +240,6 @@ class ItemEncryptionMapper(
             deleted = deleted,
             securityType = securityType,
             contentType = contentType,
-            contentVersion = contentVersion,
             content = content,
             tagIds = tagIds,
         )
@@ -224,7 +255,6 @@ class ItemEncryptionMapper(
             deleted = deleted,
             securityType = securityType,
             contentType = contentType,
-            contentVersion = contentVersion,
             content = content,
             tagIds = tagIds,
         )

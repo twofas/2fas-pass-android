@@ -22,9 +22,7 @@ fun List<Item>.filterBySearchQuery(query: String): List<Item> {
                         item.content.uris.any { it.text.contains(query, ignoreCase = true) }
                 }
 
-                is ItemContent.SecureNote -> {
-                    item.content.text.orEmpty().contains(query, ignoreCase = true)
-                }
+                is ItemContent.SecureNote -> false
             }
     }.distinctBy { it.id }
 }

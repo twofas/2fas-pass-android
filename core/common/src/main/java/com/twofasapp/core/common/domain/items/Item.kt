@@ -10,8 +10,7 @@ data class Item(
     override val deletedAt: Long? = null,
     override val deleted: Boolean = false,
     override val securityType: SecurityType,
-    override val contentType: String,
-    override val contentVersion: Int,
+    override val contentType: ItemContentType,
     override val tagIds: List<String>,
     val content: ItemContent,
 ) : ItemSpec {
@@ -24,14 +23,13 @@ data class Item(
             deletedAt = 0,
             deleted = false,
             securityType = SecurityType.Tier3,
-            contentType = "",
-            contentVersion = 1,
+            contentType = ItemContentType.Unknown(""),
             tagIds = emptyList(),
             content = ItemContent.Unknown(""),
         )
 
         fun create(
-            contentType: String,
+            contentType: ItemContentType,
             content: ItemContent,
             vaultId: String = "",
             securityType: SecurityType = SecurityType.Tier3,

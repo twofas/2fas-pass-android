@@ -42,7 +42,7 @@ data class VaultBackup(
     }
 
     companion object {
-        const val CurrentSchema = 1
+        const val CurrentSchema = 2
 
         val Empty = VaultBackup(
             schemaVersion = CurrentSchema,

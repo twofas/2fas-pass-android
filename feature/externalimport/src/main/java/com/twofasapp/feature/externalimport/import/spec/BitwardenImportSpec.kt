@@ -17,6 +17,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
@@ -45,7 +46,7 @@ internal class BitwardenImportSpec(
         val content = json.decodeFromString<Model>(context.readTextFile(uri))
         val items = content.items.orEmpty().map { item ->
             Item.create(
-                contentType = "login",
+                contentType = ItemContentType.Login,
                 vaultId = vaultsRepository.getVault().id,
                 content = ItemContent.Login.Empty.copy(
                     name = item.name.orEmpty(),

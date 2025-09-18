@@ -1,5 +1,6 @@
 package com.twofasapp.feature.itemform
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,22 +20,24 @@ fun ItemForm(
     onHasUnsavedChangesUpdated: (Boolean) -> Unit = {},
     onCloseWithoutSaving: () -> Unit = {},
 ) {
-    when (initialItem.content) {
-        is ItemContent.Unknown -> Unit
-        is ItemContent.Login -> {
-            LoginForm(
-                modifier = modifier,
-                initialItem = initialItem,
-                initialItemContent = initialItem.content as ItemContent.Login,
-                containerColor = containerColor,
-                confirmUnsavedChanges = confirmUnsavedChanges,
-                onItemUpdated = onItemUpdated,
-                onIsValidUpdated = onIsValidUpdated,
-                onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
-                onCloseWithoutSaving = onCloseWithoutSaving,
-            )
-        }
+    AnimatedContent(initialItem.content) { content ->
+        when (content) {
+            is ItemContent.Unknown -> Unit
+            is ItemContent.Login -> {
+                LoginForm(
+                    modifier = modifier,
+                    initialItem = initialItem,
+                    initialItemContent = initialItem.content as ItemContent.Login,
+                    containerColor = containerColor,
+                    confirmUnsavedChanges = confirmUnsavedChanges,
+                    onItemUpdated = onItemUpdated,
+                    onIsValidUpdated = onIsValidUpdated,
+                    onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
+                    onCloseWithoutSaving = onCloseWithoutSaving,
+                )
+            }
 
-        is ItemContent.SecureNote -> Unit
+            is ItemContent.SecureNote -> Unit
+        }
     }
 }

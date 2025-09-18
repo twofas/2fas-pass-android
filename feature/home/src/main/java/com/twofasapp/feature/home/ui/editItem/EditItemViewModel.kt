@@ -15,6 +15,8 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.normalizeBeforeSaving
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -42,8 +44,8 @@ internal class EditItemViewModel(
             launchScoped {
                 uiState.update { state ->
                     state.copy(
-                        initialItem = Item.Empty,
-                        item = Item.Empty,
+                        initialItem = Item.create(contentType = ItemContentType.Login, content = ItemContent.Login.Empty),
+                        item = Item.create(contentType = ItemContentType.Login, content = ItemContent.Login.Empty),
                     )
                 }
             }

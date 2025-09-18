@@ -10,12 +10,13 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.data.main.local.model.items.LoginContentEntityV1
-import com.twofasapp.data.main.remote.model.deprecated.LoginUriJson
+import com.twofasapp.data.main.remote.model.ItemContentJson
+import com.twofasapp.data.main.remote.model.vaultbackup.LoginUriJson
 
 class ItemUriMapper(
     private val uriMatcherMapper: UriMatcherMapper,
 ) {
-    fun mapToDomain(entity: LoginContentEntityV1.UriJson): ItemUri {
+    internal fun mapToDomain(entity: LoginContentEntityV1.UriJson): ItemUri {
         return with(entity) {
             ItemUri(
                 text = text,
@@ -24,7 +25,7 @@ class ItemUriMapper(
         }
     }
 
-    fun mapToEntity(domain: ItemUri): LoginContentEntityV1.UriJson {
+    internal fun mapToEntity(domain: ItemUri): LoginContentEntityV1.UriJson {
         return with(domain) {
             LoginContentEntityV1.UriJson(
                 text = text,
@@ -33,7 +34,7 @@ class ItemUriMapper(
         }
     }
 
-    fun mapToJson(domain: ItemUri): LoginUriJson {
+    internal fun mapToJson(domain: ItemUri): LoginUriJson {
         return with(domain) {
             LoginUriJson(
                 text = text,
@@ -42,7 +43,25 @@ class ItemUriMapper(
         }
     }
 
-    fun mapToDomain(json: LoginUriJson): ItemUri {
+    internal fun mapToDomain(json: LoginUriJson): ItemUri {
+        return with(json) {
+            ItemUri(
+                text = text,
+                matcher = matcher.let { uriMatcherMapper.mapToDomainFromJson(it) },
+            )
+        }
+    }
+
+    internal fun mapToItemContentJson(domain: ItemUri): ItemContentJson.Login.UriJson {
+        return with(domain) {
+            ItemContentJson.Login.UriJson(
+                text = text,
+                matcher = uriMatcherMapper.mapToJson(matcher),
+            )
+        }
+    }
+
+    internal fun mapToDomain(json: ItemContentJson.Login.UriJson): ItemUri {
         return with(json) {
             ItemUri(
                 text = text,

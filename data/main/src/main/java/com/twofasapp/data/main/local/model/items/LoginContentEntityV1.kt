@@ -28,10 +28,7 @@ data class LoginContentEntityV1(
     val customImageUrl: String?,
     @SerialName("notes")
     val notes: String?,
-) : ContentEntity {
-    override val contentType: String = "login"
-    override val contentVersion: Int = 1
-
+) {
     @Serializable
     data class UriJson(
         @SerialName("text")

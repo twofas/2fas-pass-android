@@ -10,7 +10,6 @@ interface ItemSpec {
     val deletedAt: Long?
     val deleted: Boolean
     val securityType: SecurityType
-    val contentType: String
-    val contentVersion: Int
+    val contentType: ItemContentType
     val tagIds: List<String>
 }

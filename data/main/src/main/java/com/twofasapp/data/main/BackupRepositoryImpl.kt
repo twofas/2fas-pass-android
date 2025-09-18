@@ -31,10 +31,9 @@ import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
 import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataCompressedJson
 import com.twofasapp.data.main.remote.model.DeletedItemJson
+import com.twofasapp.data.main.remote.model.ItemJson
 import com.twofasapp.data.main.remote.model.TagJson
-import com.twofasapp.data.main.remote.model.VaultBackupJsonV2
-import com.twofasapp.data.main.remote.model.deprecated.LoginJson
-import com.twofasapp.data.main.remote.model.deprecated.VaultBackupJsonV1
+import com.twofasapp.data.main.remote.model.vaultbackup.LoginJson
 import com.twofasapp.data.security.crypto.Seed
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -118,7 +117,7 @@ internal class BackupRepositoryImpl(
                     itemsEncrypted = vaultBackup.items
                         ?.map { item ->
                             encryptWithExternalKey(
-                                json.encodeToString(itemMapper.mapItemContentLoginToJson(item)),
+                                json.encodeToString(itemMapper.mapToJson(item)),
                             ).encodeBase64()
                         },
                     tags = null,
@@ -167,38 +166,35 @@ internal class BackupRepositoryImpl(
                 )
             }
 
-            when (schemaVersion) {
-                1 -> {
-                    vaultBackupMapper.mapToDomainV1(
-                        json = json.decodeFromString(VaultBackupJsonV1.serializer(), content),
-                        deviceIdFallback = device.uniqueId(),
-                    )
-                }
-
-                2 -> {
-                    vaultBackupMapper.mapToDomainV2(
-                        json = json.decodeFromString(VaultBackupJsonV2.serializer(), content),
-                        deviceIdFallback = device.uniqueId(),
-                    )
-                }
-
-                else -> {
-                    vaultBackupMapper.mapToDomainV2(
-                        json = json.decodeFromString(VaultBackupJsonV2.serializer(), content),
-                        deviceIdFallback = device.uniqueId(),
-                    )
-                }
-            }
+            vaultBackupMapper.mapToDomain(
+                schemaVersion = schemaVersion,
+                content = content,
+                deviceIdFallback = device.uniqueId(),
+            )
         }
     }
 
     override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys): VaultBackup {
         return withContext(dispatchers.io) {
             vaultCryptoScope.withVaultCipher(vaultKeys) {
-                val items = vaultBackup.itemsEncrypted.orEmpty().map { encryptedLoginJson ->
-                    json.decodeFromString<LoginJson>(
-                        decryptWithExternalKey(EncryptedBytes(encryptedLoginJson.decodeBase64())),
-                    ).let { itemMapper.mapItemContentLoginToDomain(json = it, vaultBackup.vaultId) }
+                val items = vaultBackup.itemsEncrypted.orEmpty().map { encryptedItemJson ->
+                    val decryptedItemJson = decryptWithExternalKey(EncryptedBytes(encryptedItemJson.decodeBase64()))
+
+                    when (vaultBackup.schemaVersion) {
+                        1 -> {
+                            json.decodeFromString<LoginJson>(decryptedItemJson)
+                                .let { itemMapper.mapToDomainFromV1(json = it, vaultId = vaultBackup.vaultId) }
+                        }
+
+                        2 -> {
+                            json.decodeFromString<ItemJson>(decryptedItemJson)
+                                .let { itemMapper.mapToDomain(json = it, vaultId = vaultBackup.vaultId, tagIds = it.tags) }
+                        }
+
+                        else -> {
+                            throw IllegalArgumentException("Unsupported schema version: ${vaultBackup.schemaVersion}")
+                        }
+                    }
                 }
 
                 val tags = vaultBackup.tagsEncrypted.orEmpty().map { encryptedTagJson ->
@@ -207,9 +203,9 @@ internal class BackupRepositoryImpl(
                     ).let { tagMapper.mapToDomain(json = it, vaultBackup.vaultId) }
                 }
 
-                val deletedItems = vaultBackup.deletedItemsEncrypted.orEmpty().map { encryptedLoginJson ->
+                val deletedItems = vaultBackup.deletedItemsEncrypted.orEmpty().map { encryptedDeletedItemJson ->
                     json.decodeFromString<DeletedItemJson>(
-                        decryptWithExternalKey(EncryptedBytes(encryptedLoginJson.decodeBase64())),
+                        decryptWithExternalKey(EncryptedBytes(encryptedDeletedItemJson.decodeBase64())),
                     ).let { deletedItemsMapper.mapToDomain(json = it, vaultId = vaultBackup.vaultId) }
                 }
 

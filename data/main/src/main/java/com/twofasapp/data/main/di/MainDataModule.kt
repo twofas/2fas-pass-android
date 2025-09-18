@@ -52,6 +52,7 @@ import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
 import com.twofasapp.data.main.mapper.ItemUriMapper
 import com.twofasapp.data.main.mapper.TagMapper
+import com.twofasapp.data.main.mapper.UnknownItemEncryptionMapper
 import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
@@ -72,6 +73,7 @@ class MainDataModule : KoinModule {
         singleOf(::VaultMapper)
         singleOf(::ItemMapper)
         singleOf(::ItemEncryptionMapper)
+        singleOf(::UnknownItemEncryptionMapper)
         singleOf(::CloudMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)

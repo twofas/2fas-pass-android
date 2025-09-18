@@ -9,10 +9,7 @@ import kotlinx.serialization.Serializable
 data class SecureNoteContentEntityV1(
     @SerialName("name")
     val name: String,
-    @SerialName("text")
+    @SerialName("s_text")
     @Serializable(with = EncryptedBytesSerializer::class)
     val text: EncryptedBytes?,
-) : ContentEntity {
-    override val contentType: String = "secureNote"
-    override val contentVersion: Int = 1
-}
+)

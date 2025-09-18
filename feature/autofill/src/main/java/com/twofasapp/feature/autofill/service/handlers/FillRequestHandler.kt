@@ -52,7 +52,7 @@ internal class FillRequestHandler(
             Timber.tag(AutofillTag).d("✅ Node structure parsed: \n$nodeStructure")
 
             val fillRequestSpec = getFillRequestSpec(fillRequest)
-            val loginsToTake = if (fillRequestSpec.inlinePresentationEnabled) {
+            val itemsToTake = if (fillRequestSpec.inlinePresentationEnabled) {
                 fillRequestSpec.maxItemsCount - 2 // Make room for App item and pinned item
             } else {
                 fillRequestSpec.maxItemsCount - 1
@@ -62,17 +62,17 @@ internal class FillRequestHandler(
                 context = context,
                 fillRequestSpec = fillRequestSpec,
                 nodeStructure = nodeStructure,
-                logins = when (fillRequestSpec.authenticated) {
+                items = when (fillRequestSpec.authenticated) {
                     true -> {
                         AutofillItemMatcher.matchByUri(
                             itemsRepository = itemsRepository,
                             vaultCryptoScope = vaultCryptoScope,
-                            items = itemsRepository.getItems(),
+                            items = itemsRepository.getItems().filter { it.contentType.fillable },
                             packageName = nodeStructure.packageName,
                             webDomain = nodeStructure.webDomain,
                         )
                             .filter { it.matchRank != null }
-                            .take(loginsToTake)
+                            .take(itemsToTake)
                     }
 
                     false -> {

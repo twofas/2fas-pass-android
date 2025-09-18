@@ -11,6 +11,7 @@ package com.twofasapp.feature.home.ui.home
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.Vault
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.filterBySearchQuery
 import com.twofasapp.data.settings.domain.LoginClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
@@ -30,6 +31,7 @@ internal data class HomeUiState(
 ) {
     val itemsFiltered: List<Item>
         get() = items
+            .filter { it.content !is ItemContent.Unknown }
             .filter { item ->
                 if (selectedTag == null) {
                     true

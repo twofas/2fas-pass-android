@@ -28,7 +28,7 @@ data class ItemJson(
     @SerialName("contentVersion")
     val contentVersion: Int,
     @SerialName("content")
-    val content: ItemContentJson?,
+    val content: String,
     @SerialName("tags")
     val tags: List<String>?,
 )

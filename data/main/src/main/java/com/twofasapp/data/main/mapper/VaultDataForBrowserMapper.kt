@@ -29,7 +29,7 @@ internal class VaultDataForBrowserMapper(
                 logins = items.orEmpty()
                     .filter { it.securityType != SecurityType.Tier1 }
                     .map { item ->
-                        val itemJson = itemMapper.mapItemContentLoginToJson(item)
+                        val itemJson = itemMapper.mapToJsonV1(item)
 
                         if (item.securityType == SecurityType.Tier2) {
                             itemJson.copy(

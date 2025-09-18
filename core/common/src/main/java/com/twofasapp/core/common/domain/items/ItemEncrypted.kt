@@ -20,7 +20,6 @@ data class ItemEncrypted(
     override val deleted: Boolean,
     override val securityType: SecurityType,
     override val tagIds: List<String>,
-    override val contentType: String,
-    override val contentVersion: Int,
+    override val contentType: ItemContentType,
     val content: EncryptedBytes,
 ) : ItemSpec

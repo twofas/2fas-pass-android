@@ -15,6 +15,7 @@ import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.normalizeBeforeSaving
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -41,7 +42,7 @@ internal class AutofillSaveLoginViewModel(
         launchScoped {
             val initialItem = Item.create(
                 securityType = settingsRepository.observeDefaultSecurityType().first(),
-                contentType = "login",
+                contentType = ItemContentType.Login,
                 content = ItemContent.Login.Empty.copy(
                     name = saveLoginData.uri.orEmpty(),
                     username = saveLoginData.username,

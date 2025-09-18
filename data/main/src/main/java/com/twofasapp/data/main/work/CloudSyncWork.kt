@@ -40,6 +40,7 @@ import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.purchases.PurchasesRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 internal class CloudSyncWork(
     context: Context,
@@ -211,6 +212,8 @@ internal class CloudSyncWork(
     private suspend fun publishError(
         type: CloudError,
     ) {
+        Timber.e(type.cause)
+
         CrashlyticsInstance.logException(type.cause)
 
         cloudRepository.setSyncStatus(

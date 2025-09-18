@@ -6,8 +6,12 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.data.main.remote.model
+package com.twofasapp.data.main.remote.model.vaultbackup
 
+import com.twofasapp.data.main.remote.model.DeletedItemJson
+import com.twofasapp.data.main.remote.model.EncryptionSpecJson
+import com.twofasapp.data.main.remote.model.ItemJson
+import com.twofasapp.data.main.remote.model.TagJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
