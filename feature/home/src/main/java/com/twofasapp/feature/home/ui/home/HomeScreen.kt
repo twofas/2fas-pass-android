@@ -41,11 +41,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
+import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.button.IconButton
@@ -64,9 +66,9 @@ import com.twofasapp.core.design.window.DeviceType
 import com.twofasapp.core.design.window.currentDeviceType
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.SortingMethod
-import com.twofasapp.feature.home.ui.home.composable.HomeFab
-import com.twofasapp.feature.home.ui.home.composable.HomeSearchBar
-import com.twofasapp.feature.home.ui.home.composable.LoginItem
+import com.twofasapp.feature.home.ui.home.components.HomeFab
+import com.twofasapp.feature.home.ui.home.components.HomeItem
+import com.twofasapp.feature.home.ui.home.components.HomeSearchBar
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.ListOptionsModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
@@ -82,6 +84,7 @@ internal fun HomeScreen(
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
@@ -91,7 +94,13 @@ internal fun HomeScreen(
         onEventConsumed = { viewModel.consumeEvent(it) },
         onAddLoginClick = openAddLogin,
         onEditLoginClick = openEditLogin,
-        onCopyPasswordToClipboard = { viewModel.copyPasswordToClipboard(it) },
+        onCopySecretFieldToClipboard = { item, secretField ->
+            viewModel.decryptSecretField(
+                item = item,
+                secretField = secretField,
+                onDecrypted = { text -> context.copyToClipboard(text = text, isSensitive = true) },
+            )
+        },
         onOpenQuickSetupClick = openQuickSetup,
         onTrashConfirmed = { viewModel.trash(it) },
         onSearchQueryChange = { viewModel.search(it) },
@@ -111,7 +120,7 @@ private fun Content(
     onEventConsumed: (HomeUiEvent) -> Unit = {},
     onAddLoginClick: (String) -> Unit = {},
     onEditLoginClick: (String, String) -> Unit = { _, _ -> },
-    onCopyPasswordToClipboard: (Login) -> Unit = {},
+    onCopySecretFieldToClipboard: (Item, SecretField?) -> Unit = { _, _ -> },
     onOpenQuickSetupClick: () -> Unit = {},
     onTrashConfirmed: (String) -> Unit = {},
     onSearchQueryChange: (String) -> Unit = {},
@@ -122,7 +131,6 @@ private fun Content(
     onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
 ) {
-    val context = LocalContext.current
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
@@ -141,9 +149,6 @@ private fun Content(
         LaunchedEffect(Unit) {
             when (uiEvent) {
                 is HomeUiEvent.OpenQuickSetup -> onOpenQuickSetupClick()
-                is HomeUiEvent.CopyPasswordToClipboard -> {
-                    context.copyToClipboard(text = uiEvent.text, isSensitive = true)
-                }
             }
 
             onEventConsumed(uiEvent)
@@ -204,7 +209,7 @@ private fun Content(
                 )
             }
 
-            AnimatedFadeVisibility(visible = uiState.loginsFiltered.isEmpty() && uiState.searchQuery.isNotEmpty()) {
+            AnimatedFadeVisibility(visible = uiState.itemsFiltered.isEmpty() && uiState.searchQuery.isNotEmpty()) {
                 EmptySearchResults(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -241,7 +246,7 @@ private fun Content(
                         )
                     }
 
-                    if (uiState.loginsFiltered.isEmpty()) {
+                    if (uiState.itemsFiltered.isEmpty()) {
                         listItem(HomeListItem.Empty) {
                             EmptySearchResults(
                                 modifier = Modifier
@@ -252,38 +257,38 @@ private fun Content(
                     }
 
                     if (loginsPerRow > 1) {
-                        uiState.loginsFiltered.chunked(loginsPerRow).forEachIndexed { index, logins ->
-                            listItem(HomeListItem.LoginsRow(index = index, ids = logins.map { it.id })) {
+                        uiState.itemsFiltered.chunked(loginsPerRow).forEachIndexed { index, logins ->
+                            listItem(HomeListItem.HomeItemsRow(index = index, ids = logins.map { it.id })) {
                                 Row(
                                     modifier = Modifier.animateItem(),
                                 ) {
-                                    logins.forEach { login ->
-                                        LoginItem(
-                                            login = login,
+                                    logins.forEach { item ->
+                                        HomeItem(
+                                            item = item,
                                             tags = uiState.tags,
                                             loginClickAction = uiState.loginClickAction,
                                             query = uiState.searchQuery,
                                             modifier = Modifier.weight(1f),
-                                            onEditClick = { onEditLoginClick(login.id, login.vaultId) },
-                                            onTrashConfirmed = { onTrashConfirmed(login.id) },
-                                            onCopyPasswordToClipboard = onCopyPasswordToClipboard,
+                                            onEditClick = { itemId, vaultId -> onEditLoginClick(itemId, vaultId) },
+                                            onTrashConfirmed = { onTrashConfirmed(item.id) },
+                                            onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                         )
                                     }
                                 }
                             }
                         }
                     } else {
-                        uiState.loginsFiltered.forEach { login ->
-                            listItem(HomeListItem.Login(id = login.id)) {
-                                LoginItem(
-                                    login = login,
+                        uiState.itemsFiltered.forEach { item ->
+                            listItem(HomeListItem.HomeItem(id = item.id)) {
+                                HomeItem(
+                                    item = item,
                                     tags = uiState.tags,
                                     loginClickAction = uiState.loginClickAction,
                                     query = uiState.searchQuery,
                                     modifier = Modifier.animateItem(),
-                                    onEditClick = { onEditLoginClick(login.id, login.vaultId) },
-                                    onTrashConfirmed = { onTrashConfirmed(login.id) },
-                                    onCopyPasswordToClipboard = onCopyPasswordToClipboard,
+                                    onEditClick = { itemId, vaultId -> onEditLoginClick(itemId, vaultId) },
+                                    onTrashConfirmed = { onTrashConfirmed(item.id) },
+                                    onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                 )
                             }
                         }
@@ -403,9 +408,9 @@ private fun PreviewSuccess() {
     PreviewTheme {
         Content(
             uiState = HomeUiState(
-                logins = buildList {
+                items = buildList {
                     repeat(3) {
-                        add(Login.Preview.copy(id = "$it"))
+                        add(LoginItemPreview.copy(id = it.toString()))
                     }
                 },
             ),

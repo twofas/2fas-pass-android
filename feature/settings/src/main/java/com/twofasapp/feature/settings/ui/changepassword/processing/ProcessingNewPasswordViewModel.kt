@@ -21,7 +21,7 @@ import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.data.main.CloudRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -37,7 +37,7 @@ internal class ProcessingNewPasswordViewModel(
     dispatchers: Dispatchers,
     private val securityRepository: SecurityRepository,
     private val androidKeyStore: AndroidKeyStore,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val vaultsRepository: VaultsRepository,
     private val tagsRepository: TagsRepository,
     private val vaultKeysRepository: VaultKeysRepository,
@@ -59,7 +59,7 @@ internal class ProcessingNewPasswordViewModel(
 
                 // Re-encrypt local database
                 val vault = vaultsRepository.getVault()
-                val logins = loginsRepository.getLoginsDecryptedWithDeleted()
+                val items = itemsRepository.getItemsDecryptedWithDeleted()
 
                 val encryptedPassword: String = savedStateHandle.toRoute<Screen.ProcessingNewPassword>().encryptedPassword
                 val password = decrypt(androidKeyStore.appKey, EncryptedBytes(encryptedPassword.decodeBase64())).decodeToString()
@@ -71,17 +71,17 @@ internal class ProcessingNewPasswordViewModel(
                 uiState.update { it.copy(newMasterKeyHex = masterKey.hashHex) }
 
                 val newVaultKeys = vaultKeysRepository.generateVaultKeys(masterKeyHex = masterKey.hashHex, vaultId = vault.id)
-                val newLogins = vaultCryptoScope.withVaultCipher(vaultKeys = newVaultKeys) {
-                    itemEncryptionMapper.encryptLogins(logins = logins, vaultCipher = this)
+                val newItems = vaultCryptoScope.withVaultCipher(vaultKeys = newVaultKeys) {
+                    itemEncryptionMapper.encryptItems(items = items, vaultCipher = this)
                 }
 
-                loginsRepository.lockLogins()
-                loginsRepository.saveLogins(newLogins)
+                itemsRepository.lockItems()
+                itemsRepository.saveItems(newItems)
                 tagsRepository.reencryptTags(newVaultKeys)
                 vaultKeysRepository.generateAndSaveVaultKeys(masterKeyHex = masterKey.hashHex)
                 securityRepository.saveEncryptionReference(masterKey)
                 securityRepository.saveBiometricsEnabled(false)
-                loginsRepository.unlockLogins()
+                itemsRepository.unlockItems()
 
                 if (cloudRepository.getSyncInfo().enabled.not()) {
                     delay(1500)

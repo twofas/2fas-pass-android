@@ -10,11 +10,11 @@ package com.twofasapp.feature.settings.ui.trash
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.success
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.update
 internal class TrashViewModel(
     private val purchasesRepository: PurchasesRepository,
     private val trashRepository: TrashRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemEncryptionMapper: ItemEncryptionMapper,
 ) : ViewModel() {
@@ -40,24 +40,24 @@ internal class TrashViewModel(
         }
 
         launchScoped {
-            loginsRepository.getLoginsCount().let { count ->
-                uiState.update { it.copy(loginsCount = count) }
+            itemsRepository.getItemsCount().let { count ->
+                uiState.update { it.copy(itemsCount = count) }
             }
         }
 
         launchScoped {
-            trashRepository.observeDeleted().collect { logins ->
-                val loginStates = logins
+            trashRepository.observeDeleted().collect { items ->
+                val itemStates = items
                     .groupBy { it.vaultId }
-                    .map { (vaultId, logins) ->
+                    .map { (vaultId, items) ->
                         vaultCryptoScope.withVaultCipher(vaultId) {
-                            logins.map { login ->
-                                val matchingLoginUiState = uiState.value.trashedLogins.find { it.id == login.id }
+                            items.map { item ->
+                                val matchingItemUiState = uiState.value.trashedItems.find { it.id == item.id }
 
-                                if (matchingLoginUiState?.updatedAt == login.updatedAt) {
-                                    matchingLoginUiState
+                                if (matchingItemUiState?.updatedAt == item.updatedAt) {
+                                    matchingItemUiState
                                 } else {
-                                    itemEncryptionMapper.decryptLogin(login, this)
+                                    itemEncryptionMapper.decryptItem(item, this)
                                 }
                             }
                         }
@@ -66,9 +66,9 @@ internal class TrashViewModel(
                     .filterNotNull()
                     .sortedByDescending { it.updatedAt }
 
-                uiState.update { it.copy(trashedLogins = loginStates) }
+                uiState.update { it.copy(trashedItems = itemStates) }
 
-                if (logins.isEmpty()) {
+                if (items.isEmpty()) {
                     screenState.empty("List is empty")
                 } else {
                     screenState.success()
@@ -91,16 +91,16 @@ internal class TrashViewModel(
         }
     }
 
-    fun toggle(login: Login) {
-        if (uiState.value.selected.contains(login.id)) {
-            uiState.update { it.copy(selected = it.selected.minus(login.id)) }
+    fun toggle(item: Item) {
+        if (uiState.value.selected.contains(item.id)) {
+            uiState.update { it.copy(selected = it.selected.minus(item.id)) }
         } else {
-            uiState.update { it.copy(selected = it.selected.plus(login.id)) }
+            uiState.update { it.copy(selected = it.selected.plus(item.id)) }
         }
     }
 
     fun selectAll() {
-        uiState.update { it.copy(selected = it.trashedLogins.map { login -> login.id }) }
+        uiState.update { it.copy(selected = it.trashedItems.map { login -> login.id }) }
     }
 
     fun clearSelections() {

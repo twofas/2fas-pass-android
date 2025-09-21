@@ -8,9 +8,9 @@
 
 package com.twofasapp.feature.externalimport.import
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 internal data class ImportContent(
-    val logins: List<Login>,
+    val items: List<Item>,
     val skipped: Int,
 )

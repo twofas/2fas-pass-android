@@ -10,7 +10,7 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.SecurityType
 
-internal class LoginSecurityTypeMapper {
+internal class ItemSecurityTypeMapper {
 
     fun mapToEntity(domain: SecurityType): Int {
         return when (domain) {

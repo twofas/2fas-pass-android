@@ -8,12 +8,12 @@
 
 package com.twofasapp.feature.settings.ui.trash
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 internal data class TrashUiState(
     val maxItems: Int = 0,
-    val loginsCount: Int = 0,
-    val trashedLogins: List<Login> = emptyList(),
+    val itemsCount: Int = 0,
+    val trashedItems: List<Item> = emptyList(),
     val selected: List<String> = emptyList(),
 ) {
     val hasSelections: Boolean

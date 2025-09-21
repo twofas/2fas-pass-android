@@ -10,13 +10,13 @@ package com.twofasapp.feature.settings.ui.transfer
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class TransferViewModel(
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val purchasesRepository: PurchasesRepository,
 ) : ViewModel() {
     val uiState = MutableStateFlow(TransferUiState())
@@ -28,7 +28,7 @@ internal class TransferViewModel(
                     uiState.update { state ->
                         state.copy(
                             maxItems = plan.entitlements.itemsLimit,
-                            isItemsLimitReached = loginsRepository.getLoginsCount() >= plan.entitlements.itemsLimit,
+                            isItemsLimitReached = itemsRepository.getItemsCount() >= plan.entitlements.itemsLimit,
                         )
                     }
                 }

@@ -63,7 +63,7 @@ internal class TagsRepositoryImpl(
 
     override suspend fun getTags(vaultId: String): List<Tag> {
         return withContext(dispatchers.io) {
-            val items = itemsLocalSource.getLogins()
+            val items = itemsLocalSource.getItems()
 
             tagsLocalSource.getTags(vaultId).let { tags ->
                 vaultCryptoScope.withVaultCipher(vaultId) {

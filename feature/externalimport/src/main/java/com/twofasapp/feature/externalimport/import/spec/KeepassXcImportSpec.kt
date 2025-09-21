@@ -49,7 +49,7 @@ internal class KeepassXcImportSpec(
         )
 
         return ImportContent(
-            logins = csvFile.parse(vaultId),
+            items = csvFile.parse(vaultId),
             skipped = 0,
         )
     }

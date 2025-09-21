@@ -13,13 +13,14 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.coroutines.Dispatchers
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.CloudRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -43,7 +44,7 @@ internal class HomeViewModel(
     private val settingsRepository: SettingsRepository,
     private val sessionRepository: SessionRepository,
     private val vaultsRepository: VaultsRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val tagsRepository: TagsRepository,
     private val trashRepository: TrashRepository,
     private val vaultCryptoScope: VaultCryptoScope,
@@ -109,40 +110,45 @@ internal class HomeViewModel(
             uiState.update { it.copy(vault = vault) }
 
             combine(
-                loginsRepository.observeLogins(vaultId = vault.id),
+                itemsRepository.observeItems(vaultId = vault.id),
                 settingsRepository.observeSortingMethod(),
             ) { a, b -> Pair(a, b) }
-                .map { (logins, sortingMethod) ->
+                .map { (items, sortingMethod) ->
                     vaultCryptoScope.withVaultCipher(vault) {
-                        logins
-                            .mapNotNull { login ->
-                                val matchingLoginUiState = uiState.value.logins.find { it.id == login.id }
+                        items
+                            .mapNotNull { item ->
+                                val matchingItemUiState = uiState.value.items.find { it.id == item.id }
 
-                                if (matchingLoginUiState?.updatedAt == login.updatedAt) {
-                                    matchingLoginUiState
+                                if (matchingItemUiState?.updatedAt == item.updatedAt) {
+                                    matchingItemUiState
                                 } else {
-                                    itemEncryptionMapper.decryptLogin(login, this)
+                                    itemEncryptionMapper.decryptItem(item, this)
                                 }
                             }
                             .sortedWith(
                                 when (sortingMethod) {
-                                    SortingMethod.NameAsc -> compareBy<Login> { it.name.lowercase() }.thenBy { it.createdAt }
-                                    SortingMethod.NameDesc -> compareByDescending<Login> { it.name.lowercase() }.thenByDescending { it.createdAt }
-                                    SortingMethod.CreationDateAsc -> compareBy<Login> { it.createdAt }.thenBy { it.name.lowercase() }
-                                    SortingMethod.CreationDateDesc -> compareByDescending<Login> { it.createdAt }.thenByDescending { it.name.lowercase() }
+                                    SortingMethod.NameAsc -> compareBy<Item> { it.content?.name.orEmpty().lowercase() }.thenBy { it.createdAt }
+                                    SortingMethod.NameDesc -> compareByDescending<Item> {
+                                        it.content?.name.orEmpty().lowercase()
+                                    }.thenByDescending { it.createdAt }
+
+                                    SortingMethod.CreationDateAsc -> compareBy<Item> { it.createdAt }.thenBy { it.content?.name.orEmpty().lowercase() }
+                                    SortingMethod.CreationDateDesc -> compareByDescending<Item> { it.createdAt }.thenByDescending {
+                                        it.content?.name.orEmpty().lowercase()
+                                    }
                                 },
                             )
                     }
                 }
                 .flowOn(dispatchers.io)
-                .collect { logins ->
-                    if (logins.isEmpty()) {
+                .collect { items ->
+                    if (items.isEmpty()) {
                         screenState.empty()
                     } else {
                         screenState.success()
                     }
 
-                    uiState.update { it.copy(logins = logins) }
+                    uiState.update { it.copy(items = items) }
                 }
         }
 
@@ -184,15 +190,22 @@ internal class HomeViewModel(
         }
     }
 
-    fun copyPasswordToClipboard(login: Login) {
+    fun decryptSecretField(
+        item: Item,
+        secretField: SecretField?,
+        onDecrypted: (String) -> Unit,
+    ) {
+        if (secretField == null) {
+            return
+        }
+
         launchScoped {
-            vaultCryptoScope.withVaultCipher(login.vaultId) {
-                itemEncryptionMapper.decryptPassword(
-                    login = login,
+            vaultCryptoScope.withVaultCipher(item.vaultId) {
+                itemEncryptionMapper.decryptSecretField(
+                    secretField = secretField,
+                    securityType = item.securityType,
                     vaultCipher = this,
-                )?.let {
-                    publishEvent(HomeUiEvent.CopyPasswordToClipboard(text = it))
-                }
+                )?.let { onDecrypted(it) }
             }
         }
     }

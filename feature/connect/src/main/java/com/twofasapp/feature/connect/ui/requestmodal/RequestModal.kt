@@ -30,11 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
-import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
-import com.twofasapp.core.design.feature.login.LoginEntry
+import com.twofasapp.core.design.feature.items.ItemEntry
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.modal.Modal
@@ -156,9 +157,9 @@ private fun Content(
         when (uiState.requestState) {
             is RequestState.FullSize -> {
                 when (uiState.requestState) {
-                    is RequestState.FullSize.LoginForm -> {
+                    is RequestState.FullSize.ItemForm -> {
                         LoginFormState(
-                            loginFormState = uiState.requestState,
+                            itemFormState = uiState.requestState,
                         )
                     }
                 }
@@ -180,7 +181,7 @@ private fun Content(
 
                         is RequestState.InsideFrame.PasswordRequest -> {
                             ItemState(
-                                login = passwordRequestState.login,
+                                item = passwordRequestState.item,
                                 title = strings.requestModalPasswordRequestTitle,
                                 subtitle = strings.requestModalPasswordRequestSubtitle,
                                 icon = MdtIcons.Downloading,
@@ -188,9 +189,10 @@ private fun Content(
                                 positiveCta = strings.requestModalPasswordRequestCtaPositive,
                                 negativeCta = strings.requestModalPasswordRequestCtaNegative,
                                 onPositiveCta = {
-                                    passwordRequestState.onSendPasswordClick(
-                                        (passwordRequestState.login.password as? SecretField.Visible)?.value.orEmpty(),
-                                    )
+                                    // TODO: BEv2
+                                    ((passwordRequestState.item.content as? ItemContent.Login)?.password as? SecretField.ClearText)?.value.orEmpty().let {
+                                        passwordRequestState.onSendPasswordClick(it)
+                                    }
                                 },
                                 onNegativeCta = {
                                     passwordRequestState.onCancelClick()
@@ -200,7 +202,7 @@ private fun Content(
 
                         is RequestState.InsideFrame.AddLogin -> {
                             ItemState(
-                                login = addLoginState.login,
+                                item = addLoginState.item,
                                 title = strings.requestModalNewItemTitle,
                                 subtitle = strings.requestModalNewItemSubtitle,
                                 icon = MdtIcons.AddCircle,
@@ -214,7 +216,7 @@ private fun Content(
 
                         is RequestState.InsideFrame.UpdateLogin -> {
                             ItemState(
-                                login = updateLoginState.login,
+                                item = updateLoginState.item,
                                 title = strings.requestModalUpdateItemTitle,
                                 subtitle = strings.requestModalUpdateItemSubtitle,
                                 icon = MdtIcons.RotateLeft,
@@ -228,7 +230,7 @@ private fun Content(
 
                         is RequestState.InsideFrame.DeleteLogin -> {
                             ItemState(
-                                login = deleteLoginState.login,
+                                item = deleteLoginState.item,
                                 title = strings.requestModalRemoveItemTitle,
                                 subtitle = strings.requestModalRemoveItemSubtitle,
                                 icon = MdtIcons.Delete,
@@ -266,7 +268,7 @@ private fun Content(
 
 @Composable
 private fun ItemState(
-    login: Login,
+    item: Item,
     title: String,
     subtitle: String,
     icon: Painter,
@@ -302,8 +304,8 @@ private fun ItemState(
 
         Space(20.dp)
 
-        LoginEntry(
-            login = login,
+        ItemEntry(
+            item = item,
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, MdtTheme.color.outline.copy(alpha = 0.16f), RoundedShape16)

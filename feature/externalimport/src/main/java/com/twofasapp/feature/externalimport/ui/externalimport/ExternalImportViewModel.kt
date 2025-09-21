@@ -17,7 +17,7 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.ImportType
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.spec.AppleDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.AppleMobileImportSpec
@@ -38,7 +38,7 @@ import timber.log.Timber
 internal class ExternalImportViewModel(
     savedStateHandle: SavedStateHandle,
     private val dispatchers: Dispatchers,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val bitwardenImportSpec: BitwardenImportSpec,
     private val onePasswordImportSpec: OnePasswordImportSpec,
     private val protonPassImportSpec: ProtonPassImportSpec,
@@ -93,7 +93,7 @@ internal class ExternalImportViewModel(
         uiState.update { it.copy(loading = true) }
 
         launchScoped {
-            runSafely { loginsRepository.importLogins(importContent.logins) }
+            runSafely { itemsRepository.importItems(importContent.items) }
                 .onSuccess { onSuccess() }
                 .onFailure { updateState(ImportState.Error(it.message)) }
         }

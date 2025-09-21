@@ -18,7 +18,7 @@ import com.twofasapp.core.design.state.loading
 import com.twofasapp.core.design.state.notLoading
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.ConnectedBrowsersRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.update
 
 internal class ManageSubscriptionViewModel(
     private val purchasesRepository: PurchasesRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val connectedBrowsersRepository: ConnectedBrowsersRepository,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ManageSubscriptionUiState())
@@ -51,7 +51,7 @@ internal class ManageSubscriptionViewModel(
         }
 
         launchScoped {
-            loginsRepository.getLoginsCount().let { count ->
+            itemsRepository.getItemsCount().let { count ->
                 uiState.update { it.copy(itemsCount = count) }
             }
         }

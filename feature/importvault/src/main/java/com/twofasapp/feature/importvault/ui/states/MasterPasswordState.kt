@@ -30,8 +30,8 @@ import com.twofasapp.core.design.feature.headers.ScreenHeader
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
-import com.twofasapp.core.design.foundation.textfield.Password
-import com.twofasapp.core.design.foundation.textfield.PasswordTrailingIcon
+import com.twofasapp.core.design.foundation.textfield.SecretField
+import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.locale.MdtLocale
 
@@ -67,10 +67,10 @@ fun MasterPasswordState(
             isError = error != null,
             supportingText = error,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-            visualTransformation = VisualTransformation.Password(passwordVisible),
+            visualTransformation = VisualTransformation.SecretField(passwordVisible),
             trailingIcon = {
-                PasswordTrailingIcon(
-                    passwordVisible = passwordVisible,
+                SecretFieldTrailingIcon(
+                    visible = passwordVisible,
                     onToggle = { passwordVisible = passwordVisible.not() },
                 )
             },

@@ -19,14 +19,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.android.ktx.getSafelyParcelable
 import com.twofasapp.core.android.ktx.toastShort
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_SAVE_LOGIN_DATA
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
-import com.twofasapp.feature.loginform.ui.LoginForm
+import com.twofasapp.feature.itemform.ItemForm
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,10 +46,10 @@ internal fun AutofillSaveLoginScreen(
         viewModel.initLogin(saveLoginData)
     }
 
-    uiState.initialLogin?.let {
+    uiState.initialItem?.let {
         Content(
             uiState = uiState,
-            onLoginUpdated = viewModel::updateLogin,
+            onItemUpdated = viewModel::updateItem,
             onIsValidUpdated = viewModel::updateIsValid,
             onSaveClick = {
                 viewModel.save(
@@ -66,7 +66,7 @@ internal fun AutofillSaveLoginScreen(
 @Composable
 private fun Content(
     uiState: AutofillSaveLoginUiState,
-    onLoginUpdated: (Login) -> Unit = {},
+    onItemUpdated: (Item) -> Unit = {},
     onIsValidUpdated: (Boolean) -> Unit = {},
     onSaveClick: () -> Unit = {},
 ) {
@@ -87,11 +87,11 @@ private fun Content(
             )
         },
     ) { padding ->
-        uiState.initialLogin?.let {
-            LoginForm(
+        uiState.initialItem?.let {
+            ItemForm(
                 modifier = Modifier.padding(top = padding.calculateTopPadding()),
-                initialLogin = it,
-                onLoginUpdated = onLoginUpdated,
+                initialItem = it,
+                onItemUpdated = onItemUpdated,
                 onIsValidUpdated = onIsValidUpdated,
             )
         }

@@ -13,18 +13,19 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.uriPrefixAndroidApp
 import com.twofasapp.core.android.ktx.uriPrefixWebsite
 import com.twofasapp.core.common.coroutines.Dispatchers
-import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginUri
+import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.success
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
+import com.twofasapp.feature.autofill.service.domain.AutofillItemMatcher
 import com.twofasapp.feature.autofill.service.domain.AutofillLogin
-import com.twofasapp.feature.autofill.service.domain.AutofillLoginMatcher
 import com.twofasapp.feature.autofill.service.domain.asAutofillLogin
 import com.twofasapp.feature.autofill.service.parser.NodeStructure
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +35,7 @@ import kotlinx.coroutines.flow.update
 
 internal class AutofillPickerViewModel(
     private val dispatchers: Dispatchers,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val vaultsRepository: VaultsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemEncryptionMapper: ItemEncryptionMapper,
@@ -48,10 +49,10 @@ internal class AutofillPickerViewModel(
         launchScoped {
             val vault = vaultsRepository.getVault()
 
-            loginsRepository.observeLogins(vaultId = vault.id)
-                .map { logins ->
+            itemsRepository.observeItems(vaultId = vault.id)
+                .map { items ->
                     vaultCryptoScope.withVaultCipher(vault) {
-                        logins
+                        items
                             .filter {
                                 when (it.securityType) {
                                     SecurityType.Tier1 -> false
@@ -60,32 +61,32 @@ internal class AutofillPickerViewModel(
                                 }
                             }
                             .mapNotNull { login ->
-                                itemEncryptionMapper.decryptLogin(
+                                itemEncryptionMapper.decryptItem(
                                     itemEncrypted = login,
                                     vaultCipher = this,
-                                    decryptPassword = true,
+                                    decryptSecretFields = true,
                                 )
                             }
                     }
                 }
                 .flowOn(dispatchers.io)
-                .collect { logins ->
-                    if (logins.isEmpty()) {
+                .collect { items ->
+                    if (items.isEmpty()) {
                         screenState.empty()
                     } else {
                         screenState.success()
                     }
 
-                    val grouped = AutofillLoginMatcher.matchByUri(
-                        logins = logins,
+                    val grouped = AutofillItemMatcher.matchByUri(
+                        items = items,
                         packageName = nodeStructure.packageName,
                         webDomain = nodeStructure.webDomain,
                     )
 
                     uiState.update {
                         it.copy(
-                            suggestedLogins = grouped.filterKeys { key -> key != null }.values.flatten().sortedBy { login -> login.updatedAt },
-                            otherLogins = grouped[null].orEmpty().sortedBy { login -> login.updatedAt },
+                            suggestedItems = grouped.filterKeys { key -> key != null }.values.flatten().sortedBy { login -> login.updatedAt },
+                            otherItems = grouped[null].orEmpty().sortedBy { login -> login.updatedAt },
                         )
                     }
                 }
@@ -100,44 +101,53 @@ internal class AutofillPickerViewModel(
         uiState.update { it.copy(searchFocused = searchFocused) }
     }
 
-    fun fillAndRemember(login: Login, onSuccess: (AutofillLogin) -> Unit) {
+    fun fillAndRemember(item: Item, onSuccess: (AutofillLogin) -> Unit) {
         launchScoped {
-            loginsRepository.saveLogin(
-                login
-                    .copy(
-                        uris = login.uris.plus(
-                            buildList {
-                                if (uiState.value.nodeStructure.webDomain.isNullOrBlank().not()) {
-                                    add(
-                                        LoginUri(
-                                            text = "$uriPrefixWebsite${uiState.value.nodeStructure.webDomain}",
-                                        ),
-                                    )
-                                } else {
-                                    if (uiState.value.nodeStructure.packageName.isNullOrBlank().not()) {
-                                        add(
-                                            LoginUri(
-                                                text = "$uriPrefixAndroidApp${uiState.value.nodeStructure.packageName}",
-                                            ),
-                                        )
-                                    }
-                                }
+            when (item.content) {
+                is ItemContent.Unknown -> Unit
+                is ItemContent.Login -> {
+                    itemsRepository.saveItem(
+                        item
+                            .copy(
+                                content = (item.content as ItemContent.Login).copy(
+                                    uris = (item.content as ItemContent.Login).uris.plus(
+                                        buildList {
+                                            if (uiState.value.nodeStructure.webDomain.isNullOrBlank().not()) {
+                                                add(
+                                                    ItemUri(
+                                                        text = "$uriPrefixWebsite${uiState.value.nodeStructure.webDomain}",
+                                                    ),
+                                                )
+                                            } else {
+                                                if (uiState.value.nodeStructure.packageName.isNullOrBlank().not()) {
+                                                    add(
+                                                        ItemUri(
+                                                            text = "$uriPrefixAndroidApp${uiState.value.nodeStructure.packageName}",
+                                                        ),
+                                                    )
+                                                }
+                                            }
+                                        },
+                                    ).distinct(),
+                                ),
+                            )
+                            .let {
+                                itemEncryptionMapper.encryptItem(
+                                    item = it,
+                                    vaultCipher = vaultCryptoScope.getVaultCipher(vaultsRepository.getVault().id),
+                                )
                             },
-                        ).distinct(),
                     )
-                    .let {
-                        itemEncryptionMapper.encryptLogin(
-                            login = it,
-                            vaultCipher = vaultCryptoScope.getVaultCipher(vaultsRepository.getVault().id),
-                        )
-                    },
-            )
+                }
 
-            onSuccess(login.asAutofillLogin())
+                is ItemContent.SecureNote -> Unit
+            }
+
+            item.asAutofillLogin()?.let { onSuccess(it) }
         }
     }
 
-    fun fill(login: Login, onSuccess: (AutofillLogin) -> Unit) {
-        onSuccess(login.asAutofillLogin())
+    fun fill(item: Item, onSuccess: (AutofillLogin) -> Unit) {
+        item.asAutofillLogin()?.let { onSuccess(it) }
     }
 }

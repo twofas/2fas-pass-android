@@ -29,7 +29,7 @@ dependencies {
 
     implementation(project(":feature:qrscan"))
     implementation(project(":feature:permissions"))
-    implementation(project(":feature:loginform"))
+    implementation(project(":feature:itemform"))
     implementation(project(":feature:purchases"))
 
     implementation(platform(libs.composeBom))

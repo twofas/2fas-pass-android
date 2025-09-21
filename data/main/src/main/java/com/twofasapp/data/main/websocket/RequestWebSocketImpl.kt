@@ -20,12 +20,15 @@ import com.twofasapp.core.common.crypto.RandomGenerator
 import com.twofasapp.core.common.crypto.SharedKeyGenerator
 import com.twofasapp.core.common.crypto.decrypt
 import com.twofasapp.core.common.crypto.encrypt
-import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginUri
+import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.PasswordGenerator
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeString
 import com.twofasapp.core.common.ktx.encodeBase64
@@ -33,16 +36,16 @@ import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.ConnectedBrowsersRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.domain.BrowserRequestAction
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
 import com.twofasapp.data.main.domain.RequestWebSocketResult
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
-import com.twofasapp.data.main.mapper.LoginMapper
-import com.twofasapp.data.main.mapper.LoginSecurityTypeMapper
-import com.twofasapp.data.main.mapper.LoginUriMatcherMapper
+import com.twofasapp.data.main.mapper.ItemMapper
+import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
+import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
 import com.twofasapp.data.main.websocket.messages.BrowserRequestActionJson
 import com.twofasapp.data.main.websocket.messages.IncomingMessageJson
@@ -64,7 +67,7 @@ internal class RequestWebSocketImpl(
     override val device: Device,
     override val timeProvider: TimeProvider,
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
-    override val loginsRepository: LoginsRepository,
+    override val itemsRepository: ItemsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
     override val loginDecryptionMapper: ItemEncryptionMapper,
     private val settingsRepository: SettingsRepository,
@@ -73,9 +76,9 @@ internal class RequestWebSocketImpl(
     private val json: Json,
     private val browserRequestsRemoteSource: BrowserRequestsRemoteSource,
     private val notificationManager: NotificationManager,
-    private val loginMapper: LoginMapper,
-    private val loginSecurityTypeMapper: LoginSecurityTypeMapper,
-    private val loginUriMatcherMapper: LoginUriMatcherMapper,
+    private val itemMapper: ItemMapper,
+    private val itemSecurityTypeMapper: ItemSecurityTypeMapper,
+    private val uriMatcherMapper: UriMatcherMapper,
 ) : RequestWebSocket, WebSocketDelegate {
 
     override var expectedIncomingId: String = ""
@@ -274,104 +277,111 @@ internal class RequestWebSocketImpl(
             is BrowserRequestActionJson.PasswordRequest -> {
                 BrowserRequestAction.PasswordRequest(
                     type = type,
-                    login = getLogin(data.loginId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
             }
 
             is BrowserRequestActionJson.DeleteLogin -> {
                 BrowserRequestAction.DeleteLogin(
                     type = type,
-                    login = getLogin(data.loginId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
             }
 
             is BrowserRequestActionJson.AddLogin -> {
-                val newLogin = Login.Empty.copy(
-                    name = (data.url.toUri().host ?: data.url).removePrefix("www."),
-                    uris = listOf(LoginUri(text = data.url)),
-                    username = if (data.usernamePasswordMobile == true) {
-                        loginsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
-                    } else {
-                        data.username
-                    },
-                    password = if (data.usernamePasswordMobile == true) {
-                        SecretField.Visible(
-                            PasswordGenerator.generatePassword(
-                                settingsRepository.observePasswordGeneratorSettings().first(),
-                            ),
-                        )
-                    } else {
-                        data.passwordEnc?.let { encryptedPassword ->
-                            val newPasswordKey = HkdfGenerator.generate(
-                                inputKeyMaterial = sessionKey,
-                                salt = hkdfSalt,
-                                contextInfo = "PassNew",
-                            )
-
-                            val password = decrypt(
-                                key = newPasswordKey,
-                                data = EncryptedBytes(encryptedPassword.decodeBase64()),
-                            )
-
-                            SecretField.Visible(password.decodeString())
-                        }
-                    },
-                )
-
-                BrowserRequestAction.AddLogin(
-                    type = type,
-                    login = newLogin,
-                )
-            }
-
-            is BrowserRequestActionJson.UpdateLogin -> {
-                val login = getLogin(data.id)
-                    ?: throw WebSocketException(1501, "Could not find requested item.")
-
-                BrowserRequestAction.UpdateLogin(
-                    type = type,
-                    login = login,
-                    updatedLogin = login.copy(
-                        name = data.name ?: login.name,
-                        username = if (data.usernameMobile == true) {
-                            loginsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                val newItem = Item.create(
+                    contentType = ItemContentType.Login,
+                    content = ItemContent.Login.Empty.copy(
+                        name = (data.url.toUri().host ?: data.url).removePrefix("www."),
+                        uris = listOf(ItemUri(text = data.url)),
+                        username = if (data.usernamePasswordMobile == true) {
+                            itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
                         } else {
-                            data.username ?: login.username
+                            data.username
                         },
-                        password = if (data.passwordMobile == true) {
-                            SecretField.Visible(
+                        password = if (data.usernamePasswordMobile == true) {
+                            SecretField.ClearText(
                                 PasswordGenerator.generatePassword(
                                     settingsRepository.observePasswordGeneratorSettings().first(),
                                 ),
                             )
                         } else {
                             data.passwordEnc?.let { encryptedPassword ->
-                                val updatePasswordKey = HkdfGenerator.generate(
+                                val newPasswordKey = HkdfGenerator.generate(
                                     inputKeyMaterial = sessionKey,
                                     salt = hkdfSalt,
-                                    contextInfo = when (data.securityType.let(loginSecurityTypeMapper::mapToDomainFromJson)) {
-                                        SecurityType.Tier1 -> "PassT1"
-                                        SecurityType.Tier2 -> "PassT2"
-                                        SecurityType.Tier3 -> "PassT3"
-                                    },
+                                    contextInfo = "PassNew",
                                 )
 
                                 val password = decrypt(
-                                    key = updatePasswordKey,
+                                    key = newPasswordKey,
                                     data = EncryptedBytes(encryptedPassword.decodeBase64()),
                                 )
 
-                                SecretField.Visible(password.decodeString())
-                            } ?: login.password
+                                SecretField.ClearText(password.decodeString())
+                            }
                         },
-                        securityType = data.securityType.let(loginSecurityTypeMapper::mapToDomainFromJson),
-                        notes = data.notes ?: login.notes,
-                        uris = data.uris?.map { uri ->
-                            LoginUri(
-                                text = uri.text,
-                                matcher = loginUriMatcherMapper.mapToDomainFromJson(uri.matcher),
+                    ),
+                )
+
+                BrowserRequestAction.AddLogin(
+                    type = type,
+                    item = newItem,
+                )
+            }
+
+            is BrowserRequestActionJson.UpdateLogin -> {
+                val item = getItem(data.id)
+                    ?: throw WebSocketException(1501, "Could not find requested item.")
+
+                BrowserRequestAction.UpdateLogin(
+                    type = type,
+                    item = item,
+                    updatedItem = item.copy(
+                        securityType = data.securityType.let(itemSecurityTypeMapper::mapToDomainFromJson),
+                        content = (item.content as ItemContent.Login).let { content ->
+                            content.copy(
+                                name = data.name ?: content.name,
+                                username = if (data.usernameMobile == true) {
+                                    itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                                } else {
+                                    data.username ?: content.username
+                                },
+                                password = if (data.passwordMobile == true) {
+                                    SecretField.ClearText(
+                                        PasswordGenerator.generatePassword(
+                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                        ),
+                                    )
+                                } else {
+                                    data.passwordEnc?.let { encryptedPassword ->
+                                        val updatePasswordKey = HkdfGenerator.generate(
+                                            inputKeyMaterial = sessionKey,
+                                            salt = hkdfSalt,
+                                            contextInfo = when (data.securityType.let(itemSecurityTypeMapper::mapToDomainFromJson)) {
+                                                SecurityType.Tier1 -> "PassT1"
+                                                SecurityType.Tier2 -> "PassT2"
+                                                SecurityType.Tier3 -> "PassT3"
+                                            },
+                                        )
+
+                                        val password = decrypt(
+                                            key = updatePasswordKey,
+                                            data = EncryptedBytes(encryptedPassword.decodeBase64()),
+                                        )
+
+                                        SecretField.ClearText(password.decodeString())
+                                    } ?: content.password
+                                },
+                                notes = data.notes ?: content.notes,
+                                uris = data.uris?.map { uri ->
+                                    ItemUri(
+                                        text = uri.text,
+                                        matcher = uriMatcherMapper.mapToDomainFromJson(uri.matcher),
+                                    )
+                                } ?: content.uris,
                             )
-                        } ?: login.uris,
+                        },
                     ),
                 )
             }
@@ -394,7 +404,7 @@ internal class RequestWebSocketImpl(
             is BrowserRequestResponse.PasswordRequestAccept -> "accept"
             is BrowserRequestResponse.DeleteLoginAccept -> "accept"
             is BrowserRequestResponse.AddLoginAccept -> {
-                when (response.login.securityType) {
+                when (response.item.securityType) {
                     SecurityType.Tier1 -> "addedInT1"
                     SecurityType.Tier2 -> "added"
                     SecurityType.Tier3 -> "added"
@@ -402,7 +412,7 @@ internal class RequestWebSocketImpl(
             }
 
             is BrowserRequestResponse.UpdateLoginAccept -> {
-                when (response.login.securityType) {
+                when (response.item.securityType) {
                     SecurityType.Tier1 -> "addedInT1"
                     SecurityType.Tier2 -> "updated"
                     SecurityType.Tier3 -> "updated"
@@ -436,24 +446,24 @@ internal class RequestWebSocketImpl(
 
                 is BrowserRequestResponse.DeleteLoginAccept -> Unit
                 is BrowserRequestResponse.AddLoginAccept -> {
-                    when (response.login.securityType) {
+                    when (response.item.securityType) {
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
                         -> {
-                            val loginData = createLoginAcceptData(login = response.login, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
+                            val loginData = createLoginAcceptData(item = response.item, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
                             put("login", loginData)
                         }
                     }
                 }
 
                 is BrowserRequestResponse.UpdateLoginAccept -> {
-                    when (response.login.securityType) {
+                    when (response.item.securityType) {
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
                         -> {
-                            val loginData = createLoginAcceptData(login = response.login, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
+                            val loginData = createLoginAcceptData(item = response.item, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
                             put("login", loginData)
                         }
                     }
@@ -467,30 +477,36 @@ internal class RequestWebSocketImpl(
     }
 
     private fun createLoginAcceptData(
-        login: Login,
+        item: Item,
         deviceId: String,
         hkdfSalt: ByteArray,
         sessionKey: ByteArray,
     ): JsonElement {
-        val password = (login.password as? SecretField.Visible)?.value
+        val password = (item.content as? ItemContent.Login)?.password.clearTextOrNull
         val passwordKey = HkdfGenerator.generate(
             inputKeyMaterial = sessionKey,
             salt = hkdfSalt,
-            contextInfo = when (login.securityType) {
+            contextInfo = when (item.securityType) {
                 SecurityType.Tier1 -> "PassT1"
                 SecurityType.Tier2 -> "PassT2"
                 SecurityType.Tier3 -> "PassT3"
             },
         )
         val passwordEnc = password?.let {
-            SecretField.Visible(
+            SecretField.ClearText(
                 encrypt(key = passwordKey, data = password).encodeBase64(),
             )
         }
 
+        // TODO: BEv2
+        val updatedItem = item.copy(
+            content = (item.content as ItemContent.Login).copy(
+                password = passwordEnc,
+            ),
+        )
+
         return json.encodeToJsonElement(
-            login.copy(password = passwordEnc)
-                .let { loginMapper.mapToJson(domain = it, deviceId = deviceId) },
+            itemMapper.mapToJsonV1(domain = updatedItem, deviceId = deviceId),
         )
     }
 

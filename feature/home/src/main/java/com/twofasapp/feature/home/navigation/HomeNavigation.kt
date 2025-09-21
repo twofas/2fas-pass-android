@@ -9,7 +9,7 @@
 package com.twofasapp.feature.home.navigation
 
 import androidx.compose.runtime.Composable
-import com.twofasapp.feature.home.ui.editlogin.EditLoginScreen
+import com.twofasapp.feature.home.ui.editItem.EditItemScreen
 import com.twofasapp.feature.home.ui.home.HomeScreen
 
 @Composable
@@ -30,10 +30,10 @@ fun HomeRoute(
 }
 
 @Composable
-fun EditLoginRoute(
+fun EditItemRoute(
     close: () -> Unit,
 ) {
-    EditLoginScreen(
+    EditItemScreen(
         close = close,
     )
 }

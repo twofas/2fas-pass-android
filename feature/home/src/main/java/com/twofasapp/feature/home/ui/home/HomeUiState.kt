@@ -8,9 +8,10 @@
 
 package com.twofasapp.feature.home.ui.home
 
-import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.Vault
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.filterBySearchQuery
 import com.twofasapp.data.settings.domain.LoginClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
@@ -18,7 +19,7 @@ import com.twofasapp.data.settings.domain.SortingMethod
 internal data class HomeUiState(
     val developerModeEnabled: Boolean = false,
     val vault: Vault = Vault.Empty,
-    val logins: List<Login> = emptyList(),
+    val items: List<Item> = emptyList(),
     val tags: List<Tag> = emptyList(),
     val selectedTag: Tag? = null,
     val searchQuery: String = "",
@@ -28,22 +29,22 @@ internal data class HomeUiState(
     val maxItems: Int = 0,
     val events: List<HomeUiEvent> = emptyList(),
 ) {
-    val loginsFiltered: List<Login>
-        get() = logins
-            .filter { login ->
+    val itemsFiltered: List<Item>
+        get() = items
+            .filter { it.content !is ItemContent.Unknown }
+            .filter { item ->
                 if (selectedTag == null) {
                     true
                 } else {
-                    login.tagIds.contains(selectedTag.id)
+                    item.tagIds.contains(selectedTag.id)
                 }
             }
             .filterBySearchQuery(searchQuery)
 
     val isItemsLimitReached: Boolean
-        get() = logins.size >= maxItems
+        get() = items.size >= maxItems
 }
 
 internal sealed interface HomeUiEvent {
     data object OpenQuickSetup : HomeUiEvent
-    data class CopyPasswordToClipboard(val text: String) : HomeUiEvent
 }

@@ -9,7 +9,7 @@
 package com.twofasapp.feature.home.di
 
 import com.twofasapp.core.di.KoinModule
-import com.twofasapp.feature.home.ui.editlogin.EditLoginViewModel
+import com.twofasapp.feature.home.ui.editItem.EditItemViewModel
 import com.twofasapp.feature.home.ui.home.HomeViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -17,6 +17,6 @@ import org.koin.dsl.module
 class HomeModule : KoinModule {
     override fun provide() = module {
         viewModelOf(::HomeViewModel)
-        viewModelOf(::EditLoginViewModel)
+        viewModelOf(::EditItemViewModel)
     }
 }

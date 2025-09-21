@@ -8,14 +8,14 @@
 
 package com.twofasapp.feature.connect.ui.requestmodal
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 internal sealed interface RequestState {
     sealed interface FullSize : RequestState {
-        data class LoginForm(
-            val login: Login,
+        data class ItemForm(
+            val item: Item,
             val onCancel: () -> Unit = {},
-            val onSaveClick: (Login) -> Unit = {},
+            val onSaveClick: (Item) -> Unit = {},
         ) : FullSize
     }
 

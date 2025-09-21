@@ -35,8 +35,8 @@ internal sealed interface BrowserRequestActionJson {
     ) : BrowserRequestActionJson {
         @Serializable
         data class Data(
-            @SerialName("loginId")
-            val loginId: String,
+            @SerialName("loginId") // TODO: BEv2
+            val itemId: String,
         )
     }
 
@@ -48,8 +48,8 @@ internal sealed interface BrowserRequestActionJson {
     ) : BrowserRequestActionJson {
         @Serializable
         data class Data(
-            @SerialName("loginId")
-            val loginId: String,
+            @SerialName("loginId") // TODO: BEv2
+            val itemId: String,
         )
     }
 

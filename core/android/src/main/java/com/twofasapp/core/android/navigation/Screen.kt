@@ -80,7 +80,7 @@ sealed class Screen(
     data object Developer : Screen()
 
     @Serializable
-    data class EditLogin(val vaultId: String, val loginId: String) : Screen()
+    data class EditItem(val vaultId: String, val itemId: String) : Screen()
 
     @Serializable
     data object Security : Screen()

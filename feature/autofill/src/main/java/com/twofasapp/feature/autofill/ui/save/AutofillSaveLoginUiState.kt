@@ -8,10 +8,10 @@
 
 package com.twofasapp.feature.autofill.ui.save
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 internal data class AutofillSaveLoginUiState(
-    val initialLogin: Login? = null,
-    val login: Login = Login.Empty,
+    val initialItem: Item? = null,
+    val item: Item = Item.Empty,
     val isValid: Boolean = false,
 )

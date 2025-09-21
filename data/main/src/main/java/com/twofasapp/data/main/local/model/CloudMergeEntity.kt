@@ -9,7 +9,7 @@
 package com.twofasapp.data.main.local.model
 
 data class CloudMergeEntity(
-    val loginsToAdd: List<ItemEntity>,
-    val loginsToUpdate: List<ItemEntity>,
-    val loginsToTrash: List<ItemEntity>,
+    val itemsToAdd: List<ItemEntity>,
+    val itemsToUpdate: List<ItemEntity>,
+    val itemsToTrash: List<ItemEntity>,
 )

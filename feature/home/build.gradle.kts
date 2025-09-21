@@ -27,8 +27,8 @@ dependencies {
     implementation(project(":data:settings"))
     implementation(project(":data:cloud"))
     implementation(project(":data:purchases"))
+    implementation(project(":feature:itemform"))
 
-    implementation(project(":feature:loginform"))
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))
 
