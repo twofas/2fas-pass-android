@@ -29,6 +29,7 @@ import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
+import com.twofasapp.feature.externalimport.import.spec.MicrosoftEdgeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ProtonPassImportSpec
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +44,7 @@ internal class ExternalImportViewModel(
     private val onePasswordImportSpec: OnePasswordImportSpec,
     private val protonPassImportSpec: ProtonPassImportSpec,
     private val chromeImportSpec: ChromeImportSpec,
+    private val microsoftEdgeImportSpec: MicrosoftEdgeImportSpec,
     private val lastPassImportSpec: LastPassImportSpec,
     private val dashlaneDesktopImportSpec: DashlaneDesktopImportSpec,
     private val dashlaneMobileImportSpec: DashlaneMobileImportSpec,
@@ -63,6 +65,7 @@ internal class ExternalImportViewModel(
                     ImportType.OnePassword -> onePasswordImportSpec
                     ImportType.ProtonPass -> protonPassImportSpec
                     ImportType.Chrome -> chromeImportSpec
+                    ImportType.MicrosoftEdge -> microsoftEdgeImportSpec
                     ImportType.LastPass -> lastPassImportSpec
                     ImportType.DashlaneDesktop -> dashlaneDesktopImportSpec
                     ImportType.DashlaneMobile -> dashlaneMobileImportSpec
