@@ -25,6 +25,7 @@ import com.twofasapp.feature.externalimport.import.spec.BitwardenImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ChromeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneMobileImportSpec
+import com.twofasapp.feature.externalimport.import.spec.EnpassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
@@ -45,6 +46,7 @@ internal class ExternalImportViewModel(
     private val protonPassImportSpec: ProtonPassImportSpec,
     private val chromeImportSpec: ChromeImportSpec,
     private val microsoftEdgeImportSpec: MicrosoftEdgeImportSpec,
+    private val enpassImportSpec: EnpassImportSpec,
     private val lastPassImportSpec: LastPassImportSpec,
     private val dashlaneDesktopImportSpec: DashlaneDesktopImportSpec,
     private val dashlaneMobileImportSpec: DashlaneMobileImportSpec,
@@ -66,6 +68,7 @@ internal class ExternalImportViewModel(
                     ImportType.ProtonPass -> protonPassImportSpec
                     ImportType.Chrome -> chromeImportSpec
                     ImportType.MicrosoftEdge -> microsoftEdgeImportSpec
+                    ImportType.Enpass -> enpassImportSpec
                     ImportType.LastPass -> lastPassImportSpec
                     ImportType.DashlaneDesktop -> dashlaneDesktopImportSpec
                     ImportType.DashlaneMobile -> dashlaneMobileImportSpec

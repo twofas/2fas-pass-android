@@ -15,6 +15,7 @@ import com.twofasapp.feature.externalimport.import.spec.BitwardenImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ChromeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneMobileImportSpec
+import com.twofasapp.feature.externalimport.import.spec.EnpassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
@@ -35,6 +36,7 @@ class ExternalImportModule : KoinModule {
         singleOf(::ProtonPassImportSpec)
         singleOf(::ChromeImportSpec)
         singleOf(::MicrosoftEdgeImportSpec)
+        singleOf(::EnpassImportSpec)
         singleOf(::LastPassImportSpec)
         singleOf(::DashlaneDesktopImportSpec)
         singleOf(::DashlaneMobileImportSpec)

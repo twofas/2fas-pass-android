@@ -94,6 +94,7 @@ private fun Content(
                             ImportType.ProtonPass -> R.drawable.external_logo_protonpass
                             ImportType.Chrome -> R.drawable.external_logo_chrome
                             ImportType.MicrosoftEdge -> R.drawable.external_logo_microsoft_edge
+                            ImportType.Enpass -> R.drawable.external_logo_enpass
                             ImportType.LastPass -> R.drawable.external_logo_lastpass
                             ImportType.DashlaneDesktop -> R.drawable.external_logo_dashlane
                             ImportType.DashlaneMobile -> R.drawable.external_logo_dashlane
