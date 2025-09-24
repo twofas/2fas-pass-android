@@ -43,7 +43,7 @@ internal class FillRequestHandler(
                 return
             }
 
-            if (nodeStructure.packageName == context.packageName) {
+            if (nodeStructure.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
                 Timber.tag(AutofillTag).d("❌ Package name is the same as autofill service package name!")
                 fillCallback.onSuccess(null)
                 return

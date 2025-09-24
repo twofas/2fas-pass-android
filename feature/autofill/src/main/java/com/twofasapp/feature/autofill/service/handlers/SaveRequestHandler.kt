@@ -43,7 +43,7 @@ internal class SaveRequestHandler(
             return
         }
 
-        if (saveRequestSpec.packageName == context.packageName) {
+        if (saveRequestSpec.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
             saveCallback.onFailure("Package name is the same as autofill service package name!")
             return
         }
