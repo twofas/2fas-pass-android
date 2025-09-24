@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
+import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
@@ -72,6 +73,7 @@ internal fun ItemDetailsModal(
     tags: List<Tag>,
     onDismissRequest: () -> Unit,
     onEditClick: () -> Unit = {},
+    onCopySecretFieldToClipboard: (SecretField?) -> Unit = {},
 ) {
     Modal(
         onDismissRequest = onDismissRequest,
@@ -82,6 +84,7 @@ internal fun ItemDetailsModal(
             item = item,
             tags = tags,
             onEditClick = onEditClick,
+            onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
         )
     }
 }
@@ -93,6 +96,7 @@ private fun Content(
     item: Item,
     tags: List<Tag>,
     onEditClick: () -> Unit = {},
+    onCopySecretFieldToClipboard: (SecretField?) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -180,17 +184,7 @@ private fun Content(
 
                                         IconButton(
                                             icon = MdtIcons.Copy,
-                                            onClick = {
-                                                scope.launch(Dispatchers.IO) {
-                                                    vaultCryptoScope.withVaultCipher(item.vaultId) {
-                                                        itemEncryptionMapper.decryptSecretField(
-                                                            secretField = content.password,
-                                                            securityType = item.securityType,
-                                                            vaultCipher = this,
-                                                        )?.let { context.copyToClipboard(text = it, isSensitive = true) }
-                                                    }
-                                                }
-                                            },
+                                            onClick = { onCopySecretFieldToClipboard(content.password) },
                                         )
                                     },
                                 )

@@ -114,6 +114,9 @@ internal fun HomeItem(
                 showDetailsModal = false
                 onEditClick(item.id, item.vaultId)
             },
+            onCopySecretFieldToClipboard = { secretField ->
+                onCopySecretFieldToClipboard(item, secretField)
+            },
         )
     }
 
