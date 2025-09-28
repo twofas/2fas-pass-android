@@ -20,9 +20,10 @@ fun ScreenOrientation(compactOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_
     if (LocalInspectionMode.current.not()) {
         val activity = LocalContext.currentActivity
         val deviceType = currentDeviceType()
+        val isTablet = activity.resources.configuration.smallestScreenWidthDp >= 600
 
-        when (deviceType) {
-            DeviceType.Compact -> {
+        when {
+            isTablet.not() || deviceType == DeviceType.Compact -> {
                 DisposableEffect(Unit) {
                     val originalOrientation = activity.requestedOrientation
                     activity.requestedOrientation = compactOrientation
@@ -32,8 +33,8 @@ fun ScreenOrientation(compactOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_
                 }
             }
 
-            DeviceType.Medium -> Unit
-            DeviceType.Expanded -> Unit
+            deviceType == DeviceType.Medium -> Unit
+            deviceType == DeviceType.Expanded -> Unit
         }
     }
 }
