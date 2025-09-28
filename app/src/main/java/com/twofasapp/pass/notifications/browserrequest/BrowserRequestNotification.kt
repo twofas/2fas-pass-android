@@ -19,6 +19,7 @@ import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.BrowserExtensionRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.domain.BrowserRequestData
+import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.push.domain.Push
 import com.twofasapp.data.push.internal.PushLogger
 import com.twofasapp.data.push.notifications.NotificationSystemChannelProvider
@@ -45,6 +46,7 @@ internal class BrowserRequestNotification(
         }
 
         val browserRequestData = BrowserRequestData(
+            version = push.scheme ?: ConnectData.CurrentSchema,
             browser = browser,
             deviceId = device.uniqueId(),
             notificationId = push.notificationId,

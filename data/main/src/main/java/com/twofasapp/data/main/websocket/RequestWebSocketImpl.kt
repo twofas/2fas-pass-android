@@ -41,6 +41,7 @@ import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.domain.BrowserRequestAction
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
+import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.main.domain.RequestWebSocketResult
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.ItemMapper
@@ -69,7 +70,7 @@ internal class RequestWebSocketImpl(
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
     override val itemsRepository: ItemsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
-    override val loginDecryptionMapper: ItemEncryptionMapper,
+    override val itemEncryptionMapper: ItemEncryptionMapper,
     private val settingsRepository: SettingsRepository,
     private val dispatchers: Dispatchers,
     private val androidKeyStore: AndroidKeyStore,
@@ -81,6 +82,7 @@ internal class RequestWebSocketImpl(
     private val uriMatcherMapper: UriMatcherMapper,
 ) : RequestWebSocket, WebSocketDelegate {
 
+    override var version: Int = ConnectData.CurrentSchema
     override var expectedIncomingId: String = ""
     private var error: Exception? = null
 
@@ -92,6 +94,7 @@ internal class RequestWebSocketImpl(
             withContext(dispatchers.io) {
                 Timber.d("Request: $requestData")
 
+                version = requestData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
                 val pkEpheMa = epheMa.public.encoded
                 val pkEpheBe = EcKeyConverter.createPublicKey(requestData.pkEpheBe)
@@ -180,7 +183,11 @@ internal class RequestWebSocketImpl(
                                             ),
                                         )
 
-                                        val action = json.decodeFromString<BrowserRequestActionJson>(request.decodeString())
+                                        val requestString = request.decodeString()
+
+                                        Timber.d("Request data: $requestString")
+
+                                        val action = json.decodeFromString<BrowserRequestActionJson>(requestString)
                                             .asDomain(
                                                 hkdfSalt = hkdfSalt,
                                                 sessionKey = sessionKey,
@@ -271,24 +278,24 @@ internal class RequestWebSocketImpl(
         hkdfSalt: ByteArray,
         sessionKey: ByteArray,
     ): BrowserRequestAction {
-        Timber.d(this.toString())
+        Timber.d("Request action: $this")
 
         return when (this) {
-            is BrowserRequestActionJson.PasswordRequest -> {
+            is BrowserRequestActionJson.SecretFieldRequest -> {
                 BrowserRequestAction.PasswordRequest(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
             }
 
-            is BrowserRequestActionJson.DeleteLogin -> {
+            is BrowserRequestActionJson.DeleteItem -> {
                 BrowserRequestAction.DeleteLogin(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
             }
 
-            is BrowserRequestActionJson.AddLogin -> {
+            is BrowserRequestActionJson.AddItem -> {
                 val newItem = Item.create(
                     contentType = ItemContentType.Login,
                     content = ItemContent.Login.Empty.copy(
@@ -330,7 +337,7 @@ internal class RequestWebSocketImpl(
                 )
             }
 
-            is BrowserRequestActionJson.UpdateLogin -> {
+            is BrowserRequestActionJson.UpdateItem -> {
                 val item = getItem(data.id)
                     ?: throw WebSocketException(1501, "Could not find requested item.")
 

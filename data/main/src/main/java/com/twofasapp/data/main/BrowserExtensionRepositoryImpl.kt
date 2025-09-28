@@ -95,6 +95,7 @@ internal class BrowserExtensionRepositoryImpl(
             val browser = getConnectedBrowser(notification.data.pkPersBe.decodeBase64()) ?: return@withContext null
 
             val browserRequestData = BrowserRequestData(
+                version = notification.data.scheme ?: ConnectData.CurrentSchema,
                 browser = browser,
                 deviceId = device.uniqueId(),
                 notificationId = notification.id,

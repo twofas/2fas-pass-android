@@ -30,5 +30,7 @@ internal data class NotificationJson(
         val pkEpheBe: String,
         @SerialName("sigPush")
         val sigPush: String,
+        @SerialName("scheme")
+        val scheme: Int?,
     )
 }

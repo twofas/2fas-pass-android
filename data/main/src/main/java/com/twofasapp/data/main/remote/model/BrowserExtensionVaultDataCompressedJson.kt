@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class BrowserExtensionVaultDataCompressedJson(
-    val logins: String,
+    val logins: String?, // V1
+    val items: String?, // V2
     val tags: String,
 )

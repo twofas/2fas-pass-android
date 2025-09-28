@@ -9,10 +9,12 @@
 package com.twofasapp.data.main.websocket.messages
 
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import timber.log.Timber
@@ -28,33 +30,35 @@ internal sealed interface BrowserRequestActionJson {
     ) : BrowserRequestActionJson
 
     @Serializable
-    data class PasswordRequest(
+    data class SecretFieldRequest(
         override val type: String,
         @SerialName("data")
         val data: Data,
     ) : BrowserRequestActionJson {
         @Serializable
         data class Data(
-            @SerialName("loginId") // TODO: BEv2
+            @ExperimentalSerializationApi
+            @JsonNames("loginId", "itemId")
             val itemId: String,
         )
     }
 
     @Serializable
-    data class DeleteLogin(
+    data class DeleteItem(
         override val type: String,
         @SerialName("data")
         val data: Data,
     ) : BrowserRequestActionJson {
         @Serializable
         data class Data(
-            @SerialName("loginId") // TODO: BEv2
+            @ExperimentalSerializationApi
+            @JsonNames("loginId", "itemId")
             val itemId: String,
         )
     }
 
     @Serializable
-    data class AddLogin(
+    data class AddItem(
         override val type: String,
         @SerialName("data")
         val data: Data,
@@ -73,7 +77,7 @@ internal sealed interface BrowserRequestActionJson {
     }
 
     @Serializable
-    data class UpdateLogin(
+    data class UpdateItem(
         override val type: String,
         @SerialName("data")
         val data: Data,
@@ -114,10 +118,10 @@ internal sealed interface BrowserRequestActionJson {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<BrowserRequestActionJson> {
             return try {
                 when (element.jsonObject["type"]?.jsonPrimitive?.content) {
-                    "passwordRequest" -> PasswordRequest.serializer()
-                    "deleteLogin" -> DeleteLogin.serializer()
-                    "newLogin" -> AddLogin.serializer()
-                    "updateLogin" -> UpdateLogin.serializer()
+                    "sifRequest" -> SecretFieldRequest.serializer()
+                    "deleteData" -> DeleteItem.serializer()
+                    "addData" -> AddItem.serializer()
+                    "updateData" -> UpdateItem.serializer()
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {

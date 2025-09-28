@@ -13,13 +13,18 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataJson
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 internal class VaultDataForBrowserMapper(
+    private val json: Json,
     private val itemMapper: ItemMapper,
     private val tagMapper: TagMapper,
 ) {
 
-    fun mapToJson(
+    fun mapToJsonV1(
         vaultBackup: VaultBackup,
         deviceId: String,
         encryptionKey: ByteArray,
@@ -45,8 +50,59 @@ internal class VaultDataForBrowserMapper(
                             )
                         }
                     },
+                items = null,
                 tags = tags.orEmpty().map { tagMapper.mapToJson(it) },
             )
         }
+    }
+
+    fun mapToJson(
+        vaultBackup: VaultBackup,
+        deviceId: String,
+        encryptionKey: ByteArray,
+    ): BrowserExtensionVaultDataJson {
+        return with(vaultBackup) {
+            BrowserExtensionVaultDataJson(
+                items = items.orEmpty()
+                    .filter { it.securityType != SecurityType.Tier1 }
+                    .mapNotNull { item ->
+                        val itemJson = itemMapper.mapToJson(item) ?: return@mapNotNull null
+
+                        val contentJson = json
+                            .parseToJsonElement(itemJson.content)
+                            .processSecretFieldsKeys(
+                                secretField = { value ->
+                                    if (item.securityType == SecurityType.Tier2) {
+                                        null
+                                    } else {
+                                        encrypt(encryptionKey, value.toString()).encodeBase64()
+                                    }
+                                },
+                            )
+
+                        itemJson.copy(
+                            deviceId = deviceId,
+                            content = contentJson.toString(),
+                        )
+                    },
+                logins = null,
+                tags = tags.orEmpty().map { tagMapper.mapToJson(it) },
+            )
+        }
+    }
+
+    private fun JsonElement.processSecretFieldsKeys(
+        secretField: (value: JsonElement) -> String?,
+    ): JsonElement {
+        val jsonObject = this as? JsonObject ?: return this
+
+        val processedEntries = jsonObject.entries.map { (key, value) ->
+            when {
+                key.startsWith("s_") -> key to JsonPrimitive(secretField(value))
+                else -> key to value
+            }
+        }
+
+        return JsonObject(processedEntries.toMap())
     }
 }

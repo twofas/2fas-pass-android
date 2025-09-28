@@ -259,21 +259,35 @@ internal class BackupRepositoryImpl(
     }
 
     override suspend fun createCompressedVaultDataForBrowserExtension(
+        version: Int,
         vaultId: String,
         deviceId: String,
-        encryptionPassKey: ByteArray,
+        encryptionKey: ByteArray,
     ): String {
         return withContext(dispatchers.io) {
             val vaultData = createVaultBackup(vaultId = vaultId, includeDeleted = false, decryptSecretFields = true) // TODO: BEv2
 
-            val vaultDataJson = vaultDataForBrowserMapper.mapToJson(
-                vaultBackup = vaultData,
-                deviceId = deviceId,
-                encryptionKey = encryptionPassKey,
-            )
+            val vaultDataJson = when (version) {
+                1 -> {
+                    vaultDataForBrowserMapper.mapToJsonV1(
+                        vaultBackup = vaultData,
+                        deviceId = deviceId,
+                        encryptionKey = encryptionKey,
+                    )
+                }
+
+                else -> {
+                    vaultDataForBrowserMapper.mapToJson(
+                        vaultBackup = vaultData,
+                        deviceId = deviceId,
+                        encryptionKey = encryptionKey,
+                    )
+                }
+            }
 
             val vaultDataCompressedJson = BrowserExtensionVaultDataCompressedJson(
-                logins = Gzip.compress(json.encodeToString(vaultDataJson.logins)).encodeBase64(),
+                logins = vaultDataJson.logins?.let { logins -> Gzip.compress(json.encodeToString(logins)).encodeBase64() },
+                items = vaultDataJson.items?.let { items -> Gzip.compress(json.encodeToString(items)).encodeBase64() },
                 tags = Gzip.compress(json.encodeToString(vaultDataJson.tags)).encodeBase64(),
             )
 
