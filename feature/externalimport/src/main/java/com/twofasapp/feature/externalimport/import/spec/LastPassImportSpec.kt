@@ -30,7 +30,7 @@ internal class LastPassImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile(),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 

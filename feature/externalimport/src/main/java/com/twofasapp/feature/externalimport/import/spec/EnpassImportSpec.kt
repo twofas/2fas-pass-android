@@ -39,7 +39,7 @@ internal class EnpassImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_json),
-            action = ImportSpec.CtaAction.ChooseFile("application/json"),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 

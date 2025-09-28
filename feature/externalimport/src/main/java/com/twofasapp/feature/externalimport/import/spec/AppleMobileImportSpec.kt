@@ -30,7 +30,7 @@ internal class AppleMobileImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_zip),
-            action = ImportSpec.CtaAction.ChooseFile(),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 
