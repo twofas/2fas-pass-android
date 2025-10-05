@@ -24,7 +24,7 @@ internal sealed interface RequestState {
         data object PasswordRequest : InsideFrame
         data object AddLogin : InsideFrame
         data object UpdateLogin : InsideFrame
-        data object DeleteLogin : InsideFrame
+        data object DeleteItem : InsideFrame
         data class UpgradePlan(val maxItems: Int) : InsideFrame
         data class Error(
             val title: String,

@@ -52,7 +52,7 @@ import com.twofasapp.feature.connect.ui.commonmodal.LoadingState
 import com.twofasapp.feature.connect.ui.commonmodal.LoginFormState
 import com.twofasapp.feature.connect.ui.commonmodal.ModalFrame
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
-import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteLoginState
+import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import org.koin.androidx.compose.koinViewModel
@@ -102,7 +102,7 @@ private fun ModalContent(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val passwordRequestState by viewModel.passwordRequestState.collectAsStateWithLifecycle()
-    val deleteItemState by viewModel.deleteLoginState.collectAsStateWithLifecycle()
+    val deleteItemState by viewModel.deleteItemState.collectAsStateWithLifecycle()
     val addItemState by viewModel.addLoginState.collectAsStateWithLifecycle()
     val updateItemState by viewModel.updateLoginState.collectAsStateWithLifecycle()
 
@@ -113,7 +113,7 @@ private fun ModalContent(
     Content(
         uiState = uiState,
         passwordRequestState = passwordRequestState,
-        deleteLoginState = deleteItemState,
+        deleteItemState = deleteItemState,
         addLoginState = addItemState,
         updateLoginState = updateItemState,
         onUpgradePlan = onUpgradePlan,
@@ -129,7 +129,7 @@ private fun ModalContent(
 private fun Content(
     uiState: RequestModalUiState,
     passwordRequestState: PasswordRequestState = PasswordRequestState(),
-    deleteLoginState: DeleteLoginState = DeleteLoginState(),
+    deleteItemState: DeleteItemState = DeleteItemState(),
     addLoginState: AddLoginState = AddLoginState(),
     updateLoginState: UpdateLoginState = UpdateLoginState(),
     onUpgradePlan: () -> Unit = {},
@@ -143,7 +143,7 @@ private fun Content(
             val toastMessage = when (uiState.selectedResponse) {
                 is BrowserRequestResponse.AddLoginAccept -> strings.requestModalToastAddLogin
                 is BrowserRequestResponse.UpdateLoginAccept -> strings.requestModalToastUpdateLogin
-                is BrowserRequestResponse.DeleteLoginAccept -> strings.requestModalToastDeleteLogin
+                is BrowserRequestResponse.DeleteItemAccept -> strings.requestModalToastDeleteItem
                 is BrowserRequestResponse.PasswordRequestAccept -> strings.requestModalToastPasswordRequest
                 is BrowserRequestResponse.Cancel -> strings.requestModalToastCancel
                 null -> strings.requestModalToastCancel
@@ -228,17 +228,17 @@ private fun Content(
                             )
                         }
 
-                        is RequestState.InsideFrame.DeleteLogin -> {
+                        is RequestState.InsideFrame.DeleteItem -> {
                             ItemState(
-                                item = deleteLoginState.item,
+                                item = deleteItemState.item,
                                 title = strings.requestModalRemoveItemTitle,
                                 subtitle = strings.requestModalRemoveItemSubtitle,
                                 icon = MdtIcons.Delete,
                                 iconTint = MdtTheme.color.error,
                                 positiveCta = strings.requestModalRemoveItemCtaPositive,
                                 negativeCta = strings.requestModalRemoveItemCtaNegative,
-                                onPositiveCta = { deleteLoginState.onDeleteClick() },
-                                onNegativeCta = { deleteLoginState.onCancelClick() },
+                                onPositiveCta = { deleteItemState.onDeleteClick() },
+                                onNegativeCta = { deleteItemState.onCancelClick() },
                             )
                         }
 

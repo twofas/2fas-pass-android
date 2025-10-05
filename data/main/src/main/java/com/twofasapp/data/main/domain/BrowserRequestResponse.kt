@@ -15,7 +15,7 @@ sealed interface BrowserRequestResponse {
         val password: String,
     ) : BrowserRequestResponse
 
-    data object DeleteLoginAccept : BrowserRequestResponse
+    data object DeleteItemAccept : BrowserRequestResponse
     data class AddLoginAccept(val item: Item) : BrowserRequestResponse // TODO: BEv2
     data class UpdateLoginAccept(val item: Item) : BrowserRequestResponse // TODO: BEv2
     data object Cancel : BrowserRequestResponse

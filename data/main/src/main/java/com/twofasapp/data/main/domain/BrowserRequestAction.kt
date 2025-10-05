@@ -18,7 +18,7 @@ sealed interface BrowserRequestAction {
         val item: Item,
     ) : BrowserRequestAction
 
-    data class DeleteLogin(
+    data class DeleteItem(
         override val type: String,
         val item: Item,
     ) : BrowserRequestAction

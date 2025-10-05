@@ -289,13 +289,13 @@ internal class RequestWebSocketImpl(
             }
 
             is BrowserRequestActionJson.DeleteItem -> {
-                BrowserRequestAction.DeleteLogin(
+                BrowserRequestAction.DeleteItem(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
             }
 
-            is BrowserRequestActionJson.AddItem -> {
+            is BrowserRequestActionJson.AddLogin -> {
                 val newItem = Item.create(
                     contentType = ItemContentType.Login,
                     content = ItemContent.Login.Empty.copy(
@@ -337,7 +337,7 @@ internal class RequestWebSocketImpl(
                 )
             }
 
-            is BrowserRequestActionJson.UpdateItem -> {
+            is BrowserRequestActionJson.UpdateLogin -> {
                 val item = getItem(data.id)
                     ?: throw WebSocketException(1501, "Could not find requested item.")
 
@@ -409,7 +409,7 @@ internal class RequestWebSocketImpl(
         val type = action.type
         val status = when (response) {
             is BrowserRequestResponse.PasswordRequestAccept -> "accept"
-            is BrowserRequestResponse.DeleteLoginAccept -> "accept"
+            is BrowserRequestResponse.DeleteItemAccept -> "accept"
             is BrowserRequestResponse.AddLoginAccept -> {
                 when (response.item.securityType) {
                     SecurityType.Tier1 -> "addedInT1"
@@ -451,7 +451,7 @@ internal class RequestWebSocketImpl(
                     put("passwordEnc", JsonPrimitive(passwordEnc.encodeBase64()))
                 }
 
-                is BrowserRequestResponse.DeleteLoginAccept -> Unit
+                is BrowserRequestResponse.DeleteItemAccept -> Unit
                 is BrowserRequestResponse.AddLoginAccept -> {
                     when (response.item.securityType) {
                         SecurityType.Tier1 -> Unit

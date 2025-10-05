@@ -26,7 +26,7 @@ import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.websocket.RequestWebSocket
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
-import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteLoginState
+import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import kotlinx.coroutines.CancellableContinuation
@@ -48,7 +48,7 @@ internal class RequestModalViewModel(
 
     val uiState = MutableStateFlow(RequestModalUiState())
     val passwordRequestState = MutableStateFlow(PasswordRequestState())
-    val deleteLoginState = MutableStateFlow(DeleteLoginState())
+    val deleteItemState = MutableStateFlow(DeleteItemState())
     val addLoginState = MutableStateFlow(AddLoginState())
     val updateLoginState = MutableStateFlow(UpdateLoginState())
 
@@ -100,7 +100,7 @@ internal class RequestModalViewModel(
         updateState(
             when (request) {
                 is BrowserRequestAction.PasswordRequest -> RequestState.InsideFrame.PasswordRequest
-                is BrowserRequestAction.DeleteLogin -> RequestState.InsideFrame.DeleteLogin
+                is BrowserRequestAction.DeleteItem -> RequestState.InsideFrame.DeleteItem
                 is BrowserRequestAction.AddLogin -> {
                     val maxItems = purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit
                     val currentItems = itemsRepository.getItemsCount()
@@ -134,9 +134,9 @@ internal class RequestModalViewModel(
                     }
                 }
 
-                is BrowserRequestAction.DeleteLogin -> {
+                is BrowserRequestAction.DeleteItem -> {
                     launchScoped {
-                        deleteLoginState.update { state ->
+                        deleteItemState.update { state ->
                             state.copy(
                                 item = request.item,
                                 onDeleteClick = {
@@ -145,7 +145,7 @@ internal class RequestModalViewModel(
 
                                         trashRepository.trash(request.item.id)
 
-                                        continuation.sendResponse(BrowserRequestResponse.DeleteLoginAccept)
+                                        continuation.sendResponse(BrowserRequestResponse.DeleteItemAccept)
                                     }
                                 },
                                 onCancelClick = {

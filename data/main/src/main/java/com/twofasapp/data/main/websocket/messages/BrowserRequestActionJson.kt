@@ -58,7 +58,7 @@ internal sealed interface BrowserRequestActionJson {
     }
 
     @Serializable
-    data class AddItem(
+    data class AddLogin(
         override val type: String,
         @SerialName("data")
         val data: Data,
@@ -77,7 +77,7 @@ internal sealed interface BrowserRequestActionJson {
     }
 
     @Serializable
-    data class UpdateItem(
+    data class UpdateLogin(
         override val type: String,
         @SerialName("data")
         val data: Data,
@@ -118,10 +118,17 @@ internal sealed interface BrowserRequestActionJson {
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<BrowserRequestActionJson> {
             return try {
                 when (element.jsonObject["type"]?.jsonPrimitive?.content) {
+                    // V1:
+                    "passwordRequest" -> SecretFieldRequest.serializer()
+                    "deleteLogin" -> DeleteItem.serializer()
+                    "newLogin" -> AddLogin.serializer()
+                    "updateLogin" -> UpdateLogin.serializer()
+                    // V2:
                     "sifRequest" -> SecretFieldRequest.serializer()
                     "deleteData" -> DeleteItem.serializer()
-                    "addData" -> AddItem.serializer()
-                    "updateData" -> UpdateItem.serializer()
+                    "addData" -> AddLogin.serializer()
+                    "updateData" -> UpdateLogin.serializer()
+
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {
