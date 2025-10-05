@@ -13,7 +13,26 @@ import com.twofasapp.core.common.domain.items.Item
 sealed interface BrowserRequestAction {
     val type: String
 
+    @Deprecated("Used in V1. Can be removed later.")
     data class PasswordRequest(
+        override val type: String,
+        val item: Item,
+    ) : BrowserRequestAction
+
+    @Deprecated("Used in V1. Can be removed later.")
+    data class AddLogin(
+        override val type: String,
+        val item: Item,
+    ) : BrowserRequestAction
+
+    @Deprecated("Used in V1. Can be removed later.")
+    data class UpdateLogin(
+        override val type: String,
+        val item: Item,
+        val updatedItem: Item,
+    ) : BrowserRequestAction
+
+    data class SecretFieldRequest(
         override val type: String,
         val item: Item,
     ) : BrowserRequestAction
@@ -21,16 +40,5 @@ sealed interface BrowserRequestAction {
     data class DeleteItem(
         override val type: String,
         val item: Item,
-    ) : BrowserRequestAction
-
-    data class AddLogin(
-        override val type: String,
-        val item: Item,
-    ) : BrowserRequestAction
-
-    data class UpdateLogin(
-        override val type: String,
-        val item: Item,
-        val updatedItem: Item,
     ) : BrowserRequestAction
 }

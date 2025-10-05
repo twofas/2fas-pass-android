@@ -10,6 +10,7 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataJson
@@ -65,6 +66,7 @@ internal class VaultDataForBrowserMapper(
             BrowserExtensionVaultDataJson(
                 items = items.orEmpty()
                     .filter { it.securityType != SecurityType.Tier1 }
+                    .filter { it.content !is ItemContent.Unknown }
                     .mapNotNull { item ->
                         val itemJson = itemMapper.mapToJson(item) ?: return@mapNotNull null
 

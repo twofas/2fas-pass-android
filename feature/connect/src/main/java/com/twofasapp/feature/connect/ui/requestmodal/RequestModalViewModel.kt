@@ -28,6 +28,7 @@ import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
 import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +49,7 @@ internal class RequestModalViewModel(
 
     val uiState = MutableStateFlow(RequestModalUiState())
     val passwordRequestState = MutableStateFlow(PasswordRequestState())
+    val secretFieldRequestState = MutableStateFlow(SecretFieldRequestState())
     val deleteItemState = MutableStateFlow(DeleteItemState())
     val addLoginState = MutableStateFlow(AddLoginState())
     val updateLoginState = MutableStateFlow(UpdateLoginState())
@@ -100,7 +102,6 @@ internal class RequestModalViewModel(
         updateState(
             when (request) {
                 is BrowserRequestAction.PasswordRequest -> RequestState.InsideFrame.PasswordRequest
-                is BrowserRequestAction.DeleteItem -> RequestState.InsideFrame.DeleteItem
                 is BrowserRequestAction.AddLogin -> {
                     val maxItems = purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit
                     val currentItems = itemsRepository.getItemsCount()
@@ -113,6 +114,8 @@ internal class RequestModalViewModel(
                 }
 
                 is BrowserRequestAction.UpdateLogin -> RequestState.InsideFrame.UpdateLogin
+                is BrowserRequestAction.SecretFieldRequest -> RequestState.InsideFrame.SecretFieldRequest
+                is BrowserRequestAction.DeleteItem -> RequestState.InsideFrame.DeleteItem
             },
         )
 
@@ -125,28 +128,6 @@ internal class RequestModalViewModel(
                                 item = request.item,
                                 onSendPasswordClick = { password ->
                                     continuation.sendResponse(BrowserRequestResponse.PasswordRequestAccept(password))
-                                },
-                                onCancelClick = {
-                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
-                                },
-                            )
-                        }
-                    }
-                }
-
-                is BrowserRequestAction.DeleteItem -> {
-                    launchScoped {
-                        deleteItemState.update { state ->
-                            state.copy(
-                                item = request.item,
-                                onDeleteClick = {
-                                    launchScoped {
-                                        updateState(RequestState.InsideFrame.Loading)
-
-                                        trashRepository.trash(request.item.id)
-
-                                        continuation.sendResponse(BrowserRequestResponse.DeleteItemAccept)
-                                    }
                                 },
                                 onCancelClick = {
                                     continuation.sendResponse(BrowserRequestResponse.Cancel)
@@ -231,6 +212,44 @@ internal class RequestModalViewModel(
                                             },
                                         ),
                                     )
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.SecretFieldRequest -> {
+                    launchScoped {
+                        secretFieldRequestState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onSendClick = { secretFields ->
+                                    continuation.sendResponse(BrowserRequestResponse.SecretFieldRequestAccept(secretFields))
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.DeleteItem -> {
+                    launchScoped {
+                        deleteItemState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onDeleteClick = {
+                                    launchScoped {
+                                        updateState(RequestState.InsideFrame.Loading)
+
+                                        trashRepository.trash(request.item.id)
+
+                                        continuation.sendResponse(BrowserRequestResponse.DeleteItemAccept)
+                                    }
                                 },
                                 onCancelClick = {
                                     continuation.sendResponse(BrowserRequestResponse.Cancel)

@@ -30,29 +30,14 @@ internal sealed interface BrowserRequestActionJson {
     ) : BrowserRequestActionJson
 
     @Serializable
-    data class SecretFieldRequest(
+    data class PasswordRequest(
         override val type: String,
         @SerialName("data")
         val data: Data,
     ) : BrowserRequestActionJson {
         @Serializable
         data class Data(
-            @ExperimentalSerializationApi
-            @JsonNames("loginId", "itemId")
-            val itemId: String,
-        )
-    }
-
-    @Serializable
-    data class DeleteItem(
-        override val type: String,
-        @SerialName("data")
-        val data: Data,
-    ) : BrowserRequestActionJson {
-        @Serializable
-        data class Data(
-            @ExperimentalSerializationApi
-            @JsonNames("loginId", "itemId")
+            @SerialName("loginId")
             val itemId: String,
         )
     }
@@ -113,13 +98,40 @@ internal sealed interface BrowserRequestActionJson {
         }
     }
 
+    @Serializable
+    data class SecretFieldRequest(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+        @Serializable
+        data class Data(
+            @SerialName("itemId")
+            val itemId: String,
+        )
+    }
+
+    @Serializable
+    data class DeleteItem(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+        @Serializable
+        data class Data(
+            @ExperimentalSerializationApi
+            @JsonNames("loginId", "itemId")
+            val itemId: String,
+        )
+    }
+
     object Serializer : JsonContentPolymorphicSerializer<BrowserRequestActionJson>(BrowserRequestActionJson::class) {
 
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<BrowserRequestActionJson> {
             return try {
                 when (element.jsonObject["type"]?.jsonPrimitive?.content) {
                     // V1:
-                    "passwordRequest" -> SecretFieldRequest.serializer()
+                    "passwordRequest" -> PasswordRequest.serializer()
                     "deleteLogin" -> DeleteItem.serializer()
                     "newLogin" -> AddLogin.serializer()
                     "updateLogin" -> UpdateLogin.serializer()

@@ -281,15 +281,8 @@ internal class RequestWebSocketImpl(
         Timber.d("Request action: $this")
 
         return when (this) {
-            is BrowserRequestActionJson.SecretFieldRequest -> {
+            is BrowserRequestActionJson.PasswordRequest -> {
                 BrowserRequestAction.PasswordRequest(
-                    type = type,
-                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
-                )
-            }
-
-            is BrowserRequestActionJson.DeleteItem -> {
-                BrowserRequestAction.DeleteItem(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
@@ -393,6 +386,20 @@ internal class RequestWebSocketImpl(
                 )
             }
 
+            is BrowserRequestActionJson.SecretFieldRequest -> {
+                BrowserRequestAction.SecretFieldRequest(
+                    type = type,
+                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                )
+            }
+
+            is BrowserRequestActionJson.DeleteItem -> {
+                BrowserRequestAction.DeleteItem(
+                    type = type,
+                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                )
+            }
+
             is BrowserRequestActionJson.Unknown -> {
                 throw WebSocketException(1502, "Unknown request action.")
             }
@@ -409,6 +416,7 @@ internal class RequestWebSocketImpl(
         val type = action.type
         val status = when (response) {
             is BrowserRequestResponse.PasswordRequestAccept -> "accept"
+            is BrowserRequestResponse.SecretFieldRequestAccept -> "accept"
             is BrowserRequestResponse.DeleteItemAccept -> "accept"
             is BrowserRequestResponse.AddLoginAccept -> {
                 when (response.item.securityType) {
@@ -449,6 +457,26 @@ internal class RequestWebSocketImpl(
                     )
 
                     put("passwordEnc", JsonPrimitive(passwordEnc.encodeBase64()))
+                }
+
+                is BrowserRequestResponse.SecretFieldRequestAccept -> {
+                    val itemT2Key = HkdfGenerator.generate(
+                        inputKeyMaterial = sessionKey,
+                        salt = hkdfSalt,
+                        contextInfo = "ItemT2",
+                    )
+
+                    response.fields.forEach { field ->
+                        val fieldEnc = encrypt(
+                            key = itemT2Key,
+                            data = field.value,
+                        )
+
+                        put(
+                            key = "${field.key}Enc",
+                            element = JsonPrimitive(fieldEnc.encodeBase64()),
+                        )
+                    }
                 }
 
                 is BrowserRequestResponse.DeleteItemAccept -> Unit
