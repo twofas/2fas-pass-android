@@ -20,6 +20,8 @@ import com.twofasapp.data.main.remote.model.ItemContentJson
 import com.twofasapp.data.main.remote.model.ItemJson
 import com.twofasapp.data.main.remote.model.vaultbackup.LoginJson
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.encodeToJsonElement
 
 internal class ItemMapper(
     private val jsonSerializer: Json,
@@ -107,11 +109,11 @@ internal class ItemMapper(
 
     private fun mapItemContentToDomain(
         contentType: String,
-        contentJson: String,
+        contentJson: JsonElement,
     ): ItemContent {
         return when (contentType) {
             ItemContentType.Login.key -> {
-                val content = jsonSerializer.decodeFromString(ItemContentJson.Login.serializer(), contentJson)
+                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.Login.serializer(), contentJson)
 
                 ItemContent.Login(
                     name = content.name,
@@ -129,7 +131,7 @@ internal class ItemMapper(
 
             // TODO: Uncomment when SecureNote is implemented
 //            ItemContentType.SecureNote.key -> {
-//                val content = jsonSerializer.decodeFromString(ItemContentJson.SecureNote.serializer(), contentJson)
+//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
 //
 //                ItemContent.SecureNote(
 //                    name = content.name,
@@ -138,17 +140,17 @@ internal class ItemMapper(
 //            }
 
             else -> {
-                ItemContent.Unknown(rawJson = contentJson)
+                ItemContent.Unknown(rawJson = jsonSerializer.encodeToString(contentJson))
             }
         }
     }
 
     private fun mapItemContentToJson(
         content: ItemContent,
-    ): String {
+    ): JsonElement {
         return when (content) {
             is ItemContent.Login -> {
-                jsonSerializer.encodeToString(
+                jsonSerializer.encodeToJsonElement(
                     ItemContentJson.Login(
                         name = content.name,
                         username = content.username,
@@ -165,7 +167,7 @@ internal class ItemMapper(
             }
 
             is ItemContent.SecureNote -> {
-                jsonSerializer.encodeToString(
+                jsonSerializer.encodeToJsonElement(
                     ItemContentJson.SecureNote(
                         name = content.name,
                         text = content.text.clearTextOrNull,
@@ -174,7 +176,7 @@ internal class ItemMapper(
             }
 
             is ItemContent.Unknown -> {
-                content.rawJson
+                jsonSerializer.parseToJsonElement(content.rawJson)
             }
         }
     }

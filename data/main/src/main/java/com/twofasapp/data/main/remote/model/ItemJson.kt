@@ -10,6 +10,7 @@ package com.twofasapp.data.main.remote.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class ItemJson(
@@ -28,7 +29,7 @@ data class ItemJson(
     @SerialName("contentVersion")
     val contentVersion: Int,
     @SerialName("content")
-    val content: String,
+    val content: JsonElement,
     @SerialName("tags")
     val tags: List<String>?,
 )
