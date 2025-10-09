@@ -56,12 +56,14 @@ internal class ImportExportViewModel(
                     backupRepository.createVaultBackup(
                         vaultId = vaultsRepository.getVault().id,
                         includeDeleted = false,
+                        decryptSecretFields = false,
                     ),
                 )
             } else {
                 backupRepository.createVaultBackup(
                     vaultId = vaultsRepository.getVault().id,
                     includeDeleted = false,
+                    decryptSecretFields = true,
                 )
             }
 

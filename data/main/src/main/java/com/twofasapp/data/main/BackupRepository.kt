@@ -14,7 +14,7 @@ import com.twofasapp.data.main.domain.VaultKeys
 import com.twofasapp.data.security.crypto.Seed
 
 interface BackupRepository {
-    suspend fun createVaultBackup(vaultId: String, includeDeleted: Boolean): VaultBackup
+    suspend fun createVaultBackup(vaultId: String, includeDeleted: Boolean, decryptSecretFields: Boolean): VaultBackup
     suspend fun encryptVaultBackup(vaultBackup: VaultBackup): VaultBackup
     suspend fun serializeVaultBackup(vaultBackup: VaultBackup): String
     suspend fun readVaultBackup(fileUri: Uri): VaultBackup

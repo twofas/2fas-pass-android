@@ -9,6 +9,7 @@
 package com.twofasapp.core.common.domain
 
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.ktx.encodeBase64
 
 sealed interface SecretField {
     data class Encrypted(val value: EncryptedBytes) : SecretField
@@ -23,3 +24,6 @@ val SecretField?.clearTextOrNull: String?
 
 val SecretField?.clearText: String
     get() = (this as SecretField.ClearText).value
+
+val SecretField?.encryptedText: String
+    get() = (this as SecretField.Encrypted).value.bytes.encodeBase64()

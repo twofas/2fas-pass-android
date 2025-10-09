@@ -62,7 +62,7 @@ internal class BackupRepositoryImpl(
     private val tagsRepository: TagsRepository,
 ) : BackupRepository {
 
-    override suspend fun createVaultBackup(vaultId: String, includeDeleted: Boolean): VaultBackup {
+    override suspend fun createVaultBackup(vaultId: String, includeDeleted: Boolean, decryptSecretFields: Boolean): VaultBackup {
         return withContext(dispatchers.io) {
             val vault = vaultsRepository.getVault(vaultId)
             val items = vaultCryptoScope.withVaultCipher(vault) {
@@ -70,7 +70,7 @@ internal class BackupRepositoryImpl(
                     itemEncryptionMapper.decryptItem(
                         itemEncrypted = item,
                         vaultCipher = this,
-                        decryptSecretFields = true,
+                        decryptSecretFields = decryptSecretFields,
                     )
                 }
             }
@@ -188,7 +188,7 @@ internal class BackupRepositoryImpl(
 
                         2 -> {
                             json.decodeFromString<ItemJson>(decryptedItemJson)
-                                .let { itemMapper.mapToDomain(json = it, vaultId = vaultBackup.vaultId, tagIds = it.tags) }
+                                .let { itemMapper.mapToDomain(json = it, vaultId = vaultBackup.vaultId, tagIds = it.tags, hasSecretFieldsEncrypted = true) }
                         }
 
                         else -> {
@@ -257,7 +257,7 @@ internal class BackupRepositoryImpl(
         encryptionPassKey: ByteArray,
     ): String {
         return withContext(dispatchers.io) {
-            val vaultData = createVaultBackup(vaultId = vaultId, includeDeleted = false)
+            val vaultData = createVaultBackup(vaultId = vaultId, includeDeleted = false, decryptSecretFields = true) // TODO: BEv2
 
             val vaultDataJson = vaultDataForBrowserMapper.mapToJson(
                 vaultBackup = vaultData,

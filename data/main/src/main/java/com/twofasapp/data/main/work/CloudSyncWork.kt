@@ -116,7 +116,7 @@ internal class CloudSyncWork(
                 mergeVaultContent = { cloudBackupContent ->
                     if (cloudBackupContent == null || forceReplace) {
                         // Push local backup
-                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true)
+                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
                         val localBackupEncrypted = backupRepository.encryptVaultBackup(localBackup)
 
                         VaultMergeResult.Success(
@@ -163,7 +163,7 @@ internal class CloudSyncWork(
                         )
 
                         // Create local backup
-                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true)
+                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
 
                         val cloudMerge = cloudMerger.merge(
                             local = localBackup,
@@ -177,7 +177,7 @@ internal class CloudSyncWork(
                         deletedItemsRepository.saveDeletedItems(cloudMerge.deletedItems)
 
                         // Create new local backup
-                        val newBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true)
+                        val newBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
                         val newBackupEncrypted = backupRepository.encryptVaultBackup(newBackup)
 
                         VaultMergeResult.Success(

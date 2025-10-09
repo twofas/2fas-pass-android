@@ -10,11 +10,14 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.DeletedItem
 import com.twofasapp.core.common.domain.SecretField
-import com.twofasapp.core.common.domain.clearTextOrNull
+import com.twofasapp.core.common.domain.clearText
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.domain.encryptedText
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.items.ItemEncrypted
+import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.data.main.local.model.ItemEntity
 import com.twofasapp.data.main.remote.model.ItemContentJson
 import com.twofasapp.data.main.remote.model.ItemJson
@@ -65,7 +68,7 @@ internal class ItemMapper(
         }
     }
 
-    fun mapToDomain(json: ItemJson, vaultId: String, tagIds: List<String>?): Item {
+    fun mapToDomain(json: ItemJson, vaultId: String, tagIds: List<String>?, hasSecretFieldsEncrypted: Boolean): Item {
         return with(json) {
             Item(
                 id = id,
@@ -76,7 +79,7 @@ internal class ItemMapper(
                 deleted = false,
                 securityType = securityTypeMapper.mapToDomainFromEntity(securityType),
                 contentType = ItemContentType.fromKey(contentType),
-                content = mapItemContentToDomain(contentType = contentType, contentJson = content),
+                content = mapItemContentToDomain(contentType = contentType, contentJson = content, hasSecretFieldsEncrypted = hasSecretFieldsEncrypted),
                 tagIds = tagIds.orEmpty(),
             )
         }
@@ -110,6 +113,7 @@ internal class ItemMapper(
     private fun mapItemContentToDomain(
         contentType: String,
         contentJson: JsonElement,
+        hasSecretFieldsEncrypted: Boolean,
     ): ItemContent {
         return when (contentType) {
             ItemContentType.Login.key -> {
@@ -118,7 +122,13 @@ internal class ItemMapper(
                 ItemContent.Login(
                     name = content.name,
                     username = content.username,
-                    password = content.password?.let { SecretField.ClearText(it) },
+                    password = content.password?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
                     uris = content.uris.map { uriMapper.mapToDomain(it) },
                     iconType = iconTypeMapper.mapToDomainFromJson(content.iconType),
                     iconUriIndex = content.iconUriIndex,
@@ -135,7 +145,13 @@ internal class ItemMapper(
 //
 //                ItemContent.SecureNote(
 //                    name = content.name,
-//                    text = content.text?.let { SecretField.ClearText(it) },
+//                    text = content.text?.let {
+//                        if (hasSecretFieldsEncrypted) {
+//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+//                        } else {
+//                            SecretField.ClearText(it)
+//                        }
+//                    },
 //                )
 //            }
 
@@ -154,7 +170,11 @@ internal class ItemMapper(
                     ItemContentJson.Login(
                         name = content.name,
                         username = content.username,
-                        password = content.password.clearTextOrNull,
+                        password = when (content.password) {
+                            is SecretField.ClearText -> content.password.clearText
+                            is SecretField.Encrypted -> content.password.encryptedText
+                            null -> null
+                        },
                         uris = content.uris.map { uriMapper.mapToItemContentJson(it) },
                         iconType = iconTypeMapper.mapToJson(content.iconType),
                         iconUriIndex = content.iconUriIndex,
@@ -170,7 +190,11 @@ internal class ItemMapper(
                 jsonSerializer.encodeToJsonElement(
                     ItemContentJson.SecureNote(
                         name = content.name,
-                        text = content.text.clearTextOrNull,
+                        text = when (content.text) {
+                            is SecretField.ClearText -> content.text.clearText
+                            is SecretField.Encrypted -> content.text.encryptedText
+                            null -> null
+                        },
                     ),
                 )
             }

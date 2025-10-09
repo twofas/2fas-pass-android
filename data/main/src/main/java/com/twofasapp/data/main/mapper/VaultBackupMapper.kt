@@ -96,7 +96,14 @@ internal class VaultBackupMapper(
                 vaultName = vault.name,
                 vaultCreatedAt = vault.createdAt,
                 vaultUpdatedAt = vault.updatedAt,
-                items = vault.items?.map { itemMapper.mapToDomain(json = it, vaultId = vault.id, tagIds = it.tags) },
+                items = vault.items?.map {
+                    itemMapper.mapToDomain(
+                        json = it,
+                        vaultId = vault.id,
+                        tagIds = it.tags,
+                        hasSecretFieldsEncrypted = false,
+                    )
+                },
                 itemsEncrypted = vault.itemsEncrypted,
                 tags = vault.tags?.map { tagMapper.mapToDomain(json = it, vaultId = vault.id) },
                 tagsEncrypted = vault.tagsEncrypted,
