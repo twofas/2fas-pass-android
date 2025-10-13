@@ -8,6 +8,7 @@
 
 package com.twofasapp.feature.externalimport.import
 
+import com.opencsv.CSVParser
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import com.twofasapp.core.common.domain.IconType
@@ -30,6 +31,7 @@ internal data class CsvFile(
                 CSVParserBuilder()
                     .withSeparator(delimiter)
                     .withQuoteChar('"')
+                    .withEscapeChar(CSVParser.NULL_CHARACTER)
                     .build(),
             )
             .build()
