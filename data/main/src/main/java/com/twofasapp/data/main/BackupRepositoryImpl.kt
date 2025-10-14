@@ -174,7 +174,7 @@ internal class BackupRepositoryImpl(
         }
     }
 
-    override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys): VaultBackup {
+    override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys, decryptSecretFields: Boolean): VaultBackup {
         return withContext(dispatchers.io) {
             vaultCryptoScope.withVaultCipher(vaultKeys) {
                 val items = vaultBackup.itemsEncrypted.orEmpty().map { encryptedItemJson ->
@@ -187,8 +187,32 @@ internal class BackupRepositoryImpl(
                         }
 
                         2 -> {
-                            json.decodeFromString<ItemJson>(decryptedItemJson)
-                                .let { itemMapper.mapToDomain(json = it, vaultId = vaultBackup.vaultId, tagIds = it.tags, hasSecretFieldsEncrypted = true) }
+                            json
+                                // Read Item from string
+                                .decodeFromString<ItemJson>(decryptedItemJson)
+                                .let {
+                                    // Item is decrypted but its content still have secret fields encrypted (SecretField.Encrypted)
+                                    itemMapper.mapToDomain(
+                                        json = it,
+                                        vaultId = vaultBackup.vaultId,
+                                        tagIds = it.tags,
+                                        hasSecretFieldsEncrypted = true,
+                                    )
+                                }
+                                .let { item ->
+                                    // We need to now decrypt the content of the item
+                                    if (decryptSecretFields) {
+                                        item.copy(
+                                            content = itemEncryptionMapper.decryptSecretFields(
+                                                vaultCipher = this,
+                                                securityType = item.securityType,
+                                                content = item.content,
+                                            ),
+                                        )
+                                    } else {
+                                        item
+                                    }
+                                }
                         }
 
                         else -> {
@@ -222,31 +246,14 @@ internal class BackupRepositoryImpl(
         }
     }
 
-    override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, password: String, seed: Seed): VaultBackup {
-        return withContext(dispatchers.io) {
-            if (vaultBackup.encryption == null) {
-                vaultBackup
-            } else {
-                val masterKey = securityRepository.generateMasterKey(
-                    password = password,
-                    seed = seed,
-                    kdfSpec = vaultBackup.encryption.kdfSpec,
-                )
-                val vaultKeys = vaultKeysRepository.generateVaultKeys(masterKeyHex = masterKey.hashHex, vaultId = vaultBackup.vaultId)
-
-                decryptVaultBackup(vaultBackup, vaultKeys)
-            }
-        }
-    }
-
-    override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, masterKey: ByteArray, seed: Seed): VaultBackup {
+    override suspend fun decryptVaultBackup(vaultBackup: VaultBackup, masterKey: ByteArray, seed: Seed, decryptSecretFields: Boolean): VaultBackup {
         return withContext(dispatchers.io) {
             if (vaultBackup.encryption == null) {
                 vaultBackup
             } else {
                 val vaultKeys = vaultKeysRepository.generateVaultKeys(masterKeyHex = masterKey.encodeHex(), vaultId = vaultBackup.vaultId)
 
-                decryptVaultBackup(vaultBackup, vaultKeys)
+                decryptVaultBackup(vaultBackup, vaultKeys, decryptSecretFields)
             }
         }
     }

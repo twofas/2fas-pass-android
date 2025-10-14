@@ -221,7 +221,11 @@ internal class ItemsRepositoryImpl(
 
                     if (matchingItem != null) {
                         if (newItem.updatedAt > matchingItem.updatedAt) {
-                            itemsToInsert.add(newItem)
+                            itemsToInsert.add(
+                                newItem.copy(
+                                    vaultId = vault.id,
+                                ),
+                            )
                         }
                     } else {
                         itemsToInsert.add(
@@ -240,31 +244,25 @@ internal class ItemsRepositoryImpl(
                     }
                 }
 
-            itemsToInsert
-                .groupBy { it.vaultId }
-                .map { (vaultId, items) ->
-                    vaultCryptoScope.withVaultCipher(vaultId) {
-                        items
-                            .map { item ->
-                                itemEncryptionMapper.encryptItem(item, this)
-                                    .let(itemMapper::mapToEntity)
-                            }
+            vaultCryptoScope.withVaultCipher(vault.id) {
+                itemsToInsert
+                    .map { item ->
+                        itemEncryptionMapper.encryptItem(item, this)
+                            .let(itemMapper::mapToEntity)
                     }
-                }
-                .flatten()
-                .also {
-                    itemsLocalSource.saveItems(it)
+            }.also { itemsEncrypted ->
+                itemsLocalSource.saveItems(itemsEncrypted)
 
-                    val mostRecentModificationTime = itemsLocalSource.getMostRecentUpdatedAt()
-                    vaultsLocalSource.updateLastModificationTime(
-                        vault.id,
-                        mostRecentModificationTime,
-                    )
+                val mostRecentModificationTime = itemsLocalSource.getMostRecentUpdatedAt()
+                vaultsLocalSource.updateLastModificationTime(
+                    vault.id,
+                    mostRecentModificationTime,
+                )
 
-                    if (triggerSync) {
-                        cloudRepository.sync()
-                    }
+                if (triggerSync) {
+                    cloudRepository.sync()
                 }
+            }
         }
     }
 

@@ -160,6 +160,7 @@ internal class CloudSyncWork(
                         val cloudBackup = backupRepository.decryptVaultBackup(
                             vaultBackup = cloudBackupEncrypted,
                             vaultKeys = vaultKeys,
+                            decryptSecretFields = false,
                         )
 
                         // Create local backup

@@ -19,9 +19,8 @@ interface BackupRepository {
     suspend fun serializeVaultBackup(vaultBackup: VaultBackup): String
     suspend fun readVaultBackup(fileUri: Uri): VaultBackup
     suspend fun readVaultBackup(content: String): VaultBackup
-    suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys): VaultBackup
-    suspend fun decryptVaultBackup(vaultBackup: VaultBackup, password: String, seed: Seed): VaultBackup
-    suspend fun decryptVaultBackup(vaultBackup: VaultBackup, masterKey: ByteArray, seed: Seed): VaultBackup
+    suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys, decryptSecretFields: Boolean): VaultBackup
+    suspend fun decryptVaultBackup(vaultBackup: VaultBackup, masterKey: ByteArray, seed: Seed, decryptSecretFields: Boolean): VaultBackup
     suspend fun createCompressedVaultDataForBrowserExtension(
         vaultId: String,
         deviceId: String,

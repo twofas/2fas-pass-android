@@ -230,6 +230,7 @@ internal class DecryptVaultViewModel(
                         vaultBackup = backup,
                         masterKey = masterKey.hashHex.decodeHex(),
                         seed = seed,
+                        decryptSecretFields = true,
                     )
 
                     val items = decryptedBackup.items.orEmpty()

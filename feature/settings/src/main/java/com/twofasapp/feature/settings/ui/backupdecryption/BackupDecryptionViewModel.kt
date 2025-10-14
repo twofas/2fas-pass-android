@@ -254,6 +254,7 @@ class BackupDecryptionViewModel(
                         vaultBackup = uiState.value.vaultBackup,
                         masterKey = masterKey.hashHex.decodeHex(),
                         seed = seed,
+                        decryptSecretFields = true,
                     )
 
                     val items = vaultBackupDecrypted.items.orEmpty()
