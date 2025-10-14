@@ -50,6 +50,8 @@ internal class VaultsLocalSource(
     }
 
     suspend fun updateLastModificationTime(id: String, timestamp: Long) {
-        dao.updateLastModificationTime(id, timestamp)
+        if (timestamp > dao.get(id).updatedAt) {
+            dao.updateLastModificationTime(id, timestamp)
+        }
     }
 }
