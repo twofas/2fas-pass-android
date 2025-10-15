@@ -26,7 +26,7 @@ import com.twofasapp.data.cloud.services.CloudServiceProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.DeletedItemsRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -54,7 +54,7 @@ internal class DecryptVaultViewModel(
     private val startupConfig: StartupConfig,
     private val vaultKeysRepository: VaultKeysRepository,
     private val securityRepository: SecurityRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val tagsRepository: TagsRepository,
     private val deletedItemsRepository: DeletedItemsRepository,
     private val backupRepository: BackupRepository,
@@ -230,9 +230,10 @@ internal class DecryptVaultViewModel(
                         vaultBackup = backup,
                         masterKey = masterKey.hashHex.decodeHex(),
                         seed = seed,
+                        decryptSecretFields = true,
                     )
 
-                    val logins = decryptedBackup.logins.orEmpty()
+                    val items = decryptedBackup.items.orEmpty()
                     val tags = decryptedBackup.tags.orEmpty()
                     val deletedItems = decryptedBackup.deletedItems.orEmpty()
 
@@ -247,7 +248,7 @@ internal class DecryptVaultViewModel(
 
                     securityRepository.saveEncryptionReference(masterKey) // Important!
 
-                    loginsRepository.importLogins(logins, triggerSync = false)
+                    itemsRepository.importItems(items, triggerSync = false)
                     tagsRepository.importTags(tags)
                     deletedItemsRepository.saveDeletedItems(deletedItems)
 

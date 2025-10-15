@@ -11,6 +11,7 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
@@ -29,7 +30,7 @@ internal class FirefoxImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile(),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 
@@ -49,9 +50,17 @@ internal class FirefoxImportSpec(
         )
 
         return ImportContent(
-            logins = csvFile.parse(vaultId)
-                .filter { it.name.lowercase() != "chrome://FirefoxAccounts".lowercase() }
-                .map { it.copy(name = it.name.removePrefix("http://").removePrefix("https://")) },
+            items = csvFile.parse(vaultId)
+                .filter { item ->
+                    item.content.name.lowercase() != "chrome://FirefoxAccounts".lowercase()
+                }
+                .map { item ->
+                    item.copy(
+                        content = (item.content as ItemContent.Login).copy(
+                            name = item.content.name.removePrefix("http://").removePrefix("https://"),
+                        ),
+                    )
+                },
             skipped = 0,
         )
     }

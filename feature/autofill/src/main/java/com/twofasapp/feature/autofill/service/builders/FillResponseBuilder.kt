@@ -24,12 +24,12 @@ internal object FillResponseBuilder {
         context: Context,
         fillRequestSpec: FillRequestSpec,
         nodeStructure: NodeStructure,
-        logins: List<AutofillLogin>,
+        items: List<AutofillLogin>,
     ): FillResponse {
         val fillResponse = FillResponse.Builder()
 
-        // Add login items
-        logins.forEachIndexed { index, login ->
+        // Add items
+        items.forEachIndexed { index, login ->
             fillResponse.addDataset(
                 DatasetBuilder.createLoginItem(
                     context = context,
@@ -46,7 +46,7 @@ internal object FillResponseBuilder {
                 context = context,
                 nodeStructure = nodeStructure,
                 inlinePresentationSpec = fillRequestSpec.getInlinePresentationSpec(
-                    if (fillRequestSpec.inlinePresentationEnabled && logins.isNotEmpty()) {
+                    if (fillRequestSpec.inlinePresentationEnabled && items.isNotEmpty()) {
                         fillRequestSpec.maxItemsCount - 2
                     } else {
                         fillRequestSpec.maxItemsCount - 1
@@ -56,7 +56,7 @@ internal object FillResponseBuilder {
         )
 
         // Add pinned icon
-        if (fillRequestSpec.inlinePresentationEnabled && logins.isNotEmpty()) {
+        if (fillRequestSpec.inlinePresentationEnabled && items.isNotEmpty()) {
             fillResponse.addDataset(
                 DatasetBuilder.createPinnedItem(
                     context = context,

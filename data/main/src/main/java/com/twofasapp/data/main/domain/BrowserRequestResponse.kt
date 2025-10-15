@@ -8,7 +8,7 @@
 
 package com.twofasapp.data.main.domain
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 sealed interface BrowserRequestResponse {
     data class PasswordRequestAccept(
@@ -16,7 +16,7 @@ sealed interface BrowserRequestResponse {
     ) : BrowserRequestResponse
 
     data object DeleteLoginAccept : BrowserRequestResponse
-    data class AddLoginAccept(val login: Login) : BrowserRequestResponse
-    data class UpdateLoginAccept(val login: Login) : BrowserRequestResponse
+    data class AddLoginAccept(val item: Item) : BrowserRequestResponse // TODO: BEv2
+    data class UpdateLoginAccept(val item: Item) : BrowserRequestResponse // TODO: BEv2
     data object Cancel : BrowserRequestResponse
 }

@@ -29,7 +29,7 @@ internal interface ImportSpec {
     }
 
     sealed interface CtaAction {
-        data class ChooseFile(val type: String = "*/*") : CtaAction
+        data object ChooseFile : CtaAction
     }
 
     companion object {
@@ -38,7 +38,7 @@ internal interface ImportSpec {
             override val name = "Name"
             override val image = com.twofasapp.core.design.R.drawable.ic_android
             override val instructions = "$PreviewTextMedium\n\n$PreviewTextMedium\n\n$PreviewTextMedium"
-            override val cta = listOf<Cta>(Cta.Primary(text = "Choose file", action = CtaAction.ChooseFile()))
+            override val cta = listOf<Cta>(Cta.Primary(text = "Choose file", action = CtaAction.ChooseFile))
             override suspend fun readContent(uri: Uri): ImportContent = ImportContent(emptyList(), 0)
         }
     }

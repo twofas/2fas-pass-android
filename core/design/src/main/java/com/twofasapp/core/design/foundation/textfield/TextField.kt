@@ -195,10 +195,10 @@ private fun Previews() {
         modifier = Modifier.fillMaxWidth(),
         value = "Secret",
         labelText = "Password",
-        visualTransformation = VisualTransformation.Password(false),
+        visualTransformation = VisualTransformation.SecretField(false),
         trailingIcon = {
-            PasswordTrailingIcon(
-                passwordVisible = false,
+            SecretFieldTrailingIcon(
+                visible = false,
             )
         },
     )

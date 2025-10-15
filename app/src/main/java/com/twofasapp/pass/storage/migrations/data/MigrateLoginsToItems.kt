@@ -5,6 +5,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.VaultCryptoScope
@@ -273,8 +274,8 @@ class MigrateLoginsToItems(
             deletedAt = login.deletedAt,
             deleted = login.deleted,
             securityType = login.securityType,
-            contentType = content.contentType,
-            contentVersion = content.contentVersion,
+            contentType = ItemContentType.Login.key,
+            contentVersion = ItemContentType.Login.version,
             content = contentEncrypted,
             tagIds = login.tags,
         )

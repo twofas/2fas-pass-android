@@ -9,9 +9,9 @@
 package com.twofasapp.data.main.domain
 
 import com.twofasapp.core.common.domain.DeletedItem
-import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.crypto.EncryptionSpec
+import com.twofasapp.core.common.domain.items.Item
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -27,8 +27,8 @@ data class VaultBackup(
     val vaultName: String,
     val vaultCreatedAt: Long,
     val vaultUpdatedAt: Long,
-    val logins: List<Login>?,
-    val loginsEncrypted: List<String>?,
+    val items: List<Item>?,
+    val itemsEncrypted: List<String>?,
     val tags: List<Tag>?,
     val tagsEncrypted: List<String>?,
     val deletedItems: List<DeletedItem>?,
@@ -42,7 +42,7 @@ data class VaultBackup(
     }
 
     companion object {
-        const val CurrentSchema = 1
+        const val CurrentSchema = 2
 
         val Empty = VaultBackup(
             schemaVersion = CurrentSchema,
@@ -55,8 +55,8 @@ data class VaultBackup(
             vaultName = "",
             vaultCreatedAt = 0L,
             vaultUpdatedAt = 0L,
-            logins = null,
-            loginsEncrypted = null,
+            items = null,
+            itemsEncrypted = null,
             tags = null,
             tagsEncrypted = null,
             deletedItems = null,

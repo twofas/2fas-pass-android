@@ -33,6 +33,7 @@ internal fun ItemsSection(
     onGenerateTopDomainItems: () -> Unit = {},
     onDeleteAll: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
+    onInsertRandomSecureNote: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -88,6 +89,12 @@ internal fun ItemsSection(
             title = "Generate 1000 domains with favicon",
             icon = MdtIcons.Refresh,
             onClick = { onGenerateTopDomainItems() },
+        )
+
+        OptionEntry(
+            title = "Generate random secure note",
+            icon = MdtIcons.Document,
+            onClick = { onInsertRandomSecureNote() },
         )
 
         OptionEntry(

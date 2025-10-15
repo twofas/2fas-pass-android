@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.Button
@@ -67,7 +67,7 @@ internal fun TrashScreen(
     Content(
         uiState = uiState,
         screenState = screenState,
-        onLoginToggled = { viewModel.toggle(it) },
+        onItemToggled = { viewModel.toggle(it) },
         onSelectAll = { viewModel.selectAll() },
         onClearSelections = { viewModel.clearSelections() },
         onRestoreClick = { viewModel.restore() },
@@ -79,7 +79,7 @@ internal fun TrashScreen(
 private fun Content(
     uiState: TrashUiState,
     screenState: ScreenState,
-    onLoginToggled: (Login) -> Unit = {},
+    onItemToggled: (Item) -> Unit = {},
     onSelectAll: () -> Unit = {},
     onClearSelections: () -> Unit = {},
     onRestoreClick: () -> Unit = {},
@@ -114,7 +114,7 @@ private fun Content(
                     }
                 },
                 actions = {
-                    if (uiState.trashedLogins.isNotEmpty()) {
+                    if (uiState.trashedItems.isNotEmpty()) {
                         ActionsRow {
                             IconButton(
                                 icon = MdtIcons.CheckAll,
@@ -138,15 +138,15 @@ private fun Content(
                     .background(MdtTheme.color.background),
                 contentPadding = PaddingValues(bottom = if (uiState.selected.isEmpty()) 0.dp else 2 * ScreenPadding + 40.dp),
                 itemsWhenSuccess = {
-                    uiState.trashedLogins.forEach { login ->
-                        item(key = login.id, contentType = "Login") {
-                            Modifier
-                                .fillMaxWidth()
-                            TrashLoginItem(
-                                modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
-                                login = login,
-                                checked = uiState.selected.contains(login.id),
-                                onCheckedChange = { onLoginToggled(login) },
+                    uiState.trashedItems.forEach { item ->
+                        item(key = item.id, contentType = "Item") {
+                            TrashItem(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .animateItem(fadeInSpec = null, fadeOutSpec = null),
+                                item = item,
+                                checked = uiState.selected.contains(item.id),
+                                onCheckedChange = { onItemToggled(item) },
                             )
                         }
                     }
@@ -173,7 +173,7 @@ private fun Content(
                         modifier = Modifier.weight(1f),
                         height = 40.dp,
                         onClick = {
-                            if (uiState.loginsCount + uiState.selected.size >= uiState.maxItems) {
+                            if (uiState.itemsCount + uiState.selected.size >= uiState.maxItems) {
                                 showPaywall = true
                             } else {
                                 onRestoreClick()
@@ -238,9 +238,9 @@ private fun Content(
 @Composable
 private fun Preview() {
     PreviewTheme {
-        Content(
-            uiState = TrashUiState(trashedLogins = listOf(Login.Preview), selected = listOf("")),
-            screenState = ScreenState.Success,
-        )
+//        Content(
+//            uiState = TrashUiState(trashedItems = listOf(Login.Preview), selected = listOf("")),
+//            screenState = ScreenState.Success,
+//        )
     }
 }

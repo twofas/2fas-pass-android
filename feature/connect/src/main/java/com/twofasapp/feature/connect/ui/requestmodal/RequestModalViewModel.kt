@@ -14,7 +14,7 @@ import com.twofasapp.core.android.ktx.resumeIfActive
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.BrowserExtensionRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
@@ -37,7 +37,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 internal class RequestModalViewModel(
     private val strings: Strings,
     private val browserExtensionRepository: BrowserExtensionRepository,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val vaultsRepository: VaultsRepository,
     private val trashRepository: TrashRepository,
     private val purchasesRepository: PurchasesRepository,
@@ -103,7 +103,7 @@ internal class RequestModalViewModel(
                 is BrowserRequestAction.DeleteLogin -> RequestState.InsideFrame.DeleteLogin
                 is BrowserRequestAction.AddLogin -> {
                     val maxItems = purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit
-                    val currentItems = loginsRepository.getLoginsCount()
+                    val currentItems = itemsRepository.getItemsCount()
 
                     if (currentItems >= maxItems) {
                         RequestState.InsideFrame.UpgradePlan(maxItems = maxItems)
@@ -122,7 +122,7 @@ internal class RequestModalViewModel(
                     launchScoped {
                         passwordRequestState.update { state ->
                             state.copy(
-                                login = request.login,
+                                item = request.item,
                                 onSendPasswordClick = { password ->
                                     continuation.sendResponse(BrowserRequestResponse.PasswordRequestAccept(password))
                                 },
@@ -138,12 +138,12 @@ internal class RequestModalViewModel(
                     launchScoped {
                         deleteLoginState.update { state ->
                             state.copy(
-                                login = request.login,
+                                item = request.item,
                                 onDeleteClick = {
                                     launchScoped {
                                         updateState(RequestState.InsideFrame.Loading)
 
-                                        trashRepository.trash(request.login.id)
+                                        trashRepository.trash(request.item.id)
 
                                         continuation.sendResponse(BrowserRequestResponse.DeleteLoginAccept)
                                     }
@@ -160,32 +160,32 @@ internal class RequestModalViewModel(
                     launchScoped {
                         addLoginState.update { state ->
                             state.copy(
-                                login = request.login,
+                                item = request.item,
                                 onContinueClick = {
                                     updateState(
-                                        RequestState.FullSize.LoginForm(
-                                            login = request.login,
+                                        RequestState.FullSize.ItemForm(
+                                            item = request.item,
                                             onCancel = {
                                                 updateState(RequestState.InsideFrame.AddLogin)
                                             },
-                                            onSaveClick = { login ->
+                                            onSaveClick = { item ->
                                                 launchScoped {
                                                     val vaultId = vaultsRepository.getVault().id
 
                                                     vaultCryptoScope.withVaultCipher(vaultId) {
-                                                        val loginId = loginsRepository.saveLogin(
-                                                            login
+                                                        val itemId = itemsRepository.saveItem(
+                                                            item
                                                                 .copy(vaultId = vaultId)
-                                                                .let { itemEncryptionMapper.encryptLogin(it, this) },
+                                                                .let { itemEncryptionMapper.encryptItem(it, this) },
                                                         )
 
                                                         updateState(RequestState.InsideFrame.Loading)
 
-                                                        val updatedLogin = loginsRepository.getLogin(loginId).let {
-                                                            itemEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
+                                                        val updatedItem = itemsRepository.getItem(itemId).let {
+                                                            itemEncryptionMapper.decryptItem(it, this, decryptSecretFields = true)
                                                         }
 
-                                                        continuation.sendResponse(BrowserRequestResponse.AddLoginAccept(updatedLogin!!))
+                                                        continuation.sendResponse(BrowserRequestResponse.AddLoginAccept(updatedItem!!))
                                                     }
                                                 }
                                             },
@@ -204,28 +204,28 @@ internal class RequestModalViewModel(
                     launchScoped {
                         updateLoginState.update { state ->
                             state.copy(
-                                login = request.login,
+                                item = request.item,
                                 onContinueClick = {
                                     updateState(
-                                        RequestState.FullSize.LoginForm(
-                                            login = request.updatedLogin,
+                                        RequestState.FullSize.ItemForm(
+                                            item = request.updatedItem,
                                             onCancel = {
                                                 updateState(RequestState.InsideFrame.UpdateLogin)
                                             },
-                                            onSaveClick = { login ->
+                                            onSaveClick = { item ->
                                                 launchScoped {
-                                                    vaultCryptoScope.withVaultCipher(login.vaultId) {
-                                                        val loginId = loginsRepository.saveLogin(
-                                                            itemEncryptionMapper.encryptLogin(login, this),
+                                                    vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                        val itemId = itemsRepository.saveItem(
+                                                            itemEncryptionMapper.encryptItem(item, this),
                                                         )
 
                                                         updateState(RequestState.InsideFrame.Loading)
 
-                                                        val updatedLogin = loginsRepository.getLogin(loginId).let {
-                                                            itemEncryptionMapper.decryptLogin(it, this, decryptPassword = true)
+                                                        val updatedItem = itemsRepository.getItem(itemId).let {
+                                                            itemEncryptionMapper.decryptItem(it, this, decryptSecretFields = true)
                                                         }
 
-                                                        continuation.sendResponse(BrowserRequestResponse.UpdateLoginAccept(updatedLogin!!))
+                                                        continuation.sendResponse(BrowserRequestResponse.UpdateLoginAccept(updatedItem!!))
                                                     }
                                                 }
                                             },

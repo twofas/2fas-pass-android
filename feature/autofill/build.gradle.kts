@@ -28,7 +28,7 @@ dependencies {
     implementation(project(":data:main"))
     implementation(project(":data:purchases"))
     implementation(project(":feature:lock"))
-    implementation(project(":feature:loginform"))
+    implementation(project(":feature:itemform"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

@@ -11,7 +11,7 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvFile
@@ -30,13 +30,13 @@ internal class AppleMobileImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_zip),
-            action = ImportSpec.CtaAction.ChooseFile(),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val vaultId = vaultsRepository.getVault().id
-        val logins = mutableListOf<Login>()
+        val items = mutableListOf<Item>()
 
         val zipFile = ZipFile(
             uri = uri,
@@ -60,11 +60,11 @@ internal class AppleMobileImportSpec(
                 ),
             )
 
-            logins.addAll(csvFile.parse(vaultId))
+            items.addAll(csvFile.parse(vaultId))
         }
 
         return ImportContent(
-            logins = logins,
+            items = items,
             skipped = 0,
         )
     }

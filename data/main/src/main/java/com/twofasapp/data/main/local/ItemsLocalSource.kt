@@ -24,35 +24,35 @@ internal class ItemsLocalSource(
         return itemsDao.observeDeleted()
     }
 
-    suspend fun getLogin(id: String): ItemEntity {
+    suspend fun getItem(id: String): ItemEntity {
         return itemsDao.get(id)
     }
 
-    suspend fun getLogins(ids: List<String>): List<ItemEntity> {
+    suspend fun getItems(ids: List<String>): List<ItemEntity> {
         return itemsDao.get(ids)
     }
 
-    suspend fun getLogins(): List<ItemEntity> {
+    suspend fun getItems(): List<ItemEntity> {
         return itemsDao.get()
     }
 
-    suspend fun countLogins(): Int {
+    suspend fun countItems(): Int {
         return itemsDao.count()
     }
 
-    suspend fun getLoginsWithDeleted(): List<ItemEntity> {
+    suspend fun getItemsWithDeleted(): List<ItemEntity> {
         return itemsDao.getWithDeleted()
     }
 
-    suspend fun getLoginsDeleted(ids: List<String>): List<ItemEntity> {
+    suspend fun getItemsDeleted(ids: List<String>): List<ItemEntity> {
         return itemsDao.getDeleted(ids)
     }
 
-    suspend fun saveLogin(entity: ItemEntity) {
+    suspend fun saveItem(entity: ItemEntity) {
         itemsDao.save(entity)
     }
 
-    suspend fun saveLogins(entities: List<ItemEntity>) {
+    suspend fun saveItems(entities: List<ItemEntity>) {
         itemsDao.saveInTransaction(entities)
     }
 

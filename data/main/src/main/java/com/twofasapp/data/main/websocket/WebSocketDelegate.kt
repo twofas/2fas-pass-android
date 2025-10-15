@@ -11,11 +11,11 @@ package com.twofasapp.data.main.websocket
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.crypto.Uuid
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.ConnectedBrowsersRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.domain.ConnectedBrowser
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
@@ -32,7 +32,7 @@ internal interface WebSocketDelegate {
     val device: Device
     val timeProvider: TimeProvider
     val connectedBrowsersRepository: ConnectedBrowsersRepository
-    val loginsRepository: LoginsRepository
+    val itemsRepository: ItemsRepository
     val vaultCryptoScope: VaultCryptoScope
     val loginDecryptionMapper: ItemEncryptionMapper
 
@@ -148,15 +148,15 @@ internal interface WebSocketDelegate {
         )
     }
 
-    suspend fun getLogin(id: String): Login? {
-        val login = loginsRepository.getLogin(id)
-        if (login.deleted) return null
+    suspend fun getItem(id: String): Item? {
+        val itemEncrypted = itemsRepository.getItem(id)
+        if (itemEncrypted.deleted) return null
 
-        return vaultCryptoScope.withVaultCipher(login.vaultId) {
-            loginDecryptionMapper.decryptLogin(
-                itemEncrypted = login,
+        return vaultCryptoScope.withVaultCipher(itemEncrypted.vaultId) {
+            loginDecryptionMapper.decryptItem(
+                itemEncrypted = itemEncrypted,
                 vaultCipher = this,
-                decryptPassword = true,
+                decryptSecretFields = true,
             )
         }
     }

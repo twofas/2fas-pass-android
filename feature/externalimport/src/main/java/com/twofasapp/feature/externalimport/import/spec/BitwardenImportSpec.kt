@@ -12,11 +12,12 @@ import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ImportType
-import com.twofasapp.core.common.domain.Login
-import com.twofasapp.core.common.domain.LoginUri
-import com.twofasapp.core.common.domain.LoginUriMatcher
+import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
-import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
@@ -37,51 +38,52 @@ internal class BitwardenImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_json),
-            action = ImportSpec.CtaAction.ChooseFile("application/json"),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val content = json.decodeFromString<Model>(context.readTextFile(uri))
-        val logins = content.items.orEmpty().map { item ->
-            Login(
-                name = item.name.orEmpty(),
+        val items = content.items.orEmpty().map { item ->
+            Item.create(
+                contentType = ItemContentType.Login,
                 vaultId = vaultsRepository.getVault().id,
-                username = item.login?.username,
-                password = item.login?.password?.let { SecretField.Visible(it) },
-                securityType = SecurityType.Tier3,
-                uris = item.login?.uris.orEmpty().map { uri ->
-                    LoginUri(
-                        text = uri.uri.orEmpty(),
-                        matcher = when (uri.match) {
-                            0 -> LoginUriMatcher.Domain
-                            1 -> LoginUriMatcher.Host
-                            2 -> LoginUriMatcher.StartsWith
-                            3 -> LoginUriMatcher.Exact
-                            else -> LoginUriMatcher.Domain
-                        },
-                    )
-                },
-                iconType = IconType.Icon,
-                iconUriIndex = if (item.login?.uris.isNullOrEmpty()) null else 0,
-                notes = item.notes,
-                tagIds = emptyList(),
+                content = ItemContent.Login.Empty.copy(
+                    name = item.name.orEmpty(),
+                    username = item.login?.username,
+                    password = item.login?.password?.let { SecretField.ClearText(it) },
+                    uris = item.login?.uris.orEmpty().map { uri ->
+                        ItemUri(
+                            text = uri.uri.orEmpty(),
+                            matcher = when (uri.match) {
+                                0 -> UriMatcher.Domain
+                                1 -> UriMatcher.Host
+                                2 -> UriMatcher.StartsWith
+                                3 -> UriMatcher.Exact
+                                else -> UriMatcher.Domain
+                            },
+                        )
+                    },
+                    iconType = IconType.Icon,
+                    iconUriIndex = if (item.login?.uris.isNullOrEmpty()) null else 0,
+                    notes = item.notes,
+                ),
             )
         }
 
         return ImportContent(
-            logins = logins,
+            items = items,
             skipped = 0,
         )
     }
 
     @Serializable
     private data class Model(
-        val items: List<Item>?,
+        val items: List<BitwardenItem>?,
     )
 
     @Serializable
-    private data class Item(
+    private data class BitwardenItem(
         val name: String?,
         val notes: String?,
         val login: LoginItem?,

@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "com.twofasapp.pass"
-        versionName = "1.2.2"
-        versionCode = 29
+        versionName = "1.2.3"
+        versionCode = 30
     }
 
     applicationVariants.all {
@@ -66,7 +66,7 @@ dependencies {
     implementation(project(":feature:qrscan"))
     implementation(project(":feature:externalimport"))
     implementation(project(":feature:cloudsync"))
-    implementation(project(":feature:loginform"))
+    implementation(project(":feature:itemform"))
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))
     implementation(project(":feature:quicksetup"))

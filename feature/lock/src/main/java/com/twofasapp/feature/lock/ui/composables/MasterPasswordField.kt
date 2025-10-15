@@ -22,8 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
-import com.twofasapp.core.design.foundation.textfield.Password
-import com.twofasapp.core.design.foundation.textfield.PasswordTrailingIcon
+import com.twofasapp.core.design.foundation.textfield.SecretField
+import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.locale.MdtLocale
 
@@ -49,10 +49,10 @@ fun MasterPasswordField(
         singleLine = true,
         maxLines = 1,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-        visualTransformation = VisualTransformation.Password(passwordVisible),
+        visualTransformation = VisualTransformation.SecretField(passwordVisible),
         trailingIcon = {
-            PasswordTrailingIcon(
-                passwordVisible = passwordVisible,
+            SecretFieldTrailingIcon(
+                visible = passwordVisible,
                 onToggle = { passwordVisible = passwordVisible.not() },
             )
         },

@@ -13,6 +13,8 @@ enum class ImportType(val displayName: String) {
     OnePassword("1Password"),
     ProtonPass("Proton Pass"),
     Chrome("Chrome"),
+    MicrosoftEdge("Microsoft Edge"),
+    Enpass("Enpass"),
     LastPass("LastPass"),
     DashlaneDesktop("Dashlane (Desktop)"),
     DashlaneMobile("Dashlane (Mobile)"),

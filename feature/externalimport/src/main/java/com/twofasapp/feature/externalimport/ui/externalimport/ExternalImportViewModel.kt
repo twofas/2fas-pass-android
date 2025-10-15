@@ -17,7 +17,7 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.ImportType
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.spec.AppleDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.AppleMobileImportSpec
@@ -25,10 +25,12 @@ import com.twofasapp.feature.externalimport.import.spec.BitwardenImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ChromeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.DashlaneMobileImportSpec
+import com.twofasapp.feature.externalimport.import.spec.EnpassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
+import com.twofasapp.feature.externalimport.import.spec.MicrosoftEdgeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ProtonPassImportSpec
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,11 +40,13 @@ import timber.log.Timber
 internal class ExternalImportViewModel(
     savedStateHandle: SavedStateHandle,
     private val dispatchers: Dispatchers,
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val bitwardenImportSpec: BitwardenImportSpec,
     private val onePasswordImportSpec: OnePasswordImportSpec,
     private val protonPassImportSpec: ProtonPassImportSpec,
     private val chromeImportSpec: ChromeImportSpec,
+    private val microsoftEdgeImportSpec: MicrosoftEdgeImportSpec,
+    private val enpassImportSpec: EnpassImportSpec,
     private val lastPassImportSpec: LastPassImportSpec,
     private val dashlaneDesktopImportSpec: DashlaneDesktopImportSpec,
     private val dashlaneMobileImportSpec: DashlaneMobileImportSpec,
@@ -63,6 +67,8 @@ internal class ExternalImportViewModel(
                     ImportType.OnePassword -> onePasswordImportSpec
                     ImportType.ProtonPass -> protonPassImportSpec
                     ImportType.Chrome -> chromeImportSpec
+                    ImportType.MicrosoftEdge -> microsoftEdgeImportSpec
+                    ImportType.Enpass -> enpassImportSpec
                     ImportType.LastPass -> lastPassImportSpec
                     ImportType.DashlaneDesktop -> dashlaneDesktopImportSpec
                     ImportType.DashlaneMobile -> dashlaneMobileImportSpec
@@ -93,7 +99,7 @@ internal class ExternalImportViewModel(
         uiState.update { it.copy(loading = true) }
 
         launchScoped {
-            runSafely { loginsRepository.importLogins(importContent.logins) }
+            runSafely { itemsRepository.importItems(importContent.items) }
                 .onSuccess { onSuccess() }
                 .onFailure { updateState(ImportState.Error(it.message)) }
         }

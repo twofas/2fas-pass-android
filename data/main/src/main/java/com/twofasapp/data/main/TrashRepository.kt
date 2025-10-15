@@ -8,7 +8,7 @@
 
 package com.twofasapp.data.main
 
-import com.twofasapp.core.common.domain.ItemEncrypted
+import com.twofasapp.core.common.domain.items.ItemEncrypted
 import kotlinx.coroutines.flow.Flow
 
 interface TrashRepository {

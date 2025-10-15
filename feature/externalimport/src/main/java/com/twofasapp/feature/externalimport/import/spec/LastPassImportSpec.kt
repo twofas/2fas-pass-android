@@ -11,6 +11,7 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
@@ -29,7 +30,7 @@ internal class LastPassImportSpec(
     override val cta: List<ImportSpec.Cta> = listOf(
         ImportSpec.Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile(),
+            action = ImportSpec.CtaAction.ChooseFile,
         ),
     )
 
@@ -49,12 +50,14 @@ internal class LastPassImportSpec(
         )
 
         return ImportContent(
-            logins = csvFile.parse(vaultId).map { login ->
-                val filteredUris = login.uris.filterNot { it.text.equals("http://sn", true) }
+            items = csvFile.parse(vaultId).map { item ->
+                val filteredUris = (item.content as ItemContent.Login).uris.filterNot { it.text.equals("http://sn", true) }
 
-                login.copy(
-                    uris = filteredUris,
-                    iconUriIndex = if (filteredUris.isEmpty()) null else 0,
+                item.copy(
+                    content = (item.content as ItemContent.Login).copy(
+                        uris = filteredUris,
+                        iconUriIndex = if (filteredUris.isEmpty()) null else 0,
+                    ),
                 )
             },
             skipped = 0,

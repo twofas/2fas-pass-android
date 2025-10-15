@@ -27,7 +27,7 @@ import com.twofasapp.data.cloud.services.CloudServiceProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.DeletedItemsRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -40,6 +40,7 @@ import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.purchases.PurchasesRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 internal class CloudSyncWork(
     context: Context,
@@ -50,7 +51,7 @@ internal class CloudSyncWork(
     private val vaultRepository: VaultsRepository by inject()
     private val vaultKeysRepository: VaultKeysRepository by inject()
     private val backupRepository: BackupRepository by inject()
-    private val loginsRepository: LoginsRepository by inject()
+    private val itemsRepository: ItemsRepository by inject()
     private val tagsRepository: TagsRepository by inject()
     private val deletedItemsRepository: DeletedItemsRepository by inject()
     private val securityRepository: SecurityRepository by inject()
@@ -115,7 +116,7 @@ internal class CloudSyncWork(
                 mergeVaultContent = { cloudBackupContent ->
                     if (cloudBackupContent == null || forceReplace) {
                         // Push local backup
-                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true)
+                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
                         val localBackupEncrypted = backupRepository.encryptVaultBackup(localBackup)
 
                         VaultMergeResult.Success(
@@ -159,24 +160,25 @@ internal class CloudSyncWork(
                         val cloudBackup = backupRepository.decryptVaultBackup(
                             vaultBackup = cloudBackupEncrypted,
                             vaultKeys = vaultKeys,
+                            decryptSecretFields = false,
                         )
 
                         // Create local backup
-                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true)
+                        val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
 
                         val cloudMerge = cloudMerger.merge(
                             local = localBackup,
                             cloud = cloudBackup,
                         )
 
-                        loginsRepository.executeCloudMerge(cloudMerge.logins)
+                        itemsRepository.executeCloudMerge(cloudMerge.items)
                         tagsRepository.executeCloudMerge(cloudMerge.tags)
 
                         deletedItemsRepository.clearAll(vault.id)
                         deletedItemsRepository.saveDeletedItems(cloudMerge.deletedItems)
 
                         // Create new local backup
-                        val newBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true)
+                        val newBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
                         val newBackupEncrypted = backupRepository.encryptVaultBackup(newBackup)
 
                         VaultMergeResult.Success(
@@ -211,6 +213,8 @@ internal class CloudSyncWork(
     private suspend fun publishError(
         type: CloudError,
     ) {
+        Timber.e(type.cause)
+
         CrashlyticsInstance.logException(type.cause)
 
         cloudRepository.setSyncStatus(

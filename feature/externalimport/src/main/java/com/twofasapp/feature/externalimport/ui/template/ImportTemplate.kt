@@ -121,7 +121,7 @@ internal fun ImportTemplate(
                         onClick = {
                             when (cta.action) {
                                 is ImportSpec.CtaAction.ChooseFile -> {
-                                    filePicker.launch(cta.action.type)
+                                    filePicker.launch("*/*")
                                 }
                             }
                         },

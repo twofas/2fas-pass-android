@@ -23,47 +23,47 @@ import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.connect.ui.requestmodal.RequestState
-import com.twofasapp.feature.loginform.ui.LoginForm
+import com.twofasapp.feature.itemform.ItemForm
 
 @Composable
 internal fun LoginFormState(
-    loginFormState: RequestState.FullSize.LoginForm,
+    itemFormState: RequestState.FullSize.ItemForm,
 ) {
-    var login by remember { mutableStateOf(loginFormState.login) }
+    var item by remember { mutableStateOf(itemFormState.item) }
     var isValid by remember { mutableStateOf(false) }
 
     BackHandler {
-        loginFormState.onCancel()
+        itemFormState.onCancel()
     }
 
     Column {
         TopAppBar(
-            title = if (loginFormState.login.id.isBlank()) {
+            title = if (itemFormState.item.id.isBlank()) {
                 MdtLocale.strings.loginAddTitle
             } else {
                 MdtLocale.strings.loginEditTitle
             },
-            onBackClick = { loginFormState.onCancel() },
+            onBackClick = { itemFormState.onCancel() },
             containerColor = MdtTheme.color.surfaceContainerLow,
             actions = {
                 Button(
                     text = MdtLocale.strings.commonSave,
                     style = ButtonStyle.Text,
-                    onClick = { loginFormState.onSaveClick(login) },
+                    onClick = { itemFormState.onSaveClick(item) },
                     enabled = isValid,
                 )
             },
         )
 
-        LoginForm(
+        ItemForm(
             modifier = Modifier.fillMaxSize(),
-            initialLogin = loginFormState.login,
+            initialItem = itemFormState.item,
             containerColor = MdtTheme.color.surfaceContainerLow,
             confirmUnsavedChanges = false,
-            onLoginUpdated = { login = it },
+            onItemUpdated = { item = it },
             onIsValidUpdated = { isValid = it },
             onHasUnsavedChangesUpdated = { },
-            onCloseWithoutSaving = { loginFormState.onCancel() },
+            onCloseWithoutSaving = { itemFormState.onCancel() },
         )
     }
 }

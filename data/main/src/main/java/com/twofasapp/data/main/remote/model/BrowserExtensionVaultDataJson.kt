@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.remote.model
 
+import com.twofasapp.data.main.remote.model.vaultbackup.LoginJson
 import kotlinx.serialization.Serializable
 
 @Serializable

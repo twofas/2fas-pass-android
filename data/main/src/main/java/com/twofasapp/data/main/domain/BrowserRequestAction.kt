@@ -8,29 +8,29 @@
 
 package com.twofasapp.data.main.domain
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
 
 sealed interface BrowserRequestAction {
     val type: String
 
     data class PasswordRequest(
         override val type: String,
-        val login: Login,
+        val item: Item,
     ) : BrowserRequestAction
 
     data class DeleteLogin(
         override val type: String,
-        val login: Login,
+        val item: Item,
     ) : BrowserRequestAction
 
     data class AddLogin(
         override val type: String,
-        val login: Login,
+        val item: Item,
     ) : BrowserRequestAction
 
     data class UpdateLogin(
         override val type: String,
-        val login: Login,
-        val updatedLogin: Login,
+        val item: Item,
+        val updatedItem: Item,
     ) : BrowserRequestAction
 }

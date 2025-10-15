@@ -8,12 +8,21 @@
 
 package com.twofasapp.core.common.ktx
 
-import com.twofasapp.core.common.domain.Login
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 
-fun List<Login>.filterBySearchQuery(query: String): List<Login> {
-    return filter { login ->
-        login.name.contains(query, ignoreCase = true) ||
-            login.username.orEmpty().contains(query, ignoreCase = true) ||
-            login.uris.any { it.text.contains(query, ignoreCase = true) }
+fun List<Item>.filterBySearchQuery(query: String): List<Item> {
+    return filter { item ->
+        item.content.name.contains(query, ignoreCase = true) ||
+            when (item.content) {
+                is ItemContent.Unknown -> false
+
+                is ItemContent.Login -> {
+                    item.content.username.orEmpty().contains(query, ignoreCase = true) ||
+                        item.content.uris.any { it.text.contains(query, ignoreCase = true) }
+                }
+
+                is ItemContent.SecureNote -> false
+            }
     }.distinctBy { it.id }
 }

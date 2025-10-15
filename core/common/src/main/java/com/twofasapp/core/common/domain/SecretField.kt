@@ -9,8 +9,21 @@
 package com.twofasapp.core.common.domain
 
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.ktx.encodeBase64
 
 sealed interface SecretField {
-    data class Hidden(val value: EncryptedBytes) : SecretField
-    data class Visible(val value: String) : SecretField
+    data class Encrypted(val value: EncryptedBytes) : SecretField
+    data class ClearText(val value: String) : SecretField
 }
+
+val SecretField?.isClearText: Boolean
+    get() = this is SecretField.ClearText
+
+val SecretField?.clearTextOrNull: String?
+    get() = (this as? SecretField.ClearText)?.value
+
+val SecretField?.clearText: String
+    get() = (this as SecretField.ClearText).value
+
+val SecretField?.encryptedText: String
+    get() = (this as SecretField.Encrypted).value.bytes.encodeBase64()

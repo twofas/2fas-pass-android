@@ -58,6 +58,7 @@ internal fun DeveloperScreen(
         onSetSubscriptionOverride = { viewModel.setSubscriptionOverride(it) },
         onDeleteAll = { viewModel.deleteAll() },
         onInsertRandomTag = { viewModel.insertRandomTag() },
+        onInsertRandomSecureNote = { viewModel.insertRandomSecureNote() },
     )
 }
 
@@ -70,6 +71,7 @@ private fun Content(
     onSetSubscriptionOverride: (String?) -> Unit = {},
     onDeleteAll: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
+    onInsertRandomSecureNote: () -> Unit = {},
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Items", "Subscription", "Other")
@@ -111,6 +113,7 @@ private fun Content(
                     onGenerateTopDomainItems = onGenerateTopDomainItems,
                     onDeleteAll = onDeleteAll,
                     onInsertRandomTag = onInsertRandomTag,
+                    onInsertRandomSecureNote = onInsertRandomSecureNote,
                 )
 
                 1 -> SubscriptionSection(

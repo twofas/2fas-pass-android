@@ -12,10 +12,10 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
-import com.twofasapp.core.common.domain.Login
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.data.main.BackupRepository
-import com.twofasapp.data.main.LoginsRepository
+import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.domain.InvalidSchemaVersionException
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class ImportExportViewModel(
-    private val loginsRepository: LoginsRepository,
+    private val itemsRepository: ItemsRepository,
     private val vaultsRepository: VaultsRepository,
     private val backupRepository: BackupRepository,
     private val purchasesRepository: PurchasesRepository,
@@ -41,7 +41,7 @@ internal class ImportExportViewModel(
                     uiState.update { state ->
                         state.copy(
                             maxItems = plan.entitlements.itemsLimit,
-                            isItemsLimitReached = loginsRepository.getLoginsCount() >= plan.entitlements.itemsLimit,
+                            isItemsLimitReached = itemsRepository.getItemsCount() >= plan.entitlements.itemsLimit,
                         )
                     }
                 }
@@ -56,12 +56,14 @@ internal class ImportExportViewModel(
                     backupRepository.createVaultBackup(
                         vaultId = vaultsRepository.getVault().id,
                         includeDeleted = false,
+                        decryptSecretFields = false,
                     ),
                 )
             } else {
                 backupRepository.createVaultBackup(
                     vaultId = vaultsRepository.getVault().id,
                     includeDeleted = false,
+                    decryptSecretFields = true,
                 )
             }
 
@@ -113,20 +115,20 @@ internal class ImportExportViewModel(
             showImportLoading(false)
             publishEvent(ImportExportUiEvent.ShowDecryptionDialog(encryptionSpec = uiState.value.vaultBackupToImport.encryption!!))
         } else {
-            importLogins(
-                logins = uiState.value.vaultBackupToImport.logins.orEmpty(),
+            importItems(
+                items = uiState.value.vaultBackupToImport.items.orEmpty(),
                 tags = uiState.value.vaultBackupToImport.tags.orEmpty(),
             )
         }
     }
 
-    private fun importLogins(
-        logins: List<Login>,
+    private fun importItems(
+        items: List<Item>,
         tags: List<Tag>,
     ) {
         importJob = launchScoped {
             runSafely {
-                loginsRepository.importLogins(logins)
+                itemsRepository.importItems(items)
                 tagsRepository.importTags(tags)
             }
                 .onSuccess {
