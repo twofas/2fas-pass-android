@@ -8,12 +8,10 @@
 
 package com.twofasapp.data.main.remote.model
 
-import com.twofasapp.data.main.remote.model.vaultbackup.LoginJson
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class BrowserExtensionVaultDataJson(
-    val logins: List<LoginJson>?, // V1
-    val items: List<ItemJson>?, // V2
+internal data class BrowserExtensionVaultDataV2Json(
+    val items: List<ItemJson>,
     val tags: List<TagJson>,
 )

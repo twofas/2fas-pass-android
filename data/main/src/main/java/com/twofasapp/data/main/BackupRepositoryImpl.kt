@@ -29,7 +29,8 @@ import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.TagMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
-import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataCompressedJson
+import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataCompressedV1Json
+import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataCompressedV2Json
 import com.twofasapp.data.main.remote.model.DeletedItemJson
 import com.twofasapp.data.main.remote.model.ItemJson
 import com.twofasapp.data.main.remote.model.TagJson
@@ -267,31 +268,37 @@ internal class BackupRepositoryImpl(
         return withContext(dispatchers.io) {
             val vaultData = createVaultBackup(vaultId = vaultId, includeDeleted = false, decryptSecretFields = true) // TODO: BEv2
 
-            val vaultDataJson = when (version) {
+            when (version) {
                 1 -> {
-                    vaultDataForBrowserMapper.mapToJsonV1(
+                    val vaultDataJson = vaultDataForBrowserMapper.mapToJsonV1(
                         vaultBackup = vaultData,
                         deviceId = deviceId,
                         encryptionKey = encryptionKey,
                     )
+
+                    val vaultDataCompressedJson = BrowserExtensionVaultDataCompressedV1Json(
+                        logins = vaultDataJson.logins.let { logins -> Gzip.compress(json.encodeToString(logins)).encodeBase64() },
+                        tags = Gzip.compress(json.encodeToString(vaultDataJson.tags)).encodeBase64(),
+                    )
+
+                    json.encodeToString(vaultDataCompressedJson)
                 }
 
                 else -> {
-                    vaultDataForBrowserMapper.mapToJson(
+                    val vaultDataJson = vaultDataForBrowserMapper.mapToJsonV2(
                         vaultBackup = vaultData,
                         deviceId = deviceId,
                         encryptionKey = encryptionKey,
                     )
+
+                    val vaultDataCompressedJson = BrowserExtensionVaultDataCompressedV2Json(
+                        items = vaultDataJson.items.let { items -> Gzip.compress(json.encodeToString(items)).encodeBase64() },
+                        tags = Gzip.compress(json.encodeToString(vaultDataJson.tags)).encodeBase64(),
+                    )
+
+                    json.encodeToString(vaultDataCompressedJson)
                 }
             }
-
-            val vaultDataCompressedJson = BrowserExtensionVaultDataCompressedJson(
-                logins = vaultDataJson.logins?.let { logins -> Gzip.compress(json.encodeToString(logins)).encodeBase64() },
-                items = vaultDataJson.items?.let { items -> Gzip.compress(json.encodeToString(items)).encodeBase64() },
-                tags = Gzip.compress(json.encodeToString(vaultDataJson.tags)).encodeBase64(),
-            )
-
-            json.encodeToString(vaultDataCompressedJson)
         }
     }
 }

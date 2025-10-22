@@ -13,7 +13,8 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.domain.VaultBackup
-import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataJson
+import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataV1Json
+import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataV2Json
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -29,9 +30,9 @@ internal class VaultDataForBrowserMapper(
         vaultBackup: VaultBackup,
         deviceId: String,
         encryptionKey: ByteArray,
-    ): BrowserExtensionVaultDataJson {
+    ): BrowserExtensionVaultDataV1Json {
         return with(vaultBackup) {
-            BrowserExtensionVaultDataJson(
+            BrowserExtensionVaultDataV1Json(
                 logins = items.orEmpty()
                     .filter { it.securityType != SecurityType.Tier1 }
                     .map { item ->
@@ -51,19 +52,18 @@ internal class VaultDataForBrowserMapper(
                             )
                         }
                     },
-                items = null,
                 tags = tags.orEmpty().map { tagMapper.mapToJson(it) },
             )
         }
     }
 
-    fun mapToJson(
+    fun mapToJsonV2(
         vaultBackup: VaultBackup,
         deviceId: String,
         encryptionKey: ByteArray,
-    ): BrowserExtensionVaultDataJson {
+    ): BrowserExtensionVaultDataV2Json {
         return with(vaultBackup) {
-            BrowserExtensionVaultDataJson(
+            BrowserExtensionVaultDataV2Json(
                 items = items.orEmpty()
                     .filter { it.securityType != SecurityType.Tier1 }
                     .filter { it.content !is ItemContent.Unknown }
@@ -87,7 +87,6 @@ internal class VaultDataForBrowserMapper(
                             content = contentJson,
                         )
                     },
-                logins = null,
                 tags = tags.orEmpty().map { tagMapper.mapToJson(it) },
             )
         }
