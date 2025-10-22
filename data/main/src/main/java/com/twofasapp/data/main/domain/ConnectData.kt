@@ -19,7 +19,7 @@ data class ConnectData(
     private val signatureHex: String,
 ) {
     companion object {
-        const val CurrentSchema = 1
+        const val CurrentSchema = 2
     }
 
     val data: ByteArray

@@ -70,21 +70,21 @@ internal class VaultDataForBrowserMapper(
                     .mapNotNull { item ->
                         val itemJson = itemMapper.mapToJson(item) ?: return@mapNotNull null
 
-                        val contentJson = json
-                            .parseToJsonElement(itemJson.content)
-                            .processSecretFieldsKeys(
-                                secretField = { value ->
-                                    if (item.securityType == SecurityType.Tier2) {
-                                        null
-                                    } else {
-                                        encrypt(encryptionKey, value.toString()).encodeBase64()
-                                    }
-                                },
-                            )
+                        val contentJson =
+                            itemJson.content
+                                .processSecretFieldsKeys(
+                                    secretField = { value ->
+                                        if (item.securityType == SecurityType.Tier2) {
+                                            null
+                                        } else {
+                                            encrypt(encryptionKey, value.toString()).encodeBase64()
+                                        }
+                                    },
+                                )
 
                         itemJson.copy(
                             deviceId = deviceId,
-                            content = contentJson.toString(),
+                            content = contentJson,
                         )
                     },
                 logins = null,
