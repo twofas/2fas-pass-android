@@ -520,17 +520,23 @@ internal class RequestWebSocketImpl(
                         contextInfo = "ItemT2",
                     )
 
-                    response.fields.forEach { field ->
-                        val fieldEnc = encrypt(
-                            key = itemT2Key,
-                            data = field.value,
-                        )
+                    put("expireInSeconds", JsonPrimitive(180))
+                    put(
+                        key = "data",
+                        element = buildJsonObject {
+                            response.fields.forEach { field ->
+                                val fieldEnc = encrypt(
+                                    key = itemT2Key,
+                                    data = field.value,
+                                )
 
-                        put(
-                            key = "${field.key}Enc",
-                            element = JsonPrimitive(fieldEnc.encodeBase64()),
-                        )
-                    }
+                                put(
+                                    key = field.key,
+                                    element = JsonPrimitive(fieldEnc.encodeBase64()),
+                                )
+                            }
+                        },
+                    )
                 }
 
                 is BrowserRequestResponse.DeleteItemAccept -> Unit
