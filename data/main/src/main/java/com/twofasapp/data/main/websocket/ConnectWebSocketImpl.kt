@@ -22,7 +22,6 @@ import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
-import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.sha256
 import com.twofasapp.core.common.push.PushTokenProvider
 import com.twofasapp.core.common.time.TimeProvider
@@ -179,7 +178,7 @@ internal class ConnectWebSocketImpl(
                                             }
                                         }
 
-                                        val vaultDataGzip = backupRepository.createCompressedVaultDataForBrowserExtension(
+                                        val vaultDataGzip = backupRepository.createSerializedVaultDataForBrowserExtension(
                                             version = version,
                                             vaultId = vaultsRepository.getVault().id,
                                             deviceId = device.uniqueId(),
@@ -203,7 +202,7 @@ internal class ConnectWebSocketImpl(
                                             }
 
                                         val totalChunks = chunks.size
-                                        val totalSize = vaultDataGzip.encodeByteArray().size // gzipped JSON before encryption
+                                        val totalSize = vaultDataGzip.size // gzipped JSON before encryption
 
                                         sendMessage(
                                             createOutgoingMessage(

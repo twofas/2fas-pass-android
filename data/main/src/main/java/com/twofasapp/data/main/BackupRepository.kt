@@ -21,10 +21,10 @@ interface BackupRepository {
     suspend fun readVaultBackup(content: String): VaultBackup
     suspend fun decryptVaultBackup(vaultBackup: VaultBackup, vaultKeys: VaultKeys, decryptSecretFields: Boolean): VaultBackup
     suspend fun decryptVaultBackup(vaultBackup: VaultBackup, masterKey: ByteArray, seed: Seed, decryptSecretFields: Boolean): VaultBackup
-    suspend fun createCompressedVaultDataForBrowserExtension(
+    suspend fun createSerializedVaultDataForBrowserExtension(
         version: Int,
         vaultId: String,
         deviceId: String,
         encryptionKey: ByteArray,
-    ): String
+    ): ByteArray
 }

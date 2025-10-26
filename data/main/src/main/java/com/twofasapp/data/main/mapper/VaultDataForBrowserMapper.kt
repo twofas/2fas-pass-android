@@ -15,13 +15,12 @@ import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataV1Json
 import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataV2Json
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonPrimitive
 
 internal class VaultDataForBrowserMapper(
-    private val json: Json,
     private val itemMapper: ItemMapper,
     private val tagMapper: TagMapper,
 ) {
@@ -59,11 +58,12 @@ internal class VaultDataForBrowserMapper(
 
     fun mapToJsonV2(
         vaultBackup: VaultBackup,
-        deviceId: String,
         encryptionKey: ByteArray,
     ): BrowserExtensionVaultDataV2Json {
         return with(vaultBackup) {
             BrowserExtensionVaultDataV2Json(
+                id = vaultBackup.vaultId,
+                name = vaultBackup.vaultName,
                 items = items.orEmpty()
                     .filter { it.securityType != SecurityType.Tier1 }
                     .filter { it.content !is ItemContent.Unknown }
@@ -73,17 +73,17 @@ internal class VaultDataForBrowserMapper(
                         val contentJson =
                             itemJson.content
                                 .processSecretFieldsKeys(
-                                    secretField = { value ->
+                                    processSecretField = { secretValue ->
+                                        // Remove Tier2, keep Tier3 but encrypt with ItemT3 key
                                         if (item.securityType == SecurityType.Tier2) {
                                             null
                                         } else {
-                                            encrypt(encryptionKey, value.toString()).encodeBase64()
+                                            encrypt(encryptionKey, secretValue).encodeBase64()
                                         }
                                     },
                                 )
 
                         itemJson.copy(
-                            deviceId = deviceId,
                             content = contentJson,
                         )
                     },
@@ -93,13 +93,13 @@ internal class VaultDataForBrowserMapper(
     }
 
     private fun JsonElement.processSecretFieldsKeys(
-        secretField: (value: JsonElement) -> String?,
+        processSecretField: (value: String) -> String?,
     ): JsonElement {
         val jsonObject = this as? JsonObject ?: return this
 
         val processedEntries = jsonObject.entries.map { (key, value) ->
             when {
-                key.startsWith("s_") -> key to JsonPrimitive(secretField(value))
+                key.startsWith("s_") -> key to JsonPrimitive(processSecretField(value.jsonPrimitive.content))
                 else -> key to value
             }
         }

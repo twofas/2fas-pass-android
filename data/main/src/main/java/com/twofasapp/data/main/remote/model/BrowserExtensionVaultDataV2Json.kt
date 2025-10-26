@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class BrowserExtensionVaultDataV2Json(
+    val id: String,
+    val name: String,
     val items: List<ItemJson>,
     val tags: List<TagJson>,
 )
