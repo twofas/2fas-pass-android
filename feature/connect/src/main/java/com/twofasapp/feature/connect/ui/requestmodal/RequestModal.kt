@@ -54,6 +54,7 @@ import com.twofasapp.feature.connect.ui.commonmodal.LoginFormState
 import com.twofasapp.feature.connect.ui.commonmodal.ModalFrame
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
 import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
+import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
@@ -104,6 +105,7 @@ private fun ModalContent(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val passwordRequestState by viewModel.passwordRequestState.collectAsStateWithLifecycle()
+    val fullSyncState by viewModel.fullSyncState.collectAsStateWithLifecycle()
     val secretFieldRequestState by viewModel.secretFieldRequestState.collectAsStateWithLifecycle()
     val deleteItemState by viewModel.deleteItemState.collectAsStateWithLifecycle()
     val addItemState by viewModel.addLoginState.collectAsStateWithLifecycle()
@@ -116,6 +118,7 @@ private fun ModalContent(
     Content(
         uiState = uiState,
         passwordRequestState = passwordRequestState,
+        fullSyncState = fullSyncState,
         secretFieldRequestState = secretFieldRequestState,
         deleteItemState = deleteItemState,
         addLoginState = addItemState,
@@ -133,6 +136,7 @@ private fun ModalContent(
 private fun Content(
     uiState: RequestModalUiState,
     passwordRequestState: PasswordRequestState = PasswordRequestState(),
+    fullSyncState: FullSyncState = FullSyncState(),
     secretFieldRequestState: SecretFieldRequestState = SecretFieldRequestState(),
     deleteItemState: DeleteItemState = DeleteItemState(),
     addLoginState: AddLoginState = AddLoginState(),
@@ -149,6 +153,7 @@ private fun Content(
                 is BrowserRequestResponse.AddLoginAccept -> strings.requestModalToastAddLogin
                 is BrowserRequestResponse.UpdateLoginAccept -> strings.requestModalToastUpdateLogin
                 is BrowserRequestResponse.DeleteItemAccept -> strings.requestModalToastDeleteItem
+                is BrowserRequestResponse.FullSyncAccept -> strings.connectModalSuccessTitle
                 is BrowserRequestResponse.SecretFieldRequestAccept -> strings.requestModalToastPasswordRequest
                 is BrowserRequestResponse.PasswordRequestAccept -> strings.requestModalToastPasswordRequest
                 is BrowserRequestResponse.Cancel -> strings.requestModalToastCancel
@@ -185,8 +190,22 @@ private fun Content(
                             )
                         }
 
+                        is RequestState.InsideFrame.FullSync -> {
+                            RequestState(
+                                item = null,
+                                title = strings.requestModalFullSyncTitle,
+                                subtitle = strings.requestModalFullSyncSubtitle,
+                                icon = MdtIcons.SyncAlt,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalFullSyncCtaPositive,
+                                negativeCta = strings.requestModalFullSyncCtaNegative,
+                                onPositiveCta = { fullSyncState.onConfirmClick() },
+                                onNegativeCta = { fullSyncState.onCancelClick() },
+                            )
+                        }
+
                         is RequestState.InsideFrame.PasswordRequest -> {
-                            ItemState(
+                            RequestState(
                                 item = passwordRequestState.item,
                                 title = strings.requestModalPasswordRequestTitle,
                                 subtitle = strings.requestModalPasswordRequestSubtitle,
@@ -206,7 +225,7 @@ private fun Content(
                         }
 
                         is RequestState.InsideFrame.AddLogin -> {
-                            ItemState(
+                            RequestState(
                                 item = addLoginState.item,
                                 title = strings.requestModalNewItemTitle,
                                 subtitle = strings.requestModalNewItemSubtitle,
@@ -220,7 +239,7 @@ private fun Content(
                         }
 
                         is RequestState.InsideFrame.UpdateLogin -> {
-                            ItemState(
+                            RequestState(
                                 item = updateLoginState.item,
                                 title = strings.requestModalUpdateItemTitle,
                                 subtitle = strings.requestModalUpdateItemSubtitle,
@@ -234,7 +253,7 @@ private fun Content(
                         }
 
                         is RequestState.InsideFrame.SecretFieldRequest -> {
-                            ItemState(
+                            RequestState(
                                 item = secretFieldRequestState.item,
                                 title = strings.requestModalPasswordRequestTitle,
                                 subtitle = strings.requestModalPasswordRequestSubtitle,
@@ -266,7 +285,7 @@ private fun Content(
                         }
 
                         is RequestState.InsideFrame.DeleteItem -> {
-                            ItemState(
+                            RequestState(
                                 item = deleteItemState.item,
                                 title = strings.requestModalRemoveItemTitle,
                                 subtitle = strings.requestModalRemoveItemSubtitle,
@@ -304,8 +323,8 @@ private fun Content(
 }
 
 @Composable
-private fun ItemState(
-    item: Item,
+private fun RequestState(
+    item: Item?,
     title: String,
     subtitle: String,
     icon: Painter,
@@ -341,15 +360,17 @@ private fun ItemState(
 
         Space(20.dp)
 
-        ItemEntry(
-            item = item,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, MdtTheme.color.outline.copy(alpha = 0.16f), RoundedShape16)
-                .padding(16.dp),
-        )
+        item?.let {
+            ItemEntry(
+                item = it,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MdtTheme.color.outline.copy(alpha = 0.16f), RoundedShape16)
+                    .padding(16.dp),
+            )
 
-        Space(20.dp)
+            Space(20.dp)
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),

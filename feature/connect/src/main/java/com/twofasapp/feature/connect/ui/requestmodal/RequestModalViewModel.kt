@@ -27,6 +27,7 @@ import com.twofasapp.data.main.websocket.RequestWebSocket
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
 import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
+import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
@@ -49,6 +50,7 @@ internal class RequestModalViewModel(
 
     val uiState = MutableStateFlow(RequestModalUiState())
     val passwordRequestState = MutableStateFlow(PasswordRequestState())
+    val fullSyncState = MutableStateFlow(FullSyncState())
     val secretFieldRequestState = MutableStateFlow(SecretFieldRequestState())
     val deleteItemState = MutableStateFlow(DeleteItemState())
     val addLoginState = MutableStateFlow(AddLoginState())
@@ -114,6 +116,7 @@ internal class RequestModalViewModel(
                 }
 
                 is BrowserRequestAction.UpdateLogin -> RequestState.InsideFrame.UpdateLogin
+                is BrowserRequestAction.FullSync -> RequestState.InsideFrame.FullSync
                 is BrowserRequestAction.SecretFieldRequest -> RequestState.InsideFrame.SecretFieldRequest
                 is BrowserRequestAction.DeleteItem -> RequestState.InsideFrame.DeleteItem
             },
@@ -212,6 +215,25 @@ internal class RequestModalViewModel(
                                             },
                                         ),
                                     )
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.FullSync -> {
+                    launchScoped {
+                        fullSyncState.update { state ->
+                            state.copy(
+                                onConfirmClick = {
+                                    launchScoped {
+                                        updateState(RequestState.InsideFrame.Loading)
+
+                                        continuation.sendResponse(BrowserRequestResponse.FullSyncAccept)
+                                    }
                                 },
                                 onCancelClick = {
                                     continuation.sendResponse(BrowserRequestResponse.Cancel)

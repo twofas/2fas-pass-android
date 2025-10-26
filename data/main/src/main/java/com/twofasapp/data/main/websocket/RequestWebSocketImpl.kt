@@ -34,10 +34,13 @@ import com.twofasapp.core.common.ktx.decodeString
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.encodeHex
+import com.twofasapp.core.common.ktx.sha256
 import com.twofasapp.core.common.time.TimeProvider
+import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
+import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.domain.BrowserRequestAction
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
@@ -72,6 +75,8 @@ internal class RequestWebSocketImpl(
     override val vaultCryptoScope: VaultCryptoScope,
     override val itemEncryptionMapper: ItemEncryptionMapper,
     private val settingsRepository: SettingsRepository,
+    private val backupRepository: BackupRepository,
+    private val vaultsRepository: VaultsRepository,
     private val dispatchers: Dispatchers,
     private val androidKeyStore: AndroidKeyStore,
     private val json: Json,
@@ -85,6 +90,8 @@ internal class RequestWebSocketImpl(
     override var version: Int = ConnectData.CurrentSchema
     override var expectedIncomingId: String = ""
     private var error: Exception? = null
+    private val chunks = mutableListOf<String>()
+    private val chunkSize = 2 * 1024 * 1024
 
     override suspend fun open(
         requestData: BrowserRequestData,
@@ -249,7 +256,47 @@ internal class RequestWebSocketImpl(
                                     throw WebSocketException(1005, "Unknown websocket message received.")
                                 }
 
-                                else -> Unit
+                                is IncomingMessageJson.InitTransferConfirmed -> {
+                                    sendMessage(
+                                        createOutgoingMessage(
+                                            payload = OutgoingPayloadJson.TransferChunk(
+                                                chunkIndex = 0,
+                                                chunkSize = chunks[0].length,
+                                                chunkData = chunks[0],
+                                            ),
+                                        ),
+                                    )
+                                }
+
+                                is IncomingMessageJson.TransferChunkConfirmed -> {
+                                    try {
+                                        val chunkIndex = message.payload.chunkIndex + 1
+                                        sendMessage(
+                                            createOutgoingMessage(
+                                                payload = OutgoingPayloadJson.TransferChunk(
+                                                    chunkIndex = chunkIndex,
+                                                    chunkSize = chunks[chunkIndex].length,
+                                                    chunkData = chunks[chunkIndex],
+                                                ),
+                                            ),
+                                        )
+                                    } catch (e: Exception) {
+                                        throw WebSocketException(1600, "Error when sending chunk.")
+                                    }
+                                }
+
+                                is IncomingMessageJson.TransferCompleted -> {
+                                    saveBrowserSessionId(
+                                        publicKey = requestData.pkPersBe,
+                                        sessionId = newSessionId,
+                                    )
+
+                                    sendMessage(
+                                        createOutgoingMessage(
+                                            payload = OutgoingPayloadJson.CloseWithSuccess,
+                                        ),
+                                    )
+                                }
                             }
                         } catch (e: Exception) {
                             error = e
@@ -386,6 +433,12 @@ internal class RequestWebSocketImpl(
                 )
             }
 
+            is BrowserRequestActionJson.FullSync -> {
+                BrowserRequestAction.FullSync(
+                    type = type,
+                )
+            }
+
             is BrowserRequestActionJson.SecretFieldRequest -> {
                 BrowserRequestAction.SecretFieldRequest(
                     type = type,
@@ -418,6 +471,7 @@ internal class RequestWebSocketImpl(
             is BrowserRequestResponse.PasswordRequestAccept -> "accept"
             is BrowserRequestResponse.SecretFieldRequestAccept -> "accept"
             is BrowserRequestResponse.DeleteItemAccept -> "accept"
+            is BrowserRequestResponse.FullSyncAccept -> "accept"
             is BrowserRequestResponse.AddLoginAccept -> {
                 when (response.item.securityType) {
                     SecurityType.Tier1 -> "addedInT1"
@@ -502,6 +556,50 @@ internal class RequestWebSocketImpl(
                             put("login", loginData)
                         }
                     }
+                }
+
+                is BrowserRequestResponse.FullSyncAccept -> {
+                    val dataKey = HkdfGenerator.generate(
+                        inputKeyMaterial = sessionKey,
+                        salt = hkdfSalt,
+                        contextInfo = "Data",
+                    )
+
+                    val itemT3Key = HkdfGenerator.generate(
+                        inputKeyMaterial = sessionKey,
+                        salt = hkdfSalt,
+                        contextInfo = "ItemT3",
+                    )
+
+                    val vaultDataGzip = backupRepository.createSerializedVaultDataForBrowserExtension(
+                        version = 2,
+                        vaultId = vaultsRepository.getVault().id,
+                        deviceId = device.uniqueId(),
+                        encryptionKey = itemT3Key,
+                    )
+
+                    val vaultDataGzipEnc = encrypt(
+                        key = dataKey,
+                        data = vaultDataGzip,
+                    )
+
+                    val sha256EncGzipVaultData = vaultDataGzipEnc.bytes.sha256()
+
+                    chunks.clear()
+
+                    vaultDataGzipEnc
+                        .encodeBase64()
+                        .chunked(chunkSize)
+                        .forEach { chunk ->
+                            chunks.add(chunk)
+                        }
+
+                    val totalChunks = chunks.size
+                    val totalSize = vaultDataGzip.size
+
+                    put("totalChunks", JsonPrimitive(totalChunks))
+                    put("totalSize", JsonPrimitive(totalSize))
+                    put("sha256GzipVaultDataEnc", JsonPrimitive(sha256EncGzipVaultData.encodeBase64()))
                 }
 
                 is BrowserRequestResponse.Cancel -> Unit

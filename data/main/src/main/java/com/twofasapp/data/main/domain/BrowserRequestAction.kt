@@ -32,6 +32,10 @@ sealed interface BrowserRequestAction {
         val updatedItem: Item,
     ) : BrowserRequestAction
 
+    data class FullSync(
+        override val type: String,
+    ) : BrowserRequestAction
+
     data class SecretFieldRequest(
         override val type: String,
         val item: Item,

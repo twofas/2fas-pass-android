@@ -99,6 +99,11 @@ internal sealed interface BrowserRequestActionJson {
     }
 
     @Serializable
+    data class FullSync(
+        override val type: String,
+    ) : BrowserRequestActionJson
+
+    @Serializable
     data class SecretFieldRequest(
         override val type: String,
         @SerialName("data")
@@ -136,6 +141,7 @@ internal sealed interface BrowserRequestActionJson {
                     "newLogin" -> AddLogin.serializer()
                     "updateLogin" -> UpdateLogin.serializer()
                     // V2:
+                    "fullSync" -> FullSync.serializer()
                     "sifRequest" -> SecretFieldRequest.serializer()
                     "deleteData" -> DeleteItem.serializer()
                     "addData" -> AddLogin.serializer()
