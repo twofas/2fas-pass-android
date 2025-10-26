@@ -57,6 +57,7 @@ internal fun DeveloperScreen(
         },
         onSetSubscriptionOverride = { viewModel.setSubscriptionOverride(it) },
         onDeleteAll = { viewModel.deleteAll() },
+        onDeleteAllBrowsers = { viewModel.deleteAllBrowsers() },
         onInsertRandomTag = { viewModel.insertRandomTag() },
         onInsertRandomSecureNote = { viewModel.insertRandomSecureNote() },
     )
@@ -70,6 +71,7 @@ private fun Content(
     onGenerateTopDomainItems: () -> Unit = {},
     onSetSubscriptionOverride: (String?) -> Unit = {},
     onDeleteAll: () -> Unit = {},
+    onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
 ) {
@@ -112,6 +114,7 @@ private fun Content(
                     onGenerateMultipleItems = onGenerateMultipleItems,
                     onGenerateTopDomainItems = onGenerateTopDomainItems,
                     onDeleteAll = onDeleteAll,
+                    onDeleteAllBrowsers = onDeleteAllBrowsers,
                     onInsertRandomTag = onInsertRandomTag,
                     onInsertRandomSecureNote = onInsertRandomSecureNote,
                 )
