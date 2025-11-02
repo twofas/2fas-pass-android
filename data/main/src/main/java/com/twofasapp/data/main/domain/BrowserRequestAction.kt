@@ -45,4 +45,9 @@ sealed interface BrowserRequestAction {
         override val type: String,
         val item: Item,
     ) : BrowserRequestAction
+
+    data class AddItem(
+        override val type: String,
+        val item: Item,
+    ) : BrowserRequestAction
 }

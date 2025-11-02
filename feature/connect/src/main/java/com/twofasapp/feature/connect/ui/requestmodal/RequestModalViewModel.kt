@@ -25,6 +25,7 @@ import com.twofasapp.data.main.domain.RequestWebSocketResult
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.websocket.RequestWebSocket
 import com.twofasapp.data.purchases.PurchasesRepository
+import com.twofasapp.feature.connect.ui.requestmodal.states.AddItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
 import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
@@ -54,6 +55,7 @@ internal class RequestModalViewModel(
     val secretFieldRequestState = MutableStateFlow(SecretFieldRequestState())
     val deleteItemState = MutableStateFlow(DeleteItemState())
     val addLoginState = MutableStateFlow(AddLoginState())
+    val addItemState = MutableStateFlow(AddItemState())
     val updateLoginState = MutableStateFlow(UpdateLoginState())
 
     fun connect(requestData: BrowserRequestData) {
@@ -119,6 +121,16 @@ internal class RequestModalViewModel(
                 is BrowserRequestAction.FullSync -> RequestState.InsideFrame.FullSync
                 is BrowserRequestAction.SecretFieldRequest -> RequestState.InsideFrame.SecretFieldRequest
                 is BrowserRequestAction.DeleteItem -> RequestState.InsideFrame.DeleteItem
+                is BrowserRequestAction.AddItem -> {
+                    val maxItems = purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit
+                    val currentItems = itemsRepository.getItemsCount()
+
+                    if (currentItems >= maxItems) {
+                        RequestState.InsideFrame.UpgradePlan(maxItems = maxItems)
+                    } else {
+                        RequestState.InsideFrame.AddItem
+                    }
+                }
             },
         )
 
@@ -272,6 +284,50 @@ internal class RequestModalViewModel(
 
                                         continuation.sendResponse(BrowserRequestResponse.DeleteItemAccept)
                                     }
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.AddItem -> {
+                    launchScoped {
+                        addItemState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onContinueClick = {
+                                    updateState(
+                                        RequestState.FullSize.ItemForm(
+                                            item = request.item,
+                                            onCancel = {
+                                                updateState(RequestState.InsideFrame.AddItem)
+                                            },
+                                            onSaveClick = { item ->
+                                                launchScoped {
+                                                    val vaultId = vaultsRepository.getVault().id
+
+                                                    vaultCryptoScope.withVaultCipher(vaultId) {
+                                                        val itemId = itemsRepository.saveItem(
+                                                            item
+                                                                .copy(vaultId = vaultId)
+                                                                .let { itemEncryptionMapper.encryptItem(it, this) },
+                                                        )
+
+                                                        updateState(RequestState.InsideFrame.Loading)
+
+                                                        val updatedItem = itemsRepository.getItem(itemId).let {
+                                                            itemEncryptionMapper.decryptItem(it, this, decryptSecretFields = true)
+                                                        }
+
+                                                        continuation.sendResponse(BrowserRequestResponse.AddItemAccept(updatedItem!!))
+                                                    }
+                                                }
+                                            },
+                                        ),
+                                    )
                                 },
                                 onCancelClick = {
                                     continuation.sendResponse(BrowserRequestResponse.Cancel)

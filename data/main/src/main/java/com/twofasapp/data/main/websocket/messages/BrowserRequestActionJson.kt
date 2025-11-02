@@ -29,6 +29,7 @@ internal sealed interface BrowserRequestActionJson {
         override val type: String,
     ) : BrowserRequestActionJson
 
+    @Deprecated("Used in V1. Can be removed later.")
     @Serializable
     data class PasswordRequest(
         override val type: String,
@@ -42,6 +43,7 @@ internal sealed interface BrowserRequestActionJson {
         )
     }
 
+    @Deprecated("Used in V1. Can be removed later.")
     @Serializable
     data class AddLogin(
         override val type: String,
@@ -61,6 +63,7 @@ internal sealed interface BrowserRequestActionJson {
         )
     }
 
+    @Deprecated("Used in V1. Can be removed later.")
     @Serializable
     data class UpdateLogin(
         override val type: String,
@@ -130,6 +133,32 @@ internal sealed interface BrowserRequestActionJson {
         )
     }
 
+    @Serializable
+    data class AddItem(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+
+        @Serializable
+        data class Data(
+            @SerialName("contentType")
+            val contentType: String,
+            @SerialName("content")
+            val content: Content,
+        )
+
+        @Serializable
+        data class Content(
+            @SerialName("url")
+            val url: String,
+            @SerialName("username")
+            val username: ActionFieldJson?,
+            @SerialName("s_password")
+            val s_password: ActionFieldJson?,
+        )
+    }
+
     object Serializer : JsonContentPolymorphicSerializer<BrowserRequestActionJson>(BrowserRequestActionJson::class) {
 
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<BrowserRequestActionJson> {
@@ -144,9 +173,8 @@ internal sealed interface BrowserRequestActionJson {
                     "fullSync" -> FullSync.serializer()
                     "sifRequest" -> SecretFieldRequest.serializer()
                     "deleteData" -> DeleteItem.serializer()
-                    "addData" -> AddLogin.serializer()
+                    "addData" -> AddItem.serializer()
                     "updateData" -> UpdateLogin.serializer()
-
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {

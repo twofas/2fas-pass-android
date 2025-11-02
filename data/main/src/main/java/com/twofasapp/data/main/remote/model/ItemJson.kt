@@ -16,6 +16,8 @@ import kotlinx.serialization.json.JsonElement
 data class ItemJson(
     @SerialName("id")
     val id: String,
+    @SerialName("vaultId")
+    val vaultId: String? = null,
     @SerialName("createdAt")
     val createdAt: Long,
     @SerialName("updatedAt")

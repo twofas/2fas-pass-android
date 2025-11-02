@@ -52,6 +52,7 @@ import com.twofasapp.feature.connect.ui.commonmodal.ErrorState
 import com.twofasapp.feature.connect.ui.commonmodal.LoadingState
 import com.twofasapp.feature.connect.ui.commonmodal.LoginFormState
 import com.twofasapp.feature.connect.ui.commonmodal.ModalFrame
+import com.twofasapp.feature.connect.ui.requestmodal.states.AddItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
 import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
@@ -108,7 +109,8 @@ private fun ModalContent(
     val fullSyncState by viewModel.fullSyncState.collectAsStateWithLifecycle()
     val secretFieldRequestState by viewModel.secretFieldRequestState.collectAsStateWithLifecycle()
     val deleteItemState by viewModel.deleteItemState.collectAsStateWithLifecycle()
-    val addItemState by viewModel.addLoginState.collectAsStateWithLifecycle()
+    val addLoginState by viewModel.addLoginState.collectAsStateWithLifecycle()
+    val addItemState by viewModel.addItemState.collectAsStateWithLifecycle()
     val updateItemState by viewModel.updateLoginState.collectAsStateWithLifecycle()
 
     LaunchedEffect(requestData) {
@@ -121,7 +123,8 @@ private fun ModalContent(
         fullSyncState = fullSyncState,
         secretFieldRequestState = secretFieldRequestState,
         deleteItemState = deleteItemState,
-        addLoginState = addItemState,
+        addLoginState = addLoginState,
+        addItemState = addItemState,
         updateLoginState = updateItemState,
         onUpgradePlan = onUpgradePlan,
         onSuccessDismiss = { onSuccessDismiss(it) },
@@ -140,6 +143,7 @@ private fun Content(
     secretFieldRequestState: SecretFieldRequestState = SecretFieldRequestState(),
     deleteItemState: DeleteItemState = DeleteItemState(),
     addLoginState: AddLoginState = AddLoginState(),
+    addItemState: AddItemState = AddItemState(),
     updateLoginState: UpdateLoginState = UpdateLoginState(),
     onUpgradePlan: () -> Unit = {},
     onSuccessDismiss: (String) -> Unit = {},
@@ -151,6 +155,7 @@ private fun Content(
         if (uiState.finishWithSuccess) {
             val toastMessage = when (uiState.selectedResponse) {
                 is BrowserRequestResponse.AddLoginAccept -> strings.requestModalToastAddLogin
+                is BrowserRequestResponse.AddItemAccept -> strings.requestModalToastAddLogin
                 is BrowserRequestResponse.UpdateLoginAccept -> strings.requestModalToastUpdateLogin
                 is BrowserRequestResponse.DeleteItemAccept -> strings.requestModalToastDeleteItem
                 is BrowserRequestResponse.FullSyncAccept -> strings.connectModalSuccessTitle
@@ -295,6 +300,20 @@ private fun Content(
                                 negativeCta = strings.requestModalRemoveItemCtaNegative,
                                 onPositiveCta = { deleteItemState.onDeleteClick() },
                                 onNegativeCta = { deleteItemState.onCancelClick() },
+                            )
+                        }
+
+                        is RequestState.InsideFrame.AddItem -> {
+                            RequestState(
+                                item = addItemState.item,
+                                title = strings.requestModalNewItemTitle,
+                                subtitle = strings.requestModalNewItemSubtitle,
+                                icon = MdtIcons.AddCircle,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalNewItemCtaPositive,
+                                negativeCta = strings.requestModalNewItemCtaNegative,
+                                onPositiveCta = { addItemState.onContinueClick() },
+                                onNegativeCta = { addItemState.onCancelClick() },
                             )
                         }
 

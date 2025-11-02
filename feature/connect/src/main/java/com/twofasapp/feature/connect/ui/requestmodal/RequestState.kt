@@ -27,6 +27,7 @@ internal sealed interface RequestState {
         data object FullSync : InsideFrame
         data object SecretFieldRequest : InsideFrame
         data object DeleteItem : InsideFrame
+        data object AddItem : InsideFrame
         data class UpgradePlan(val maxItems: Int) : InsideFrame
         data class Error(
             val title: String,
