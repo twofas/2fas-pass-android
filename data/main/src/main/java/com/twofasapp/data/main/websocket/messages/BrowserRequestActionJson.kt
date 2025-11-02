@@ -156,7 +156,63 @@ internal sealed interface BrowserRequestActionJson {
             val username: ActionFieldJson?,
             @SerialName("s_password")
             val s_password: ActionFieldJson?,
+            @SerialName("name")
+            val name: String?,
+            @SerialName("s_text")
+            val s_text: ActionFieldJson?,
         )
+    }
+
+    @Serializable
+    data class UpdateItem(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+
+        @Serializable
+        data class Data(
+            @SerialName("itemId")
+            val itemId: String,
+            @SerialName("vaultId")
+            val vaultId: String,
+            @SerialName("securityType")
+            val securityType: Int?,
+            @SerialName("sifFetched")
+            val sifFetched: Boolean = false,
+            @SerialName("tags")
+            val tags: List<String>?,
+            @SerialName("contentType")
+            val contentType: String,
+            @SerialName("content")
+            val content: Content,
+        )
+
+        @Serializable
+        data class Content(
+            @SerialName("name")
+            val name: String?,
+            @SerialName("notes")
+            val notes: String?,
+            @SerialName("url")
+            val url: String?,
+            @SerialName("username")
+            val username: ActionFieldJson?,
+            @SerialName("s_password")
+            val s_password: ActionFieldJson?,
+            @SerialName("uris")
+            val uris: List<Uri>?,
+            @SerialName("s_text")
+            val s_text: ActionFieldJson?,
+        ) {
+            @Serializable
+            data class Uri(
+                @SerialName("text")
+                val text: String,
+                @SerialName("matcher")
+                val matcher: Int,
+            )
+        }
     }
 
     object Serializer : JsonContentPolymorphicSerializer<BrowserRequestActionJson>(BrowserRequestActionJson::class) {
@@ -174,7 +230,7 @@ internal sealed interface BrowserRequestActionJson {
                     "sifRequest" -> SecretFieldRequest.serializer()
                     "deleteData" -> DeleteItem.serializer()
                     "addData" -> AddItem.serializer()
-                    "updateData" -> UpdateLogin.serializer()
+                    "updateData" -> UpdateItem.serializer()
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {

@@ -31,6 +31,7 @@ import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,6 +58,7 @@ internal class RequestModalViewModel(
     val addLoginState = MutableStateFlow(AddLoginState())
     val addItemState = MutableStateFlow(AddItemState())
     val updateLoginState = MutableStateFlow(UpdateLoginState())
+    val updateItemState = MutableStateFlow(UpdateItemState())
 
     fun connect(requestData: BrowserRequestData) {
         uiState.update {
@@ -131,6 +133,8 @@ internal class RequestModalViewModel(
                         RequestState.InsideFrame.AddItem
                     }
                 }
+
+                is BrowserRequestAction.UpdateItem -> RequestState.InsideFrame.UpdateItem
             },
         )
 
@@ -323,6 +327,51 @@ internal class RequestModalViewModel(
                                                         }
 
                                                         continuation.sendResponse(BrowserRequestResponse.AddItemAccept(updatedItem!!))
+                                                    }
+                                                }
+                                            },
+                                        ),
+                                    )
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.UpdateItem -> {
+                    launchScoped {
+                        updateItemState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onContinueClick = {
+                                    updateState(
+                                        RequestState.FullSize.ItemForm(
+                                            item = request.updatedItem,
+                                            onCancel = {
+                                                updateState(RequestState.InsideFrame.UpdateItem)
+                                            },
+                                            onSaveClick = { item ->
+                                                launchScoped {
+                                                    vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                        val itemId = itemsRepository.saveItem(
+                                                            itemEncryptionMapper.encryptItem(item, this),
+                                                        )
+
+                                                        updateState(RequestState.InsideFrame.Loading)
+
+                                                        val updatedItem = itemsRepository.getItem(itemId).let {
+                                                            itemEncryptionMapper.decryptItem(it, this, decryptSecretFields = true)
+                                                        }
+
+                                                        continuation.sendResponse(
+                                                            BrowserRequestResponse.UpdateItemAccept(
+                                                                item = updatedItem!!,
+                                                                sifFetched = request.sifFetched,
+                                                            ),
+                                                        )
                                                     }
                                                 }
                                             },

@@ -58,6 +58,7 @@ import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
 import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import org.koin.androidx.compose.koinViewModel
 
@@ -111,7 +112,8 @@ private fun ModalContent(
     val deleteItemState by viewModel.deleteItemState.collectAsStateWithLifecycle()
     val addLoginState by viewModel.addLoginState.collectAsStateWithLifecycle()
     val addItemState by viewModel.addItemState.collectAsStateWithLifecycle()
-    val updateItemState by viewModel.updateLoginState.collectAsStateWithLifecycle()
+    val updateLoginState by viewModel.updateLoginState.collectAsStateWithLifecycle()
+    val updateItemState by viewModel.updateItemState.collectAsStateWithLifecycle()
 
     LaunchedEffect(requestData) {
         viewModel.connect(requestData)
@@ -125,7 +127,8 @@ private fun ModalContent(
         deleteItemState = deleteItemState,
         addLoginState = addLoginState,
         addItemState = addItemState,
-        updateLoginState = updateItemState,
+        updateLoginState = updateLoginState,
+        updateItemState = updateItemState,
         onUpgradePlan = onUpgradePlan,
         onSuccessDismiss = { onSuccessDismiss(it) },
         onDismiss = {
@@ -145,6 +148,7 @@ private fun Content(
     addLoginState: AddLoginState = AddLoginState(),
     addItemState: AddItemState = AddItemState(),
     updateLoginState: UpdateLoginState = UpdateLoginState(),
+    updateItemState: UpdateItemState = UpdateItemState(),
     onUpgradePlan: () -> Unit = {},
     onSuccessDismiss: (String) -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -157,6 +161,7 @@ private fun Content(
                 is BrowserRequestResponse.AddLoginAccept -> strings.requestModalToastAddLogin
                 is BrowserRequestResponse.AddItemAccept -> strings.requestModalToastAddLogin
                 is BrowserRequestResponse.UpdateLoginAccept -> strings.requestModalToastUpdateLogin
+                is BrowserRequestResponse.UpdateItemAccept -> strings.requestModalToastUpdateLogin
                 is BrowserRequestResponse.DeleteItemAccept -> strings.requestModalToastDeleteItem
                 is BrowserRequestResponse.FullSyncAccept -> strings.connectModalSuccessTitle
                 is BrowserRequestResponse.SecretFieldRequestAccept -> strings.requestModalToastPasswordRequest
@@ -314,6 +319,20 @@ private fun Content(
                                 negativeCta = strings.requestModalNewItemCtaNegative,
                                 onPositiveCta = { addItemState.onContinueClick() },
                                 onNegativeCta = { addItemState.onCancelClick() },
+                            )
+                        }
+
+                        is RequestState.InsideFrame.UpdateItem -> {
+                            RequestState(
+                                item = updateItemState.item,
+                                title = strings.requestModalUpdateItemTitle,
+                                subtitle = strings.requestModalUpdateItemSubtitle,
+                                icon = MdtIcons.RotateLeft,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalUpdateItemCtaPositive,
+                                negativeCta = strings.requestModalUpdateItemCtaNegative,
+                                onPositiveCta = { updateItemState.onContinueClick() },
+                                onNegativeCta = { updateItemState.onCancelClick() },
                             )
                         }
 

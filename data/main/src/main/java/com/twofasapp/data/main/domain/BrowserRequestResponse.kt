@@ -29,5 +29,6 @@ sealed interface BrowserRequestResponse {
 
     data object DeleteItemAccept : BrowserRequestResponse
     data class AddItemAccept(val item: Item) : BrowserRequestResponse
+    data class UpdateItemAccept(val item: Item, val sifFetched: Boolean) : BrowserRequestResponse
     data object Cancel : BrowserRequestResponse
 }

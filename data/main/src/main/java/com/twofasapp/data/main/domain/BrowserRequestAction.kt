@@ -50,4 +50,11 @@ sealed interface BrowserRequestAction {
         override val type: String,
         val item: Item,
     ) : BrowserRequestAction
+
+    data class UpdateItem(
+        override val type: String,
+        val item: Item,
+        val updatedItem: Item,
+        val sifFetched: Boolean,
+    ) : BrowserRequestAction
 }

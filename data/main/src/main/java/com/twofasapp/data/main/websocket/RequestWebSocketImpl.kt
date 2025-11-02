@@ -519,6 +519,88 @@ internal class RequestWebSocketImpl(
                 )
             }
 
+            is BrowserRequestActionJson.UpdateItem -> {
+                val item = getItem(data.itemId)
+                    ?: throw WebSocketException(1501, "Could not find requested item.")
+
+                val contentType = when (data.contentType) {
+                    "login" -> ItemContentType.Login
+                    "secureNote" -> ItemContentType.SecureNote
+                    else -> throw IllegalArgumentException("Unsupported item type")
+                }
+
+                val securityType = data.securityType?.let(itemSecurityTypeMapper::mapToDomainFromJson) ?: item.securityType
+                val tagIds = data.tags ?: item.tagIds
+
+                val updatedContent = when (contentType) {
+                    is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.Login -> {
+                        val existingContent = item.content as ItemContent.Login
+                        existingContent.copy(
+                            name = data.content.name ?: existingContent.name,
+                            username = when (data.content.username?.action) {
+                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                                else -> data.content.username?.value ?: existingContent.username
+                            },
+                            password = when (data.content.s_password?.action) {
+                                "generate" -> {
+                                    SecretField.ClearText(
+                                        PasswordGenerator.generatePassword(
+                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                        ),
+                                    )
+                                }
+
+                                else -> {
+                                    data.content.s_password?.let { encryptedPassword ->
+                                        if (encryptedPassword.value.isEmpty()) {
+                                            SecretField.ClearText("")
+                                        } else {
+                                            val updatePasswordKey = HkdfGenerator.generate(
+                                                inputKeyMaterial = sessionKey,
+                                                salt = hkdfSalt,
+                                                contextInfo = when (securityType) {
+                                                    SecurityType.Tier1 -> "ItemT1"
+                                                    SecurityType.Tier2 -> "ItemT2"
+                                                    SecurityType.Tier3 -> "ItemT3"
+                                                },
+                                            )
+
+                                            val password = decrypt(
+                                                key = updatePasswordKey,
+                                                data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
+                                            )
+
+                                            SecretField.ClearText(password.decodeString())
+                                        }
+                                    } ?: existingContent.password
+                                }
+                            },
+                            notes = data.content.notes ?: existingContent.notes,
+                            uris = data.content.uris?.map { uri ->
+                                ItemUri(
+                                    text = uri.text,
+                                    matcher = uriMatcherMapper.mapToDomainFromJson(uri.matcher),
+                                )
+                            } ?: existingContent.uris,
+                        )
+                    }
+
+                    is ItemContentType.SecureNote -> throw IllegalArgumentException("Unsupported item type")
+                }
+
+                BrowserRequestAction.UpdateItem(
+                    type = type,
+                    sifFetched = data.sifFetched,
+                    item = item,
+                    updatedItem = item.copy(
+                        securityType = securityType,
+                        content = updatedContent,
+                        tagIds = tagIds,
+                    ),
+                )
+            }
+
             is BrowserRequestActionJson.Unknown -> {
                 throw WebSocketException(1502, "Unknown request action.")
             }
@@ -559,6 +641,14 @@ internal class RequestWebSocketImpl(
                     SecurityType.Tier1 -> "addedInT1"
                     SecurityType.Tier2 -> "added"
                     SecurityType.Tier3 -> "added"
+                }
+            }
+
+            is BrowserRequestResponse.UpdateItemAccept -> {
+                when (response.item.securityType) {
+                    SecurityType.Tier1 -> "addedInT1"
+                    SecurityType.Tier2 -> "updated"
+                    SecurityType.Tier3 -> "updated"
                 }
             }
 
@@ -689,8 +779,39 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier2,
                         SecurityType.Tier3,
                         -> {
-                            val itemData = createItemAcceptData(item = response.item, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
-                            val tagsData = createTagsData(vaultId = response.item.vaultId)
+                            val itemData = createItemAcceptData(
+                                item = response.item,
+                                includeSecretFields = true,
+                                hkdfSalt = hkdfSalt,
+                                sessionKey = sessionKey,
+                            )
+
+                            val tagsData = createTagsData(
+                                vaultId = response.item.vaultId,
+                            )
+
+                            put("data", itemData)
+                            put("tags", tagsData)
+                        }
+                    }
+                }
+
+                is BrowserRequestResponse.UpdateItemAccept -> {
+                    when (response.item.securityType) {
+                        SecurityType.Tier1 -> Unit
+                        SecurityType.Tier2,
+                        SecurityType.Tier3,
+                        -> {
+                            val itemData = createItemAcceptData(
+                                item = response.item,
+                                includeSecretFields = response.sifFetched,
+                                hkdfSalt = hkdfSalt,
+                                sessionKey = sessionKey,
+                            )
+
+                            val tagsData = createTagsData(
+                                vaultId = response.item.vaultId,
+                            )
 
                             put("data", itemData)
                             put("tags", tagsData)
@@ -740,6 +861,7 @@ internal class RequestWebSocketImpl(
 
     private fun createItemAcceptData(
         item: Item,
+        includeSecretFields: Boolean,
         hkdfSalt: ByteArray,
         sessionKey: ByteArray,
     ): JsonElement {
@@ -763,16 +885,24 @@ internal class RequestWebSocketImpl(
             content = when (contentWithEncryptedFields) {
                 is ItemContent.Login -> {
                     contentWithEncryptedFields.copy(
-                        password = (contentWithEncryptedFields.password as? SecretField.Encrypted)?.let { encryptedField ->
-                            SecretField.ClearText(encryptedField.value.encodeBase64())
+                        password = if (includeSecretFields) {
+                            (contentWithEncryptedFields.password as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
                         },
                     )
                 }
 
                 is ItemContent.SecureNote -> {
                     contentWithEncryptedFields.copy(
-                        text = (contentWithEncryptedFields.text as? SecretField.Encrypted)?.let { encryptedField ->
-                            SecretField.ClearText(encryptedField.value.encodeBase64())
+                        text = if (includeSecretFields) {
+                            (contentWithEncryptedFields.text as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
                         },
                     )
                 }
@@ -782,7 +912,7 @@ internal class RequestWebSocketImpl(
         )
 
         return json.encodeToJsonElement(
-            itemMapper.mapToJson(updatedItem.copy(content = contentWithEncryptedFields)),
+            itemMapper.mapToJson(updatedItem),
         )
     }
 
