@@ -415,11 +415,8 @@ class Strings(private val c: Context) {
     val setNewPasswordScreenTitle = c.getString(R.string.set_new_password_screen_title)
     val setNewPasswordScreenDescription = c.getString(R.string.set_new_password_screen_description)
     val setNewPasswordConfirmTitle = c.getString(R.string.set_new_password_confirm_title)
-    val setNewPasswordConfirmBodyPart1 = c.getString(R.string.set_new_password_confirm_body_part1)
-    val setNewPasswordConfirmBodyPart2Bold = c.getString(R.string.set_new_password_confirm_body_part2_bold)
-    val setNewPasswordConfirmBodyPart3 = c.getString(R.string.set_new_password_confirm_body_part3)
-    val setNewPasswordConfirmBodyPart4Bold = c.getString(R.string.set_new_password_confirm_body_part4_bold)
-    val setNewPasswordConfirmBodyPart5 = c.getString(R.string.set_new_password_confirm_body_part5)
+    val setNewPasswordConfirmBodyPart1 = c.getString(R.string.set_new_password_confirm_body_part1_ios)
+    val setNewPasswordConfirmBodyPart2 = c.getString(R.string.set_new_password_confirm_body_part2_ios)
 
     val uriSettingsModalHeader = c.getString(R.string.uri_settings_modal_header)
     val uriSettingsMatchingRuleHeader = c.getString(R.string.uri_settings_matching_rule_header)
