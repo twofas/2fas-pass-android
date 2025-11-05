@@ -559,7 +559,7 @@ internal class RequestWebSocketImpl(
                                             val updatePasswordKey = HkdfGenerator.generate(
                                                 inputKeyMaterial = sessionKey,
                                                 salt = hkdfSalt,
-                                                contextInfo = when (securityType) {
+                                                contextInfo = when (item.securityType) {
                                                     SecurityType.Tier1 -> "ItemT1"
                                                     SecurityType.Tier2 -> "ItemT2"
                                                     SecurityType.Tier3 -> "ItemT3"
