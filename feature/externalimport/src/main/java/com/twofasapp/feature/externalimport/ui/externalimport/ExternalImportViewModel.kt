@@ -29,6 +29,7 @@ import com.twofasapp.feature.externalimport.import.spec.EnpassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
+import com.twofasapp.feature.externalimport.import.spec.KeeperImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.MicrosoftEdgeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
@@ -55,6 +56,7 @@ internal class ExternalImportViewModel(
     private val firefoxImportSpec: FirefoxImportSpec,
     private val keepassImportSpec: KeepassImportSpec,
     private val keepassXcImportSpec: KeepassXcImportSpec,
+    private val keeperImportSpec: KeeperImportSpec,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ExternalImportUiState())
     private val importType = savedStateHandle.toRoute<Screen.ExternalImport>().importType
@@ -77,6 +79,7 @@ internal class ExternalImportViewModel(
                     ImportType.Firefox -> firefoxImportSpec
                     ImportType.KeePass -> keepassImportSpec
                     ImportType.KeePassXC -> keepassXcImportSpec
+                    ImportType.Keeper -> keeperImportSpec
                 },
             )
         }

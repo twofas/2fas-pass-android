@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Wed, 24 Sep 2025 15:04:27 -0700
+ Exported at: Wed, 05 Nov 2025 10:29:34 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -71,7 +71,7 @@
     <string name="decryption_kit_confirm_title">Decryption Kit saved?</string>
     <string name="decryption_kit_confirm_description">Just double-checking: Have you securely saved your decryption kit? It\'s your lifeline to your Vault if you ever need to recover it.</string>
     <string name="decryption_kit_save_modal_title">Save Decryption Kit</string>
-    <string name="decryption_kit_save_modal_description">Keep your Decryption Kit in a secure place. Never share it with anyone to protect your data.</string>
+    <string name="decryption_kit_save_modal_description">Keep your Decryption Kit in a safe place. Never share it with anyone to protect your data.</string>
     <string name="decryption_kit_save_modal_cta1">Share</string>
     <string name="decryption_kit_save_modal_cta2">Save to file</string>
     <string name="decryption_kit_save_toast">Decryption Kit saved!</string>
@@ -81,10 +81,10 @@
     <string name="decryption_kit_settings_secret_words">Secret Words (15-word phrase),</string>
     <string name="decryption_kit_settings_master_key">Master Password hash</string>
     <string name="decryption_kit_settings_toggle_title">Include the Master Password hash\u0020</string>
-    <string name="decryption_kit_settings_toggle_msg">to avoid entering the Master Password to recover my Vault.</string>
+    <string name="decryption_kit_settings_toggle_msg">to avoid entering the Master Password when recovering my Vault.</string>
     <string name="decryption_kit_settings_cta">Done</string>
     <string name="restore_vault_source_title">Select backup file</string>
-    <string name="restore_vault_source_description">To recover or sync your 2FAS Pass Vault, select one of the available backup methods:</string>
+    <string name="restore_vault_source_description">To recover your 2FAS Pass Vault, select one of the available backup methods:</string>
     <string name="restore_vault_source_option_google_drive">Google Drive</string>
     <string name="restore_vault_source_option_google_drive_description">Connect with your Google Drive</string>
     <string name="restore_vault_source_option_webdav">WebDAV</string>
@@ -92,18 +92,18 @@
     <string name="restore_vault_source_option_file">Local file</string>
     <string name="restore_vault_source_option_file_description">Import a backup file</string>
     <string name="restore_webdav_title">WebDAV</string>
-    <string name="restore_webdav_description">Restore your 2FAS Pass Vault data from a WebDAV server</string>
+    <string name="restore_webdav_description">Restore your 2FAS Pass Vault from a WebDAV server.</string>
     <string name="restore_cloud_files_title">Your Vaults</string>
-    <string name="restore_cloud_files_description">Below, you can see a list of files from various devices. Click on the one that interests you to select it.</string>
+    <string name="restore_cloud_files_description">Below, you can see a list of 2FAS Pass Vaults. Select the one you want to restore.</string>
     <string name="restore_cloud_files_empty_description">No Vaults found in your cloud storage</string>
     <string name="restore_decrypt_vault_title">Decrypt Your Backup</string>
-    <string name="restore_decrypt_vault_description">To proceed, enter your Secret Words and Master Password using one of the available methods to decrypt a backup file</string>
+    <string name="restore_decrypt_vault_description">To proceed, enter your Secret Words and Master Password using one of the available methods:</string>
     <string name="restore_decrypt_vault_option_file">Local Decryption Kit File</string>
     <string name="restore_decrypt_vault_option_file_description">Select a PDF file</string>
     <string name="restore_decrypt_vault_option_scan_qr">Printed Decryption Kit</string>
-    <string name="restore_decrypt_vault_option_scan_qr_description">Scan QR code</string>
+    <string name="restore_decrypt_vault_option_scan_qr_description">Scan the QR code</string>
     <string name="restore_decrypt_vault_option_manual">Manual Input</string>
-    <string name="restore_decrypt_vault_option_manual_description">Manually enter Secret Words</string>
+    <string name="restore_decrypt_vault_option_manual_description">Enter Secret Words manually</string>
     <string name="restore_manual_key_input_title">Manual Input</string>
     <string name="restore_manual_key_input_description">Enter your Secret Words (15-word phrase)</string>
     <string name="restore_master_password_title">Master Password</string>
@@ -113,7 +113,7 @@
     <string name="restore_importing_file_text">Importing backup file…</string>
     <string name="restore_importing_file_error_text">Error importing file</string>
     <string name="restore_success_title">Your Vault is restored!</string>
-    <string name="restore_success_description">Start using the 2FAS Pass app on this device.</string>
+    <string name="restore_success_description">Start using the 2FAS Pass on this device.</string>
     <string name="restore_success_cta">Start using app</string>
     <string name="master_password_label">Password</string>
     <string name="master_password_confirm_label">Confirm password</string>
@@ -151,7 +151,7 @@
     <string name="settings_entry_theme">Theme</string>
     <string name="settings_entry_convenience">Convenience</string>
     <string name="settings_entry_dynamic_colors">Dynamic Theme</string>
-    <string name="settings_entry_dynamic_colors_description">Change the app theme based on your wallpaper for a more dynamic experience.</string>
+    <string name="settings_entry_dynamic_colors_description">Dynamically change the app theme based on your wallpaper.</string>
     <string name="settings_entry_login_click_action">Default action on tap</string>
     <string name="settings_entry_login_click_action_description">Select the action that happens when you tap an Item.</string>
     <string name="settings_entry_device_nickname">Device nickname</string>
@@ -164,8 +164,8 @@
     <string name="settings_entry_cloud_sync_description">Automatically back up and sync your data across devices.</string>
     <string name="settings_entry_import_export">Import / Export</string>
     <string name="settings_entry_import_export_description">Move your data between devices.</string>
-    <string name="settings_entry_transfer_from_other_apps">Transfer from Other Apps</string>
-    <string name="settings_entry_transfer_from_other_apps_description">Easily transfer your data from another password manager and quickly set it up in 2FAS Pass.</string>
+    <string name="settings_entry_transfer_from_other_apps">Transfer from other Apps</string>
+    <string name="settings_entry_transfer_from_other_apps_description">Easily transfer your data from another password manager and set it up in 2FAS Pass.</string>
     <string name="settings_entry_trash">Removed Items</string>
     <string name="settings_entry_trash_description">Recover or permanently delete Items you\'ve removed from the app.</string>
     <string name="settings_entry_about">About 2FAS Pass</string>
@@ -187,7 +187,7 @@
     <string name="settings_entry_data_access">Default Security</string>
     <string name="settings_entry_change_password">Change Master Password</string>
     <string name="settings_entry_biometrics">Biometrics</string>
-    <string name="settings_entry_biometrics_description">Use your biometric data to unlock the app instead of using a Master Password.</string>
+    <string name="settings_entry_biometrics_description">Use biometrics to unlock the app instead of using a Master Password.</string>
     <string name="settings_entry_lockout_settings">Lockout settings</string>
     <string name="settings_entry_lockout_settings_description">Manage the app\'s lockouts settings.</string>
     <string name="settings_entry_decryption_kit">Decryption Kit</string>
@@ -196,7 +196,7 @@
     <string name="settings_entry_app_lock_attempts">Max failed attempts</string>
     <string name="settings_entry_app_lock_attempts_description">After this number of failed attempts, the application will be locked for 1 minute. It will increase progressively to 3 minutes, 5 minutes, 15 minutes, up to 1 hour.</string>
     <string name="settings_entry_autofill_lock_time">Autofill lockout time</string>
-    <string name="settings_entry_autofill_lock_time_description">Set the duration after which the autofill service will require the Master Password again. This is only relevant for services assigned to the Secret Tier.</string>
+    <string name="settings_entry_autofill_lock_time_description">Set the duration after which the autofill service will require the Master Password again. This is only relevant for Items assigned to the Secret Tier.</string>
     <string name="settings_entry_protection_level">Security Tier</string>
     <string name="settings_entry_protection_level_description">With Security Tiers, you decide how to use individual Items with Autofill and share them with the 2FAS Pass Browser Extension.</string>
     <string name="settings_header_protection_level">Choose Security Tier</string>
@@ -313,12 +313,12 @@
     <string name="lock_screen_unlock_description">Enter your Master Password to unlock the app</string>
     <string name="lock_screen_unlock_cta">Unlock</string>
     <string name="login_delete_confirm_title">Remove Item?</string>
-    <string name="login_delete_confirm_body">Are you sure you want to remove this Item? You can restore it later.</string>
+    <string name="login_delete_confirm_body">Are you sure you want to remove this Item? You can recover it later.</string>
     <string name="password_length_requirement">At least 9 characters</string>
     <string name="passwords_match_text">Passwords match</string>
     <string name="login_search_no_results_title">Item not found</string>
     <string name="login_search_no_results_description">Take another try with a different filter</string>
-    <string name="scan_decryption_kit_title">Scan QR code</string>
+    <string name="scan_decryption_kit_title">Scan the QR code</string>
     <string name="scan_decryption_kit_description">Point your camera at the QR code found in your Decryption Kit.</string>
     <string name="security_biometrics_enable_title">Enable Biometrics</string>
     <string name="security_biometrics_enable_description">Master Password is required to enable biometrics.</string>
@@ -329,8 +329,8 @@
     <string name="security_screen_capture_enable_title">Enable Screen Capture</string>
     <string name="security_screen_capture_enable_description">Authentication is required to enable Screen Capture</string>
     <string name="security_screen_capture_enable_cta">Enable Screen Capture</string>
-    <string name="security_decryption_kit_access_title">Access Decryption Kit</string>
-    <string name="security_decryption_kit_access_description">Master Password is required to access the Decryption Kit</string>
+    <string name="security_decryption_kit_access_title">New Decryption Kit</string>
+    <string name="security_decryption_kit_access_description">Master Password is required to download a new Decryption Kit</string>
     <string name="security_decryption_kit_access_cta">Authenticate</string>
     <string name="biometrics_modal_title">Biometrics</string>
     <string name="biometrics_modal_subtitle_enable">Enable biometrics login</string>
@@ -481,7 +481,7 @@
     <string name="request_modal_header_title">Request from 2FAS Pass</string>
     <string name="request_modal_loading">Connecting…</string>
     <string name="request_modal_password_request_title">Password Request</string>
-    <string name="request_modal_password_request_subtitle">Browser extension requests the password of this Item for 3 minutes</string>
+    <string name="request_modal_password_request_subtitle">Browser extension requests this Item\'s password</string>
     <string name="request_modal_password_request_cta_positive">Send</string>
     <string name="request_modal_password_request_cta_negative">Cancel</string>
     <string name="request_modal_new_item_title">New Item</string>
@@ -516,9 +516,9 @@
     <string name="restore_cloud_files_updated_at__0025_0040">Updated at: %s</string>
     <string name="restore_manual_key_incorrect_words">Incorrect Secret Words</string>
     <string name="restore_qr_code_camera_description">Hover over the QR code and wait for a moment</string>
-    <string name="restore_qr_code_camera_title">Scan QR code</string>
+    <string name="restore_qr_code_camera_title">Scan the QR code</string>
     <string name="restore_qr_code_error">The camera is unavailable. Check the 2FAS Pass camera access in System Settings</string>
-    <string name="restore_qr_code_intro_cta">Scan QR code</string>
+    <string name="restore_qr_code_intro_cta">Scan the QR code</string>
     <string name="restore_qr_code_intro_description">Scan the QR code from your printed Decryption Kit</string>
     <string name="restore_qr_code_intro_title">Scan the QR code</string>
     <string name="restore_unencrypted_file_cta_description_ios">To import it, create a new Vault and navigate to **Settings → Import/Export**.</string>
@@ -609,7 +609,7 @@
     <string name="security_tiers_help_layers_section_title">3. Multi-Layer Encryption</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">End-to-End Encryption (E2EE)</string>
     <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Your data is protected with a unique, randomly generated SEED combined with your Master Password.\\nOn your device, the SEED is securely stored in Apple\'s Secure Enclave, so you only need your Master Password to access your data.</string>
-    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">When setting up a new device, you\'ll need a 15-word recovery list to restore your SEED. It\'s securely stored in Apple\'s Secure Enclave — a dedicated, tamper-resistant chip - ensuring your encryption keys never leave your device.</string>
+    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">When setting up a new device, you\'ll need a 15-word recovery phrase to restore your SEED. It\'s securely stored in Apple\'s Secure Enclave, a dedicated, tamper-resistant chip, ensuring your encryption keys never leave your device.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Apple Advanced Data Protection</string>
     <string name="security_tiers_help_tiers_layers_adp_subtitle">When you enable ADP and iCloud sync, your data is encrypted twice — first with your E2EE and then with Apple\'s encryption keys. Even if someone gains access to your iCloud, they will only find fully encrypted E2EE data, keeping it secure.</string>
@@ -776,7 +776,7 @@
     <string name="quick_setup_security_tier_title">Security Tier</string>
     <string name="quick_setup_security_tier_description">Decide how to use individual Items with Autofill and share them with the Browser Extension.</string>
     <string name="quick_setup_security_tier_default_label">Default</string>
-    <string name="quick_setup_import_items_cta">Import Items from 2FAS Pass Backup</string>
+    <string name="quick_setup_import_items_cta">Import Items from 2FAS Pass backup</string>
     <string name="quick_setup_transfer_items_cta">Transfer passwords from other apps</string>
     <string name="quick_setup_icloud_sync_failure">Failed to enable Vault Sync</string>
     <string name="transfer_instructions_firefox">Open Firefox on your PC\n\nSelect the **Menu button** (3 horizontal lines) at the top right, then select **Passwords**.\n\nSelect **Firefox menu** (3 dots) and **Export Passwords**.\n\nSelect **Continue with export** and choose the file name and location.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
@@ -828,4 +828,14 @@
     <string name="common_back">Back</string>
     <string name="transfer_instructions_microsoft_edge">Open Microsoft Edge on your PC\n\nSelect the 3 dots next to your profile icon at the top right, then select **Passwords**.\n\nSelect the 3 dots next to Passkeys and click **Export passwords**.\n\nConfirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
     <string name="transfer_instructions_enpass">Open Enpass on your PC.\n\nOpen the menu at the top right of the app.\n\nSelect **File** then **Export**.\n\nSelect the correct Vault and the .json file format.\n\nChoose the location and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
+    <string name="restore_vault_title">Welcome back!</string>
+    <string name="restore_vault_message">You\'ve successfully restored your encrypted 2FAS Pass Vault. However, you must decrypt it to restore access to your Items.</string>
+    <string name="restore_vault_warning">Do not uninstall 2FAS Pass without decrypting your Vault, as you will lose access to your Items.</string>
+    <string name="restore_decrypt_vault_option_title">Select decryption method:</string>
+    <string name="request_modal_toast_success_full_sync">Synced successfully</string>
+    <string name="request_modal_full_sync_title">Sync Request</string>
+    <string name="request_modal_full_sync_subtitle">Sync request from the browser extension.</string>
+    <string name="request_modal_full_sync_cta_positive">Send</string>
+    <string name="request_modal_full_sync_cta_negative">Cancel</string>
+    <string name="transfer_instructions_keeper">Open Keeper on your PC.\n\nClick on your account in the top right corner, select **Settings**, and go to **Export**\n\nUnder **Export file**, select JSON as the format and click **Export**.\n\nEnter your Master Password and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
 </resources>

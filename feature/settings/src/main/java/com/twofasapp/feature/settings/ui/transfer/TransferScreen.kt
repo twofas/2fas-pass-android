@@ -103,6 +103,7 @@ private fun Content(
                             ImportType.Firefox -> R.drawable.external_logo_firefox
                             ImportType.KeePass -> R.drawable.external_logo_keepass
                             ImportType.KeePassXC -> R.drawable.external_logo_keepassxc
+                            ImportType.Keeper -> R.drawable.external_logo_keeper
                         },
                     ),
                     onClick = {
