@@ -34,17 +34,23 @@ import com.twofasapp.core.common.ktx.decodeString
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.encodeHex
+import com.twofasapp.core.common.ktx.sha256
 import com.twofasapp.core.common.time.TimeProvider
+import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.ItemsRepository
+import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
+import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.domain.BrowserRequestAction
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
+import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.main.domain.RequestWebSocketResult
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
+import com.twofasapp.data.main.mapper.TagMapper
 import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
 import com.twofasapp.data.main.websocket.messages.BrowserRequestActionJson
@@ -69,8 +75,10 @@ internal class RequestWebSocketImpl(
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
     override val itemsRepository: ItemsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
-    override val loginDecryptionMapper: ItemEncryptionMapper,
+    override val itemEncryptionMapper: ItemEncryptionMapper,
     private val settingsRepository: SettingsRepository,
+    private val backupRepository: BackupRepository,
+    private val vaultsRepository: VaultsRepository,
     private val dispatchers: Dispatchers,
     private val androidKeyStore: AndroidKeyStore,
     private val json: Json,
@@ -79,10 +87,15 @@ internal class RequestWebSocketImpl(
     private val itemMapper: ItemMapper,
     private val itemSecurityTypeMapper: ItemSecurityTypeMapper,
     private val uriMatcherMapper: UriMatcherMapper,
+    private val tagsRepository: TagsRepository,
+    private val tagMapper: TagMapper,
 ) : RequestWebSocket, WebSocketDelegate {
 
+    override var version: Int = ConnectData.CurrentSchema
     override var expectedIncomingId: String = ""
     private var error: Exception? = null
+    private val chunks = mutableListOf<String>()
+    private val chunkSize = 2 * 1024 * 1024
 
     override suspend fun open(
         requestData: BrowserRequestData,
@@ -92,6 +105,7 @@ internal class RequestWebSocketImpl(
             withContext(dispatchers.io) {
                 Timber.d("Request: $requestData")
 
+                version = requestData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
                 val pkEpheMa = epheMa.public.encoded
                 val pkEpheBe = EcKeyConverter.createPublicKey(requestData.pkEpheBe)
@@ -180,7 +194,11 @@ internal class RequestWebSocketImpl(
                                             ),
                                         )
 
-                                        val action = json.decodeFromString<BrowserRequestActionJson>(request.decodeString())
+                                        val requestString = request.decodeString()
+
+                                        Timber.d("Request data: $requestString")
+
+                                        val action = json.decodeFromString<BrowserRequestActionJson>(requestString)
                                             .asDomain(
                                                 hkdfSalt = hkdfSalt,
                                                 sessionKey = sessionKey,
@@ -242,7 +260,47 @@ internal class RequestWebSocketImpl(
                                     throw WebSocketException(1005, "Unknown websocket message received.")
                                 }
 
-                                else -> Unit
+                                is IncomingMessageJson.InitTransferConfirmed -> {
+                                    sendMessage(
+                                        createOutgoingMessage(
+                                            payload = OutgoingPayloadJson.TransferChunk(
+                                                chunkIndex = 0,
+                                                chunkSize = chunks[0].length,
+                                                chunkData = chunks[0],
+                                            ),
+                                        ),
+                                    )
+                                }
+
+                                is IncomingMessageJson.TransferChunkConfirmed -> {
+                                    try {
+                                        val chunkIndex = message.payload.chunkIndex + 1
+                                        sendMessage(
+                                            createOutgoingMessage(
+                                                payload = OutgoingPayloadJson.TransferChunk(
+                                                    chunkIndex = chunkIndex,
+                                                    chunkSize = chunks[chunkIndex].length,
+                                                    chunkData = chunks[chunkIndex],
+                                                ),
+                                            ),
+                                        )
+                                    } catch (e: Exception) {
+                                        throw WebSocketException(1600, "Error when sending chunk.")
+                                    }
+                                }
+
+                                is IncomingMessageJson.TransferCompleted -> {
+                                    saveBrowserSessionId(
+                                        publicKey = requestData.pkPersBe,
+                                        sessionId = newSessionId,
+                                    )
+
+                                    sendMessage(
+                                        createOutgoingMessage(
+                                            payload = OutgoingPayloadJson.CloseWithSuccess,
+                                        ),
+                                    )
+                                }
                             }
                         } catch (e: Exception) {
                             error = e
@@ -271,18 +329,11 @@ internal class RequestWebSocketImpl(
         hkdfSalt: ByteArray,
         sessionKey: ByteArray,
     ): BrowserRequestAction {
-        Timber.d(this.toString())
+        Timber.d("Request action: $this")
 
         return when (this) {
             is BrowserRequestActionJson.PasswordRequest -> {
                 BrowserRequestAction.PasswordRequest(
-                    type = type,
-                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
-                )
-            }
-
-            is BrowserRequestActionJson.DeleteLogin -> {
-                BrowserRequestAction.DeleteLogin(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
                 )
@@ -386,6 +437,170 @@ internal class RequestWebSocketImpl(
                 )
             }
 
+            is BrowserRequestActionJson.FullSync -> {
+                BrowserRequestAction.FullSync(
+                    type = type,
+                )
+            }
+
+            is BrowserRequestActionJson.SecretFieldRequest -> {
+                BrowserRequestAction.SecretFieldRequest(
+                    type = type,
+                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                )
+            }
+
+            is BrowserRequestActionJson.DeleteItem -> {
+                BrowserRequestAction.DeleteItem(
+                    type = type,
+                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                )
+            }
+
+            is BrowserRequestActionJson.AddItem -> {
+                val contentType = when (data.contentType) {
+                    "login" -> ItemContentType.Login
+                    "secureNote" -> ItemContentType.SecureNote
+                    else -> throw IllegalArgumentException("Unsupported item type")
+                }
+
+                val content = when (contentType) {
+                    is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.Login -> {
+                        ItemContent.Login.Empty.copy(
+                            name = (data.content.url.toUri().host ?: data.content.url).removePrefix("www."),
+                            uris = listOf(ItemUri(text = data.content.url)),
+                            username = when (data.content.username?.action) {
+                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                                else -> data.content.username?.value.orEmpty()
+                            },
+                            password = when (data.content.s_password?.action) {
+                                "generate" -> {
+                                    SecretField.ClearText(
+                                        PasswordGenerator.generatePassword(
+                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                        ),
+                                    )
+                                }
+
+                                else -> {
+                                    data.content.s_password?.let { encryptedPassword ->
+                                        if (encryptedPassword.value.isEmpty()) {
+                                            SecretField.ClearText("")
+                                        } else {
+                                            val newPasswordKey = HkdfGenerator.generate(
+                                                inputKeyMaterial = sessionKey,
+                                                salt = hkdfSalt,
+                                                contextInfo = "ItemNew",
+                                            )
+
+                                            val password = decrypt(
+                                                key = newPasswordKey,
+                                                data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
+                                            )
+
+                                            SecretField.ClearText(password.decodeString())
+                                        }
+                                    }
+                                }
+                            },
+                        )
+                    }
+
+                    is ItemContentType.SecureNote -> throw IllegalArgumentException("Unsupported item type")
+                }
+
+                BrowserRequestAction.AddItem(
+                    type = type,
+                    item = Item.create(
+                        contentType = contentType,
+                        content = content,
+                    ),
+                )
+            }
+
+            is BrowserRequestActionJson.UpdateItem -> {
+                val item = getItem(data.itemId)
+                    ?: throw WebSocketException(1501, "Could not find requested item.")
+
+                val contentType = when (data.contentType) {
+                    "login" -> ItemContentType.Login
+                    "secureNote" -> ItemContentType.SecureNote
+                    else -> throw IllegalArgumentException("Unsupported item type")
+                }
+
+                val securityType = data.securityType?.let(itemSecurityTypeMapper::mapToDomainFromJson) ?: item.securityType
+                val tagIds = data.tags ?: item.tagIds
+
+                val updatedContent = when (contentType) {
+                    is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.Login -> {
+                        val existingContent = item.content as ItemContent.Login
+                        existingContent.copy(
+                            name = data.content.name ?: existingContent.name,
+                            username = when (data.content.username?.action) {
+                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                                else -> data.content.username?.value ?: existingContent.username
+                            },
+                            password = when (data.content.s_password?.action) {
+                                "generate" -> {
+                                    SecretField.ClearText(
+                                        PasswordGenerator.generatePassword(
+                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                        ),
+                                    )
+                                }
+
+                                else -> {
+                                    data.content.s_password?.let { encryptedPassword ->
+                                        if (encryptedPassword.value.isEmpty()) {
+                                            SecretField.ClearText("")
+                                        } else {
+                                            val updatePasswordKey = HkdfGenerator.generate(
+                                                inputKeyMaterial = sessionKey,
+                                                salt = hkdfSalt,
+                                                contextInfo = when (item.securityType) {
+                                                    SecurityType.Tier1 -> "ItemT1"
+                                                    SecurityType.Tier2 -> "ItemT2"
+                                                    SecurityType.Tier3 -> "ItemT3"
+                                                },
+                                            )
+
+                                            val password = decrypt(
+                                                key = updatePasswordKey,
+                                                data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
+                                            )
+
+                                            SecretField.ClearText(password.decodeString())
+                                        }
+                                    } ?: existingContent.password
+                                }
+                            },
+                            notes = data.content.notes ?: existingContent.notes,
+                            uris = data.content.uris?.map { uri ->
+                                ItemUri(
+                                    text = uri.text,
+                                    matcher = uriMatcherMapper.mapToDomainFromJson(uri.matcher),
+                                )
+                            } ?: existingContent.uris,
+                        )
+                    }
+
+                    is ItemContentType.SecureNote -> throw IllegalArgumentException("Unsupported item type")
+                }
+
+                BrowserRequestAction.UpdateItem(
+                    type = type,
+                    sifFetched = data.sifFetched,
+                    item = item,
+                    updatedItem = item.copy(
+                        securityType = securityType,
+                        content = updatedContent,
+                        tagIds = tagIds,
+                    ),
+                )
+            }
+
             is BrowserRequestActionJson.Unknown -> {
                 throw WebSocketException(1502, "Unknown request action.")
             }
@@ -402,7 +617,6 @@ internal class RequestWebSocketImpl(
         val type = action.type
         val status = when (response) {
             is BrowserRequestResponse.PasswordRequestAccept -> "accept"
-            is BrowserRequestResponse.DeleteLoginAccept -> "accept"
             is BrowserRequestResponse.AddLoginAccept -> {
                 when (response.item.securityType) {
                     SecurityType.Tier1 -> "addedInT1"
@@ -412,6 +626,25 @@ internal class RequestWebSocketImpl(
             }
 
             is BrowserRequestResponse.UpdateLoginAccept -> {
+                when (response.item.securityType) {
+                    SecurityType.Tier1 -> "addedInT1"
+                    SecurityType.Tier2 -> "updated"
+                    SecurityType.Tier3 -> "updated"
+                }
+            }
+
+            is BrowserRequestResponse.SecretFieldRequestAccept -> "accept"
+            is BrowserRequestResponse.DeleteItemAccept -> "accept"
+            is BrowserRequestResponse.FullSyncAccept -> "accept"
+            is BrowserRequestResponse.AddItemAccept -> {
+                when (response.item.securityType) {
+                    SecurityType.Tier1 -> "addedInT1"
+                    SecurityType.Tier2 -> "added"
+                    SecurityType.Tier3 -> "added"
+                }
+            }
+
+            is BrowserRequestResponse.UpdateItemAccept -> {
                 when (response.item.securityType) {
                     SecurityType.Tier1 -> "addedInT1"
                     SecurityType.Tier2 -> "updated"
@@ -444,7 +677,6 @@ internal class RequestWebSocketImpl(
                     put("passwordEnc", JsonPrimitive(passwordEnc.encodeBase64()))
                 }
 
-                is BrowserRequestResponse.DeleteLoginAccept -> Unit
                 is BrowserRequestResponse.AddLoginAccept -> {
                     when (response.item.securityType) {
                         SecurityType.Tier1 -> Unit
@@ -465,6 +697,124 @@ internal class RequestWebSocketImpl(
                         -> {
                             val loginData = createLoginAcceptData(item = response.item, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
                             put("login", loginData)
+                        }
+                    }
+                }
+
+                is BrowserRequestResponse.SecretFieldRequestAccept -> {
+                    val itemT2Key = HkdfGenerator.generate(
+                        inputKeyMaterial = sessionKey,
+                        salt = hkdfSalt,
+                        contextInfo = "ItemT2",
+                    )
+
+                    put("expireInSeconds", JsonPrimitive(180))
+                    put(
+                        key = "data",
+                        element = buildJsonObject {
+                            response.fields.forEach { field ->
+                                val fieldEnc = encrypt(
+                                    key = itemT2Key,
+                                    data = field.value,
+                                )
+
+                                put(
+                                    key = field.key,
+                                    element = JsonPrimitive(fieldEnc.encodeBase64()),
+                                )
+                            }
+                        },
+                    )
+                }
+
+                is BrowserRequestResponse.FullSyncAccept -> {
+                    val dataKey = HkdfGenerator.generate(
+                        inputKeyMaterial = sessionKey,
+                        salt = hkdfSalt,
+                        contextInfo = "Data",
+                    )
+
+                    val itemT3Key = HkdfGenerator.generate(
+                        inputKeyMaterial = sessionKey,
+                        salt = hkdfSalt,
+                        contextInfo = "ItemT3",
+                    )
+
+                    val vaultDataGzip = backupRepository.createSerializedVaultDataForBrowserExtension(
+                        version = 2,
+                        vaultId = vaultsRepository.getVault().id,
+                        deviceId = device.uniqueId(),
+                        encryptionKey = itemT3Key,
+                    )
+
+                    val vaultDataGzipEnc = encrypt(
+                        key = dataKey,
+                        data = vaultDataGzip,
+                    )
+
+                    val sha256EncGzipVaultData = vaultDataGzipEnc.bytes.sha256()
+
+                    chunks.clear()
+
+                    vaultDataGzipEnc
+                        .encodeBase64()
+                        .chunked(chunkSize)
+                        .forEach { chunk ->
+                            chunks.add(chunk)
+                        }
+
+                    val totalChunks = chunks.size
+                    val totalSize = vaultDataGzip.size
+
+                    put("totalChunks", JsonPrimitive(totalChunks))
+                    put("totalSize", JsonPrimitive(totalSize))
+                    put("sha256GzipVaultDataEnc", JsonPrimitive(sha256EncGzipVaultData.encodeBase64()))
+                }
+
+                is BrowserRequestResponse.DeleteItemAccept -> Unit
+
+                is BrowserRequestResponse.AddItemAccept -> {
+                    when (response.item.securityType) {
+                        SecurityType.Tier1 -> Unit
+                        SecurityType.Tier2,
+                        SecurityType.Tier3,
+                        -> {
+                            val itemData = createItemAcceptData(
+                                item = response.item,
+                                includeSecretFields = true,
+                                hkdfSalt = hkdfSalt,
+                                sessionKey = sessionKey,
+                            )
+
+                            val tagsData = createTagsData(
+                                vaultId = response.item.vaultId,
+                            )
+
+                            put("data", itemData)
+                            put("tags", tagsData)
+                        }
+                    }
+                }
+
+                is BrowserRequestResponse.UpdateItemAccept -> {
+                    when (response.item.securityType) {
+                        SecurityType.Tier1 -> Unit
+                        SecurityType.Tier2,
+                        SecurityType.Tier3,
+                        -> {
+                            val itemData = createItemAcceptData(
+                                item = response.item,
+                                includeSecretFields = response.sifFetched,
+                                hkdfSalt = hkdfSalt,
+                                sessionKey = sessionKey,
+                            )
+
+                            val tagsData = createTagsData(
+                                vaultId = response.item.vaultId,
+                            )
+
+                            put("data", itemData)
+                            put("tags", tagsData)
                         }
                     }
                 }
@@ -498,7 +848,6 @@ internal class RequestWebSocketImpl(
             )
         }
 
-        // TODO: BEv2
         val updatedItem = item.copy(
             content = (item.content as ItemContent.Login).copy(
                 password = passwordEnc,
@@ -507,6 +856,71 @@ internal class RequestWebSocketImpl(
 
         return json.encodeToJsonElement(
             itemMapper.mapToJsonV1(domain = updatedItem, deviceId = deviceId),
+        )
+    }
+
+    private fun createItemAcceptData(
+        item: Item,
+        includeSecretFields: Boolean,
+        hkdfSalt: ByteArray,
+        sessionKey: ByteArray,
+    ): JsonElement {
+        val secretFieldKey = HkdfGenerator.generate(
+            inputKeyMaterial = sessionKey,
+            salt = hkdfSalt,
+            contextInfo = when (item.securityType) {
+                SecurityType.Tier1 -> "ItemT1"
+                SecurityType.Tier2 -> "ItemT2"
+                SecurityType.Tier3 -> "ItemT3"
+            },
+        )
+
+        val contentWithEncryptedFields = itemEncryptionMapper.encryptSecretFields(
+            content = item.content,
+            encryptionKey = secretFieldKey,
+        )
+
+        val updatedItem = item.copy(
+            vaultId = item.vaultId,
+            content = when (contentWithEncryptedFields) {
+                is ItemContent.Login -> {
+                    contentWithEncryptedFields.copy(
+                        password = if (includeSecretFields) {
+                            (contentWithEncryptedFields.password as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
+                        },
+                    )
+                }
+
+                is ItemContent.SecureNote -> {
+                    contentWithEncryptedFields.copy(
+                        text = if (includeSecretFields) {
+                            (contentWithEncryptedFields.text as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
+                        },
+                    )
+                }
+
+                is ItemContent.Unknown -> contentWithEncryptedFields
+            },
+        )
+
+        return json.encodeToJsonElement(
+            itemMapper.mapToJson(updatedItem),
+        )
+    }
+
+    private suspend fun createTagsData(vaultId: String): JsonElement {
+        val tags = tagsRepository.getTags(vaultId)
+
+        return json.encodeToJsonElement(
+            tagMapper.mapToJson(tags),
         )
     }
 

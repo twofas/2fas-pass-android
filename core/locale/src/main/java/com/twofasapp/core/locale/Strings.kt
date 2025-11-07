@@ -484,6 +484,11 @@ class Strings(private val c: Context) {
     val requestModalRemoveItemCtaPositive = c.getString(R.string.request_modal_remove_item_cta_positive)
     val requestModalRemoveItemCtaNegative = c.getString(R.string.request_modal_remove_item_cta_negative)
 
+    val requestModalFullSyncTitle = c.getString(R.string.request_modal_full_sync_title)
+    val requestModalFullSyncSubtitle = c.getString(R.string.request_modal_full_sync_subtitle)
+    val requestModalFullSyncCtaPositive = c.getString(R.string.request_modal_full_sync_cta_positive)
+    val requestModalFullSyncCtaNegative = c.getString(R.string.request_modal_full_sync_cta_negative)
+
     val requestModalErrorGenericTitle = c.getString(R.string.request_modal_error_generic_title)
     val requestModalErrorGenericSubtitle = c.getString(R.string.request_modal_error_generic_subtitle)
     val requestModalErrorGenericCta = c.getString(R.string.request_modal_error_generic_cta)
@@ -499,7 +504,7 @@ class Strings(private val c: Context) {
     val requestModalToastCancel = c.getString(R.string.request_modal_toast_cancel)
     val requestModalToastAddLogin = c.getString(R.string.request_modal_toast_success_add_login)
     val requestModalToastUpdateLogin = c.getString(R.string.request_modal_toast_success_update_login)
-    val requestModalToastDeleteLogin = c.getString(R.string.request_modal_toast_success_delete_login)
+    val requestModalToastDeleteItem = c.getString(R.string.request_modal_toast_success_delete_login)
     val requestModalToastPasswordRequest = c.getString(R.string.request_modal_toast_success_password_request)
     val lockScreenTryAgainIn = c.getString(R.string.lock_screen_try_again__0025_0040)
 

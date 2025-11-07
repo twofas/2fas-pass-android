@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.mapper
 
+import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.clearText
@@ -307,6 +308,58 @@ class ItemEncryptionMapper(
                     securityType = securityType,
                     vaultCipher = vaultCipher,
                     decryptSecretFields = true,
+                )
+            }
+        }
+    }
+
+    fun encryptSecretFields(
+        content: ItemContent,
+        encryptionKey: ByteArray,
+    ): ItemContent {
+        return when (content) {
+            is ItemContent.Login -> {
+                content.copy(
+                    password = content.password?.let {
+                        when (it) {
+                            is SecretField.Encrypted -> it
+                            is SecretField.ClearText -> {
+                                if (it.value.isBlank()) {
+                                    null
+                                } else {
+                                    SecretField.Encrypted(
+                                        encrypt(key = encryptionKey, data = it.value),
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
+            }
+
+            is ItemContent.SecureNote -> {
+                content.copy(
+                    text = content.text?.let {
+                        when (it) {
+                            is SecretField.Encrypted -> it
+                            is SecretField.ClearText -> {
+                                if (it.value.isBlank()) {
+                                    null
+                                } else {
+                                    SecretField.Encrypted(
+                                        encrypt(key = encryptionKey, data = it.value),
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
+            }
+
+            is ItemContent.Unknown -> {
+                unknownItemEncryptionMapper.encryptSecretFields(
+                    rawJson = content.rawJson,
+                    encryptionKey = encryptionKey,
                 )
             }
         }

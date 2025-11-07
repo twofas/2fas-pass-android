@@ -28,6 +28,7 @@ internal object PushFactory {
                 pkPersBe = remoteMessage.data["pkPersBe"]!!,
                 pkEpheBe = remoteMessage.data["pkEpheBe"]!!,
                 sigPush = remoteMessage.data["sigPush"]!!,
+                scheme = remoteMessage.data["scheme"]?.toInt(),
             )
         } catch (e: Exception) {
             PushLogger.log(e.message.orEmpty())

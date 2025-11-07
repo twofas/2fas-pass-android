@@ -32,5 +32,6 @@ sealed interface Push {
         val pkPersBe: String,
         val pkEpheBe: String,
         val sigPush: String,
+        val scheme: Int?,
     ) : NotificationType, LocalType
 }

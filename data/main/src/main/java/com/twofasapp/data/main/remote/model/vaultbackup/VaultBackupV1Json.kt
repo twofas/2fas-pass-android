@@ -15,7 +15,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class VaultBackupJsonV1(
+internal data class VaultBackupV1Json(
     @SerialName("schemaVersion")
     val schemaVersion: Int,
     @SerialName("origin")

@@ -17,6 +17,7 @@ internal sealed interface OutgoingPayloadJson {
         val deviceId: String,
         val deviceName: String,
         val deviceOs: String,
+        val supportedFeatures: List<String>,
     ) : OutgoingPayloadJson
 
     @Serializable

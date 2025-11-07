@@ -17,4 +17,5 @@ interface ConnectedBrowsersRepository {
     suspend fun getBrowser(publicKey: ByteArray): ConnectedBrowser?
     suspend fun updateBrowser(browser: ConnectedBrowser)
     suspend fun deleteBrowser(browser: ConnectedBrowser)
+    suspend fun permanentlyDeleteAll()
 }

@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.MdtIcons
@@ -51,9 +52,13 @@ import com.twofasapp.feature.connect.ui.commonmodal.ErrorState
 import com.twofasapp.feature.connect.ui.commonmodal.LoadingState
 import com.twofasapp.feature.connect.ui.commonmodal.LoginFormState
 import com.twofasapp.feature.connect.ui.commonmodal.ModalFrame
+import com.twofasapp.feature.connect.ui.requestmodal.states.AddItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
-import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteLoginState
+import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
+import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import org.koin.androidx.compose.koinViewModel
 
@@ -102,9 +107,13 @@ private fun ModalContent(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val passwordRequestState by viewModel.passwordRequestState.collectAsStateWithLifecycle()
-    val deleteItemState by viewModel.deleteLoginState.collectAsStateWithLifecycle()
-    val addItemState by viewModel.addLoginState.collectAsStateWithLifecycle()
-    val updateItemState by viewModel.updateLoginState.collectAsStateWithLifecycle()
+    val fullSyncState by viewModel.fullSyncState.collectAsStateWithLifecycle()
+    val secretFieldRequestState by viewModel.secretFieldRequestState.collectAsStateWithLifecycle()
+    val deleteItemState by viewModel.deleteItemState.collectAsStateWithLifecycle()
+    val addLoginState by viewModel.addLoginState.collectAsStateWithLifecycle()
+    val addItemState by viewModel.addItemState.collectAsStateWithLifecycle()
+    val updateLoginState by viewModel.updateLoginState.collectAsStateWithLifecycle()
+    val updateItemState by viewModel.updateItemState.collectAsStateWithLifecycle()
 
     LaunchedEffect(requestData) {
         viewModel.connect(requestData)
@@ -113,9 +122,13 @@ private fun ModalContent(
     Content(
         uiState = uiState,
         passwordRequestState = passwordRequestState,
-        deleteLoginState = deleteItemState,
-        addLoginState = addItemState,
-        updateLoginState = updateItemState,
+        fullSyncState = fullSyncState,
+        secretFieldRequestState = secretFieldRequestState,
+        deleteItemState = deleteItemState,
+        addLoginState = addLoginState,
+        addItemState = addItemState,
+        updateLoginState = updateLoginState,
+        updateItemState = updateItemState,
         onUpgradePlan = onUpgradePlan,
         onSuccessDismiss = { onSuccessDismiss(it) },
         onDismiss = {
@@ -129,9 +142,13 @@ private fun ModalContent(
 private fun Content(
     uiState: RequestModalUiState,
     passwordRequestState: PasswordRequestState = PasswordRequestState(),
-    deleteLoginState: DeleteLoginState = DeleteLoginState(),
+    fullSyncState: FullSyncState = FullSyncState(),
+    secretFieldRequestState: SecretFieldRequestState = SecretFieldRequestState(),
+    deleteItemState: DeleteItemState = DeleteItemState(),
     addLoginState: AddLoginState = AddLoginState(),
+    addItemState: AddItemState = AddItemState(),
     updateLoginState: UpdateLoginState = UpdateLoginState(),
+    updateItemState: UpdateItemState = UpdateItemState(),
     onUpgradePlan: () -> Unit = {},
     onSuccessDismiss: (String) -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -142,8 +159,12 @@ private fun Content(
         if (uiState.finishWithSuccess) {
             val toastMessage = when (uiState.selectedResponse) {
                 is BrowserRequestResponse.AddLoginAccept -> strings.requestModalToastAddLogin
+                is BrowserRequestResponse.AddItemAccept -> strings.requestModalToastAddLogin
                 is BrowserRequestResponse.UpdateLoginAccept -> strings.requestModalToastUpdateLogin
-                is BrowserRequestResponse.DeleteLoginAccept -> strings.requestModalToastDeleteLogin
+                is BrowserRequestResponse.UpdateItemAccept -> strings.requestModalToastUpdateLogin
+                is BrowserRequestResponse.DeleteItemAccept -> strings.requestModalToastDeleteItem
+                is BrowserRequestResponse.FullSyncAccept -> strings.connectModalSuccessTitle
+                is BrowserRequestResponse.SecretFieldRequestAccept -> strings.requestModalToastPasswordRequest
                 is BrowserRequestResponse.PasswordRequestAccept -> strings.requestModalToastPasswordRequest
                 is BrowserRequestResponse.Cancel -> strings.requestModalToastCancel
                 null -> strings.requestModalToastCancel
@@ -179,8 +200,22 @@ private fun Content(
                             )
                         }
 
+                        is RequestState.InsideFrame.FullSync -> {
+                            RequestState(
+                                item = null,
+                                title = strings.requestModalFullSyncTitle,
+                                subtitle = strings.requestModalFullSyncSubtitle,
+                                icon = MdtIcons.SyncAlt,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalFullSyncCtaPositive,
+                                negativeCta = strings.requestModalFullSyncCtaNegative,
+                                onPositiveCta = { fullSyncState.onConfirmClick() },
+                                onNegativeCta = { fullSyncState.onCancelClick() },
+                            )
+                        }
+
                         is RequestState.InsideFrame.PasswordRequest -> {
-                            ItemState(
+                            RequestState(
                                 item = passwordRequestState.item,
                                 title = strings.requestModalPasswordRequestTitle,
                                 subtitle = strings.requestModalPasswordRequestSubtitle,
@@ -189,7 +224,6 @@ private fun Content(
                                 positiveCta = strings.requestModalPasswordRequestCtaPositive,
                                 negativeCta = strings.requestModalPasswordRequestCtaNegative,
                                 onPositiveCta = {
-                                    // TODO: BEv2
                                     ((passwordRequestState.item.content as? ItemContent.Login)?.password as? SecretField.ClearText)?.value.orEmpty().let {
                                         passwordRequestState.onSendPasswordClick(it)
                                     }
@@ -201,7 +235,7 @@ private fun Content(
                         }
 
                         is RequestState.InsideFrame.AddLogin -> {
-                            ItemState(
+                            RequestState(
                                 item = addLoginState.item,
                                 title = strings.requestModalNewItemTitle,
                                 subtitle = strings.requestModalNewItemSubtitle,
@@ -215,7 +249,7 @@ private fun Content(
                         }
 
                         is RequestState.InsideFrame.UpdateLogin -> {
-                            ItemState(
+                            RequestState(
                                 item = updateLoginState.item,
                                 title = strings.requestModalUpdateItemTitle,
                                 subtitle = strings.requestModalUpdateItemSubtitle,
@@ -228,17 +262,77 @@ private fun Content(
                             )
                         }
 
-                        is RequestState.InsideFrame.DeleteLogin -> {
-                            ItemState(
-                                item = deleteLoginState.item,
+                        is RequestState.InsideFrame.SecretFieldRequest -> {
+                            RequestState(
+                                item = secretFieldRequestState.item,
+                                title = strings.requestModalPasswordRequestTitle,
+                                subtitle = strings.requestModalPasswordRequestSubtitle,
+                                icon = MdtIcons.Downloading,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalPasswordRequestCtaPositive,
+                                negativeCta = strings.requestModalPasswordRequestCtaNegative,
+                                onPositiveCta = {
+                                    val secretFieldsMap = buildMap {
+                                        when (val content = secretFieldRequestState.item.content) {
+                                            is ItemContent.Login -> {
+                                                put("s_password", content.password.clearTextOrNull.orEmpty())
+                                            }
+
+                                            is ItemContent.SecureNote -> {
+                                                put("s_text", content.text.clearTextOrNull.orEmpty())
+                                            }
+
+                                            is ItemContent.Unknown -> Unit
+                                        }
+                                    }
+
+                                    secretFieldRequestState.onSendClick(secretFieldsMap)
+                                },
+                                onNegativeCta = {
+                                    secretFieldRequestState.onCancelClick()
+                                },
+                            )
+                        }
+
+                        is RequestState.InsideFrame.DeleteItem -> {
+                            RequestState(
+                                item = deleteItemState.item,
                                 title = strings.requestModalRemoveItemTitle,
                                 subtitle = strings.requestModalRemoveItemSubtitle,
                                 icon = MdtIcons.Delete,
                                 iconTint = MdtTheme.color.error,
                                 positiveCta = strings.requestModalRemoveItemCtaPositive,
                                 negativeCta = strings.requestModalRemoveItemCtaNegative,
-                                onPositiveCta = { deleteLoginState.onDeleteClick() },
-                                onNegativeCta = { deleteLoginState.onCancelClick() },
+                                onPositiveCta = { deleteItemState.onDeleteClick() },
+                                onNegativeCta = { deleteItemState.onCancelClick() },
+                            )
+                        }
+
+                        is RequestState.InsideFrame.AddItem -> {
+                            RequestState(
+                                item = addItemState.item,
+                                title = strings.requestModalNewItemTitle,
+                                subtitle = strings.requestModalNewItemSubtitle,
+                                icon = MdtIcons.AddCircle,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalNewItemCtaPositive,
+                                negativeCta = strings.requestModalNewItemCtaNegative,
+                                onPositiveCta = { addItemState.onContinueClick() },
+                                onNegativeCta = { addItemState.onCancelClick() },
+                            )
+                        }
+
+                        is RequestState.InsideFrame.UpdateItem -> {
+                            RequestState(
+                                item = updateItemState.item,
+                                title = strings.requestModalUpdateItemTitle,
+                                subtitle = strings.requestModalUpdateItemSubtitle,
+                                icon = MdtIcons.RotateLeft,
+                                iconTint = MdtTheme.color.primary,
+                                positiveCta = strings.requestModalUpdateItemCtaPositive,
+                                negativeCta = strings.requestModalUpdateItemCtaNegative,
+                                onPositiveCta = { updateItemState.onContinueClick() },
+                                onNegativeCta = { updateItemState.onCancelClick() },
                             )
                         }
 
@@ -267,8 +361,8 @@ private fun Content(
 }
 
 @Composable
-private fun ItemState(
-    item: Item,
+private fun RequestState(
+    item: Item?,
     title: String,
     subtitle: String,
     icon: Painter,
@@ -304,15 +398,17 @@ private fun ItemState(
 
         Space(20.dp)
 
-        ItemEntry(
-            item = item,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, MdtTheme.color.outline.copy(alpha = 0.16f), RoundedShape16)
-                .padding(16.dp),
-        )
+        item?.let {
+            ItemEntry(
+                item = it,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MdtTheme.color.outline.copy(alpha = 0.16f), RoundedShape16)
+                    .padding(16.dp),
+            )
 
-        Space(20.dp)
+            Space(20.dp)
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -301,13 +301,14 @@ internal class ItemsRepositoryImpl(
             getItemsDecrypted()
                 .map { it.content }
                 .filterIsInstance<ItemContent.Login>()
-                .groupingBy { it.username }
+                .mapNotNull { it.username }
+                .filter { it.isNotBlank() }
+                .groupingBy { it }
                 .eachCount()
-                .filter { it.key != null }
                 .entries
                 .sortedByDescending { it.value }
                 .take(8)
-                .mapNotNull { it.key }
+                .map { it.key }
         }
     }
 

@@ -20,6 +20,7 @@ import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.CloudSyncStatus
+import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.main.domain.UpdateAppException
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.push.PushRepository
@@ -88,6 +89,7 @@ internal class MainViewModel(
                         connectedBrowsersRepository.getBrowser(push.pkPersBe.decodeBase64())?.let { browser ->
                             browserExtensionRepository.publishRequest(
                                 BrowserRequestData(
+                                    version = push.scheme ?: ConnectData.CurrentSchema,
                                     browser = browser,
                                     deviceId = device.uniqueId(),
                                     notificationId = push.notificationId,

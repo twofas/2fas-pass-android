@@ -21,6 +21,7 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
@@ -37,6 +38,7 @@ internal class DeveloperViewModel(
     appBuild: AppBuild,
     private val vaultsRepository: VaultsRepository,
     private val itemsRepository: ItemsRepository,
+    private val connectedBrowsersRepository: ConnectedBrowsersRepository,
     private val purchasesRepository: PurchasesRepository,
     private val purchasesOverrideRepository: PurchasesOverrideRepository,
     private val vaultCryptoScope: VaultCryptoScope,
@@ -266,6 +268,12 @@ internal class DeveloperViewModel(
     fun deleteAll() {
         launchScoped {
             itemsRepository.permanentlyDeleteAll()
+        }
+    }
+
+    fun deleteAllBrowsers() {
+        launchScoped {
+            connectedBrowsersRepository.permanentlyDeleteAll()
         }
     }
 

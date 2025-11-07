@@ -64,6 +64,12 @@ internal class ConnectedBrowsersRepositoryImpl(
         }
     }
 
+    override suspend fun permanentlyDeleteAll() {
+        withContext(dispatchers.io) {
+            localSource.deleteAll()
+        }
+    }
+
     private suspend fun getConnectedBrowsers(): List<ConnectedBrowser> {
         val appKey = androidKeyStore.appKey
 
