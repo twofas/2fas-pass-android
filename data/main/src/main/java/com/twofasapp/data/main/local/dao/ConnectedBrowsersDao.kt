@@ -29,6 +29,9 @@ interface ConnectedBrowsersDao {
     @Query("DELETE FROM connected_browsers WHERE id = :id")
     suspend fun delete(id: Int)
 
+    @Query("DELETE FROM connected_browsers")
+    suspend fun deleteAll()
+
     @Query("SELECT COUNT(id) FROM connected_browsers")
     suspend fun count(): Int
 }

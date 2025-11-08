@@ -23,4 +23,5 @@ enum class ImportType(val displayName: String) {
     Firefox("Firefox"),
     KeePass("KeePass"),
     KeePassXC("KeePassXC"),
+    Keeper("Keeper"),
 }

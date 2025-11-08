@@ -18,6 +18,7 @@ import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.crypto.EncryptionSpec
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
+import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.data.main.domain.InvalidSchemaVersionException
@@ -29,7 +30,7 @@ import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.TagMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
-import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataCompressedJson
+import com.twofasapp.data.main.remote.model.BrowserExtensionVaultDataCompressedV1Json
 import com.twofasapp.data.main.remote.model.DeletedItemJson
 import com.twofasapp.data.main.remote.model.ItemJson
 import com.twofasapp.data.main.remote.model.TagJson
@@ -258,26 +259,50 @@ internal class BackupRepositoryImpl(
         }
     }
 
-    override suspend fun createCompressedVaultDataForBrowserExtension(
+    override suspend fun createSerializedVaultDataForBrowserExtension(
+        version: Int,
         vaultId: String,
         deviceId: String,
-        encryptionPassKey: ByteArray,
-    ): String {
+        encryptionKey: ByteArray,
+    ): ByteArray {
         return withContext(dispatchers.io) {
-            val vaultData = createVaultBackup(vaultId = vaultId, includeDeleted = false, decryptSecretFields = true) // TODO: BEv2
-
-            val vaultDataJson = vaultDataForBrowserMapper.mapToJson(
-                vaultBackup = vaultData,
-                deviceId = deviceId,
-                encryptionKey = encryptionPassKey,
+            val vaultData = createVaultBackup(
+                vaultId = vaultId,
+                includeDeleted = false,
+                decryptSecretFields = true,
             )
 
-            val vaultDataCompressedJson = BrowserExtensionVaultDataCompressedJson(
-                logins = Gzip.compress(json.encodeToString(vaultDataJson.logins)).encodeBase64(),
-                tags = Gzip.compress(json.encodeToString(vaultDataJson.tags)).encodeBase64(),
-            )
+            when (version) {
+                1 -> {
+                    val vaultDataJson = vaultDataForBrowserMapper.mapToJsonV1(
+                        vaultBackup = vaultData,
+                        deviceId = deviceId,
+                        encryptionKey = encryptionKey,
+                    )
 
-            json.encodeToString(vaultDataCompressedJson)
+                    val vaultDataCompressedJson = BrowserExtensionVaultDataCompressedV1Json(
+                        logins = vaultDataJson.logins.let { logins -> Gzip.compress(json.encodeToString(logins)).encodeBase64() },
+                        tags = Gzip.compress(json.encodeToString(vaultDataJson.tags)).encodeBase64(),
+                    )
+
+                    json.encodeToString(vaultDataCompressedJson).encodeByteArray()
+                }
+
+                else -> {
+                    val vaultDataJson = vaultDataForBrowserMapper.mapToJsonV2(
+                        vaultBackup = vaultData,
+                        encryptionKey = encryptionKey,
+                    )
+
+                    val jsonString = json.encodeToString(
+                        listOf(
+                            vaultDataJson,
+                        ),
+                    )
+
+                    Gzip.compress(jsonString)
+                }
+            }
         }
     }
 }

@@ -415,11 +415,8 @@ class Strings(private val c: Context) {
     val setNewPasswordScreenTitle = c.getString(R.string.set_new_password_screen_title)
     val setNewPasswordScreenDescription = c.getString(R.string.set_new_password_screen_description)
     val setNewPasswordConfirmTitle = c.getString(R.string.set_new_password_confirm_title)
-    val setNewPasswordConfirmBodyPart1 = c.getString(R.string.set_new_password_confirm_body_part1)
-    val setNewPasswordConfirmBodyPart2Bold = c.getString(R.string.set_new_password_confirm_body_part2_bold)
-    val setNewPasswordConfirmBodyPart3 = c.getString(R.string.set_new_password_confirm_body_part3)
-    val setNewPasswordConfirmBodyPart4Bold = c.getString(R.string.set_new_password_confirm_body_part4_bold)
-    val setNewPasswordConfirmBodyPart5 = c.getString(R.string.set_new_password_confirm_body_part5)
+    val setNewPasswordConfirmBodyPart1 = c.getString(R.string.set_new_password_confirm_body_part1_ios)
+    val setNewPasswordConfirmBodyPart2 = c.getString(R.string.set_new_password_confirm_body_part2_ios)
 
     val uriSettingsModalHeader = c.getString(R.string.uri_settings_modal_header)
     val uriSettingsMatchingRuleHeader = c.getString(R.string.uri_settings_matching_rule_header)
@@ -487,6 +484,11 @@ class Strings(private val c: Context) {
     val requestModalRemoveItemCtaPositive = c.getString(R.string.request_modal_remove_item_cta_positive)
     val requestModalRemoveItemCtaNegative = c.getString(R.string.request_modal_remove_item_cta_negative)
 
+    val requestModalFullSyncTitle = c.getString(R.string.request_modal_full_sync_title)
+    val requestModalFullSyncSubtitle = c.getString(R.string.request_modal_full_sync_subtitle)
+    val requestModalFullSyncCtaPositive = c.getString(R.string.request_modal_full_sync_cta_positive)
+    val requestModalFullSyncCtaNegative = c.getString(R.string.request_modal_full_sync_cta_negative)
+
     val requestModalErrorGenericTitle = c.getString(R.string.request_modal_error_generic_title)
     val requestModalErrorGenericSubtitle = c.getString(R.string.request_modal_error_generic_subtitle)
     val requestModalErrorGenericCta = c.getString(R.string.request_modal_error_generic_cta)
@@ -502,7 +504,7 @@ class Strings(private val c: Context) {
     val requestModalToastCancel = c.getString(R.string.request_modal_toast_cancel)
     val requestModalToastAddLogin = c.getString(R.string.request_modal_toast_success_add_login)
     val requestModalToastUpdateLogin = c.getString(R.string.request_modal_toast_success_update_login)
-    val requestModalToastDeleteLogin = c.getString(R.string.request_modal_toast_success_delete_login)
+    val requestModalToastDeleteItem = c.getString(R.string.request_modal_toast_success_delete_login)
     val requestModalToastPasswordRequest = c.getString(R.string.request_modal_toast_success_password_request)
     val lockScreenTryAgainIn = c.getString(R.string.lock_screen_try_again__0025_0040)
 

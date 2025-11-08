@@ -14,18 +14,21 @@ fun Item.normalizeBeforeSaving(): Item {
 }
 
 private fun ItemContent.Login.filterAndNormalizeUris(): ItemContent.Login {
-    if (uris.size == 1) {
-        return this
+    return when (uris.size) {
+        0 -> copy(iconUriIndex = null)
+        1 -> copy(iconUriIndex = 0)
+        else -> {
+            val normalizedUris = if (uris.all { it.text.isBlank() }) {
+                uris.take(1)
+            } else {
+                uris.filter { it.text.isNotBlank() }
+            }
+                .map { it.copy(text = it.text.trim()) }
+
+            copy(
+                uris = normalizedUris,
+                iconUriIndex = iconUriIndex?.let { minOf(it, normalizedUris.size - 1) },
+            )
+        }
     }
-
-    val normalizedUris = if (uris.all { it.text.isBlank() }) {
-        uris.take(1)
-    } else {
-        uris.filter { it.text.isNotBlank() }
-    }.map { it.copy(text = it.text.trim()) }
-
-    return copy(
-        uris = normalizedUris,
-        iconUriIndex = iconUriIndex?.let { minOf(it, normalizedUris.size - 1) },
-    )
 }

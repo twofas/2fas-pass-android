@@ -22,7 +22,6 @@ import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
-import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.sha256
 import com.twofasapp.core.common.push.PushTokenProvider
 import com.twofasapp.core.common.time.TimeProvider
@@ -51,7 +50,7 @@ internal class ConnectWebSocketImpl(
     override val connectedBrowsersRepository: ConnectedBrowsersRepository,
     override val itemsRepository: ItemsRepository,
     override val vaultCryptoScope: VaultCryptoScope,
-    override val loginDecryptionMapper: ItemEncryptionMapper,
+    override val itemEncryptionMapper: ItemEncryptionMapper,
     private val dispatchers: Dispatchers,
     private val androidKeyStore: AndroidKeyStore,
     private val pushTokenProvider: PushTokenProvider,
@@ -61,6 +60,7 @@ internal class ConnectWebSocketImpl(
     private val purchasesRepository: PurchasesRepository,
 ) : ConnectWebSocket, WebSocketDelegate {
 
+    override var version: Int = ConnectData.CurrentSchema
     override var expectedIncomingId: String = ""
     private var error: Exception? = null
     private val chunks = mutableListOf<String>()
@@ -73,6 +73,7 @@ internal class ConnectWebSocketImpl(
             withContext(dispatchers.io) {
                 Timber.d("Connect: $connectData")
 
+                version = connectData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
                 val pkEpheMa = epheMa.public.encoded
                 val pkEpheBe = EcKeyConverter.createPublicKey(connectData.pkEpheBe)
@@ -151,10 +152,13 @@ internal class ConnectWebSocketImpl(
                                             data = newSessionId,
                                         )
 
-                                        val passT3Key = HkdfGenerator.generate(
+                                        val itemT3Key = HkdfGenerator.generate(
                                             inputKeyMaterial = sessionKey,
                                             salt = hkdfSalt,
-                                            contextInfo = "PassT3",
+                                            contextInfo = when (version) {
+                                                1 -> "PassT3"
+                                                else -> "ItemT3"
+                                            },
                                         )
 
                                         val fcmTokenEnc = encrypt(
@@ -174,10 +178,11 @@ internal class ConnectWebSocketImpl(
                                             }
                                         }
 
-                                        val vaultDataGzip = backupRepository.createCompressedVaultDataForBrowserExtension(
+                                        val vaultDataGzip = backupRepository.createSerializedVaultDataForBrowserExtension(
+                                            version = version,
                                             vaultId = vaultsRepository.getVault().id,
                                             deviceId = device.uniqueId(),
-                                            encryptionPassKey = passT3Key,
+                                            encryptionKey = itemT3Key,
                                         )
 
                                         val vaultDataGzipEnc = encrypt(
@@ -197,7 +202,7 @@ internal class ConnectWebSocketImpl(
                                             }
 
                                         val totalChunks = chunks.size
-                                        val totalSize = vaultDataGzip.encodeByteArray().size // gzipped JSON before encryption
+                                        val totalSize = vaultDataGzip.size // gzipped JSON before encryption
 
                                         sendMessage(
                                             createOutgoingMessage(

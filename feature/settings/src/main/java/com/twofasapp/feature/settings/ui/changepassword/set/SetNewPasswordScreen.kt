@@ -26,11 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,6 +36,7 @@ import com.twofasapp.core.design.feature.password.MasterPasswordForm
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
+import com.twofasapp.core.design.foundation.text.richText
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
@@ -133,23 +130,13 @@ private fun Content(
         ConfirmDialog(
             onDismissRequest = { showConfirmDialog = false },
             title = MdtLocale.strings.setNewPasswordConfirmTitle,
-            bodyAnnotated = buildAnnotatedString {
-                append(MdtLocale.strings.setNewPasswordConfirmBodyPart1)
-
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart2Bold)
-                }
-
-                append("\n\n")
-
-                append(MdtLocale.strings.setNewPasswordConfirmBodyPart3)
-
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart4Bold)
-                }
-
-                append(MdtLocale.strings.setNewPasswordConfirmBodyPart5)
-            },
+            bodyAnnotated = richText(
+                buildString {
+                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart1)
+                    append("\n\n")
+                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart2)
+                },
+            ),
             icon = MdtIcons.Info,
             positive = MdtLocale.strings.commonContinue,
             negative = MdtLocale.strings.commonCancel,

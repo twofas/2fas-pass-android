@@ -237,6 +237,7 @@ internal fun MainNavHost(
             ExternalImportRoute(
                 openLogins = {
                     navController.popBackStack<Screen.Settings>(false)
+                    navController.popBackStack<Screen.QuickSetup>(false)
                     navController.navigateTopLevel(Screen.Home())
                 },
             )

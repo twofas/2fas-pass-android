@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.mapper
 
+import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.ItemContent
@@ -71,6 +72,27 @@ class UnknownItemEncryptionMapper(
         return ItemContent.Unknown(rawJson = decryptedJson)
     }
 
+    fun encryptSecretFields(
+        rawJson: String,
+        encryptionKey: ByteArray,
+    ): ItemContent.Unknown {
+        val jsonElement = runCatching { json.parseToJsonElement(rawJson) }.getOrNull()
+        if (jsonElement !is JsonObject) {
+            return ItemContent.Unknown(rawJson = rawJson)
+        }
+
+        val processed = jsonElement.mapValues { (key, value) ->
+            if (key.startsWith(SecretFieldPrefix)) {
+                encryptValueWithKey(value, encryptionKey)
+            } else {
+                value
+            }
+        }
+
+        val encryptedJson = runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { rawJson }
+        return ItemContent.Unknown(rawJson = encryptedJson)
+    }
+
     private fun encryptValue(
         value: JsonElement,
         securityType: SecurityType,
@@ -86,6 +108,21 @@ class UnknownItemEncryptionMapper(
                 securityType = securityType,
                 vaultCipher = vaultCipher,
             )
+        }.getOrNull() ?: return value
+
+        return JsonPrimitive(encrypted)
+    }
+
+    private fun encryptValueWithKey(
+        value: JsonElement,
+        encryptionKey: ByteArray,
+    ): JsonElement {
+        if (value === JsonNull) return JsonNull
+        val primitive = value as? JsonPrimitive ?: return value
+        if (!primitive.isString) return value
+
+        val encrypted = runCatching {
+            encrypt(key = encryptionKey, data = primitive.content).encodeBase64()
         }.getOrNull() ?: return value
 
         return JsonPrimitive(encrypted)

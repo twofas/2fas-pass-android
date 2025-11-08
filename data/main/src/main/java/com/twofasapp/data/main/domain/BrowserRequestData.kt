@@ -13,6 +13,7 @@ import com.twofasapp.core.common.ktx.encodeHex
 import java.time.Instant
 
 data class BrowserRequestData(
+    val version: Int,
     val browser: ConnectedBrowser,
     val deviceId: String,
     val notificationId: String,

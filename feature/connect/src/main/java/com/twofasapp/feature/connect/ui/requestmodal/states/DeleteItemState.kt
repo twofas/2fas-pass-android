@@ -10,7 +10,7 @@ package com.twofasapp.feature.connect.ui.requestmodal.states
 
 import com.twofasapp.core.common.domain.items.Item
 
-internal data class DeleteLoginState(
+internal data class DeleteItemState(
     val item: Item = Item.Empty,
     val onDeleteClick: () -> Unit = {},
     val onCancelClick: () -> Unit = {},

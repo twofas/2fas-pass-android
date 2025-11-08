@@ -25,9 +25,13 @@ import com.twofasapp.data.main.domain.RequestWebSocketResult
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.websocket.RequestWebSocket
 import com.twofasapp.data.purchases.PurchasesRepository
+import com.twofasapp.feature.connect.ui.requestmodal.states.AddItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
-import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteLoginState
+import com.twofasapp.feature.connect.ui.requestmodal.states.DeleteItemState
+import com.twofasapp.feature.connect.ui.requestmodal.states.FullSyncState
 import com.twofasapp.feature.connect.ui.requestmodal.states.PasswordRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.SecretFieldRequestState
+import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.UpdateLoginState
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,9 +52,13 @@ internal class RequestModalViewModel(
 
     val uiState = MutableStateFlow(RequestModalUiState())
     val passwordRequestState = MutableStateFlow(PasswordRequestState())
-    val deleteLoginState = MutableStateFlow(DeleteLoginState())
+    val fullSyncState = MutableStateFlow(FullSyncState())
+    val secretFieldRequestState = MutableStateFlow(SecretFieldRequestState())
+    val deleteItemState = MutableStateFlow(DeleteItemState())
     val addLoginState = MutableStateFlow(AddLoginState())
+    val addItemState = MutableStateFlow(AddItemState())
     val updateLoginState = MutableStateFlow(UpdateLoginState())
+    val updateItemState = MutableStateFlow(UpdateItemState())
 
     fun connect(requestData: BrowserRequestData) {
         uiState.update {
@@ -100,7 +108,6 @@ internal class RequestModalViewModel(
         updateState(
             when (request) {
                 is BrowserRequestAction.PasswordRequest -> RequestState.InsideFrame.PasswordRequest
-                is BrowserRequestAction.DeleteLogin -> RequestState.InsideFrame.DeleteLogin
                 is BrowserRequestAction.AddLogin -> {
                     val maxItems = purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit
                     val currentItems = itemsRepository.getItemsCount()
@@ -113,6 +120,21 @@ internal class RequestModalViewModel(
                 }
 
                 is BrowserRequestAction.UpdateLogin -> RequestState.InsideFrame.UpdateLogin
+                is BrowserRequestAction.FullSync -> RequestState.InsideFrame.FullSync
+                is BrowserRequestAction.SecretFieldRequest -> RequestState.InsideFrame.SecretFieldRequest
+                is BrowserRequestAction.DeleteItem -> RequestState.InsideFrame.DeleteItem
+                is BrowserRequestAction.AddItem -> {
+                    val maxItems = purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit
+                    val currentItems = itemsRepository.getItemsCount()
+
+                    if (currentItems >= maxItems) {
+                        RequestState.InsideFrame.UpgradePlan(maxItems = maxItems)
+                    } else {
+                        RequestState.InsideFrame.AddItem
+                    }
+                }
+
+                is BrowserRequestAction.UpdateItem -> RequestState.InsideFrame.UpdateItem
             },
         )
 
@@ -125,28 +147,6 @@ internal class RequestModalViewModel(
                                 item = request.item,
                                 onSendPasswordClick = { password ->
                                     continuation.sendResponse(BrowserRequestResponse.PasswordRequestAccept(password))
-                                },
-                                onCancelClick = {
-                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
-                                },
-                            )
-                        }
-                    }
-                }
-
-                is BrowserRequestAction.DeleteLogin -> {
-                    launchScoped {
-                        deleteLoginState.update { state ->
-                            state.copy(
-                                item = request.item,
-                                onDeleteClick = {
-                                    launchScoped {
-                                        updateState(RequestState.InsideFrame.Loading)
-
-                                        trashRepository.trash(request.item.id)
-
-                                        continuation.sendResponse(BrowserRequestResponse.DeleteLoginAccept)
-                                    }
                                 },
                                 onCancelClick = {
                                     continuation.sendResponse(BrowserRequestResponse.Cancel)
@@ -226,6 +226,152 @@ internal class RequestModalViewModel(
                                                         }
 
                                                         continuation.sendResponse(BrowserRequestResponse.UpdateLoginAccept(updatedItem!!))
+                                                    }
+                                                }
+                                            },
+                                        ),
+                                    )
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.FullSync -> {
+                    launchScoped {
+                        fullSyncState.update { state ->
+                            state.copy(
+                                onConfirmClick = {
+                                    launchScoped {
+                                        updateState(RequestState.InsideFrame.Loading)
+
+                                        continuation.sendResponse(BrowserRequestResponse.FullSyncAccept)
+                                    }
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.SecretFieldRequest -> {
+                    launchScoped {
+                        secretFieldRequestState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onSendClick = { secretFields ->
+                                    continuation.sendResponse(BrowserRequestResponse.SecretFieldRequestAccept(secretFields))
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.DeleteItem -> {
+                    launchScoped {
+                        deleteItemState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onDeleteClick = {
+                                    launchScoped {
+                                        updateState(RequestState.InsideFrame.Loading)
+
+                                        trashRepository.trash(request.item.id)
+
+                                        continuation.sendResponse(BrowserRequestResponse.DeleteItemAccept)
+                                    }
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.AddItem -> {
+                    launchScoped {
+                        addItemState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onContinueClick = {
+                                    updateState(
+                                        RequestState.FullSize.ItemForm(
+                                            item = request.item,
+                                            onCancel = {
+                                                updateState(RequestState.InsideFrame.AddItem)
+                                            },
+                                            onSaveClick = { item ->
+                                                launchScoped {
+                                                    val vaultId = vaultsRepository.getVault().id
+
+                                                    vaultCryptoScope.withVaultCipher(vaultId) {
+                                                        val itemId = itemsRepository.saveItem(
+                                                            item
+                                                                .copy(vaultId = vaultId)
+                                                                .let { itemEncryptionMapper.encryptItem(it, this) },
+                                                        )
+
+                                                        updateState(RequestState.InsideFrame.Loading)
+
+                                                        val updatedItem = itemsRepository.getItem(itemId).let {
+                                                            itemEncryptionMapper.decryptItem(it, this, decryptSecretFields = true)
+                                                        }
+
+                                                        continuation.sendResponse(BrowserRequestResponse.AddItemAccept(updatedItem!!))
+                                                    }
+                                                }
+                                            },
+                                        ),
+                                    )
+                                },
+                                onCancelClick = {
+                                    continuation.sendResponse(BrowserRequestResponse.Cancel)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                is BrowserRequestAction.UpdateItem -> {
+                    launchScoped {
+                        updateItemState.update { state ->
+                            state.copy(
+                                item = request.item,
+                                onContinueClick = {
+                                    updateState(
+                                        RequestState.FullSize.ItemForm(
+                                            item = request.updatedItem,
+                                            onCancel = {
+                                                updateState(RequestState.InsideFrame.UpdateItem)
+                                            },
+                                            onSaveClick = { item ->
+                                                launchScoped {
+                                                    vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                        val itemId = itemsRepository.saveItem(
+                                                            itemEncryptionMapper.encryptItem(item, this),
+                                                        )
+
+                                                        updateState(RequestState.InsideFrame.Loading)
+
+                                                        val updatedItem = itemsRepository.getItem(itemId).let {
+                                                            itemEncryptionMapper.decryptItem(it, this, decryptSecretFields = true)
+                                                        }
+
+                                                        continuation.sendResponse(
+                                                            BrowserRequestResponse.UpdateItemAccept(
+                                                                item = updatedItem!!,
+                                                                sifFetched = request.sifFetched,
+                                                            ),
+                                                        )
                                                     }
                                                 }
                                             },

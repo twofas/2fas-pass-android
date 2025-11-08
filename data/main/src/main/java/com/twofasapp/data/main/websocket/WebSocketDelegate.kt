@@ -26,6 +26,7 @@ import com.twofasapp.data.main.websocket.messages.OutgoingPayloadJson
 import com.twofasapp.data.main.websocket.messages.WebSocketException
 
 internal interface WebSocketDelegate {
+    var version: Int
     var expectedIncomingId: String
 
     val appBuild: AppBuild
@@ -34,7 +35,7 @@ internal interface WebSocketDelegate {
     val connectedBrowsersRepository: ConnectedBrowsersRepository
     val itemsRepository: ItemsRepository
     val vaultCryptoScope: VaultCryptoScope
-    val loginDecryptionMapper: ItemEncryptionMapper
+    val itemEncryptionMapper: ItemEncryptionMapper
 
     suspend fun WebSocketInterface.sendHelloMessage() {
         sendMessage(
@@ -43,6 +44,7 @@ internal interface WebSocketDelegate {
                     deviceId = device.uniqueId(),
                     deviceName = device.name(),
                     deviceOs = "android",
+                    supportedFeatures = emptyList(),
                 ),
             ),
         )
@@ -77,9 +79,11 @@ internal interface WebSocketDelegate {
         close()
     }
 
-    suspend fun createOutgoingMessage(payload: OutgoingPayloadJson): OutgoingMessageJson {
+    suspend fun createOutgoingMessage(
+        payload: OutgoingPayloadJson,
+    ): OutgoingMessageJson {
         return OutgoingMessageJson(
-            scheme = 1,
+            scheme = version,
             origin = device.name(),
             originVersion = appBuild.versionName,
             id = Uuid.generate(),
@@ -153,7 +157,7 @@ internal interface WebSocketDelegate {
         if (itemEncrypted.deleted) return null
 
         return vaultCryptoScope.withVaultCipher(itemEncrypted.vaultId) {
-            loginDecryptionMapper.decryptItem(
+            itemEncryptionMapper.decryptItem(
                 itemEncrypted = itemEncrypted,
                 vaultCipher = this,
                 decryptSecretFields = true,

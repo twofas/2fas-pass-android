@@ -19,6 +19,7 @@ import com.twofasapp.feature.externalimport.import.spec.EnpassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.FirefoxImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
+import com.twofasapp.feature.externalimport.import.spec.KeeperImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.MicrosoftEdgeImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
@@ -45,5 +46,6 @@ class ExternalImportModule : KoinModule {
         singleOf(::FirefoxImportSpec)
         singleOf(::KeepassImportSpec)
         singleOf(::KeepassXcImportSpec)
+        singleOf(::KeeperImportSpec)
     }
 }

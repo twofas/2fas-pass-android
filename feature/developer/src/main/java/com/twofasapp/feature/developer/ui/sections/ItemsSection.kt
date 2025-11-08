@@ -32,6 +32,7 @@ internal fun ItemsSection(
     onGenerateMultipleItems: (Int) -> Unit = {},
     onGenerateTopDomainItems: () -> Unit = {},
     onDeleteAll: () -> Unit = {},
+    onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
 ) {
@@ -98,11 +99,19 @@ internal fun ItemsSection(
         )
 
         OptionEntry(
-            title = "Permanently delete all logins",
+            title = "Delete all items",
             icon = MdtIcons.DeleteForever,
             iconTint = MdtTheme.color.error,
             titleColor = MdtTheme.color.error,
             onClick = { onDeleteAll() },
+        )
+
+        OptionEntry(
+            title = "Delete all extensions",
+            icon = MdtIcons.DeleteForever,
+            iconTint = MdtTheme.color.error,
+            titleColor = MdtTheme.color.error,
+            onClick = { onDeleteAllBrowsers() },
         )
 
         OptionEntry(

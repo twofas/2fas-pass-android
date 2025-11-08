@@ -63,12 +63,12 @@ internal class LoginFormViewModel(
         launchScoped {
             val itemContent = if (initialItem.id.isBlank()) {
                 initialItemContent.copy(
-                    username = if (initialItemContent.username.isNullOrBlank()) {
+                    username = if (initialItemContent.username == null) {
                         itemsRepository.getMostCommonUsernames().firstOrNull()
                     } else {
                         initialItemContent.username
                     },
-                    password = if (initialItemContent.password != null && !(initialItemContent.password as? SecretField.ClearText)?.value.isNullOrBlank()) {
+                    password = if (initialItemContent.password != null) {
                         initialItemContent.password
                     } else {
                         SecretField.ClearText(

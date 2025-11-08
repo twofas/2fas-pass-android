@@ -85,10 +85,10 @@ internal class ItemMapper(
         }
     }
 
-    fun mapToJson(item: Item, deviceId: String? = null): ItemJson? {
+    fun mapToJson(item: Item): ItemJson {
         return ItemJson(
             id = item.id,
-            deviceId = deviceId,
+            vaultId = item.vaultId,
             createdAt = item.createdAt,
             updatedAt = item.updatedAt,
             securityType = item.securityType.let(itemSecurityTypeMapper::mapToJson),

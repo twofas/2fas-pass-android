@@ -31,6 +31,10 @@ internal class ConnectedBrowsersLocalSource(
         dao.delete(id)
     }
 
+    suspend fun deleteAll() {
+        dao.deleteAll()
+    }
+
     suspend fun hasAnyBrowsers(): Boolean {
         return dao.count() > 0
     }

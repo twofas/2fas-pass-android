@@ -34,7 +34,7 @@ sealed interface ItemContent {
             val Empty = Login(
                 name = "",
                 username = null,
-                password = SecretField.ClearText(""),
+                password = null,
                 uris = emptyList(),
                 iconType = IconType.Icon,
                 iconUriIndex = 0,

@@ -9,10 +9,12 @@
 package com.twofasapp.data.main.websocket.messages
 
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import timber.log.Timber
@@ -27,6 +29,7 @@ internal sealed interface BrowserRequestActionJson {
         override val type: String,
     ) : BrowserRequestActionJson
 
+    @Deprecated("Used in V1. Can be removed later.")
     @Serializable
     data class PasswordRequest(
         override val type: String,
@@ -35,24 +38,12 @@ internal sealed interface BrowserRequestActionJson {
     ) : BrowserRequestActionJson {
         @Serializable
         data class Data(
-            @SerialName("loginId") // TODO: BEv2
+            @SerialName("loginId")
             val itemId: String,
         )
     }
 
-    @Serializable
-    data class DeleteLogin(
-        override val type: String,
-        @SerialName("data")
-        val data: Data,
-    ) : BrowserRequestActionJson {
-        @Serializable
-        data class Data(
-            @SerialName("loginId") // TODO: BEv2
-            val itemId: String,
-        )
-    }
-
+    @Deprecated("Used in V1. Can be removed later.")
     @Serializable
     data class AddLogin(
         override val type: String,
@@ -72,6 +63,7 @@ internal sealed interface BrowserRequestActionJson {
         )
     }
 
+    @Deprecated("Used in V1. Can be removed later.")
     @Serializable
     data class UpdateLogin(
         override val type: String,
@@ -109,15 +101,136 @@ internal sealed interface BrowserRequestActionJson {
         }
     }
 
+    @Serializable
+    data class FullSync(
+        override val type: String,
+    ) : BrowserRequestActionJson
+
+    @Serializable
+    data class SecretFieldRequest(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+        @Serializable
+        data class Data(
+            @SerialName("itemId")
+            val itemId: String,
+        )
+    }
+
+    @Serializable
+    data class DeleteItem(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+        @Serializable
+        data class Data(
+            @ExperimentalSerializationApi
+            @JsonNames("loginId", "itemId")
+            val itemId: String,
+        )
+    }
+
+    @Serializable
+    data class AddItem(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+
+        @Serializable
+        data class Data(
+            @SerialName("contentType")
+            val contentType: String,
+            @SerialName("content")
+            val content: Content,
+        )
+
+        @Serializable
+        data class Content(
+            @SerialName("url")
+            val url: String,
+            @SerialName("username")
+            val username: ActionFieldJson?,
+            @SerialName("s_password")
+            val s_password: ActionFieldJson?,
+            @SerialName("name")
+            val name: String?,
+            @SerialName("s_text")
+            val s_text: ActionFieldJson?,
+        )
+    }
+
+    @Serializable
+    data class UpdateItem(
+        override val type: String,
+        @SerialName("data")
+        val data: Data,
+    ) : BrowserRequestActionJson {
+
+        @Serializable
+        data class Data(
+            @SerialName("itemId")
+            val itemId: String,
+            @SerialName("vaultId")
+            val vaultId: String,
+            @SerialName("securityType")
+            val securityType: Int?,
+            @SerialName("sifFetched")
+            val sifFetched: Boolean = false,
+            @SerialName("tags")
+            val tags: List<String>?,
+            @SerialName("contentType")
+            val contentType: String,
+            @SerialName("content")
+            val content: Content,
+        )
+
+        @Serializable
+        data class Content(
+            @SerialName("name")
+            val name: String?,
+            @SerialName("notes")
+            val notes: String?,
+            @SerialName("url")
+            val url: String?,
+            @SerialName("username")
+            val username: ActionFieldJson?,
+            @SerialName("s_password")
+            val s_password: ActionFieldJson?,
+            @SerialName("uris")
+            val uris: List<Uri>?,
+            @SerialName("s_text")
+            val s_text: ActionFieldJson?,
+        ) {
+            @Serializable
+            data class Uri(
+                @SerialName("text")
+                val text: String,
+                @SerialName("matcher")
+                val matcher: Int,
+            )
+        }
+    }
+
     object Serializer : JsonContentPolymorphicSerializer<BrowserRequestActionJson>(BrowserRequestActionJson::class) {
 
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<BrowserRequestActionJson> {
             return try {
                 when (element.jsonObject["type"]?.jsonPrimitive?.content) {
+                    // V1:
                     "passwordRequest" -> PasswordRequest.serializer()
-                    "deleteLogin" -> DeleteLogin.serializer()
+                    "deleteLogin" -> DeleteItem.serializer()
                     "newLogin" -> AddLogin.serializer()
                     "updateLogin" -> UpdateLogin.serializer()
+                    // V2:
+                    "fullSync" -> FullSync.serializer()
+                    "sifRequest" -> SecretFieldRequest.serializer()
+                    "deleteData" -> DeleteItem.serializer()
+                    "addData" -> AddItem.serializer()
+                    "updateData" -> UpdateItem.serializer()
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {
