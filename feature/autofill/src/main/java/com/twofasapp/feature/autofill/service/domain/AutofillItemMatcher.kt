@@ -88,6 +88,7 @@ internal object AutofillItemMatcher {
                         is ItemContent.Unknown -> null
                         is ItemContent.Login -> (item.content as ItemContent.Login).uris.map { it.text }.matchesAny(searchTerms = uriSearchTerms)
                         is ItemContent.SecureNote -> null
+                        is ItemContent.CreditCard -> null
                     }
                 }
                 .toSortedMap(compareBy(nullsLast()) { it })

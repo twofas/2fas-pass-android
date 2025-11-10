@@ -507,7 +507,14 @@ internal class RequestWebSocketImpl(
                         )
                     }
 
-                    is ItemContentType.SecureNote -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.SecureNote -> {
+                        ItemContent.SecureNote.Empty.copy(
+                            name = data.content.name.orEmpty(),
+                            text = data.content.s_text?.let { SecretField.ClearText(it) },
+                        )
+                    }
+
+                    is ItemContentType.CreditCard -> throw IllegalArgumentException("Unsupported item type")
                 }
 
                 BrowserRequestAction.AddItem(
@@ -586,7 +593,15 @@ internal class RequestWebSocketImpl(
                         )
                     }
 
-                    is ItemContentType.SecureNote -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.SecureNote -> {
+                        val existingContent = item.content as ItemContent.SecureNote
+                        existingContent.copy(
+                            name = data.content.name ?: existingContent.name,
+                            text = data.content.s_text?.let { SecretField.ClearText(it) } ?: existingContent.text,
+                        )
+                    }
+
+                    is ItemContentType.CreditCard -> throw IllegalArgumentException("Unsupported item type")
                 }
 
                 BrowserRequestAction.UpdateItem(
@@ -899,6 +914,25 @@ internal class RequestWebSocketImpl(
                     contentWithEncryptedFields.copy(
                         text = if (includeSecretFields) {
                             (contentWithEncryptedFields.text as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
+                        },
+                    )
+                }
+
+                is ItemContent.CreditCard -> {
+                    contentWithEncryptedFields.copy(
+                        number = if (includeSecretFields) {
+                            (contentWithEncryptedFields.number as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
+                        },
+                        cvv = if (includeSecretFields) {
+                            (contentWithEncryptedFields.cvv as? SecretField.Encrypted)?.let { encryptedField ->
                                 SecretField.ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {

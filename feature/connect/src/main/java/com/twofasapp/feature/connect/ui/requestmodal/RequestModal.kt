@@ -49,8 +49,8 @@ import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
 import com.twofasapp.data.main.domain.Identicon
 import com.twofasapp.feature.connect.ui.commonmodal.ErrorState
+import com.twofasapp.feature.connect.ui.commonmodal.ItemFormState
 import com.twofasapp.feature.connect.ui.commonmodal.LoadingState
-import com.twofasapp.feature.connect.ui.commonmodal.LoginFormState
 import com.twofasapp.feature.connect.ui.commonmodal.ModalFrame
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
@@ -179,7 +179,7 @@ private fun Content(
             is RequestState.FullSize -> {
                 when (uiState.requestState) {
                     is RequestState.FullSize.ItemForm -> {
-                        LoginFormState(
+                        ItemFormState(
                             itemFormState = uiState.requestState,
                         )
                     }
@@ -282,6 +282,7 @@ private fun Content(
                                                 put("s_text", content.text.clearTextOrNull.orEmpty())
                                             }
 
+                                            is ItemContent.CreditCard -> Unit
                                             is ItemContent.Unknown -> Unit
                                         }
                                     }

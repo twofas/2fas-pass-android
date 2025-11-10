@@ -136,6 +136,19 @@
     <string name="login_add_uri_cta">+\u0020\u0020Add URL</string>
     <string name="login_unsaved_changes_dialog_title">Unsaved changes</string>
     <string name="login_unsaved_changes_dialog_description">Do you want to discard your changes?</string>
+
+    <!-- Secure Note -->
+    <string name="secure_note_name_label">Name</string>
+    <string name="secure_note_text_label">Text</string>
+
+    <!-- Credit Card -->
+    <string name="credit_card_name_label">Name</string>
+    <string name="credit_card_cardholder_label">Cardholder</string>
+    <string name="credit_card_number_label">Card Number</string>
+    <string name="credit_card_expiration_label">Expiration</string>
+    <string name="credit_card_cvv_label">CVV</string>
+    <string name="credit_card_notes_label">Notes</string>
+
     <string name="connect_title">Connect</string>
     <string name="settings_title">Settings</string>
     <string name="settings_header_preferences">Preferences</string>

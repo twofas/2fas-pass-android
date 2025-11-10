@@ -139,19 +139,44 @@ internal class ItemMapper(
                 )
             }
 
-            // TODO: Uncomment when SecureNote is implemented
-//            ItemContentType.SecureNote.key -> {
-//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
+            ItemContentType.SecureNote.key -> {
+                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
+
+                ItemContent.SecureNote(
+                    name = content.name,
+                    text = content.text?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                )
+            }
+
+            // Uncomment when credit cards done
+//            ItemContentType.CreditCard.key -> {
+//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.CreditCard.serializer(), contentJson)
 //
-//                ItemContent.SecureNote(
+//                ItemContent.CreditCard(
 //                    name = content.name,
-//                    text = content.text?.let {
+//                    cardholder = content.cardholder,
+//                    number = content.number?.let {
 //                        if (hasSecretFieldsEncrypted) {
 //                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
 //                        } else {
 //                            SecretField.ClearText(it)
 //                        }
 //                    },
+//                    expiration = content.expiration,
+//                    cvv = content.cvv?.let {
+//                        if (hasSecretFieldsEncrypted) {
+//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+//                        } else {
+//                            SecretField.ClearText(it)
+//                        }
+//                    },
+//                    notes = content.notes,
 //                )
 //            }
 
@@ -195,6 +220,27 @@ internal class ItemMapper(
                             is SecretField.Encrypted -> content.text.encryptedText
                             null -> null
                         },
+                    ),
+                )
+            }
+
+            is ItemContent.CreditCard -> {
+                jsonSerializer.encodeToJsonElement(
+                    ItemContentJson.CreditCard(
+                        name = content.name,
+                        cardholder = content.cardholder,
+                        number = when (content.number) {
+                            is SecretField.ClearText -> content.number.clearText
+                            is SecretField.Encrypted -> content.number.encryptedText
+                            null -> null
+                        },
+                        expiration = content.expiration,
+                        cvv = when (content.cvv) {
+                            is SecretField.ClearText -> content.cvv.clearText
+                            is SecretField.Encrypted -> content.cvv.encryptedText
+                            null -> null
+                        },
+                        notes = content.notes,
                     ),
                 )
             }

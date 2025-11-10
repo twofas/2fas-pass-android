@@ -8,7 +8,6 @@
 
 package com.twofasapp.feature.itemform.forms.login
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,16 +52,13 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
-import com.twofasapp.core.common.ktx.formatDateTime
 import com.twofasapp.core.design.AppTheme
-import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
 import com.twofasapp.core.design.feature.items.LoginItemContentPreview
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
-import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
@@ -74,8 +69,15 @@ import com.twofasapp.core.design.foundation.textfield.passwordColors
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.feature.itemform.forms.common.SecurityTypePicker
-import com.twofasapp.feature.itemform.forms.common.TagsPicker
+import com.twofasapp.feature.itemform.ItemFormListener
+import com.twofasapp.feature.itemform.ItemFormProperties
+import com.twofasapp.feature.itemform.ItemFormUiState
+import com.twofasapp.feature.itemform.forms.common.FormListItem
+import com.twofasapp.feature.itemform.forms.common.ItemContentFormContainer
+import com.twofasapp.feature.itemform.forms.common.noteItem
+import com.twofasapp.feature.itemform.forms.common.securityTypePickerItem
+import com.twofasapp.feature.itemform.forms.common.tagsPickerItem
+import com.twofasapp.feature.itemform.forms.common.timestampInfoItem
 import com.twofasapp.feature.itemform.forms.login.composables.PasswordSuggestionsBar
 import com.twofasapp.feature.itemform.forms.login.composables.UriField
 import com.twofasapp.feature.itemform.forms.login.composables.UsernameSuggestionsBar
@@ -85,70 +87,27 @@ import com.twofasapp.feature.itemform.modals.passwordgenerator.PasswordGenerator
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginForm(
-    modifier: Modifier = Modifier,
-    initialItem: Item,
-    initialItemContent: ItemContent.Login,
-    containerColor: Color = MdtTheme.color.background,
-    confirmUnsavedChanges: Boolean = true,
-    onItemUpdated: (Item) -> Unit = {},
-    onIsValidUpdated: (Boolean) -> Unit = {},
-    onHasUnsavedChangesUpdated: (Boolean) -> Unit = {},
-    onCloseWithoutSaving: () -> Unit = {},
-) {
-    LoginFormInternal(
-        modifier = modifier,
-        initialItem = initialItem,
-        initialItemContent = initialItemContent,
-        containerColor = containerColor,
-        confirmUnsavedChanges = confirmUnsavedChanges,
-        onItemUpdated = onItemUpdated,
-        onIsValidUpdated = onIsValidUpdated,
-        onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
-        onCloseWithoutSaving = onCloseWithoutSaving,
-    )
-}
-
-@Composable
-private fun LoginFormInternal(
+internal fun LoginForm(
     modifier: Modifier = Modifier,
     viewModel: LoginFormViewModel = koinViewModel(),
     initialItem: Item,
-    initialItemContent: ItemContent.Login,
-    containerColor: Color,
-    confirmUnsavedChanges: Boolean = true,
-    onItemUpdated: (Item) -> Unit = {},
-    onIsValidUpdated: (Boolean) -> Unit = {},
-    onHasUnsavedChangesUpdated: (Boolean) -> Unit = {},
-    onCloseWithoutSaving: () -> Unit = {},
+    containerColor: Color = MdtTheme.color.background,
+    properties: ItemFormProperties,
+    listener: ItemFormListener,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(initialItem, initialItemContent) {
-        viewModel.init(
-            initialItem = initialItem,
-            initialItemContent = initialItemContent,
-        )
-    }
-
-    if (uiState.initialised) {
-        LaunchedEffect(uiState.item) {
-            onItemUpdated(uiState.item)
-        }
-
-        LaunchedEffect(uiState.valid) {
-            onIsValidUpdated(uiState.valid)
-        }
-
-        LaunchedEffect(uiState.hasUnsavedChanges) {
-            onHasUnsavedChangesUpdated(uiState.hasUnsavedChanges)
-        }
+    ItemContentFormContainer(
+        viewModel = viewModel,
+        initialItem = initialItem,
+        properties = properties,
+        listener = listener,
+    ) { uiState ->
+        val loginFormUiState by viewModel.loginUiState.collectAsStateWithLifecycle()
 
         Content(
             modifier = modifier,
             uiState = uiState,
+            loginFormUiState = loginFormUiState,
             containerColor = containerColor,
-            confirmUnsavedChanges = confirmUnsavedChanges,
             onNameChange = { viewModel.updateName(it) },
             onUsernameChange = { viewModel.updateUsername(it) },
             onPasswordChange = { viewModel.updatePassword(it) },
@@ -159,12 +118,11 @@ private fun LoginFormInternal(
             onLabelColorChange = { viewModel.updateLabelColor(it) },
             onImageUrlChange = { viewModel.updateImageUrl(it) },
             onUriChange = { index, uri -> viewModel.updateUri(index, uri) },
-            onSecurityLevelChange = { viewModel.updateSecurityLevel(it) },
-            onTagsChange = { viewModel.updateTags(it) },
-            onNotesChange = { viewModel.updateNotes(it) },
             onAddUriClick = { viewModel.addUri() },
             onDeleteUriClick = { viewModel.deleteUri(it) },
-            onCloseWithoutSaving = onCloseWithoutSaving,
+            onSecurityTypeChange = { viewModel.updateSecurityType(it) },
+            onTagsChange = { viewModel.updateTags(it) },
+            onNotesChange = { viewModel.updateNotes(it) },
         )
     }
 }
@@ -172,9 +130,9 @@ private fun LoginFormInternal(
 @Composable
 private fun Content(
     modifier: Modifier,
-    uiState: LoginFormUiState,
+    uiState: ItemFormUiState<ItemContent.Login>,
+    loginFormUiState: LoginFormUiState,
     containerColor: Color,
-    confirmUnsavedChanges: Boolean = true,
     onNameChange: (String) -> Unit = {},
     onUsernameChange: (String) -> Unit = {},
     onPasswordChange: (String) -> Unit = {},
@@ -185,13 +143,14 @@ private fun Content(
     onLabelColorChange: (String?) -> Unit = {},
     onImageUrlChange: (String?) -> Unit = {},
     onUriChange: (Int, ItemUri) -> Unit = { _, _ -> },
-    onSecurityLevelChange: (SecurityType) -> Unit = {},
-    onTagsChange: (List<String>) -> Unit = {},
-    onNotesChange: (String) -> Unit = {},
     onAddUriClick: () -> Unit = {},
     onDeleteUriClick: (Int) -> Unit = {},
-    onCloseWithoutSaving: () -> Unit = {},
+    onSecurityTypeChange: (SecurityType) -> Unit = {},
+    onTagsChange: (List<String>) -> Unit = {},
+    onNotesChange: (String) -> Unit = {},
 ) {
+    if (uiState.itemContent == null) return
+
     val focusManager = LocalFocusManager.current
     val strings = MdtLocale.strings
     var passwordVisible by remember { mutableStateOf(false) }
@@ -201,13 +160,7 @@ private fun Content(
     var passwordFocused by remember { mutableStateOf(false) }
     var showPasswordGeneratorModal by remember { mutableStateOf(false) }
     var showChangeIconModal by remember { mutableStateOf(false) }
-    var showUnsavedChangesDialog by remember { mutableStateOf(false) }
     val isKeyboardOpened by keyboardAsState()
-
-    BackHandler(enabled = uiState.hasUnsavedChanges && confirmUnsavedChanges) {
-        focusManager.clearFocus()
-        showUnsavedChangesDialog = true
-    }
 
     LaunchedEffect(uiState.item.id) {
         usernameTextValue = usernameTextValue.copy(text = uiState.itemContent.username.orEmpty())
@@ -227,7 +180,7 @@ private fun Content(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(start = ScreenPadding, end = ScreenPadding, bottom = ScreenPadding, top = 8.dp),
         ) {
-            listItem(LoginFormListItem.Field("Name")) {
+            listItem(FormListItem.Field("Name")) {
                 TextField(
                     value = uiState.itemContent.name,
                     onValueChange = onNameChange,
@@ -261,7 +214,7 @@ private fun Content(
                 )
             }
 
-            listItem(LoginFormListItem.Field("Username")) {
+            listItem(FormListItem.Field("Username")) {
                 TextField(
                     value = usernameTextValue,
                     onValueChange = {
@@ -279,7 +232,7 @@ private fun Content(
                 )
             }
 
-            listItem(LoginFormListItem.Field("Password")) {
+            listItem(FormListItem.Field("Password")) {
                 TextField(
                     value = passwordTextValue,
                     onValueChange = {
@@ -310,7 +263,7 @@ private fun Content(
             }
 
             uiState.itemContent.uris.forEachIndexed { index, uri ->
-                listItem(LoginFormListItem.Field("Uri$index")) {
+                listItem(FormListItem.Field("Uri$index")) {
                     UriField(
                         modifier = Modifier.animateItem(),
                         index = index,
@@ -322,7 +275,7 @@ private fun Content(
                 }
             }
 
-            listItem(LoginFormListItem.AddUri) {
+            listItem(FormListItem.Field("AddUri")) {
                 Button(
                     modifier = Modifier
                         .offset(y = (-4).dp)
@@ -336,65 +289,29 @@ private fun Content(
                 )
             }
 
-            listItem(LoginFormListItem.SecurityType) {
-                SecurityTypePicker(
-                    modifier = Modifier.animateItem(),
-                    securityType = uiState.item.securityType,
-                    onSelect = onSecurityLevelChange,
-                    onOpened = { focusManager.clearFocus() },
-                )
-            }
+            securityTypePickerItem(
+                item = uiState.item,
+                onSecurityTypeChange = onSecurityTypeChange,
+            )
 
-            listItem(LoginFormListItem.Tags) {
-                TagsPicker(
-                    modifier = Modifier.animateItem(),
-                    tags = uiState.tags,
-                    selectedTagIds = uiState.item.tagIds,
-                    onOpened = { focusManager.clearFocus() },
-                    onConfirmTagsSelections = onTagsChange,
-                )
-            }
+            tagsPickerItem(
+                item = uiState.item,
+                tags = uiState.tags,
+                onTagsChange = onTagsChange,
+            )
 
-            listItem(LoginFormListItem.Field("Notes")) {
-                TextField(
-                    value = uiState.itemContent.notes.orEmpty(),
-                    onValueChange = { onNotesChange(it) },
-                    labelText = strings.loginNotes,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .animateItem(),
-                    minLines = 3,
-                    maxLines = 3,
-                    supportingText = if (uiState.itemContent.notes.orEmpty().length > 2048) "Notes can not be longer than 2048 characters" else null,
-                    isError = uiState.itemContent.notes.orEmpty().length > 2048,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
-                )
-            }
+            noteItem(
+                notes = uiState.itemContent.notes,
+                onNotesChange = onNotesChange,
+            )
 
-            if (uiState.item.id.isNotEmpty()) {
-                listItem(LoginFormListItem.Info) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .animateItem(),
-                        text = buildString {
-                            append(" Created at: ")
-                            append(uiState.item.createdAt.formatDateTime())
-                            appendLine()
-                            append(" Updated at: ")
-                            append(uiState.item.updatedAt.formatDateTime())
-                        },
-                        style = MdtTheme.typo.bodySmall,
-                        color = MdtTheme.color.onSurface28,
-                    )
-                }
-            }
+            timestampInfoItem(item = uiState.item)
         }
 
         AnimatedVisibility(usernameFocused && isKeyboardOpened) {
             UsernameSuggestionsBar(
                 modifier = Modifier.fillMaxWidth(),
-                usernameSuggestions = uiState.usernameSuggestionsFiltered,
+                usernameSuggestions = loginFormUiState.usernameSuggestionsFiltered,
                 onUsernameClick = {
                     usernameTextValue = usernameTextValue.copy(text = it, selection = TextRange(it.length))
                     onUsernameChange(it)
@@ -407,7 +324,7 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(),
                 onGenerateClick = {
                     val password = PasswordGenerator.generatePassword(
-                        settings = uiState.passwordGeneratorSettings,
+                        settings = loginFormUiState.passwordGeneratorSettings,
                     )
 
                     passwordTextValue = passwordTextValue.copy(text = password, selection = TextRange(password.length))
@@ -424,7 +341,7 @@ private fun Content(
     if (showPasswordGeneratorModal) {
         PasswordGeneratorModal(
             onDismissRequest = { showPasswordGeneratorModal = false },
-            settings = uiState.passwordGeneratorSettings,
+            settings = loginFormUiState.passwordGeneratorSettings,
             onUsePasswordClick = { password, settings ->
                 passwordTextValue = passwordTextValue.copy(text = password, selection = TextRange(password.length))
                 onPasswordChange(password)
@@ -454,16 +371,6 @@ private fun Content(
             onImageUrlChange = onImageUrlChange,
         )
     }
-
-    if (showUnsavedChangesDialog) {
-        ConfirmDialog(
-            onDismissRequest = { showUnsavedChangesDialog = false },
-            onPositive = onCloseWithoutSaving,
-            icon = MdtIcons.Warning,
-            title = strings.loginUnsavedChangesDialogTitle,
-            body = strings.loginUnsavedChangesDialogDescription,
-        )
-    }
 }
 
 @Preview
@@ -472,7 +379,8 @@ private fun Preview() {
     PreviewTheme(appTheme = AppTheme.Dark) {
         Content(
             modifier = Modifier,
-            uiState = LoginFormUiState(item = LoginItemPreview, itemContent = LoginItemContentPreview),
+            uiState = ItemFormUiState(item = LoginItemPreview, itemContent = LoginItemContentPreview),
+            loginFormUiState = LoginFormUiState(),
             containerColor = MdtTheme.color.background,
         )
     }

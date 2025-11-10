@@ -80,6 +80,18 @@ fun ItemImage(
                     size = size,
                 )
             }
+
+            is ItemContent.CreditCard -> {
+                ItemImage(
+                    modifier = modifier,
+                    iconType = IconType.Label,
+                    iconUrl = null,
+                    labelText = content.defaultLabelText,
+                    labelColor = null,
+                    customImageUrl = null,
+                    size = size,
+                )
+            }
         }
     }
 }

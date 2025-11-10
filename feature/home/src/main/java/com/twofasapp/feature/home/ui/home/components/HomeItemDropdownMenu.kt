@@ -93,6 +93,17 @@ internal fun HomeItemDropdownMenu(
                     }
 
                     is ItemContent.SecureNote -> {
+                        DropdownMenuItem(
+                            text = "Copy note",
+                            icon = MdtIcons.Document,
+                            onClick = {
+                                showDropdown = false
+                                onCopySecretFieldToClipboard(content.text)
+                            },
+                        )
+                    }
+
+                    is ItemContent.CreditCard -> {
                     }
                 }
             }

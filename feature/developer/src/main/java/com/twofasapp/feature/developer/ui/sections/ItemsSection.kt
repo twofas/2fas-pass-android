@@ -35,6 +35,7 @@ internal fun ItemsSection(
     onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
+    onInsertRandomCreditCard: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -93,9 +94,15 @@ internal fun ItemsSection(
         )
 
         OptionEntry(
-            title = "Generate random secure note",
-            icon = MdtIcons.Document,
+            title = "Generate secure note",
+            icon = MdtIcons.SecureNote,
             onClick = { onInsertRandomSecureNote() },
+        )
+
+        OptionEntry(
+            title = "Generate credit card",
+            icon = MdtIcons.CreditCard,
+            onClick = { onInsertRandomCreditCard() },
         )
 
         OptionEntry(

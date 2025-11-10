@@ -37,6 +37,7 @@ object MdtIcons {
     val Paint @Composable get() = painterResource(R.drawable.ic_paint)
     val Palette @Composable get() = painterResource(R.drawable.ic_palette)
     val User @Composable get() = painterResource(R.drawable.ic_user)
+    val Login @Composable get() = painterResource(R.drawable.ic_user)
     val Refresh @Composable get() = painterResource(R.drawable.ic_refresh)
     val Touch @Composable get() = painterResource(R.drawable.ic_touch)
     val Smartphone @Composable get() = painterResource(R.drawable.ic_smartphone)
@@ -72,6 +73,7 @@ object MdtIcons {
     val Import @Composable get() = painterResource(R.drawable.ic_import)
     val Export @Composable get() = painterResource(R.drawable.ic_export)
     val Document @Composable get() = painterResource(R.drawable.ic_document)
+    val SecureNote @Composable get() = painterResource(R.drawable.ic_document)
     val PasswordGenerator @Composable get() = painterResource(R.drawable.ic_password_generator)
     val Filter @Composable get() = painterResource(R.drawable.ic_filter)
     val FilterAlt @Composable get() = painterResource(R.drawable.ic_filter_alt)
@@ -113,4 +115,5 @@ object MdtIcons {
     val Rocket @Composable get() = painterResource(R.drawable.ic_rocket)
     val RocketLaunch @Composable get() = painterResource(R.drawable.ic_rocket_launch)
     val Upgrade @Composable get() = painterResource(R.drawable.ic_upgrade)
+    val CreditCard @Composable get() = painterResource(R.drawable.ic_credit_card)
 }

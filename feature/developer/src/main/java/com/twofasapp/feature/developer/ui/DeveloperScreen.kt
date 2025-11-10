@@ -60,6 +60,7 @@ internal fun DeveloperScreen(
         onDeleteAllBrowsers = { viewModel.deleteAllBrowsers() },
         onInsertRandomTag = { viewModel.insertRandomTag() },
         onInsertRandomSecureNote = { viewModel.insertRandomSecureNote() },
+        onInsertRandomCreditCard = { viewModel.insertRandomCreditCard() },
     )
 }
 
@@ -74,6 +75,7 @@ private fun Content(
     onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
+    onInsertRandomCreditCard: () -> Unit = {},
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Items", "Subscription", "Other")
@@ -117,6 +119,7 @@ private fun Content(
                     onDeleteAllBrowsers = onDeleteAllBrowsers,
                     onInsertRandomTag = onInsertRandomTag,
                     onInsertRandomSecureNote = onInsertRandomSecureNote,
+                    onInsertRandomCreditCard = onInsertRandomCreditCard,
                 )
 
                 1 -> SubscriptionSection(

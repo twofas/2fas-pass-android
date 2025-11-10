@@ -24,6 +24,7 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemForm
+import com.twofasapp.feature.itemform.ItemFormListener
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -77,10 +78,23 @@ private fun Content(
             ItemForm(
                 modifier = Modifier.padding(top = padding.calculateTopPadding()),
                 initialItem = uiState.initialItem,
-                onItemUpdated = onItemUpdated,
-                onIsValidUpdated = onIsValidUpdated,
-                onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
-                onCloseWithoutSaving = onCloseWithoutSaving,
+                listener = object : ItemFormListener {
+                    override fun onItemUpdated(item: Item) {
+                        onItemUpdated(item)
+                    }
+
+                    override fun onIsValidUpdated(valid: Boolean) {
+                        onIsValidUpdated(valid)
+                    }
+
+                    override fun onHasUnsavedChangesUpdated(hasUnsavedChanges: Boolean) {
+                        onHasUnsavedChangesUpdated(hasUnsavedChanges)
+                    }
+
+                    override fun onCloseWithoutSaving() {
+                        onCloseWithoutSaving()
+                    }
+                },
             )
         }
     }

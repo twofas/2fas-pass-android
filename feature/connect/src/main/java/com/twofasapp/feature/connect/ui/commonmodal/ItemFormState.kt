@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
@@ -24,12 +25,14 @@ import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.connect.ui.requestmodal.RequestState
 import com.twofasapp.feature.itemform.ItemForm
+import com.twofasapp.feature.itemform.ItemFormListener
+import com.twofasapp.feature.itemform.ItemFormProperties
 
 @Composable
-internal fun LoginFormState(
+internal fun ItemFormState(
     itemFormState: RequestState.FullSize.ItemForm,
 ) {
-    var item by remember { mutableStateOf(itemFormState.item) }
+    var itemState by remember { mutableStateOf(itemFormState.item) }
     var isValid by remember { mutableStateOf(false) }
 
     BackHandler {
@@ -49,7 +52,7 @@ internal fun LoginFormState(
                 Button(
                     text = MdtLocale.strings.commonSave,
                     style = ButtonStyle.Text,
-                    onClick = { itemFormState.onSaveClick(item) },
+                    onClick = { itemFormState.onSaveClick(itemState) },
                     enabled = isValid,
                 )
             },
@@ -59,11 +62,22 @@ internal fun LoginFormState(
             modifier = Modifier.fillMaxSize(),
             initialItem = itemFormState.item,
             containerColor = MdtTheme.color.surfaceContainerLow,
-            confirmUnsavedChanges = false,
-            onItemUpdated = { item = it },
-            onIsValidUpdated = { isValid = it },
-            onHasUnsavedChangesUpdated = { },
-            onCloseWithoutSaving = { itemFormState.onCancel() },
+            properties = ItemFormProperties.Default.copy(
+                shouldConfirmUnsavedChanges = false,
+            ),
+            listener = object : ItemFormListener {
+                override fun onItemUpdated(item: Item) {
+                    itemState = item
+                }
+
+                override fun onIsValidUpdated(valid: Boolean) {
+                    isValid = valid
+                }
+
+                override fun onCloseWithoutSaving() {
+                    itemFormState.onCancel()
+                }
+            },
         )
     }
 }

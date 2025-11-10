@@ -52,5 +52,35 @@ sealed interface ItemContent {
     data class SecureNote(
         override val name: String,
         val text: SecretField?,
-    ) : ItemContent
+    ) : ItemContent {
+        companion object {
+            val Empty = SecureNote(
+                name = "",
+                text = null,
+            )
+
+            val Limit: Int = 16_384
+        }
+    }
+
+    data class CreditCard(
+        override val name: String,
+        val cardholder: String?,
+        val number: SecretField?,
+        val expiration: String?,
+        val cvv: SecretField?,
+        val notes: String?,
+    ) : ItemContent {
+
+        companion object {
+            val Empty = CreditCard(
+                name = "",
+                cardholder = null,
+                number = null,
+                expiration = null,
+                cvv = null,
+                notes = null,
+            )
+        }
+    }
 }

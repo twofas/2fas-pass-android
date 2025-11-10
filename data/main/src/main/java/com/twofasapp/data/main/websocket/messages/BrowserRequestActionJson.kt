@@ -159,7 +159,7 @@ internal sealed interface BrowserRequestActionJson {
             @SerialName("name")
             val name: String?,
             @SerialName("s_text")
-            val s_text: ActionFieldJson?,
+            val s_text: String?,
         )
     }
 
@@ -203,7 +203,7 @@ internal sealed interface BrowserRequestActionJson {
             @SerialName("uris")
             val uris: List<Uri>?,
             @SerialName("s_text")
-            val s_text: ActionFieldJson?,
+            val s_text: String?,
         ) {
             @Serializable
             data class Uri(

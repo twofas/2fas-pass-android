@@ -184,6 +184,18 @@ class Strings(private val c: Context) {
     val loginUnsavedChangesDialogDescription = c.getString(R.string.login_unsaved_changes_dialog_description)
     val loginNoItemName = c.getString(R.string.login_no_item_name)
 
+    // Secure Note
+    val secureNoteName = c.getString(R.string.secure_note_name_label)
+    val secureNoteText = c.getString(R.string.secure_note_text_label)
+
+    // Credit Card
+    val creditCardName = c.getString(R.string.credit_card_name_label)
+    val creditCardCardholder = c.getString(R.string.credit_card_cardholder_label)
+    val creditCardNumber = c.getString(R.string.credit_card_number_label)
+    val creditCardExpiration = c.getString(R.string.credit_card_expiration_label)
+    val creditCardCvv = c.getString(R.string.credit_card_cvv_label)
+    val creditCardNotes = c.getString(R.string.credit_card_notes_label)
+
     // Connect
     val connectTitle = c.getString(R.string.connect_title)
 

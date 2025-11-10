@@ -23,6 +23,10 @@ fun List<Item>.filterBySearchQuery(query: String): List<Item> {
                 }
 
                 is ItemContent.SecureNote -> false
+
+                is ItemContent.CreditCard -> {
+                    item.content.cardholder.orEmpty().contains(query, ignoreCase = true)
+                }
             }
     }.distinctBy { it.id }
 }

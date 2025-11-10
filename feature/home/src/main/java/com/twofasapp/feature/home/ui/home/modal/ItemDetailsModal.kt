@@ -53,6 +53,7 @@ import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.text.secretAnnotatedString
+import com.twofasapp.core.design.foundation.text.secretString
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.passwordColorized
 import com.twofasapp.core.design.theme.ButtonHeight
@@ -210,10 +211,64 @@ private fun Content(
                                     )
                                 }
                             }
+
+                            if (content.notes.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginNotes,
+                                    subtitle = content.notes.orEmpty(),
+                                    isCompact = true,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.notes.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
                         }
 
                         is ItemContent.SecureNote -> {
+                            content.text?.let { text ->
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                LifecycleResumeEffect(Unit) {
+                                    onPauseOrDispose {
+                                        textDecrypted = null
+                                    }
+                                }
+
+                                Entry(
+                                    title = "Note",
+                                    subtitle = textDecrypted ?: secretString(),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.text,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.text) },
+                                        )
+                                    },
+                                )
+                            }
                         }
+                        is ItemContent.CreditCard -> Unit
                     }
 
                     Entry(
