@@ -44,6 +44,7 @@ import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
@@ -69,6 +70,7 @@ import com.twofasapp.data.settings.domain.SortingMethod
 import com.twofasapp.feature.home.ui.home.components.HomeFab
 import com.twofasapp.feature.home.ui.home.components.HomeItem
 import com.twofasapp.feature.home.ui.home.components.HomeSearchBar
+import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.ListOptionsModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
@@ -78,8 +80,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    openAddLogin: (String) -> Unit,
-    openEditLogin: (String, String) -> Unit,
+    openAddItem: (vaultId: String, itemContentType: ItemContentType) -> Unit,
+    openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
@@ -92,8 +94,8 @@ internal fun HomeScreen(
         uiState = uiState,
         screenState = screenState,
         onEventConsumed = { viewModel.consumeEvent(it) },
-        onAddLoginClick = openAddLogin,
-        onEditLoginClick = openEditLogin,
+        onAddItemClick = openAddItem,
+        onEditItemClick = openEditItem,
         onCopySecretFieldToClipboard = { item, secretField ->
             viewModel.decryptSecretField(
                 item = item,
@@ -118,8 +120,8 @@ private fun Content(
     uiState: HomeUiState,
     screenState: ScreenState,
     onEventConsumed: (HomeUiEvent) -> Unit = {},
-    onAddLoginClick: (String) -> Unit = {},
-    onEditLoginClick: (String, String) -> Unit = { _, _ -> },
+    onAddItemClick: (vaultId: String, ItemContentType) -> Unit = { _, _ -> },
+    onEditItemClick: (String, String, itemContentType: ItemContentType) -> Unit = { _, _, _ -> },
     onCopySecretFieldToClipboard: (Item, SecretField?) -> Unit = { _, _ -> },
     onOpenQuickSetupClick: () -> Unit = {},
     onTrashConfirmed: (String) -> Unit = {},
@@ -137,9 +139,10 @@ private fun Content(
     var showListOptionsModal by remember { mutableStateOf(false) }
     var showSortModal by remember { mutableStateOf(false) }
     var showFilterModal by remember { mutableStateOf(false) }
+    var showAddItemModal by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
     val deviceType = currentDeviceType()
-    val loginsPerRow = when (deviceType) {
+    val itemsPerRow = when (deviceType) {
         DeviceType.Compact -> 1
         DeviceType.Medium -> 2
         DeviceType.Expanded -> 3
@@ -256,20 +259,20 @@ private fun Content(
                         }
                     }
 
-                    if (loginsPerRow > 1) {
-                        uiState.itemsFiltered.chunked(loginsPerRow).forEachIndexed { index, logins ->
-                            listItem(HomeListItem.HomeItemsRow(index = index, ids = logins.map { it.id })) {
+                    if (itemsPerRow > 1) {
+                        uiState.itemsFiltered.chunked(itemsPerRow).forEachIndexed { index, items ->
+                            listItem(HomeListItem.HomeItemsRow(index = index, ids = items.map { it.id })) {
                                 Row(
                                     modifier = Modifier.animateItem(),
                                 ) {
-                                    logins.forEach { item ->
+                                    items.forEach { item ->
                                         HomeItem(
                                             item = item,
                                             tags = uiState.tags,
                                             loginClickAction = uiState.loginClickAction,
                                             query = uiState.searchQuery,
                                             modifier = Modifier.weight(1f),
-                                            onEditClick = { itemId, vaultId -> onEditLoginClick(itemId, vaultId) },
+                                            onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
                                             onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                         )
@@ -286,7 +289,7 @@ private fun Content(
                                     loginClickAction = uiState.loginClickAction,
                                     query = uiState.searchQuery,
                                     modifier = Modifier.animateItem(),
-                                    onEditClick = { itemId, vaultId -> onEditLoginClick(itemId, vaultId) },
+                                    onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
                                     onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                 )
@@ -305,7 +308,7 @@ private fun Content(
                     if (uiState.isItemsLimitReached) {
                         showPaywall = true
                     } else {
-                        onAddLoginClick(uiState.vault.id)
+                        showAddItemModal = true
                     }
                 },
             )
@@ -337,6 +340,15 @@ private fun Content(
             selectedTag = uiState.selectedTag,
             onToggle = { onToggleTag(it) },
             onManageTagsClick = onManageTagsClick,
+        )
+    }
+
+    if (showAddItemModal) {
+        AddItemModal(
+            onDismissRequest = { showAddItemModal = false },
+            onSelect = { itemContentType ->
+                onAddItemClick(uiState.vault.id, itemContentType)
+            },
         )
     }
 

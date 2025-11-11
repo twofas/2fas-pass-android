@@ -35,6 +35,7 @@ internal class EditItemViewModel(
 
     private val id: String = savedStateHandle.toRoute<Screen.EditItem>().itemId
     private val vaultId: String = savedStateHandle.toRoute<Screen.EditItem>().vaultId
+    private val itemContentType: ItemContentType = ItemContentType.fromKey(savedStateHandle.toRoute<Screen.EditItem>().itemContentTypeKey)
 
     private val isNewItem = id.isBlank()
     val uiState = MutableStateFlow(EditItemUiState())
@@ -42,10 +43,20 @@ internal class EditItemViewModel(
     init {
         if (isNewItem) {
             launchScoped {
+                val initialItem = Item.create(
+                    contentType = itemContentType,
+                    content = when (itemContentType) {
+                        is ItemContentType.Login -> ItemContent.Login.Empty
+                        is ItemContentType.SecureNote -> ItemContent.SecureNote.Empty
+                        is ItemContentType.CreditCard -> ItemContent.CreditCard.Empty
+                        is ItemContentType.Unknown -> ItemContent.Unknown("")
+                    },
+                )
+
                 uiState.update { state ->
                     state.copy(
-                        initialItem = Item.create(contentType = ItemContentType.Login, content = ItemContent.Login.Empty),
-                        item = Item.create(contentType = ItemContentType.Login, content = ItemContent.Login.Empty),
+                        initialItem = initialItem,
+                        item = initialItem,
                     )
                 }
             }

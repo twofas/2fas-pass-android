@@ -64,19 +64,21 @@ internal fun MainNavHost(
     ) {
         composable<Screen.Home> {
             HomeRoute(
-                openAddLogin = { vaultId ->
+                openAddItem = { vaultId, itemContentType ->
                     navController.navigate(
                         Screen.EditItem(
                             itemId = "",
                             vaultId = vaultId,
+                            itemContentTypeKey = itemContentType.key,
                         ),
                     )
                 },
-                openEditLogin = { loginId, vaultId ->
+                openEditItem = { itemId, vaultId, itemContentType ->
                     navController.navigate(
                         Screen.EditItem(
-                            itemId = loginId,
+                            itemId = itemId,
                             vaultId = vaultId,
+                            itemContentTypeKey = itemContentType.key,
                         ),
                     )
                 },
