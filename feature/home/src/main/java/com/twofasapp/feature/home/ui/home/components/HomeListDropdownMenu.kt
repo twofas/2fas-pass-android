@@ -11,8 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.MdtIcons
@@ -24,13 +22,10 @@ import com.twofasapp.core.design.foundation.menu.DropdownMenuItem
 @Composable
 internal fun HomeListDropdownMenu(
     selectedTag: Tag? = null,
-    onEditListClick: () -> Unit,
     onSortClick: () -> Unit,
     onFilterClick: () -> Unit,
     onClearFiltersClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val uriHandler = LocalUriHandler.current
     var showDropdown by remember { mutableStateOf(false) }
 
     DropdownMenu(

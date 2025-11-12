@@ -54,6 +54,7 @@ import com.twofasapp.feature.settings.navigation.TrashRoute
 internal fun MainNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    onHomeInEditModeChanged: (Boolean) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -91,6 +92,7 @@ internal fun MainNavHost(
                 openDeveloper = {
                     navController.navigateTopLevel(Screen.Developer)
                 },
+                onHomeInEditModeChanged = onHomeInEditModeChanged,
             )
         }
 

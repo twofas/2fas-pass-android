@@ -16,6 +16,7 @@ import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.ktx.toggle
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.success
@@ -184,7 +185,7 @@ internal class HomeViewModel(
         launchScoped { tagsRepository.toggleSelectedTag(uiState.value.vault.id, tag) }
     }
 
-    fun clearTag() {
+    fun clearFilters() {
         launchScoped {
             tagsRepository.clearSelectedTag(uiState.value.vault.id)
         }
@@ -216,5 +217,32 @@ internal class HomeViewModel(
 
     private fun publishEvent(event: HomeUiEvent) {
         uiState.update { it.copy(events = it.events.plus(event).distinct()) }
+    }
+
+    fun changeEditMode(enabled: Boolean) {
+        uiState.update { it.copy(editMode = enabled) }
+
+        if (enabled.not()) {
+            uiState.update { it.copy(selectedItemIds = emptyList()) }
+        }
+    }
+
+    fun toggleItemSelection(itemId: String) {
+        uiState.update { state ->
+            val selectedItemIds = state.selectedItemIds.toggle(itemId)
+
+            state.copy(
+                selectedItemIds = selectedItemIds,
+                editMode = selectedItemIds.isNotEmpty(),
+            )
+        }
+    }
+
+    fun selectAllItems() {
+        uiState.update { state ->
+            state.copy(
+                selectedItemIds = state.items.map { it.id },
+            )
+        }
     }
 }

@@ -24,6 +24,8 @@ internal data class HomeUiState(
     val selectedTag: Tag? = null,
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
+    val editMode: Boolean = false,
+    val selectedItemIds: List<String> = emptyList(),
     val loginClickAction: LoginClickAction = LoginClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,
     val maxItems: Int = 0,

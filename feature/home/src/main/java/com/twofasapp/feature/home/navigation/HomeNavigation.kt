@@ -20,6 +20,7 @@ fun HomeRoute(
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
+    onHomeInEditModeChanged: (Boolean) -> Unit,
 ) {
     HomeScreen(
         openAddItem = openAddItem,
@@ -27,6 +28,7 @@ fun HomeRoute(
         openManageTags = openManageTags,
         openQuickSetup = openQuickSetup,
         openDeveloper = openDeveloper,
+        onHomeInEditModeChanged = onHomeInEditModeChanged,
     )
 }
 

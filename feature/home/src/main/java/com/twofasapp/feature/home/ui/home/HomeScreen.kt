@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -51,8 +50,6 @@ import com.twofasapp.core.design.anim.AnimatedFadeVisibility
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
-import com.twofasapp.core.design.foundation.button.IconButton
-import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.lazy.isScrollingUp
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.lazy.stickyListItem
@@ -60,16 +57,15 @@ import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.screen.EmptySearchResults
 import com.twofasapp.core.design.foundation.screen.ScreenLoading
-import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.design.window.DeviceType
 import com.twofasapp.core.design.window.currentDeviceType
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.SortingMethod
+import com.twofasapp.feature.home.ui.home.components.HomeAppBar
 import com.twofasapp.feature.home.ui.home.components.HomeFab
 import com.twofasapp.feature.home.ui.home.components.HomeItem
-import com.twofasapp.feature.home.ui.home.components.HomeListDropdownMenu
 import com.twofasapp.feature.home.ui.home.components.HomeSearchBar
 import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
@@ -85,10 +81,15 @@ internal fun HomeScreen(
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
+    onHomeInEditModeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.editMode) {
+        onHomeInEditModeChanged(uiState.editMode)
+    }
 
     Content(
         uiState = uiState,
@@ -108,8 +109,11 @@ internal fun HomeScreen(
         onSearchQueryChange = { viewModel.search(it) },
         onSearchFocusChange = { viewModel.focusSearch(it) },
         onSortingMethodSelect = { viewModel.updateSortingMethod(it) },
+        onChangeEditMode = { viewModel.changeEditMode(it) },
+        onToggleItemSelection = { viewModel.toggleItemSelection(it) },
+        onSelectAllClick = { viewModel.selectAllItems() },
         onToggleTag = { viewModel.toggleTag(it) },
-        onClearTag = { viewModel.clearTag() },
+        onClearFiltersClick = { viewModel.clearFilters() },
         onManageTagsClick = openManageTags,
         onDeveloperClick = openDeveloper,
     )
@@ -128,8 +132,11 @@ private fun Content(
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
     onSortingMethodSelect: (SortingMethod) -> Unit = {},
+    onChangeEditMode: (Boolean) -> Unit = {},
+    onToggleItemSelection: (String) -> Unit = {},
+    onSelectAllClick: () -> Unit = {},
     onToggleTag: (Tag) -> Unit = {},
-    onClearTag: () -> Unit = {},
+    onClearFiltersClick: () -> Unit = {},
     onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
 ) {
@@ -159,31 +166,16 @@ private fun Content(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                showBackButton = false,
+            HomeAppBar(
+                uiState = uiState,
+                screenState = screenState,
                 scrollBehavior = scrollBehavior,
-                content = { Text(text = MdtLocale.strings.homeTitle, style = MdtTheme.typo.medium.xl2) },
-                actions = {
-                    ActionsRow {
-                        if (uiState.developerModeEnabled) {
-                            IconButton(
-                                icon = MdtIcons.Placeholder,
-                                onClick = onDeveloperClick,
-                                modifier = Modifier.alpha(0.05f),
-                            )
-                        }
-
-                        if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
-                            HomeListDropdownMenu(
-                                selectedTag = uiState.selectedTag,
-                                onEditListClick = {},
-                                onSortClick = { showSortModal = true },
-                                onFilterClick = { showFilterModal = true },
-                                onClearFiltersClick = { onClearTag() },
-                            )
-                        }
-                    }
-                },
+                onDeveloperClick = { onDeveloperClick() },
+                onChangeEditMode = { onChangeEditMode(it) },
+                onSortClick = { showSortModal = true },
+                onFilterClick = { showFilterModal = true },
+                onClearFiltersClick = { onClearFiltersClick() },
+                onSelectAllClick = { onSelectAllClick() },
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -234,7 +226,7 @@ private fun Content(
                             selectedTag = uiState.selectedTag,
                             onSearchQueryChange = onSearchQueryChange,
                             onSearchFocusChange = onSearchFocusChange,
-                            onClearFilter = onClearTag,
+                            onClearFilter = onClearFiltersClick,
                         )
                     }
 
@@ -260,10 +252,14 @@ private fun Content(
                                             tags = uiState.tags,
                                             loginClickAction = uiState.loginClickAction,
                                             query = uiState.searchQuery,
+                                            editMode = uiState.editMode,
+                                            selected = uiState.selectedItemIds.contains(item.id),
                                             modifier = Modifier.weight(1f),
                                             onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
                                             onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
+                                            onEnabledEditMode = { onChangeEditMode(true) },
+                                            onToggleSelection = { onToggleItemSelection(it) },
                                         )
                                     }
                                 }
@@ -277,10 +273,14 @@ private fun Content(
                                     tags = uiState.tags,
                                     loginClickAction = uiState.loginClickAction,
                                     query = uiState.searchQuery,
+                                    editMode = uiState.editMode,
+                                    selected = uiState.selectedItemIds.contains(item.id),
                                     modifier = Modifier.animateItem(),
                                     onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
                                     onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
+                                    onEnabledEditMode = { onChangeEditMode(true) },
+                                    onToggleSelection = { onToggleItemSelection(it) },
                                 )
                             }
                         }
@@ -292,7 +292,7 @@ private fun Content(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(ScreenPadding),
-                visible = listState.isScrollingUp(),
+                visible = listState.isScrollingUp() && uiState.editMode.not(),
                 onClick = {
                     if (uiState.isItemsLimitReached) {
                         showPaywall = true

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.foundation.button.IconButton
@@ -25,12 +26,13 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 fun ActionsRow(
     modifier: Modifier = Modifier,
     useHorizontalPadding: Boolean = false,
+    spacing: Dp = 4.dp,
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier = modifier.padding(horizontal = if (useHorizontalPadding) 4.dp else 0.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(spacing),
         content = content,
     )
 }
