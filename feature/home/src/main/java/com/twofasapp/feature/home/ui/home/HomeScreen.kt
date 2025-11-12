@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -70,10 +69,10 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.SortingMethod
 import com.twofasapp.feature.home.ui.home.components.HomeFab
 import com.twofasapp.feature.home.ui.home.components.HomeItem
+import com.twofasapp.feature.home.ui.home.components.HomeListDropdownMenu
 import com.twofasapp.feature.home.ui.home.components.HomeSearchBar
 import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
-import com.twofasapp.feature.home.ui.home.modal.ListOptionsModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
 import org.koin.androidx.compose.koinViewModel
@@ -137,7 +136,6 @@ private fun Content(
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
-    var showListOptionsModal by remember { mutableStateOf(false) }
     var showSortModal by remember { mutableStateOf(false) }
     var showFilterModal by remember { mutableStateOf(false) }
     var showAddItemModal by remember { mutableStateOf(false) }
@@ -171,29 +169,18 @@ private fun Content(
                             IconButton(
                                 icon = MdtIcons.Placeholder,
                                 onClick = onDeveloperClick,
-                                modifier = Modifier.alpha(0.05f)
+                                modifier = Modifier.alpha(0.05f),
                             )
                         }
 
                         if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
-                            Box {
-                                IconButton(
-                                    icon = MdtIcons.Filter,
-                                    onClick = { showListOptionsModal = true },
-                                )
-
-                                if (uiState.selectedTag != null) {
-                                    Icon(
-                                        painter = MdtIcons.CircleFilled,
-                                        contentDescription = null,
-                                        tint = MdtTheme.color.notice,
-                                        modifier = Modifier
-                                            .size(12.dp)
-                                            .align(Alignment.TopEnd)
-                                            .offset(x = (-6).dp, y = 6.dp),
-                                    )
-                                }
-                            }
+                            HomeListDropdownMenu(
+                                selectedTag = uiState.selectedTag,
+                                onEditListClick = {},
+                                onSortClick = { showSortModal = true },
+                                onFilterClick = { showFilterModal = true },
+                                onClearFiltersClick = { onClearTag() },
+                            )
                         }
                     }
                 },
@@ -315,16 +302,6 @@ private fun Content(
                 },
             )
         }
-    }
-
-    if (showListOptionsModal) {
-        ListOptionsModal(
-            selectedTag = uiState.selectedTag,
-            onDismissRequest = { showListOptionsModal = false },
-            onSortClick = { showSortModal = true },
-            onFilterClick = { showFilterModal = true },
-            onClearClick = { onClearTag() },
-        )
     }
 
     if (showSortModal) {

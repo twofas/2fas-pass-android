@@ -53,7 +53,7 @@ fun SearchBar(
 ) {
     val iconAlpha by animateFloatAsState(
         if (focused || query.isNotEmpty()) 1f else 0.5f,
-        label = "color"
+        label = "color",
     )
 
     Row(
@@ -64,7 +64,6 @@ fun SearchBar(
             .padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         Icon(
             painter = MdtIcons.Search,
             contentDescription = null,
