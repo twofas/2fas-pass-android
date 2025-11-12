@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -170,6 +171,7 @@ private fun Content(
                             IconButton(
                                 icon = MdtIcons.Placeholder,
                                 onClick = onDeveloperClick,
+                                modifier = Modifier.alpha(0.05f)
                             )
                         }
 

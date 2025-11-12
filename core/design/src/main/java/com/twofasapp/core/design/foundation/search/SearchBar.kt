@@ -8,7 +8,7 @@
 
 package com.twofasapp.core.design.foundation.search
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -24,9 +24,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.anim.AnimatedFadeVisibility
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.locale.MdtLocale
@@ -47,9 +50,12 @@ fun SearchBar(
     focusRequester: FocusRequester,
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
-    startContent: @Composable () -> Unit = {},
-    endContent: @Composable () -> Unit = {},
 ) {
+    val iconAlpha by animateFloatAsState(
+        if (focused || query.isNotEmpty()) 1f else 0.5f,
+        label = "color"
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -58,17 +64,15 @@ fun SearchBar(
             .padding(start = 16.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AnimatedVisibility(visible = focused.not() && query.isEmpty()) {
-            startContent()
-        }
 
-        AnimatedVisibility(visible = focused || query.isNotEmpty()) {
-            Icon(
-                painter = MdtIcons.Search,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-        }
+        Icon(
+            painter = MdtIcons.Search,
+            contentDescription = null,
+            tint = MdtTheme.color.onSurface,
+            modifier = Modifier
+                .size(20.dp)
+                .alpha(iconAlpha),
+        )
 
         TextField(
             value = query,
@@ -106,7 +110,9 @@ fun SearchBar(
             ),
         )
 
-        AnimatedVisibility(visible = focused || query.isNotEmpty()) {
+        AnimatedFadeVisibility(
+            visible = focused || query.isNotEmpty(),
+        ) {
             IconButton(
                 icon = MdtIcons.Close,
                 iconSize = 20.dp,
@@ -118,10 +124,6 @@ fun SearchBar(
                     }
                 },
             )
-        }
-
-        AnimatedVisibility(visible = focused.not() && query.isEmpty()) {
-            endContent()
         }
     }
 }

@@ -10,14 +10,12 @@ package com.twofasapp.feature.home.ui.home.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
-import com.twofasapp.core.design.R
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
@@ -88,13 +84,6 @@ internal fun HomeSearchBar(
             onSearchQueryChange = onSearchQueryChange,
             onSearchFocusChange = onSearchFocusChange,
             focusRequester = focusRequester,
-            startContent = {
-                Image(
-                    painter = painterResource(id = R.drawable.brand_logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-            },
         )
 
         if (selectedTag != null) {
