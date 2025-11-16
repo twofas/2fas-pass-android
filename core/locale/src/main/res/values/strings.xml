@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
  Loco xml export: Android strings
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Wed, 05 Nov 2025 10:29:34 -0800
+ Exported at: Sun, 16 Nov 2025 04:10:12 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -81,7 +80,7 @@
     <string name="decryption_kit_settings_secret_words">Secret Words (15-word phrase),</string>
     <string name="decryption_kit_settings_master_key">Master Password hash</string>
     <string name="decryption_kit_settings_toggle_title">Include the Master Password hash\u0020</string>
-    <string name="decryption_kit_settings_toggle_msg">to avoid entering the Master Password when recovering my Vault.</string>
+    <string name="decryption_kit_settings_toggle_msg">to avoid entering the Master Password during Vault recovery.</string>
     <string name="decryption_kit_settings_cta">Done</string>
     <string name="restore_vault_source_title">Select backup file</string>
     <string name="restore_vault_source_description">To recover your 2FAS Pass Vault, select one of the available backup methods:</string>
@@ -136,19 +135,14 @@
     <string name="login_add_uri_cta">+\u0020\u0020Add URL</string>
     <string name="login_unsaved_changes_dialog_title">Unsaved changes</string>
     <string name="login_unsaved_changes_dialog_description">Do you want to discard your changes?</string>
-
-    <!-- Secure Note -->
     <string name="secure_note_name_label">Name</string>
     <string name="secure_note_text_label">Text</string>
-
-    <!-- Credit Card -->
     <string name="credit_card_name_label">Name</string>
     <string name="credit_card_cardholder_label">Cardholder</string>
     <string name="credit_card_number_label">Card Number</string>
     <string name="credit_card_expiration_label">Expiration</string>
     <string name="credit_card_cvv_label">CVV</string>
     <string name="credit_card_notes_label">Notes</string>
-
     <string name="connect_title">Connect</string>
     <string name="settings_title">Settings</string>
     <string name="settings_header_preferences">Preferences</string>
@@ -267,11 +261,11 @@
     <string name="auth_preview_description">Enter your Master Password to unlock the app</string>
     <string name="auth_preview_cta">Unlock</string>
     <string name="autofill_prompt_title">Autofill Request</string>
-    <string name="autofill_prompt_description">Authentication is required to decrypt the Item password for the autofill request</string>
+    <string name="autofill_prompt_description">Authentication is required to decrypt the Item’s password for autofill.</string>
     <string name="autofill_prompt_cta">Authenticate</string>
     <string name="autofill_login_dialog_title">Autofill</string>
     <string name="autofill_login_dialog_body_prefix">Do you want to autofill\u0020</string>
-    <string name="autofill_login_dialog_body_suffix">Item information for this app or website?</string>
+    <string name="autofill_login_dialog_body_suffix">Item details for this app or website?</string>
     <string name="autofill_login_dialog_positive">Fill and remember</string>
     <string name="autofill_login_dialog_neutral">Fill once</string>
     <string name="connect_qr_instruction">Point your camera at the QR code shown by the 2FAS Pass Browser Extension.</string>
@@ -451,7 +445,7 @@
     <string name="password_generator_special_characters">Special characters</string>
     <string name="password_generator_uppercase_characters">Uppercase characters</string>
     <string name="password_generator_use_cta">Use password</string>
-    <string name="set_new_password_confirm_body_part1_ios">Changing your Master Password will update your Vault encryption, and you\'ll need to **download a new Decryption Kit.**</string>
+    <string name="set_new_password_confirm_body_part1_ios">Changing your Master Password will update the encryption of your Vault. You\'ll need to **download a new Decryption Kit and create a new Local Backup.**</string>
     <string name="set_new_password_confirm_body_part2_ios">If you use this Vault on other devices, Sync will be disabled, and you\'ll need to re-enable it using your new Master Password.</string>
     <string name="set_new_password_success_title">Master Password successfully changed</string>
     <string name="settings_autofill_open_system_settings_description">Configure AutoFill: Settings -&gt; Notifications -&gt; 2FAS Pass</string>
@@ -462,7 +456,7 @@
     <string name="settings_cloud_sync_title">Vault Sync</string>
     <string name="settings_cloud_sync_webdav_label">WebDAV</string>
     <string name="settings_entry_app_lock_attempts_footer">Set the number of failed Master Password attempts that will lock the application for the specified time.</string>
-    <string name="settings_entry_biometrics_not_available">Biometric authentication is not available.</string>
+    <string name="settings_entry_biometrics_not_available">Biometrics unavailable.</string>
     <string name="settings_entry_biometrics_toggle">Unlock app with Biometrics</string>
     <string name="settings_entry_decryption_kit_description">Download your Decryption Kit again if you have lost it.</string>
     <string name="settings_entry_subscription">Subscription</string>
@@ -521,7 +515,7 @@
     <string name="request_modal_toast_success_delete_login">Item deleted successfully!</string>
     <string name="request_modal_toast_success_password_request">Password sent successfully!</string>
     <string name="connect_modal_success_toast">Connected successfully!</string>
-    <string name="restore_failure_description">Did you use the correct Recover Kit?</string>
+    <string name="restore_failure_description">Did you use the correct Decryption Kit?</string>
     <string name="restore_failure_title">Error while trying to recover the Vault</string>
     <string name="restore_icloud_files_error">Error while fetching iCloud contents</string>
     <string name="restore_cloud_files_header">Your files</string>
@@ -846,9 +840,13 @@
     <string name="restore_vault_warning">Do not uninstall 2FAS Pass without decrypting your Vault, as you will lose access to your Items.</string>
     <string name="restore_decrypt_vault_option_title">Select decryption method:</string>
     <string name="request_modal_toast_success_full_sync">Synced successfully</string>
-    <string name="request_modal_full_sync_title">Sync Request</string>
-    <string name="request_modal_full_sync_subtitle">Sync request from the browser extension.</string>
+    <string name="request_modal_full_sync_title">Vault Request</string>
+    <string name="request_modal_full_sync_subtitle">Send your Vault\'s data to the browser extension.</string>
     <string name="request_modal_full_sync_cta_positive">Send</string>
     <string name="request_modal_full_sync_cta_negative">Cancel</string>
     <string name="transfer_instructions_keeper">Open Keeper on your PC.\n\nClick on your account in the top right corner, select **Settings**, and go to **Export**\n\nUnder **Export file**, select JSON as the format and click **Export**.\n\nEnter your Master Password and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
+    <string name="connect_modal_error_no_internet_title">Connection error</string>
+    <string name="connect_modal_error_no_internet_subtitle">No Internet connection. Please try again.</string>
+    <string name="home_delete_confirm_title">Remove Items?</string>
+    <string name="home_delete_confirm_body">Are you sure you want to remove %d items? You can recover them later.</string>
 </resources>

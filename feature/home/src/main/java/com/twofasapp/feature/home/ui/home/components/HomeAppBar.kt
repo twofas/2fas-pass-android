@@ -16,6 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -24,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.IconButton
+import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.preview.PreviewAllThemesInColumn
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
@@ -43,7 +48,12 @@ internal fun HomeAppBar(
     onClearFiltersClick: () -> Unit = {},
     onSelectAllClick: () -> Unit = {},
     onDeselectClick: () -> Unit = {},
+    onDeleteItemsConfirmed: () -> Unit = {},
 ) {
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    var showSecurityType by remember { mutableStateOf(false) }
+    var showTags by remember { mutableStateOf(false) }
+
     BackHandler(uiState.editMode) {
         onChangeEditMode(false)
     }
@@ -109,17 +119,17 @@ internal fun HomeAppBar(
 
                         IconButton(
                             icon = MdtIcons.Delete,
-                            onClick = {},
+                            onClick = { showDeleteConfirmation = true },
                         )
 
                         IconButton(
                             icon = MdtIcons.Tier2,
-                            onClick = {},
+                            onClick = { showSecurityType = true },
                         )
 
                         IconButton(
                             icon = MdtIcons.Tag,
-                            onClick = {},
+                            onClick = { showTags = true },
                         )
                     }
                 },
@@ -164,6 +174,24 @@ internal fun HomeAppBar(
                 },
             )
         }
+    }
+
+    if (showDeleteConfirmation) {
+        ConfirmDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = if (uiState.selectedItemIds.size == 1) {
+                MdtLocale.strings.loginDeleteConfirmTitle
+            } else {
+                MdtLocale.strings.homeDeleteConfirmTitle
+            },
+            body = if (uiState.selectedItemIds.size == 1) {
+                MdtLocale.strings.loginDeleteConfirmBody
+            } else {
+                MdtLocale.strings.homeDeleteConfirmBody.format(uiState.selectedItemIds.size)
+            },
+            icon = MdtIcons.Delete,
+            onPositive = { onDeleteItemsConfirmed() },
+        )
     }
 }
 

@@ -117,6 +117,7 @@ internal fun HomeScreen(
         onClearFiltersClick = { viewModel.clearFilters() },
         onManageTagsClick = openManageTags,
         onDeveloperClick = openDeveloper,
+        onDeleteSelectedItemsClick = { viewModel.trashSelectedItems() },
     )
 }
 
@@ -141,6 +142,7 @@ private fun Content(
     onClearFiltersClick: () -> Unit = {},
     onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
+    onDeleteSelectedItemsClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
@@ -179,6 +181,7 @@ private fun Content(
                 onClearFiltersClick = { onClearFiltersClick() },
                 onSelectAllClick = { onSelectAllClick() },
                 onDeselectClick = { onDeselectClick() },
+                onDeleteItemsConfirmed = { onDeleteSelectedItemsClick() },
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

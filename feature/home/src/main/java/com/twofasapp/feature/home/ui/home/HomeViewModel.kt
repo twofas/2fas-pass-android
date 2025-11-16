@@ -19,6 +19,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.toggle
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
+import com.twofasapp.core.design.state.loading
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ItemsRepository
@@ -251,6 +252,17 @@ internal class HomeViewModel(
             state.copy(
                 selectedItemIds = emptyList(),
             )
+        }
+    }
+
+    fun trashSelectedItems() {
+        val idsToDelete = uiState.value.selectedItemIds
+        uiState.update { it.copy(selectedItemIds = emptyList(), editMode = false) }
+
+        screenState.loading()
+
+        launchScoped(dispatchers.io) {
+            trashRepository.trash(*idsToDelete.toTypedArray())
         }
     }
 }

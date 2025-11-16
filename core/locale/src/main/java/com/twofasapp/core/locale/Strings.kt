@@ -168,7 +168,8 @@ class Strings(private val c: Context) {
     val homeItemDelete = c.getString(R.string.login_view_action_delete)
     val homeEmptyTitle = c.getString(R.string.home_empty_title)
     val homeEmptyImportCta = c.getString(R.string.home_empty_import_cta)
-    val homeListOptionsModalTitle = c.getString(R.string.home_list_options_modal_title)
+    val homeDeleteConfirmTitle = c.getString(R.string.home_delete_confirm_title)
+    val homeDeleteConfirmBody = c.getString(R.string.home_delete_confirm_body)
 
     // Login
     val loginPassword = c.getString(R.string.login_password_label)
