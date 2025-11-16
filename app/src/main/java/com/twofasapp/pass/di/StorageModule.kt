@@ -62,7 +62,7 @@ class StorageModule : KoinModule {
                         setQueryCallback(
                             { sqlQuery, _ ->
                                 if (sqlQuery.startsWith("SELECT") || sqlQuery.startsWith("INSERT")) {
-                                    if (sqlQuery.contains("logins") ||
+                                    if (sqlQuery.contains("items") ||
                                         sqlQuery.contains("vaults") ||
                                         sqlQuery.contains("vault_keys") ||
                                         sqlQuery.contains("deleted_logins") ||

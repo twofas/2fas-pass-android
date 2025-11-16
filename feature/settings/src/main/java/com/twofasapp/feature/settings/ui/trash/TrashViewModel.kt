@@ -10,9 +10,11 @@ package com.twofasapp.feature.settings.ui.trash
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
+import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
+import com.twofasapp.core.design.state.loading
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TrashRepository
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class TrashViewModel(
+    dispatchers: Dispatchers,
     private val purchasesRepository: PurchasesRepository,
     private val trashRepository: TrashRepository,
     private val itemsRepository: ItemsRepository,
@@ -45,7 +48,7 @@ internal class TrashViewModel(
             }
         }
 
-        launchScoped {
+        launchScoped(dispatchers.io) {
             trashRepository.observeDeleted().collect { items ->
                 val itemStates = items
                     .groupBy { it.vaultId }
@@ -77,18 +80,22 @@ internal class TrashViewModel(
         }
     }
 
-    fun restore() {
+    fun restore(onComplete: (String) -> Unit) {
         launchScoped {
-            trashRepository.restore(*uiState.value.selected.toTypedArray())
+            val ids = uiState.value.selected.toTypedArray()
+            screenState.loading()
             clearSelections()
-        }
+            trashRepository.restore(*ids)
+        }.invokeOnCompletion { onComplete("Items restored!") }
     }
 
-    fun delete() {
+    fun delete(onComplete: (String) -> Unit) {
         launchScoped {
-            trashRepository.delete(*uiState.value.selected.toTypedArray())
+            val ids = uiState.value.selected.toTypedArray()
+            screenState.loading()
             clearSelections()
-        }
+            trashRepository.delete(*ids)
+        }.invokeOnCompletion { onComplete("Items deleted!") }
     }
 
     fun toggle(item: Item) {

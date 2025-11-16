@@ -41,7 +41,7 @@ import com.twofasapp.core.locale.MdtLocale
 @Composable
 fun SecurityTypeModal(
     onDismissRequest: () -> Unit,
-    selected: SecurityType,
+    selected: SecurityType?,
     onSelect: (SecurityType) -> Unit = {},
 ) {
     Modal(
@@ -57,7 +57,7 @@ fun SecurityTypeModal(
 
 @Composable
 private fun Content(
-    selected: SecurityType,
+    selected: SecurityType?,
     onSelect: (SecurityType) -> Unit = {},
 ) {
     Column(

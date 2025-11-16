@@ -45,8 +45,12 @@ internal data class HomeUiState(
 
     val isItemsLimitReached: Boolean
         get() = items.size >= maxItems
+
+    val selectedItems: List<Item>
+        get() = items.filter { selectedItemIds.contains(it.id) }
 }
 
 internal sealed interface HomeUiEvent {
     data object OpenQuickSetup : HomeUiEvent
+    data class ShowToast(val message: String) : HomeUiEvent
 }

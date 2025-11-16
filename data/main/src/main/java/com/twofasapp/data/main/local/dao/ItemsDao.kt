@@ -52,6 +52,13 @@ interface ItemsDao {
     @Query("DELETE FROM items WHERE id IN (:ids)")
     suspend fun delete(ids: List<String>)
 
+    @Transaction
+    suspend fun deleteInChunks(ids: List<String>) {
+        ids.chunked(500).forEach { chunk ->
+            delete(chunk)
+        }
+    }
+
     @Query("DELETE FROM items")
     suspend fun deleteAll()
 

@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.ktx.uniform
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.IconButton
@@ -35,6 +37,7 @@ import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.home.HomeUiState
+import com.twofasapp.feature.itemform.modals.securitytype.SecurityTypeModal
 
 @Composable
 internal fun HomeAppBar(
@@ -49,9 +52,10 @@ internal fun HomeAppBar(
     onSelectAllClick: () -> Unit = {},
     onDeselectClick: () -> Unit = {},
     onDeleteItemsConfirmed: () -> Unit = {},
+    onChangeSecurityType: (SecurityType) -> Unit = {},
 ) {
-    var showDeleteConfirmation by remember { mutableStateOf(false) }
-    var showSecurityType by remember { mutableStateOf(false) }
+    var showDeleteConfirmationPrompt by remember { mutableStateOf(false) }
+    var showSecurityTypePicker by remember { mutableStateOf(false) }
     var showTags by remember { mutableStateOf(false) }
 
     BackHandler(uiState.editMode) {
@@ -119,16 +123,19 @@ internal fun HomeAppBar(
 
                         IconButton(
                             icon = MdtIcons.Delete,
-                            onClick = { showDeleteConfirmation = true },
+                            enabled = uiState.selectedItemIds.isNotEmpty(),
+                            onClick = { showDeleteConfirmationPrompt = true },
                         )
 
                         IconButton(
                             icon = MdtIcons.Tier2,
-                            onClick = { showSecurityType = true },
+                            enabled = uiState.selectedItemIds.isNotEmpty(),
+                            onClick = { showSecurityTypePicker = true },
                         )
 
                         IconButton(
                             icon = MdtIcons.Tag,
+                            enabled = uiState.selectedItemIds.isNotEmpty(),
                             onClick = { showTags = true },
                         )
                     }
@@ -176,9 +183,9 @@ internal fun HomeAppBar(
         }
     }
 
-    if (showDeleteConfirmation) {
+    if (showDeleteConfirmationPrompt) {
         ConfirmDialog(
-            onDismissRequest = { showDeleteConfirmation = false },
+            onDismissRequest = { showDeleteConfirmationPrompt = false },
             title = if (uiState.selectedItemIds.size == 1) {
                 MdtLocale.strings.loginDeleteConfirmTitle
             } else {
@@ -191,6 +198,17 @@ internal fun HomeAppBar(
             },
             icon = MdtIcons.Delete,
             onPositive = { onDeleteItemsConfirmed() },
+        )
+    }
+
+    if (showSecurityTypePicker) {
+        val selectedItems = uiState.selectedItems
+        val selectedSecurityType = selectedItems.map { it.securityType }.uniform()
+
+        SecurityTypeModal(
+            onDismissRequest = { showSecurityTypePicker = false },
+            onSelect = { onChangeSecurityType(it) },
+            selected = selectedSecurityType,
         )
     }
 }

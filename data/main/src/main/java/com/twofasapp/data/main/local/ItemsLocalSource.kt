@@ -57,7 +57,7 @@ internal class ItemsLocalSource(
     }
 
     suspend fun delete(ids: List<String>) {
-        itemsDao.delete(ids)
+        itemsDao.deleteInChunks(ids)
     }
 
     suspend fun deleteAll() {

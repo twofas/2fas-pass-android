@@ -14,6 +14,7 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.toggle
@@ -119,13 +120,13 @@ internal class HomeViewModel(
                     vaultCryptoScope.withVaultCipher(vault) {
                         items
                             .mapNotNull { item ->
-                                val matchingItemUiState = uiState.value.items.find { it.id == item.id }
-
-                                if (matchingItemUiState?.updatedAt == item.updatedAt) {
-                                    matchingItemUiState
-                                } else {
-                                    itemEncryptionMapper.decryptItem(item, this)
-                                }
+//                                val matchingItemUiState = uiState.value.items.find { it.id == item.id }
+//
+//                                if (matchingItemUiState?.updatedAt == item.updatedAt) {
+//                                    matchingItemUiState
+//                                } else {
+                                itemEncryptionMapper.decryptItem(item, this)
+//                                }
                             }
                             .sortedWith(
                                 when (sortingMethod) {
@@ -255,14 +256,44 @@ internal class HomeViewModel(
         }
     }
 
+    private fun cleatEditModeSelections() {
+        uiState.update { it.copy(selectedItemIds = emptyList(), editMode = false) }
+    }
+
     fun trashSelectedItems() {
         val idsToDelete = uiState.value.selectedItemIds
-        uiState.update { it.copy(selectedItemIds = emptyList(), editMode = false) }
+        cleatEditModeSelections()
 
         screenState.loading()
 
-        launchScoped(dispatchers.io) {
+        launchScoped {
             trashRepository.trash(*idsToDelete.toTypedArray())
+        }
+    }
+
+    fun changeSelectedItemsSecurityType(securityType: SecurityType) {
+        launchScoped {
+            val itemsToEdit = uiState.value.selectedItems.filter { it.securityType != securityType }
+            cleatEditModeSelections()
+            screenState.loading()
+
+            val updatedEncryptedItems = vaultCryptoScope.withVaultCipher(vaultId = vaultsRepository.getVault().id) {
+                val updatedItems = itemsToEdit.map { item ->
+                    item.copy(
+                        securityType = securityType,
+                        content = itemEncryptionMapper.decryptSecretFields(this, item.securityType, item.content),
+                    )
+                }
+
+                itemEncryptionMapper.encryptItems(
+                    vaultCipher = this,
+                    items = updatedItems,
+                )
+            }
+
+            itemsRepository.saveItems(updatedEncryptedItems)
+
+            publishEvent(HomeUiEvent.ShowToast("Items updated!"))
         }
     }
 }

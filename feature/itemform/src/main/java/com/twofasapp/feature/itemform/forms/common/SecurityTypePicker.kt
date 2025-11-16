@@ -42,7 +42,7 @@ internal fun SecurityTypePicker(
     onOpened: () -> Unit = {},
     onSelect: (SecurityType) -> Unit = {},
 ) {
-    var showSecurityLevelModal by remember { mutableStateOf(false) }
+    var showSecurityTypeModal by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -50,7 +50,7 @@ internal fun SecurityTypePicker(
             .background(MdtTheme.color.surfaceContainer)
             .clickable {
                 onOpened()
-                showSecurityLevelModal = true
+                showSecurityTypeModal = true
             }
             .padding(vertical = 8.dp)
             .padding(start = 12.dp, end = 4.dp),
@@ -70,9 +70,9 @@ internal fun SecurityTypePicker(
         )
     }
 
-    if (showSecurityLevelModal) {
+    if (showSecurityTypeModal) {
         SecurityTypeModal(
-            onDismissRequest = { showSecurityLevelModal = false },
+            onDismissRequest = { showSecurityTypeModal = false },
             onSelect = { onSelect(it) },
             selected = securityType,
         )

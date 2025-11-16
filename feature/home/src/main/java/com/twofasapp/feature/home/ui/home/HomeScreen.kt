@@ -40,7 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
+import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContentType
@@ -118,6 +120,7 @@ internal fun HomeScreen(
         onManageTagsClick = openManageTags,
         onDeveloperClick = openDeveloper,
         onDeleteSelectedItemsClick = { viewModel.trashSelectedItems() },
+        onChangeSelectedItemsSecurityType = { viewModel.changeSelectedItemsSecurityType(it) },
     )
 }
 
@@ -143,7 +146,9 @@ private fun Content(
     onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
     onDeleteSelectedItemsClick: () -> Unit = {},
+    onChangeSelectedItemsSecurityType: (SecurityType) -> Unit = {},
 ) {
+    val context = LocalContext.current
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
@@ -162,6 +167,7 @@ private fun Content(
         LaunchedEffect(Unit) {
             when (uiEvent) {
                 is HomeUiEvent.OpenQuickSetup -> onOpenQuickSetupClick()
+                is HomeUiEvent.ShowToast -> context.toastShort(uiEvent.message)
             }
 
             onEventConsumed(uiEvent)
@@ -182,6 +188,7 @@ private fun Content(
                 onSelectAllClick = { onSelectAllClick() },
                 onDeselectClick = { onDeselectClick() },
                 onDeleteItemsConfirmed = { onDeleteSelectedItemsClick() },
+                onChangeSecurityType = { onChangeSelectedItemsSecurityType(it) },
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

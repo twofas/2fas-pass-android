@@ -19,15 +19,11 @@ internal class DeletedItemsLocalSource(
     }
 
     suspend fun saveDeletedItems(entities: List<DeletedItemEntity>) {
-        if (entities.size > 500) {
-            deletedItemsDao.saveInTransaction(entities)
-        } else {
-            deletedItemsDao.save(entities)
-        }
+        deletedItemsDao.saveInTransaction(entities)
     }
 
     suspend fun clearDeletedItems(entities: List<String>) {
-        deletedItemsDao.delete(entities)
+        deletedItemsDao.deleteInTransaction(entities)
     }
 
     suspend fun clearAll(vaultId: String) {
