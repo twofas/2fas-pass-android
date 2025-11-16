@@ -117,4 +117,5 @@ object MdtIcons {
     val Upgrade @Composable get() = painterResource(R.drawable.ic_upgrade)
     val CreditCard @Composable get() = painterResource(R.drawable.ic_credit_card)
     val SelectAll @Composable get() = painterResource(R.drawable.ic_select_all)
+    val Deselect @Composable get() = painterResource(R.drawable.ic_deselect)
 }

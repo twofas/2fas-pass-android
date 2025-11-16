@@ -112,6 +112,7 @@ internal fun HomeScreen(
         onChangeEditMode = { viewModel.changeEditMode(it) },
         onToggleItemSelection = { viewModel.toggleItemSelection(it) },
         onSelectAllClick = { viewModel.selectAllItems() },
+        onDeselectClick = { viewModel.deselectItems() },
         onToggleTag = { viewModel.toggleTag(it) },
         onClearFiltersClick = { viewModel.clearFilters() },
         onManageTagsClick = openManageTags,
@@ -135,6 +136,7 @@ private fun Content(
     onChangeEditMode: (Boolean) -> Unit = {},
     onToggleItemSelection: (String) -> Unit = {},
     onSelectAllClick: () -> Unit = {},
+    onDeselectClick: () -> Unit = {},
     onToggleTag: (Tag) -> Unit = {},
     onClearFiltersClick: () -> Unit = {},
     onManageTagsClick: () -> Unit = {},
@@ -176,6 +178,7 @@ private fun Content(
                 onFilterClick = { showFilterModal = true },
                 onClearFiltersClick = { onClearFiltersClick() },
                 onSelectAllClick = { onSelectAllClick() },
+                onDeselectClick = { onDeselectClick() },
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

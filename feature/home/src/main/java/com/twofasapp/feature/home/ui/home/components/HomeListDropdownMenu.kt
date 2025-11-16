@@ -22,6 +22,7 @@ import com.twofasapp.core.design.foundation.menu.DropdownMenuItem
 @Composable
 internal fun HomeListDropdownMenu(
     selectedTag: Tag? = null,
+    onEditListClick: () -> Unit,
     onSortClick: () -> Unit,
     onFilterClick: () -> Unit,
     onClearFiltersClick: () -> Unit,
@@ -52,6 +53,15 @@ internal fun HomeListDropdownMenu(
             }
         },
         content = {
+            DropdownMenuItem(
+                text = "Edit list",
+                icon = MdtIcons.Edit,
+                onClick = {
+                    showDropdown = false
+                    onEditListClick()
+                },
+            )
+
             DropdownMenuItem(
                 text = "Sort by",
                 icon = MdtIcons.Sort,

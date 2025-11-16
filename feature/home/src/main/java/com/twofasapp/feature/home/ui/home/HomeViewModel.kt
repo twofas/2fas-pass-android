@@ -245,4 +245,12 @@ internal class HomeViewModel(
             )
         }
     }
+
+    fun deselectItems() {
+        uiState.update { state ->
+            state.copy(
+                selectedItemIds = emptyList(),
+            )
+        }
+    }
 }

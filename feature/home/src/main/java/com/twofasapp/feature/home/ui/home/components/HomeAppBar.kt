@@ -42,6 +42,7 @@ internal fun HomeAppBar(
     onFilterClick: () -> Unit = {},
     onClearFiltersClick: () -> Unit = {},
     onSelectAllClick: () -> Unit = {},
+    onDeselectClick: () -> Unit = {},
 ) {
     BackHandler(uiState.editMode) {
         onChangeEditMode(false)
@@ -102,8 +103,8 @@ internal fun HomeAppBar(
                         spacing = 8.dp,
                     ) {
                         IconButton(
-                            icon = MdtIcons.SelectAll,
-                            onClick = onSelectAllClick,
+                            icon = if (uiState.items.size == uiState.selectedItemIds.size) MdtIcons.Deselect else MdtIcons.SelectAll,
+                            onClick = if (uiState.items.size == uiState.selectedItemIds.size) onDeselectClick else onSelectAllClick,
                         )
 
                         IconButton(
@@ -153,6 +154,7 @@ internal fun HomeAppBar(
                         if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
                             HomeListDropdownMenu(
                                 selectedTag = uiState.selectedTag,
+                                onEditListClick = { onChangeEditMode(true) },
                                 onSortClick = { onSortClick() },
                                 onFilterClick = { onFilterClick() },
                                 onClearFiltersClick = { onClearFiltersClick() },
