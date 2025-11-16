@@ -77,6 +77,7 @@ internal fun TagsPicker(
         TagsPickerModal(
             tags = tags,
             selectedTagIds = selectedTagIds,
+            forceEnableConfirmButton = false,
             onDismissRequest = { showTagsModal = false },
             onConfirmTagsSelections = onConfirmTagsSelections,
         )

@@ -121,6 +121,7 @@ internal fun HomeScreen(
         onDeveloperClick = openDeveloper,
         onDeleteSelectedItemsClick = { viewModel.trashSelectedItems() },
         onChangeSelectedItemsSecurityType = { viewModel.changeSelectedItemsSecurityType(it) },
+        onChangeSelectedItemsTags = { viewModel.changeSelectedItemsTags(it) },
     )
 }
 
@@ -147,6 +148,7 @@ private fun Content(
     onDeveloperClick: () -> Unit = {},
     onDeleteSelectedItemsClick: () -> Unit = {},
     onChangeSelectedItemsSecurityType: (SecurityType) -> Unit = {},
+    onChangeSelectedItemsTags: (List<String>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -189,6 +191,7 @@ private fun Content(
                 onDeselectClick = { onDeselectClick() },
                 onDeleteItemsConfirmed = { onDeleteSelectedItemsClick() },
                 onChangeSecurityType = { onChangeSelectedItemsSecurityType(it) },
+                onChangeTags = { onChangeSelectedItemsTags(it) },
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

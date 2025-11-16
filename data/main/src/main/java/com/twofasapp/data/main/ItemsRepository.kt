@@ -29,6 +29,7 @@ interface ItemsRepository {
     suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Item>)
     suspend fun lockItems()
     suspend fun unlockItems()
+    suspend fun updateTags(tags: List<String>, vararg ids: String)
     suspend fun deleteTag(tagId: String)
     suspend fun permanentlyDeleteAll()
 }

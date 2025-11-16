@@ -120,25 +120,20 @@ internal class HomeViewModel(
                     vaultCryptoScope.withVaultCipher(vault) {
                         items
                             .mapNotNull { item ->
-//                                val matchingItemUiState = uiState.value.items.find { it.id == item.id }
-//
-//                                if (matchingItemUiState?.updatedAt == item.updatedAt) {
-//                                    matchingItemUiState
-//                                } else {
-                                itemEncryptionMapper.decryptItem(item, this)
-//                                }
+                                val matchingItemUiState = uiState.value.items.find { it.id == item.id }
+
+                                if (matchingItemUiState?.updatedAt == item.updatedAt) {
+                                    matchingItemUiState
+                                } else {
+                                    itemEncryptionMapper.decryptItem(item, this)
+                                }
                             }
                             .sortedWith(
                                 when (sortingMethod) {
-                                    SortingMethod.NameAsc -> compareBy<Item> { it.content?.name.orEmpty().lowercase() }.thenBy { it.createdAt }
-                                    SortingMethod.NameDesc -> compareByDescending<Item> {
-                                        it.content?.name.orEmpty().lowercase()
-                                    }.thenByDescending { it.createdAt }
-
-                                    SortingMethod.CreationDateAsc -> compareBy<Item> { it.createdAt }.thenBy { it.content?.name.orEmpty().lowercase() }
-                                    SortingMethod.CreationDateDesc -> compareByDescending<Item> { it.createdAt }.thenByDescending {
-                                        it.content?.name.orEmpty().lowercase()
-                                    }
+                                    SortingMethod.NameAsc -> compareBy<Item> { it.content.name.lowercase() }.thenBy { it.createdAt }
+                                    SortingMethod.NameDesc -> compareByDescending<Item> { it.content.name.lowercase() }.thenByDescending { it.createdAt }
+                                    SortingMethod.CreationDateAsc -> compareBy<Item> { it.createdAt }.thenBy { it.content.name.lowercase() }
+                                    SortingMethod.CreationDateDesc -> compareByDescending<Item> { it.createdAt }.thenByDescending { it.content.name.lowercase() }
                                 },
                             )
                     }
@@ -292,6 +287,18 @@ internal class HomeViewModel(
             }
 
             itemsRepository.saveItems(updatedEncryptedItems)
+
+            publishEvent(HomeUiEvent.ShowToast("Items updated!"))
+        }
+    }
+
+    fun changeSelectedItemsTags(tagIds: List<String>) {
+        launchScoped {
+            val itemsToEdit = uiState.value.selectedItemIds
+            cleatEditModeSelections()
+            screenState.loading()
+
+            itemsRepository.updateTags(tagIds, *itemsToEdit.toTypedArray())
 
             publishEvent(HomeUiEvent.ShowToast("Items updated!"))
         }

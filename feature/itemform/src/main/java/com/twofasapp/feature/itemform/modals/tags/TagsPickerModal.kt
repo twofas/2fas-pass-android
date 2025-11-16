@@ -45,9 +45,10 @@ import com.twofasapp.core.locale.MdtLocale
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun TagsPickerModal(
+fun TagsPickerModal(
     tags: List<Tag>,
     selectedTagIds: List<String>,
+    forceEnableConfirmButton: Boolean,
     onDismissRequest: () -> Unit,
     onConfirmTagsSelections: (List<String>) -> Unit,
 ) {
@@ -55,6 +56,7 @@ internal fun TagsPickerModal(
         TagsPickerContent(
             tags = tags,
             selectedTagIds = selectedTagIds,
+            forceEnableConfirmButton = forceEnableConfirmButton,
             onDismissRequest = onDismissRequest,
             onConfirmTagsSelections = onConfirmTagsSelections,
         )
@@ -66,6 +68,7 @@ private fun TagsPickerContent(
     viewModel: TagsPickerViewModel = koinViewModel(),
     tags: List<Tag>,
     selectedTagIds: List<String>,
+    forceEnableConfirmButton: Boolean,
     onDismissRequest: () -> Unit,
     onConfirmTagsSelections: (List<String>) -> Unit = {},
 ) {
@@ -88,6 +91,7 @@ private fun TagsPickerContent(
                     tags = uiState.tags,
                     initiallySelectedTagIds = selectedTagIds,
                     selectedTagIds = uiState.selectedTagIds,
+                    forceEnableConfirmButton = forceEnableConfirmButton,
                     onAddNewTag = { viewModel.openAddTag() },
                     onToggle = { viewModel.toggleTagId(it) },
                     onConfirm = { dismissAction { onConfirmTagsSelections(uiState.selectedTagIds) } },
@@ -110,6 +114,7 @@ private fun ModalContent(
     tags: List<Tag>,
     initiallySelectedTagIds: List<String>,
     selectedTagIds: List<String>,
+    forceEnableConfirmButton: Boolean,
     onAddNewTag: (List<String>) -> Unit = {},
     onToggle: (String) -> Unit = {},
     onConfirm: (List<String>) -> Unit = {},
@@ -188,7 +193,7 @@ private fun ModalContent(
 
                     Button(
                         text = MdtLocale.strings.commonConfirm,
-                        enabled = initiallySelectedTagIds != selectedTagIds,
+                        enabled = initiallySelectedTagIds != selectedTagIds || forceEnableConfirmButton,
                         onClick = { onConfirm(selectedTagIds) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -214,6 +219,7 @@ private fun Preview() {
             ),
             initiallySelectedTagIds = emptyList(),
             selectedTagIds = emptyList(),
+            forceEnableConfirmButton = false,
             onAddNewTag = {},
             onToggle = {},
             onConfirm = {},
@@ -230,6 +236,7 @@ private fun PreviewEmpty() {
             initiallySelectedTagIds = emptyList(),
             selectedTagIds = emptyList(),
             onAddNewTag = {},
+            forceEnableConfirmButton = false,
             onToggle = {},
             onConfirm = {},
         )

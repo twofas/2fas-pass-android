@@ -38,6 +38,7 @@ import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.home.HomeUiState
 import com.twofasapp.feature.itemform.modals.securitytype.SecurityTypeModal
+import com.twofasapp.feature.itemform.modals.tags.TagsPickerModal
 
 @Composable
 internal fun HomeAppBar(
@@ -53,10 +54,11 @@ internal fun HomeAppBar(
     onDeselectClick: () -> Unit = {},
     onDeleteItemsConfirmed: () -> Unit = {},
     onChangeSecurityType: (SecurityType) -> Unit = {},
+    onChangeTags: (List<String>) -> Unit = {},
 ) {
     var showDeleteConfirmationPrompt by remember { mutableStateOf(false) }
     var showSecurityTypePicker by remember { mutableStateOf(false) }
-    var showTags by remember { mutableStateOf(false) }
+    var showTagsPicker by remember { mutableStateOf(false) }
 
     BackHandler(uiState.editMode) {
         onChangeEditMode(false)
@@ -136,7 +138,7 @@ internal fun HomeAppBar(
                         IconButton(
                             icon = MdtIcons.Tag,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
-                            onClick = { showTags = true },
+                            onClick = { showTagsPicker = true },
                         )
                     }
                 },
@@ -209,6 +211,19 @@ internal fun HomeAppBar(
             onDismissRequest = { showSecurityTypePicker = false },
             onSelect = { onChangeSecurityType(it) },
             selected = selectedSecurityType,
+        )
+    }
+
+    if (showTagsPicker) {
+        val selectedItems = uiState.selectedItems
+        val selectedTagIds = selectedItems.map { it.tagIds }.flatten().distinct()
+
+        TagsPickerModal(
+            onDismissRequest = { showTagsPicker = false },
+            tags = uiState.tags,
+            selectedTagIds = selectedTagIds,
+            forceEnableConfirmButton = true,
+            onConfirmTagsSelections = onChangeTags,
         )
     }
 }
