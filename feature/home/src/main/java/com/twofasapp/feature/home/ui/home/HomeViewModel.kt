@@ -17,6 +17,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.toggle
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
@@ -305,5 +306,9 @@ internal class HomeViewModel(
 
     fun updateScrollingUp(scrollingUp: Boolean) {
         uiState.update { it.copy(scrollingUp = scrollingUp) }
+    }
+
+    fun updateSelectedItemType(itemContentType: ItemContentType?) {
+        uiState.update { it.copy(selectedItemType = itemContentType) }
     }
 }

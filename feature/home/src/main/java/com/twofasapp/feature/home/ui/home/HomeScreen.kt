@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -112,6 +114,7 @@ internal fun HomeScreen(
         onTrashConfirmed = { viewModel.trash(it) },
         onSearchQueryChange = { viewModel.search(it) },
         onSearchFocusChange = { viewModel.focusSearch(it) },
+        onSelectedItemTypeChange = { viewModel.updateSelectedItemType(it) },
         onSortingMethodSelect = { viewModel.updateSortingMethod(it) },
         onChangeEditMode = { viewModel.changeEditMode(it) },
         onScrollingUpChanged = { viewModel.updateScrollingUp(it) },
@@ -140,6 +143,7 @@ private fun Content(
     onTrashConfirmed: (String) -> Unit = {},
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
+    onSelectedItemTypeChange: (ItemContentType?) -> Unit = {},
     onSortingMethodSelect: (SortingMethod) -> Unit = {},
     onChangeEditMode: (Boolean) -> Unit = {},
     onScrollingUpChanged: (Boolean) -> Unit = {},
@@ -241,15 +245,14 @@ private fun Content(
                 ) {
                     stickyListItem(HomeListItem.SearchBar) {
                         HomeSearchBar(
-                            modifier = Modifier
-                                .background(MdtTheme.color.background)
-                                .padding(horizontal = 12.dp)
-                                .padding(bottom = 8.dp, top = 4.dp),
+                            modifier = Modifier.background(MdtTheme.color.background),
                             searchQuery = uiState.searchQuery,
                             searchFocused = uiState.searchFocused,
                             selectedTag = uiState.selectedTag,
+                            selectedItemType = uiState.selectedItemType,
                             onSearchQueryChange = onSearchQueryChange,
                             onSearchFocusChange = onSearchFocusChange,
+                            onSelectedItemTypeChange = onSelectedItemTypeChange,
                             onClearFilter = onClearFiltersClick,
                         )
                     }
@@ -308,6 +311,15 @@ private fun Content(
                                 )
                             }
                         }
+                    }
+
+                    listItem(HomeListItem.Footer) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .animateItem(),
+                        )
                     }
                 }
             }

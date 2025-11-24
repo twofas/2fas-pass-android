@@ -56,15 +56,42 @@ inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, isFirst: Boolean,
 fun LazyListState.isScrollingUp(): Boolean {
     var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
     var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
+    var lastScrollDirection by remember(this) { mutableStateOf(true) }
+
     return remember(this) {
         derivedStateOf {
-            if (previousIndex != firstVisibleItemIndex) {
-                previousIndex > firstVisibleItemIndex
-            } else {
-                previousScrollOffset >= firstVisibleItemScrollOffset
-            }.also {
+            // If list is not scrollable (content fits in viewport), always return true to show bottom bar
+            val canScroll = canScrollBackward || canScrollForward
+            if (!canScroll) {
+                return@derivedStateOf true
+            }
+
+            // Only update direction when actively scrolling (prevents bounce-back from affecting state)
+            if (isScrollInProgress) {
+                val scrollingUp = if (previousIndex != firstVisibleItemIndex) {
+                    previousIndex > firstVisibleItemIndex
+                } else {
+                    previousScrollOffset >= firstVisibleItemScrollOffset
+                }
+
+                // If we're at the bottom and detecting upward scroll, it's likely overscroll bounce
+                // Keep the last direction instead of switching
+                val atBottom = !canScrollForward
+                val shouldIgnore = atBottom && scrollingUp && !lastScrollDirection
+
                 previousIndex = firstVisibleItemIndex
                 previousScrollOffset = firstVisibleItemScrollOffset
+
+                if (!shouldIgnore) {
+                    lastScrollDirection = scrollingUp
+                }
+
+                if (shouldIgnore) lastScrollDirection else scrollingUp
+            } else {
+                // When not scrolling, maintain the last known direction
+                previousIndex = firstVisibleItemIndex
+                previousScrollOffset = firstVisibleItemScrollOffset
+                lastScrollDirection
             }
         }
     }.value

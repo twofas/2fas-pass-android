@@ -12,6 +12,7 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.Vault
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.filterBySearchQuery
 import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
@@ -22,6 +23,7 @@ internal data class HomeUiState(
     val items: List<Item> = emptyList(),
     val tags: List<Tag> = emptyList(),
     val selectedTag: Tag? = null,
+    val selectedItemType: ItemContentType? = null,
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
     val editMode: Boolean = false,
@@ -35,6 +37,13 @@ internal data class HomeUiState(
     val itemsFiltered: List<Item>
         get() = items
             .filter { it.content !is ItemContent.Unknown }
+            .filter { item ->
+                if (selectedItemType == null) {
+                    true
+                } else {
+                    item.contentType == selectedItemType
+                }
+            }
             .filter { item ->
                 if (selectedTag == null) {
                     true

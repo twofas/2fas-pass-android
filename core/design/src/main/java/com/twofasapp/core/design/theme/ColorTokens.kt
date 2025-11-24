@@ -58,4 +58,13 @@ data class ColorTokens(
     val onSurface20: Color = onSurface.copy(alpha = 0.20f),
     val onSurface24: Color = onSurface.copy(alpha = 0.24f),
     val onSurface28: Color = onSurface.copy(alpha = 0.28f),
+
+    val bottomBar: Color = Color.Unspecified,
+
+    val itemLoginContent: Color = Color.Unspecified,
+    val itemLoginContainer: Color = Color.Unspecified,
+    val itemSecureNoteContent: Color = Color.Unspecified,
+    val itemSecureNoteContainer: Color = Color.Unspecified,
+    val itemCreditCardContent: Color = Color.Unspecified,
+    val itemCreditCardContainer: Color = Color.Unspecified,
 )

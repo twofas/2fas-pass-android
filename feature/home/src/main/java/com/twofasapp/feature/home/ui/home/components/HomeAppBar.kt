@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityType
@@ -57,6 +58,7 @@ internal fun HomeAppBar(
     var showDeleteConfirmationPrompt by remember { mutableStateOf(false) }
     var showSecurityTypePicker by remember { mutableStateOf(false) }
     var showTagsPicker by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     BackHandler(uiState.editMode) {
         onChangeEditMode(false)
@@ -97,7 +99,10 @@ internal fun HomeAppBar(
                     ) {
                         IconButton(
                             icon = MdtIcons.Close,
-                            onClick = { onChangeEditMode(false) },
+                            onClick = {
+                                onChangeEditMode(false)
+                                focusManager.clearFocus()
+                            },
                             modifier = Modifier.offset(x = (-10).dp),
                         )
 
@@ -123,19 +128,28 @@ internal fun HomeAppBar(
                         IconButton(
                             icon = MdtIcons.Delete,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
-                            onClick = { showDeleteConfirmationPrompt = true },
+                            onClick = {
+                                focusManager.clearFocus()
+                                showDeleteConfirmationPrompt = true
+                            },
                         )
 
                         IconButton(
                             icon = MdtIcons.Tier2,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
-                            onClick = { showSecurityTypePicker = true },
+                            onClick = {
+                                focusManager.clearFocus()
+                                showSecurityTypePicker = true
+                            },
                         )
 
                         IconButton(
                             icon = MdtIcons.Tag,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
-                            onClick = { showTagsPicker = true },
+                            onClick = {
+                                focusManager.clearFocus()
+                                showTagsPicker = true
+                            },
                         )
                     }
                 },
@@ -169,10 +183,22 @@ internal fun HomeAppBar(
                         if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
                             HomeListDropdownMenu(
                                 selectedTag = uiState.selectedTag,
-                                onEditListClick = { onChangeEditMode(true) },
-                                onSortClick = { onSortClick() },
-                                onFilterClick = { onFilterClick() },
-                                onClearFiltersClick = { onClearFiltersClick() },
+                                onEditListClick = {
+                                    focusManager.clearFocus()
+                                    onChangeEditMode(true)
+                                },
+                                onSortClick = {
+                                    focusManager.clearFocus()
+                                    onSortClick()
+                                },
+                                onFilterClick = {
+                                    focusManager.clearFocus()
+                                    onFilterClick()
+                                },
+                                onClearFiltersClick = {
+                                    focusManager.clearFocus()
+                                    onClearFiltersClick()
+                                },
                             )
                         }
                     }
