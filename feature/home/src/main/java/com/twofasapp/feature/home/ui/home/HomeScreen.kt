@@ -23,8 +23,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,6 +81,7 @@ internal fun HomeScreen(
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
     onHomeInEditModeChanged: (Boolean) -> Unit,
+    onHomeScrollingUpChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -91,6 +89,10 @@ internal fun HomeScreen(
 
     LaunchedEffect(uiState.editMode) {
         onHomeInEditModeChanged(uiState.editMode)
+    }
+
+    LaunchedEffect(uiState.scrollingUp) {
+        onHomeScrollingUpChanged(uiState.scrollingUp)
     }
 
     Content(
@@ -112,6 +114,7 @@ internal fun HomeScreen(
         onSearchFocusChange = { viewModel.focusSearch(it) },
         onSortingMethodSelect = { viewModel.updateSortingMethod(it) },
         onChangeEditMode = { viewModel.changeEditMode(it) },
+        onScrollingUpChanged = { viewModel.updateScrollingUp(it) },
         onToggleItemSelection = { viewModel.toggleItemSelection(it) },
         onSelectAllClick = { viewModel.selectAllItems() },
         onDeselectClick = { viewModel.deselectItems() },
@@ -139,6 +142,7 @@ private fun Content(
     onSearchFocusChange: (Boolean) -> Unit = {},
     onSortingMethodSelect: (SortingMethod) -> Unit = {},
     onChangeEditMode: (Boolean) -> Unit = {},
+    onScrollingUpChanged: (Boolean) -> Unit = {},
     onToggleItemSelection: (String) -> Unit = {},
     onSelectAllClick: () -> Unit = {},
     onDeselectClick: () -> Unit = {},
@@ -152,8 +156,7 @@ private fun Content(
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
-    val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
+    var scrollingUp by remember { mutableStateOf(false) }
     var showSortModal by remember { mutableStateOf(false) }
     var showFilterModal by remember { mutableStateOf(false) }
     var showAddItemModal by remember { mutableStateOf(false) }
@@ -164,6 +167,8 @@ private fun Content(
         DeviceType.Medium -> 2
         DeviceType.Expanded -> 3
     }
+
+    scrollingUp = listState.isScrollingUp()
 
     uiState.events.firstOrNull()?.let { uiEvent ->
         LaunchedEffect(Unit) {
@@ -176,12 +181,15 @@ private fun Content(
         }
     }
 
+    LaunchedEffect(scrollingUp) {
+        onScrollingUpChanged(scrollingUp)
+    }
+
     Scaffold(
         topBar = {
             HomeAppBar(
                 uiState = uiState,
                 screenState = screenState,
-                scrollBehavior = scrollBehavior,
                 onDeveloperClick = { onDeveloperClick() },
                 onChangeEditMode = { onChangeEditMode(it) },
                 onSortClick = { showSortModal = true },
@@ -194,7 +202,7 @@ private fun Content(
                 onChangeTags = { onChangeSelectedItemsTags(it) },
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier,
     ) { padding ->
 
         Box(

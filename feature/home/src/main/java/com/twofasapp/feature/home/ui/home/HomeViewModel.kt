@@ -302,4 +302,8 @@ internal class HomeViewModel(
             publishEvent(HomeUiEvent.ShowToast("Items updated!"))
         }
     }
+
+    fun updateScrollingUp(scrollingUp: Boolean) {
+        uiState.update { it.copy(scrollingUp = scrollingUp) }
+    }
 }

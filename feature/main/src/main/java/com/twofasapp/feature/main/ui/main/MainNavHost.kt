@@ -55,6 +55,7 @@ internal fun MainNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     onHomeInEditModeChanged: (Boolean) -> Unit,
+    onHomeScrollingUpChanged: (Boolean) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -93,6 +94,7 @@ internal fun MainNavHost(
                     navController.navigateTopLevel(Screen.Developer)
                 },
                 onHomeInEditModeChanged = onHomeInEditModeChanged,
+                onHomeScrollingUpChanged = onHomeScrollingUpChanged,
             )
         }
 

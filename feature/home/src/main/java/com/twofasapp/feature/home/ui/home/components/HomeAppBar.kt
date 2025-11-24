@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +43,6 @@ import com.twofasapp.feature.itemform.modals.tags.TagsPickerMultiModal
 internal fun HomeAppBar(
     uiState: HomeUiState,
     screenState: ScreenState,
-    scrollBehavior: TopAppBarScrollBehavior,
     onDeveloperClick: () -> Unit = {},
     onChangeEditMode: (Boolean) -> Unit = {},
     onSortClick: () -> Unit = {},
@@ -93,7 +90,6 @@ internal fun HomeAppBar(
         if (editMode) {
             TopAppBar(
                 showBackButton = false,
-                scrollBehavior = scrollBehavior,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxHeight(),
@@ -147,7 +143,6 @@ internal fun HomeAppBar(
         } else {
             TopAppBar(
                 showBackButton = false,
-                scrollBehavior = scrollBehavior,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxHeight(),
@@ -234,7 +229,6 @@ private fun Preview() {
         HomeAppBar(
             uiState = HomeUiState(),
             screenState = ScreenState.Success,
-            scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
         )
     }
 }
@@ -246,7 +240,6 @@ private fun PreviewEditMode() {
         HomeAppBar(
             uiState = HomeUiState(editMode = true, selectedItemIds = listOf("", "", "")),
             screenState = ScreenState.Success,
-            scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
         )
     }
 }

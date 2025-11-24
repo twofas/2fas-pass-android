@@ -86,6 +86,7 @@ private fun Content(
     val uriHandler = LocalUriHandler.current
     var currentScreenRoute by remember { mutableStateOf<String?>(null) }
     var bottomBarVisible by remember { mutableStateOf(false) }
+    var homeScrollingUp by remember { mutableStateOf(false) }
     var homeInEditMode by remember { mutableStateOf(false) }
     var browserConnectData by remember { mutableStateOf<ConnectData?>(null) }
     var browserRequestData by remember { mutableStateOf<BrowserRequestData?>(null) }
@@ -151,10 +152,11 @@ private fun Content(
             navController = navController,
             modifier = Modifier.weight(1f),
             onHomeInEditModeChanged = { homeInEditMode = it },
+            onHomeScrollingUpChanged = { homeScrollingUp = it },
         )
 
         AnimatedVisibility(
-            visible = bottomBarVisible && homeInEditMode.not(),
+            visible = bottomBarVisible && homeInEditMode.not() && homeScrollingUp,
             enter = slideInVertically { it } + expandVertically(expandFrom = Alignment.Bottom),
             exit = shrinkVertically(shrinkTowards = Alignment.Bottom) + slideOutVertically { it },
         ) {

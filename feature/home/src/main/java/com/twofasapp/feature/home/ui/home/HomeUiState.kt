@@ -25,6 +25,7 @@ internal data class HomeUiState(
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
     val editMode: Boolean = false,
+    val scrollingUp: Boolean = false,
     val selectedItemIds: List<String> = emptyList(),
     val itemClickAction: ItemClickAction = ItemClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,

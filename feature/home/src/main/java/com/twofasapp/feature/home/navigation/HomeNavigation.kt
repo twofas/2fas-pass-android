@@ -21,6 +21,7 @@ fun HomeRoute(
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
     onHomeInEditModeChanged: (Boolean) -> Unit,
+    onHomeScrollingUpChanged: (Boolean) -> Unit,
 ) {
     HomeScreen(
         openAddItem = openAddItem,
@@ -29,6 +30,7 @@ fun HomeRoute(
         openQuickSetup = openQuickSetup,
         openDeveloper = openDeveloper,
         onHomeInEditModeChanged = onHomeInEditModeChanged,
+        onHomeScrollingUpChanged = onHomeScrollingUpChanged,
     )
 }
 
