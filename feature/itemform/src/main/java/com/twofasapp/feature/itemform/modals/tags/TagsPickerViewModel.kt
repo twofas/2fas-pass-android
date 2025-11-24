@@ -11,7 +11,7 @@ package com.twofasapp.feature.itemform.modals.tags
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.domain.Tag
-import com.twofasapp.core.common.ktx.toggle
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,11 +36,12 @@ internal class TagsPickerViewModel(
         }
     }
 
-    fun init(tags: List<Tag>, selectedTagIds: List<String>) {
+    fun init(tags: List<Tag>, items: List<Item>) {
         uiState.update {
             it.copy(
                 tags = tags,
-                selectedTagIds = selectedTagIds,
+                initialSelection = items.associateWith { item -> item.tagIds.toSet() },
+                selection = items.associateWith { item -> item.tagIds.toSet() },
             )
         }
     }
@@ -53,10 +54,22 @@ internal class TagsPickerViewModel(
         uiState.update { it.copy(state = TagsPickerUiState.State.AddTagDialog) }
     }
 
-    fun toggleTagId(tagId: String) {
+    fun selectTag(tagId: String) {
         uiState.update { state ->
             state.copy(
-                selectedTagIds = state.selectedTagIds.toggle(tagId),
+                selection = state.selection.mapValues { entry ->
+                    entry.value.plus(tagId).distinct().toSet()
+                },
+            )
+        }
+    }
+
+    fun deselectTag(tagId: String) {
+        uiState.update { state ->
+            state.copy(
+                selection = state.selection.mapValues { entry ->
+                    entry.value.minus(tagId).distinct().toSet()
+                },
             )
         }
     }
@@ -67,7 +80,7 @@ internal class TagsPickerViewModel(
 
             val tags = tagsRepository.getTags(uiState.value.vaultId)
 
-            tags.lastOrNull()?.id?.let { toggleTagId(it) }
+            tags.lastOrNull()?.id?.let { selectTag(it) }
         }
     }
 }

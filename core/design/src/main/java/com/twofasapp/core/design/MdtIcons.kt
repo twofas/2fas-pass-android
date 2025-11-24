@@ -108,6 +108,7 @@ object MdtIcons {
     val Tier3 @Composable get() = painterResource(R.drawable.ic_tier3)
     val Downloading @Composable get() = painterResource(R.drawable.ic_downloading)
     val AddCircle @Composable get() = painterResource(R.drawable.ic_add_circle)
+    val MinusCircle @Composable get() = painterResource(R.drawable.ic_minus_circle)
     val RotateLeft @Composable get() = painterResource(R.drawable.ic_rotate_left)
     val Tag @Composable get() = painterResource(R.drawable.ic_tag)
     val AddTag @Composable get() = painterResource(R.drawable.ic_add_tag)

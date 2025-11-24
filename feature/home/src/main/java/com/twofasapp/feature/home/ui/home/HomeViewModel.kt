@@ -238,7 +238,7 @@ internal class HomeViewModel(
     fun selectAllItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = state.items.map { it.id },
+                selectedItemIds = state.itemsFiltered.map { it.id },
             )
         }
     }
@@ -292,13 +292,12 @@ internal class HomeViewModel(
         }
     }
 
-    fun changeSelectedItemsTags(tagIds: List<String>) {
+    fun changeSelectedItemsTags(changedTags: Map<Item, Set<String>>) {
         launchScoped {
-            val itemsToEdit = uiState.value.selectedItemIds
             cleatEditModeSelections()
             screenState.loading()
 
-            itemsRepository.updateTags(tagIds, *itemsToEdit.toTypedArray())
+            itemsRepository.updateItemsWithTags(changedTags)
 
             publishEvent(HomeUiEvent.ShowToast("Items updated!"))
         }

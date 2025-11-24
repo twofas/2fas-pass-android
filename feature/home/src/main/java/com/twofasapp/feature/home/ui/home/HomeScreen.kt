@@ -148,7 +148,7 @@ private fun Content(
     onDeveloperClick: () -> Unit = {},
     onDeleteSelectedItemsClick: () -> Unit = {},
     onChangeSelectedItemsSecurityType: (SecurityType) -> Unit = {},
-    onChangeSelectedItemsTags: (List<String>) -> Unit = {},
+    onChangeSelectedItemsTags: (Map<Item, Set<String>>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()

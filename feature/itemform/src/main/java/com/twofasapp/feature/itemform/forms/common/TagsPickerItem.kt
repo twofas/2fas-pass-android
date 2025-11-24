@@ -26,7 +26,7 @@ internal fun LazyListScope.tagsPickerItem(
         TagsPicker(
             modifier = Modifier.animateItem(),
             tags = tags,
-            selectedTagIds = item.tagIds,
+            item = item,
             onOpened = { focusManager.clearFocus() },
             onConfirmTagsSelections = onTagsChange,
         )

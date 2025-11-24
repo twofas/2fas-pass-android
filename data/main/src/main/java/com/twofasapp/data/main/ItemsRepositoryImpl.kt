@@ -186,17 +186,28 @@ internal class ItemsRepositoryImpl(
         lockObservability.emit(false)
     }
 
-    override suspend fun updateTags(tags: List<String>, vararg ids: String) {
+    override suspend fun updateTags(itemId: String, tagIds: List<String>) {
         val now = timeProvider.currentTimeUtc()
-        val items = itemsLocalSource.getItems(ids.toList())
-        val updatedItems = items.map { item ->
-            item.copy(
-                tagIds = tags,
+        val item = itemsLocalSource.getItem(itemId)
+        val updatedItem = item.copy(
+            tagIds = tagIds,
+            updatedAt = now,
+        )
+
+        itemsLocalSource.saveItem(updatedItem)
+    }
+
+    override suspend fun updateItemsWithTags(map: Map<Item, Set<String>>) {
+        val now = timeProvider.currentTimeUtc()
+        val entities = itemsLocalSource.getItems()
+        val updatedEntities = map.mapNotNull { (item, tags) ->
+            entities.firstOrNull { entity -> entity.id == item.id }?.copy(
                 updatedAt = now,
+                tagIds = tags.toList(),
             )
         }
 
-        itemsLocalSource.saveItems(updatedItems)
+        itemsLocalSource.saveItems(updatedEntities)
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.uniform
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -38,7 +39,7 @@ import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.home.HomeUiState
 import com.twofasapp.feature.itemform.modals.securitytype.SecurityTypeModal
-import com.twofasapp.feature.itemform.modals.tags.TagsPickerModal
+import com.twofasapp.feature.itemform.modals.tags.TagsPickerMultiModal
 
 @Composable
 internal fun HomeAppBar(
@@ -54,7 +55,7 @@ internal fun HomeAppBar(
     onDeselectClick: () -> Unit = {},
     onDeleteItemsConfirmed: () -> Unit = {},
     onChangeSecurityType: (SecurityType) -> Unit = {},
-    onChangeTags: (List<String>) -> Unit = {},
+    onChangeTags: (Map<Item, Set<String>>) -> Unit = {},
 ) {
     var showDeleteConfirmationPrompt by remember { mutableStateOf(false) }
     var showSecurityTypePicker by remember { mutableStateOf(false) }
@@ -216,14 +217,12 @@ internal fun HomeAppBar(
 
     if (showTagsPicker) {
         val selectedItems = uiState.selectedItems
-        val selectedTagIds = selectedItems.map { it.tagIds }.flatten().distinct()
 
-        TagsPickerModal(
+        TagsPickerMultiModal(
             onDismissRequest = { showTagsPicker = false },
             tags = uiState.tags,
-            selectedTagIds = selectedTagIds,
-            forceEnableConfirmButton = true,
-            onConfirmTagsSelections = onChangeTags,
+            items = selectedItems,
+            onTagsChanged = onChangeTags,
         )
     }
 }

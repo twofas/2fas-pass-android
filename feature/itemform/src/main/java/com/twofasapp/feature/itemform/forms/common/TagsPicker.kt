@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -37,7 +38,7 @@ import com.twofasapp.feature.itemform.modals.tags.TagsPickerModal
 internal fun TagsPicker(
     modifier: Modifier = Modifier,
     tags: List<Tag>,
-    selectedTagIds: List<String>,
+    item: Item,
     onOpened: () -> Unit = {},
     onConfirmTagsSelections: (List<String>) -> Unit = {},
 ) {
@@ -57,10 +58,10 @@ internal fun TagsPicker(
         OptionEntry(
             icon = MdtIcons.Tag,
             title = MdtLocale.strings.loginTagsHeader,
-            subtitle = if (selectedTagIds.isEmpty()) {
+            subtitle = if (item.tagIds.isEmpty()) {
                 MdtLocale.strings.loginTagsDescription
             } else {
-                tags.filter { selectedTagIds.contains(it.id) }.joinToString(", ") { it.name }
+                tags.filter { item.tagIds.contains(it.id) }.joinToString(", ") { it.name }
             },
             content = {
                 Icon(
@@ -76,10 +77,9 @@ internal fun TagsPicker(
     if (showTagsModal) {
         TagsPickerModal(
             tags = tags,
-            selectedTagIds = selectedTagIds,
-            forceEnableConfirmButton = false,
+            item = item,
             onDismissRequest = { showTagsModal = false },
-            onConfirmTagsSelections = onConfirmTagsSelections,
+            onTagsChanged = onConfirmTagsSelections,
         )
     }
 }
@@ -95,7 +95,7 @@ private fun Preview() {
                 Tag.Empty.copy(id = "2", name = "Tag 2"),
                 Tag.Empty.copy(id = "3", name = "Tag 3"),
             ),
-            selectedTagIds = emptyList(),
+            item = Item.Empty,
         )
     }
 }
