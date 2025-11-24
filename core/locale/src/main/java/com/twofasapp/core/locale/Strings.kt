@@ -36,6 +36,7 @@ class Strings(private val c: Context) {
     val commonCreated = c.getString(R.string.common_created)
     val commonClose = c.getString(R.string.common_close)
     val commonConfirm = c.getString(R.string.common_confirm)
+    val commonCopy = c.getString(R.string.common_copy)
 
     // Permissions
     val permissionCameraTitle = c.getString(R.string.permission_camera_title)

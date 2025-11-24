@@ -71,8 +71,8 @@ internal class HomeViewModel(
         }
 
         launchScoped {
-            settingsRepository.observeLoginClickAction().collect { action ->
-                uiState.update { it.copy(loginClickAction = action) }
+            settingsRepository.observeItemClickAction().collect { action ->
+                uiState.update { it.copy(itemClickAction = action) }
             }
         }
 

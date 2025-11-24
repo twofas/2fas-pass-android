@@ -13,7 +13,7 @@ import com.twofasapp.core.common.domain.Vault
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.filterBySearchQuery
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
 
 internal data class HomeUiState(
@@ -26,7 +26,7 @@ internal data class HomeUiState(
     val searchFocused: Boolean = false,
     val editMode: Boolean = false,
     val selectedItemIds: List<String> = emptyList(),
-    val loginClickAction: LoginClickAction = LoginClickAction.View,
+    val itemClickAction: ItemClickAction = ItemClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,
     val maxItems: Int = 0,
     val events: List<HomeUiEvent> = emptyList(),

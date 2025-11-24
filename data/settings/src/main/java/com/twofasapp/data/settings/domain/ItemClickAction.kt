@@ -6,9 +6,8 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.data.settings.local.model
+package com.twofasapp.data.settings.domain
 
-@Deprecated("Replaced with ItemClickActionEntity")
-internal enum class LoginClickActionEntity {
-    View, Edit, CopyPassword, OpenUri,
+enum class ItemClickAction {
+    View, Edit, Copy,
 }

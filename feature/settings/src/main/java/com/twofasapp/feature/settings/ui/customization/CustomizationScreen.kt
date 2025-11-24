@@ -51,7 +51,7 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.theme.RoundedShape16
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.feature.settings.R
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -67,7 +67,7 @@ internal fun CustomizationScreen(
         uiState = uiState,
         onThemeChange = { viewModel.updateTheme(it) },
         onDynamicColorsChange = { viewModel.updateDynamicColors(it) },
-        onLoginClickActionChange = { viewModel.updateLoginClickAction(it) },
+        onItemClickActionChange = { viewModel.updateItemClickAction(it) },
         onDeviceNameChange = { viewModel.updateDeviceName(it) },
         onRestoreDefaultDeviceName = { viewModel.restoreDefaultDeviceName() },
         onManageTagsClick = { deeplinks.openScreen(Screen.ManageTags) },
@@ -79,13 +79,13 @@ private fun Content(
     uiState: CustomizationUiState,
     onThemeChange: (SelectedTheme) -> Unit = {},
     onDynamicColorsChange: (Boolean) -> Unit = {},
-    onLoginClickActionChange: (LoginClickAction) -> Unit = {},
+    onItemClickActionChange: (ItemClickAction) -> Unit = {},
     onDeviceNameChange: (String) -> Unit = {},
     onRestoreDefaultDeviceName: () -> Unit = {},
     onManageTagsClick: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
-    var showLoginClickActionDialog by remember { mutableStateOf(false) }
+    var showItemClickActionDialog by remember { mutableStateOf(false) }
     var showDeviceNameDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -147,9 +147,9 @@ private fun Content(
 
             OptionEntry(
                 title = strings.settingsEntryLoginClickAction,
-                subtitle = uiState.loginClickAction.asString(),
+                subtitle = uiState.itemClickAction.asString(),
                 icon = MdtIcons.Touch,
-                onClick = { showLoginClickActionDialog = true },
+                onClick = { showItemClickActionDialog = true },
             )
 
             OptionEntry(
@@ -161,15 +161,15 @@ private fun Content(
         }
     }
 
-    if (showLoginClickActionDialog) {
+    if (showItemClickActionDialog) {
         ListRadioDialog(
             title = MdtLocale.strings.settingsEntryLoginClickAction,
             body = MdtLocale.strings.settingsEntryLoginClickActionDesc,
             icon = MdtIcons.Touch,
-            onDismissRequest = { showLoginClickActionDialog = false },
-            options = LoginClickAction.entries.map { it.asString() },
-            selectedIndex = LoginClickAction.entries.indexOf(uiState.loginClickAction),
-            onOptionSelected = { index, _ -> onLoginClickActionChange(LoginClickAction.entries[index]) },
+            onDismissRequest = { showItemClickActionDialog = false },
+            options = ItemClickAction.entries.map { it.asString() },
+            selectedIndex = ItemClickAction.entries.indexOf(uiState.itemClickAction),
+            onOptionSelected = { index, _ -> onItemClickActionChange(ItemClickAction.entries[index]) },
         )
     }
 
@@ -232,12 +232,11 @@ private fun ThemeOption(
 }
 
 @Composable
-private fun LoginClickAction.asString(): String {
+private fun ItemClickAction.asString(): String {
     return when (this) {
-        LoginClickAction.View -> MdtLocale.strings.homeItemView
-        LoginClickAction.Edit -> MdtLocale.strings.homeItemEdit
-        LoginClickAction.CopyPassword -> MdtLocale.strings.homeItemCopyPassword
-        LoginClickAction.OpenUri -> MdtLocale.strings.homeItemOpenUri
+        ItemClickAction.View -> MdtLocale.strings.homeItemView
+        ItemClickAction.Edit -> MdtLocale.strings.homeItemEdit
+        ItemClickAction.Copy -> MdtLocale.strings.commonCopy
     }
 }
 

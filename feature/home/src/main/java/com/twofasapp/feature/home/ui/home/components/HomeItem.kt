@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
@@ -43,7 +42,7 @@ import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.feature.home.ui.home.modal.ItemDetailsModal
 
 @Composable
@@ -51,7 +50,7 @@ internal fun HomeItem(
     modifier: Modifier = Modifier,
     item: Item,
     tags: List<Tag>,
-    loginClickAction: LoginClickAction,
+    itemClickAction: ItemClickAction,
     query: String = "",
     editMode: Boolean = false,
     selected: Boolean = false,
@@ -79,24 +78,21 @@ internal fun HomeItem(
                 },
                 onClick = {
                     if (editMode.not()) {
-                        when (loginClickAction) {
-                            LoginClickAction.View -> {
+                        when (itemClickAction) {
+                            ItemClickAction.View -> {
                                 showDetailsModal = true
                             }
 
-                            LoginClickAction.Edit -> {
+                            ItemClickAction.Edit -> {
                                 onEditClick(item.id, item.vaultId)
                             }
 
-                            LoginClickAction.CopyPassword -> {
-                                (item.content as? ItemContent.Login)?.password?.let { password ->
-                                    onCopySecretFieldToClipboard(item, password)
-                                }
-                            }
-
-                            LoginClickAction.OpenUri -> {
-                                (item.content as? ItemContent.Login)?.uris?.let { uris ->
-                                    uriHandler.openSafely(uris.firstOrNull()?.text, context)
+                            ItemClickAction.Copy -> {
+                                when (val content = item.content) {
+                                    is ItemContent.Unknown -> Unit
+                                    is ItemContent.Login -> content.password?.let { onCopySecretFieldToClipboard(item, it) }
+                                    is ItemContent.SecureNote -> content.text?.let { onCopySecretFieldToClipboard(item, it) }
+                                    is ItemContent.CreditCard -> content.number?.let { onCopySecretFieldToClipboard(item, it) }
                                 }
                             }
                         }
@@ -183,7 +179,7 @@ private fun PreviewDark() {
                 modifier = Modifier.fillMaxWidth(),
                 item = item,
                 tags = emptyList(),
-                loginClickAction = LoginClickAction.View,
+                itemClickAction = ItemClickAction.View,
                 editMode = index == 1,
                 selected = index == 1,
             )
@@ -204,7 +200,7 @@ private fun PreviewLight() {
                 modifier = Modifier.fillMaxWidth(),
                 item = item,
                 tags = emptyList(),
-                loginClickAction = LoginClickAction.View,
+                itemClickAction = ItemClickAction.View,
                 editMode = index == 1,
                 selected = index == 1,
             )

@@ -9,27 +9,25 @@
 package com.twofasapp.data.settings.mapper
 
 import com.twofasapp.core.common.domain.SelectedTheme
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
-import com.twofasapp.data.settings.local.model.LoginClickActionEntity
+import com.twofasapp.data.settings.local.model.ItemClickActionEntity
 import com.twofasapp.data.settings.local.model.SelectedThemeEntity
 import com.twofasapp.data.settings.local.model.SortingMethodEntity
 
-internal fun LoginClickActionEntity.asDomain(): LoginClickAction {
+internal fun ItemClickActionEntity.asDomain(): ItemClickAction {
     return when (this) {
-        LoginClickActionEntity.View -> LoginClickAction.View
-        LoginClickActionEntity.Edit -> LoginClickAction.Edit
-        LoginClickActionEntity.CopyPassword -> LoginClickAction.CopyPassword
-        LoginClickActionEntity.OpenUri -> LoginClickAction.OpenUri
+        ItemClickActionEntity.View -> ItemClickAction.View
+        ItemClickActionEntity.Edit -> ItemClickAction.Edit
+        ItemClickActionEntity.Copy -> ItemClickAction.Copy
     }
 }
 
-internal fun LoginClickAction.asEntity(): LoginClickActionEntity {
+internal fun ItemClickAction.asEntity(): ItemClickActionEntity {
     return when (this) {
-        LoginClickAction.View -> LoginClickActionEntity.View
-        LoginClickAction.Edit -> LoginClickActionEntity.Edit
-        LoginClickAction.CopyPassword -> LoginClickActionEntity.CopyPassword
-        LoginClickAction.OpenUri -> LoginClickActionEntity.OpenUri
+        ItemClickAction.View -> ItemClickActionEntity.View
+        ItemClickAction.Edit -> ItemClickActionEntity.Edit
+        ItemClickAction.Copy -> ItemClickActionEntity.Copy
     }
 }
 

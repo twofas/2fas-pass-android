@@ -266,7 +266,7 @@ private fun Content(
                                         HomeItem(
                                             item = item,
                                             tags = uiState.tags,
-                                            loginClickAction = uiState.loginClickAction,
+                                            itemClickAction = uiState.itemClickAction,
                                             query = uiState.searchQuery,
                                             editMode = uiState.editMode,
                                             selected = uiState.selectedItemIds.contains(item.id),
@@ -287,7 +287,7 @@ private fun Content(
                                 HomeItem(
                                     item = item,
                                     tags = uiState.tags,
-                                    loginClickAction = uiState.loginClickAction,
+                                    itemClickAction = uiState.itemClickAction,
                                     query = uiState.searchQuery,
                                     editMode = uiState.editMode,
                                     selected = uiState.selectedItemIds.contains(item.id),
