@@ -140,16 +140,18 @@ private fun Content(
                     when (content) {
                         is ItemContent.Unknown -> Unit
                         is ItemContent.Login -> {
-                            Entry(
-                                title = MdtLocale.strings.loginUsername,
-                                subtitle = content.username.orEmpty(),
-                                actions = {
-                                    IconButton(
-                                        icon = MdtIcons.Copy,
-                                        onClick = { context.copyToClipboard(content.username.orEmpty()) },
-                                    )
-                                },
-                            )
+                            if (content.username.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginUsername,
+                                    subtitle = content.username.orEmpty(),
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.username.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
 
                             content.password?.let { password ->
                                 var passwordDecrypted: String? by remember { mutableStateOf(null) }
@@ -197,6 +199,7 @@ private fun Content(
                                         title = if (content.uris.size > 1) "URI ${index + 1}" else "URI",
                                         subtitle = uri.text,
                                         isCompact = true,
+                                        maxLines = 3,
                                         actions = {
                                             IconButton(
                                                 icon = MdtIcons.Open,
@@ -268,6 +271,7 @@ private fun Content(
                                 )
                             }
                         }
+
                         is ItemContent.CreditCard -> Unit
                     }
 
@@ -302,6 +306,7 @@ private fun Entry(
     subtitle: String? = null,
     subtitleAnnotated: AnnotatedString? = null,
     isCompact: Boolean = false,
+    maxLines: Int = Int.MAX_VALUE,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Column(
@@ -329,7 +334,7 @@ private fun Entry(
                         text = subtitle,
                         style = if (isCompact) MdtTheme.typo.regular.base.copy(lineHeight = 18.sp) else MdtTheme.typo.regular.base,
                         color = MdtTheme.color.onSurfaceVariant,
-                        maxLines = 3,
+                        maxLines = maxLines,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }

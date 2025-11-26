@@ -9,21 +9,29 @@
 package com.twofasapp.feature.itemform.forms.securenote
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -34,9 +42,13 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.anim.AnimatedFadeVisibility
 import com.twofasapp.core.design.foundation.lazy.listItem
+import com.twofasapp.core.design.foundation.text.TextIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
+import com.twofasapp.core.design.theme.RoundedShape16
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemFormListener
@@ -89,6 +101,12 @@ private fun Content(
     if (uiState.itemContent == null) return
 
     val strings = MdtLocale.strings
+    var revealTextClicked by remember { mutableStateOf(false) }
+    val showText by remember {
+        derivedStateOf {
+            uiState.initialItem.id.isEmpty() || revealTextClicked
+        }
+    }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = "")) }
 
     LaunchedEffect(uiState.item.id) {
@@ -126,22 +144,50 @@ private fun Content(
             }
 
             listItem(FormListItem.Field("Text")) {
-                TextField(
-                    value = textFieldValue,
-                    onValueChange = {
-                        onTextChange(it.text)
-                        textFieldValue = it
-                    },
-                    labelText = strings.secureNoteText,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
                         .animateItem(),
-                    minLines = 12,
-                    maxLines = 12,
-                    supportingText = if (textFieldValue.text.length > ItemContent.SecureNote.Limit) "Notes can not be longer than ${ItemContent.SecureNote.Limit} characters" else null,
-                    isError = textFieldValue.text.length > ItemContent.SecureNote.Limit,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default),
-                )
+                ) {
+                    TextField(
+                        value = textFieldValue,
+                        onValueChange = {
+                            onTextChange(it.text)
+                            textFieldValue = it
+                        },
+                        labelText = strings.secureNoteText,
+                        minLines = 10,
+                        maxLines = 10,
+                        supportingText = if (textFieldValue.text.length > ItemContent.SecureNote.Limit) "Notes can not be longer than ${ItemContent.SecureNote.Limit} characters" else null,
+                        isError = textFieldValue.text.length > ItemContent.SecureNote.Limit,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default),
+                        enabled = showText,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(if (showText) 1f else 0f),
+                    )
+
+                    AnimatedFadeVisibility(showText.not()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedShape16)
+                                .background(MdtTheme.color.surfaceContainer)
+                                .clickable { revealTextClicked = true },
+                        ) {
+                            TextIcon(
+                                text = "Reveal Text",
+                                leadingIcon = MdtIcons.Visibility,
+                                leadingIconTint = MdtTheme.color.primary,
+                                leadingIconSpacer = 8.dp,
+                                color = MdtTheme.color.primary,
+                                style = MdtTheme.typo.labelLarge,
+                                modifier = Modifier.align(Alignment.Center),
+                            )
+                        }
+                    }
+                }
             }
 
             securityTypePickerItem(
