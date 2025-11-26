@@ -66,6 +66,14 @@ fun LazyListState.isScrollingUp(): Boolean {
                 return@derivedStateOf true
             }
 
+            // Edge case: at the top of the list, always consider scrolling up
+            if (firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0) {
+                previousIndex = firstVisibleItemIndex
+                previousScrollOffset = firstVisibleItemScrollOffset
+                lastScrollDirection = true
+                return@derivedStateOf true
+            }
+
             // Only update direction when actively scrolling (prevents bounce-back from affecting state)
             if (isScrollInProgress) {
                 val scrollingUp = if (previousIndex != firstVisibleItemIndex) {
