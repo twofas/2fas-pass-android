@@ -464,12 +464,18 @@ internal class RequestWebSocketImpl(
                     else -> throw IllegalArgumentException("Unsupported item type")
                 }
 
+                val newItemKey = HkdfGenerator.generate(
+                    inputKeyMaterial = sessionKey,
+                    salt = hkdfSalt,
+                    contextInfo = "ItemNew",
+                )
+
                 val content = when (contentType) {
                     is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
-                            name = (data.content.url.toUri().host ?: data.content.url).removePrefix("www."),
-                            uris = listOf(ItemUri(text = data.content.url)),
+                            name = (data.content.url.orEmpty().toUri().host ?: data.content.url).orEmpty().removePrefix("www."),
+                            uris = listOf(ItemUri(text = data.content.url.orEmpty())),
                             username = when (data.content.username?.action) {
                                 "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
                                 else -> data.content.username?.value.orEmpty()
@@ -488,14 +494,8 @@ internal class RequestWebSocketImpl(
                                         if (encryptedPassword.value.isEmpty()) {
                                             SecretField.ClearText("")
                                         } else {
-                                            val newPasswordKey = HkdfGenerator.generate(
-                                                inputKeyMaterial = sessionKey,
-                                                salt = hkdfSalt,
-                                                contextInfo = "ItemNew",
-                                            )
-
                                             val password = decrypt(
-                                                key = newPasswordKey,
+                                                key = newItemKey,
                                                 data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
                                             )
 
@@ -510,7 +510,18 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.SecureNote -> {
                         ItemContent.SecureNote.Empty.copy(
                             name = data.content.name.orEmpty(),
-                            text = data.content.s_text?.let { SecretField.ClearText(it) },
+                            text = data.content.s_text?.let { encryptedText ->
+                                if (encryptedText.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val text = decrypt(
+                                        key = newItemKey,
+                                        data = EncryptedBytes(encryptedText.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(text.decodeString())
+                                }
+                            },
                         )
                     }
 
@@ -539,6 +550,16 @@ internal class RequestWebSocketImpl(
                 val securityType = data.securityType?.let(itemSecurityTypeMapper::mapToDomainFromJson) ?: item.securityType
                 val tagIds = data.tags ?: item.tagIds
 
+                val updateItemKey = HkdfGenerator.generate(
+                    inputKeyMaterial = sessionKey,
+                    salt = hkdfSalt,
+                    contextInfo = when (item.securityType) {
+                        SecurityType.Tier1 -> "ItemT1"
+                        SecurityType.Tier2 -> "ItemT2"
+                        SecurityType.Tier3 -> "ItemT3"
+                    },
+                )
+
                 val updatedContent = when (contentType) {
                     is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
                     is ItemContentType.Login -> {
@@ -563,18 +584,8 @@ internal class RequestWebSocketImpl(
                                         if (encryptedPassword.value.isEmpty()) {
                                             SecretField.ClearText("")
                                         } else {
-                                            val updatePasswordKey = HkdfGenerator.generate(
-                                                inputKeyMaterial = sessionKey,
-                                                salt = hkdfSalt,
-                                                contextInfo = when (item.securityType) {
-                                                    SecurityType.Tier1 -> "ItemT1"
-                                                    SecurityType.Tier2 -> "ItemT2"
-                                                    SecurityType.Tier3 -> "ItemT3"
-                                                },
-                                            )
-
                                             val password = decrypt(
-                                                key = updatePasswordKey,
+                                                key = updateItemKey,
                                                 data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
                                             )
 
@@ -597,7 +608,18 @@ internal class RequestWebSocketImpl(
                         val existingContent = item.content as ItemContent.SecureNote
                         existingContent.copy(
                             name = data.content.name ?: existingContent.name,
-                            text = data.content.s_text?.let { SecretField.ClearText(it) } ?: existingContent.text,
+                            text = data.content.s_text?.let { encryptedText ->
+                                if (encryptedText.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val text = decrypt(
+                                        key = updateItemKey,
+                                        data = EncryptedBytes(encryptedText.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(text.decodeString())
+                                }
+                            } ?: existingContent.text,
                         )
                     }
 

@@ -107,7 +107,7 @@ fun ItemImage(
     customImageUrl: String? = null,
     size: Dp = 40.dp,
 ) {
-    val color = labelColor?.hexToColor() ?: MdtTheme.color.surfaceContainerHigh
+    val color = labelColor?.hexToColor()
 
     Box(
         modifier = modifier.size(size),
@@ -187,20 +187,24 @@ fun ItemImage(
 @Composable
 private fun Label(
     text: String?,
-    color: Color,
+    color: Color?,
     size: Dp,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedShape12)
-            .background(color),
+            .background(color ?: MdtTheme.color.itemLoginContainer),
     ) {
         Text(
             text = text.orEmpty().uppercase(),
             style = MdtTheme.typo.bold.base.copy(fontSize = (size.value / 3).sp),
             modifier = Modifier.align(Alignment.Center),
-            color = if (color.luminance() > 0.5f) Color.Black else Color.White,
+            color = if (color == null) {
+                MdtTheme.color.itemLoginContent
+            } else {
+                if (color.luminance() > 0.5f) Color.Black else Color.White
+            },
         )
     }
 }

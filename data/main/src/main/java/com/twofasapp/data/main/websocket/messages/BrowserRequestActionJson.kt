@@ -151,7 +151,7 @@ internal sealed interface BrowserRequestActionJson {
         @Serializable
         data class Content(
             @SerialName("url")
-            val url: String,
+            val url: String?,
             @SerialName("username")
             val username: ActionFieldJson?,
             @SerialName("s_password")

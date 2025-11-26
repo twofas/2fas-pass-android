@@ -44,7 +44,9 @@ internal interface WebSocketDelegate {
                     deviceId = device.uniqueId(),
                     deviceName = device.name(),
                     deviceOs = "android",
-                    supportedFeatures = emptyList(),
+                    supportedFeatures = listOf(
+                        "items.secureNote",
+                    ),
                 ),
             ),
         )

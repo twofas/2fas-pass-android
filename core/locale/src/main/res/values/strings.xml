@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
  Loco xml export: Android strings
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sun, 16 Nov 2025 04:10:12 -0800
+ Exported at: Wed, 26 Nov 2025 12:16:08 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -124,8 +125,8 @@
     <string name="login_view_action_copy_password">Copy password</string>
     <string name="login_view_action_open_uri">Open Website</string>
     <string name="login_view_action_delete">Remove Item</string>
-    <string name="login_add_title">Add Item</string>
-    <string name="login_edit_title">Edit Item</string>
+    <string name="login_add_title">Add Login</string>
+    <string name="login_edit_title">Edit Login</string>
     <string name="login_password_label">Password</string>
     <string name="login_name_label">Name</string>
     <string name="login_username_label">Username</string>
@@ -135,14 +136,6 @@
     <string name="login_add_uri_cta">+\u0020\u0020Add URL</string>
     <string name="login_unsaved_changes_dialog_title">Unsaved changes</string>
     <string name="login_unsaved_changes_dialog_description">Do you want to discard your changes?</string>
-    <string name="secure_note_name_label">Name</string>
-    <string name="secure_note_text_label">Text</string>
-    <string name="credit_card_name_label">Name</string>
-    <string name="credit_card_cardholder_label">Cardholder</string>
-    <string name="credit_card_number_label">Card Number</string>
-    <string name="credit_card_expiration_label">Expiration</string>
-    <string name="credit_card_cvv_label">CVV</string>
-    <string name="credit_card_notes_label">Notes</string>
     <string name="connect_title">Connect</string>
     <string name="settings_title">Settings</string>
     <string name="settings_header_preferences">Preferences</string>
@@ -217,8 +210,8 @@
     <string name="settings_entry_screen_capture_description">Allow screenshots and screen recordings of the app for 5 minutes.</string>
     <string name="settings_entry_screenshots_confirm_title">Allow Screen Capture?</string>
     <string name="settings_entry_screenshots_confirm_description">Are you sure? This option lets you screenshot and record anything within the app. However, it will also enable any external attempts to capture screens in the app. To ensure safety, this option will automatically turn off after 5 minutes.</string>
-    <string name="settings_entry_known_browsers">Trusted Extensions</string>
-    <string name="settings_entry_known_browsers_description">Manage trusted browser extensions.</string>
+    <string name="settings_entry_known_browsers">Connected Extensions</string>
+    <string name="settings_entry_known_browsers_description">Manage connected browser extensions.</string>
     <string name="settings_entry_push_notifications">Push Notifications</string>
     <string name="settings_entry_push_notifications_description">Customize notifications to stay updated on app activity and security.</string>
     <string name="settings_entry_help_center">Help Center</string>
@@ -290,7 +283,7 @@
     <string name="known_browser_delete_button">Delete</string>
     <string name="known_browser_delete_dialog_title">Delete browser extension?</string>
     <string name="known_browser_delete_dialog_body">Are you sure you want to disconnect this device from the selected browser extension?</string>
-    <string name="known_browsers_title">Trusted Extensions</string>
+    <string name="known_browsers_title">Connected Extensions</string>
     <string name="known_browsers_description">List of trusted browser extensions that have been approved by you and don\'t need a confirmation to connect to this device.</string>
     <string name="known_browsers_empty">No browsers found</string>
     <string name="lockout_settings_app_lockout_header">Application Lockout</string>
@@ -410,7 +403,7 @@
     <string name="connect_setup_push_warning_ios__0025_0040">Using push notifications makes communicating with the browser extension much more convenient. Go to **[System Settings](%s)**.</string>
     <string name="connect_setup_steps_header">2FAS Pass Browser Extension setup</string>
     <string name="decryption_kit_settings_secret_words_ios">**Secret Words** (15-word phrase),</string>
-    <string name="known_browsers_header">Connected Browser Extensions</string>
+    <string name="known_browsers_header">Trusted Browser Extensions</string>
     <string name="lock_screen_too_many_attempts_description">2FAS Pass access temporarily blocked due to failed master password attempts</string>
     <string name="lock_screen_try_again__0025_0040">Try again in: %s</string>
     <string name="lock_screen_unlock_biometrics_error">Error while unlocking using Biometry</string>
@@ -448,7 +441,7 @@
     <string name="set_new_password_confirm_body_part1_ios">Changing your Master Password will update the encryption of your Vault. You\'ll need to **download a new Decryption Kit and create a new Local Backup.**</string>
     <string name="set_new_password_confirm_body_part2_ios">If you use this Vault on other devices, Sync will be disabled, and you\'ll need to re-enable it using your new Master Password.</string>
     <string name="set_new_password_success_title">Master Password successfully changed</string>
-    <string name="settings_autofill_open_system_settings_description">Configure AutoFill: Settings -&gt; Notifications -&gt; 2FAS Pass</string>
+    <string name="settings_autofill_open_system_settings_description">Configure AutoFill: Settings -&gt; General -&gt; AutoFill &amp; Passwords</string>
     <string name="settings_cloud_sync_description">Securely sync your 2FAS Pass Vault with iCloud or WebDAV to protect your data in case this device gets lost or damaged.</string>
     <string name="settings_cloud_sync_icloud_label">iCloud Sync</string>
     <string name="settings_cloud_sync_last_sync__0025_0040">Last successful synchronization: **%s**</string>
@@ -537,15 +530,15 @@
     <string name="restore_cloud_files_id__0025_0040">ID: %s</string>
     <string name="restore_vault_verify_master_password_description">Enter your Master Password for this Vault</string>
     <string name="common_created">Created:</string>
-    <string name="common_modified">Modified:</string>
+    <string name="common_modified">Last modified:</string>
     <string name="settings_autofill_toggle">Set app as your AutoFill provider</string>
     <string name="settings_autofill_toggle_description">Automatically fill in your information from the keyboard when you need it.</string>
     <string name="transfer_instructions_bitwarden">Open Bitwarden and go to **Settings** (gear icon).\n\nGo to **Tools/Vault**, then select **Export Vault**.\n\nChoose **.JSON** as the file format and select **Export Vault**.\n\nCopy the exported file to this device and tap **Upload JSON file** below.</string>
     <string name="transfer_instructions_onepassword">Open 1Password on your PC.\n\nClick the three dots at the top of the side bar, select **Export** and choose the account you want to export, (on Mac select a specific Vault).\n\nEnter your account password.\n\nChoose the **CSV format** and select **Export data**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
-    <string name="transfer_instructions_protonpass">Open Proton Pass via their browser extension, web app or Windows app.\n\nClick the **Proton Pass Logo** and select **Settings**.\n\nIn the Settings menu, select **Export**.\n\nChoose the **CSV format** and select **Export**.\n\nFind the CSV file saved in your default download location.\n\nCopy this file to this device and tap **Upload CSV file** below.</string>
+    <string name="transfer_instructions_protonpass">Open Proton Pass via their browser extension, web app or Windows app.\n\nClick the **Proton Pass Logo**, select **Settings**, then **Export**.\n\nChoose the **CSV format** and select **Export**.\n\nFind the CSV file saved in your default download location.\n\nCopy this file to this device and tap **Upload CSV file** below.</string>
     <string name="transfer_instructions_chrome">Open Google Chrome on your PC\n\nSelect your **Profile Icon** at the top right, then select **Passwords**.\n\nSelect **Settings** and **Download file**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
-    <string name="transfer_instructions_lastpass">Log in to LastPass on your browser and go to **Advanced Options**.\n\nUnder **Manage Your Vault**, select **Export**. This will send you a verification email.\n\nOpen the received mail and select **Continue export**.\n\nBack in the export window, enter your Master Password and save the CSV file.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
-    <string name="transfer_instructions_dashlane_mobile">Open Dashlane on your mobile phone.\n\nGo to **Settings** and select **General**.\n\nSelect **Export data to CSV**, then confirm the export to a folder.\n\nSelect the CSV file labelled as **credentials** in the created folder.\n\nCopy the **credentials** file to this device and tap **Upload CSV file** below.</string>
+    <string name="transfer_instructions_lastpass">Log in to LastPass on your browser and go to **Advanced Options**.\n\nUnder **Manage Your Vault**, select **Export**. This will send you a verification email.\n\nOpen the received mail and select **Continue export**.\n\nBack in the export window, enter your Master Password and save the **CSV file**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
+    <string name="transfer_instructions_dashlane_mobile">Open Dashlane on your mobile phone.\n\nGo to **Settings** and select **General**.\n\nSelect **Export data to CSV**, then confirm the export to a folder.\n\nSelect the CSV file labelled as **credentials** in the created folder.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
     <string name="push_browser_request_generic_message">New request from browser</string>
     <string name="backup_import_header">Import 2FAS Pass Items</string>
     <string name="backup_import_footer">Import your 2FAS Pass Items to increase (not replace) the number of Items stored in the application.</string>
@@ -554,7 +547,7 @@
     <string name="backup_export_header">Export 2FAS Pass Items</string>
     <string name="backup_export_footer">Use Export to back up your Items offline.</string>
     <string name="backup_export_failed_title">Export failed</string>
-    <string name="backup_export_failed_description">Application couldn’t export your 2FAS Pass Items. Please try again.</string>
+    <string name="backup_export_failed_description">2FAS Pass couldn’t export your Items. Please try again.</string>
     <string name="backup_export_success_title">Exported successfully</string>
     <string name="backup_export_success_description">Your 2FAS Pass Items have been successfully exported to file.</string>
     <string name="backup_export_save_title">Export Items</string>
@@ -568,21 +561,21 @@
     <string name="backup_importing_success_description">Your 2FAS Pass Items have been successfully imported to the Vault.</string>
     <string name="backup_importing_file_text">Importing file...</string>
     <string name="backup_importing_failure_title">Import failed</string>
-    <string name="backup_importing_failure_description">Application couldn’t import your 2FAS Pass Items. Please try again.</string>
+    <string name="backup_importing_failure_description">2FAS Pass couldn’t import your Items. Please try again.</string>
     <string name="transfer_services_list_header">Import Instructions</string>
-    <string name="transfer_services_list_footer">Please follow the instructions if you would like to import passwords from other applications into 2FAS Pass.\n\nAll product names, logos, and brands are the property of their respective owners. Use of these names does not imply any affiliation with or endorsement by them.</string>
+    <string name="transfer_services_list_footer">Please follow the instructions if you would like to transfer passwords from other applications into 2FAS Pass.\n\nAll product names, logos, and brands are the property of their respective owners. Use of these names does not imply any affiliation with or endorsement by them.</string>
     <string name="transfer_instructions_cta_json">Upload JSON file</string>
     <string name="transfer_instructions_header__0025_0040">Transfer from %s</string>
-    <string name="transfer_file_summary_description">This file allows you to transfer</string>
+    <string name="transfer_file_summary_description">You have transferred the passwords</string>
     <string name="transfer_file_summary_cta">Proceed</string>
     <string name="transfer_file_summary_counter_description">Passwords transferred</string>
     <string name="transfer_importing_file_text">Importing...</string>
     <string name="transfer_importing_success_title">Imported successfully</string>
     <string name="transfer_importing_success_description">Your 2FAS Pass Items have been successfully imported to Vault.</string>
     <string name="transfer_importing_failure_title">Import failed</string>
-    <string name="transfer_importing_failure_description">Application couldn’t import your 2FAS Pass Items. Please try again.</string>
+    <string name="transfer_importing_failure_description">2FAS Pass couldn’t import your Items. Please try again.</string>
     <string name="transfer_instructions_cta_csv">Upload CSV file</string>
-    <string name="transfer_instructions_dashlane_pc">Open Dashlane on your browser.\n\nExpand the **My account** menu and select **Settings**.\n\nSelect **Export data** and **Export to CSV**.\n\nEnter your Master Password, select **Unlock** and **Continue**.\n\nFind the ZIP file saved in your default download location.\n\nCopy this ZIP file to this device and tap **Upload ZIP file** below.</string>
+    <string name="transfer_instructions_dashlane_pc">Open Dashlane on your browser.\n\nExpand the **My account** menu and select **Settings**.\n\nSelect **Export data** and **Export to CSV**.\n\nEnter your Master Password, select **Unlock** and **Continue**.\n\nFind the ZIP file saved in your default download location.\n\nCopy this file to this device and tap **Upload ZIP file** below.</string>
     <string name="webdav_connecting">Connecting</string>
     <string name="transfer_instructions_cta_zip">Upload ZIP file</string>
     <string name="transfer_instructions_cta_generic">Upload file</string>
@@ -598,7 +591,7 @@
     <string name="customize_icon_label_reset">Reset</string>
     <string name="customize_icon_custom_header">Favicon URL</string>
     <string name="customize_icon_custom_placeholder">Add URL</string>
-    <string name="transfer_instructions_apple_passwords_pc">Open the **Passwords** app on your Mac.\n\nClick **File** on your menu bar.\n\nSelect **Export All/Selected Passwords to File**.\n\nClick **Export Passwords**, choose the location and click **Save**.\n\nFind the **Passwords** file saved in your download location.\n\nCopy it to this device and tap **Upload CSV file** below.</string>
+    <string name="transfer_instructions_apple_passwords_pc">Open the **Passwords** app on your Mac.\n\nClick **File** on your menu bar.\n\nSelect **Export All/Selected Passwords to File**.\n\nClick **Export Passwords**, select the location, and click **Save**.\n\nFind the **Passwords** file saved in your download location.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
     <string name="login_no_item_name">No Item Name</string>
     <string name="security_tiers_help_title">How do we ensure data security?</string>
     <string name="security_tiers_help_subtitle">2FAS Pass provides an outstanding level of data security thanks to 3 core pillars:</string>
@@ -765,7 +758,7 @@
     <string name="migration_error_title">Migration failed</string>
     <string name="migration_error_body">Please restart the app and try again</string>
     <string name="login_delete_cta">Remove Item</string>
-    <string name="login_edit">Edit item</string>
+    <string name="login_edit">Edit Item</string>
     <string name="common_done">Done</string>
     <string name="cloud_vault_delete_confirm_title">Delete backup?</string>
     <string name="cloud_vault_delete_confirm_body">Are you sure you want to delete this backup? You cannot restore it later.</string>
@@ -822,8 +815,8 @@
     <string name="connect_modal_error_browser_extension_update_required_title">Browser extension update required</string>
     <string name="connect_modal_error_browser_extension_update_required_subtitle">Update browser extension</string>
     <string name="cloud_sync_invalid_schema_error_cta">Update app</string>
-    <string name="cloud_sync_invalid_schema_error_msg">Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version %1$d, which is not supported in your current version. Please update your app to synchronize it.</string>
-    <string name="import_invalid_schema_error_msg">The backup you’re trying to import was created in a newer version %1$d, which is not supported in your current version. Please update your app to import it.</string>
+    <string name="cloud_sync_invalid_schema_error_msg">Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version %d, which is not supported in your current version. Please update your app to synchronize it.</string>
+    <string name="import_invalid_schema_error_msg">The backup you’re trying to import was created in a newer version %d, which is not supported in your current version. Please update your app to import it.</string>
     <string name="import_invalid_schema_error_cta">Update app</string>
     <string name="connect_modal_error_app_update_required_cta_android">Update app</string>
     <string name="app_update_modal_title">Update recommended</string>
@@ -848,5 +841,64 @@
     <string name="connect_modal_error_no_internet_title">Connection error</string>
     <string name="connect_modal_error_no_internet_subtitle">No Internet connection. Please try again.</string>
     <string name="home_delete_confirm_title">Remove Items?</string>
-    <string name="home_delete_confirm_body">Are you sure you want to remove %d items? You can recover them later.</string>
+    <string name="home_delete_confirm_body">Are you sure you want to remove %d Items? You can recover them later.</string>
+    <string name="secure_note_name_label">Name</string>
+    <string name="secure_note_text_label">Note</string>
+    <string name="credit_card_name_label">Name</string>
+    <string name="credit_card_cardholder_label">Cardholder</string>
+    <string name="credit_card_number_label">Card Number</string>
+    <string name="credit_card_expiration_label">Expiration date</string>
+    <string name="credit_card_cvv_label">CVV</string>
+    <string name="credit_card_notes_label">Notes</string>
+    <string name="content_type_login_name">Login</string>
+    <string name="content_type_secure_note_name">Secure Note</string>
+    <string name="secure_note_add_title">Add Secure Note</string>
+    <string name="secure_note_edit_title">Edit Secure Note</string>
+    <string name="item_add_title">Add Item</string>
+    <string name="item_edit_title">Edit Item</string>
+    <string name="secure_note_text_reveal_edit_action">Tap to edit</string>
+    <string name="secure_note_text_reveal_view_action">Tap to view</string>
+    <string name="secure_note_text_more_action">more</string>
+    <string name="request_modal_new_login_title">New Login</string>
+    <string name="request_modal_new_secure_note_title">New Secure Note</string>
+    <string name="request_modal_update_login_title">Update Login</string>
+    <string name="request_modal_update_secure_note_title">Update Secure Note</string>
+    <string name="request_modal_remove_login_title">Remove Login</string>
+    <string name="request_modal_remove_secure_note_title">Remove Secure Note</string>
+    <string name="request_modal_secure_note_request_title">Secure Note Request</string>
+    <string name="request_modal_secure_note_request_subtitle">Browser Extension requests this Note</string>
+    <string name="request_modal_toast_success_secure_note_request">Note sent successfully</string>
+    <string name="secure_note_view_action_copy">Copy note</string>
+    <string name="toast_secure_note_copied">Note copied</string>
+    <string name="secure_note_error_copy">Error while copying the note</string>
+    <string name="content_type_filter_secure_note_name">Secure Notes</string>
+    <string name="content_type_filter_login_name">Logins</string>
+    <string name="content_type_filter_all_name">All Items</string>
+    <string name="request_modal_toast_success_card_request">Card sent successfully</string>
+    <string name="request_modal_card_request_subtitle">Browser Extension requests this Card</string>
+    <string name="request_modal_card_request_title">Card Request</string>
+    <string name="request_modal_new_card_title">New Card</string>
+    <string name="request_modal_update_card_title">Update Card</string>
+    <string name="request_modal_remove_card_title">Remove Card</string>
+    <string name="card_add_title">Add Card</string>
+    <string name="card_edit_title">Edit Card</string>
+    <string name="card_name_label">Name</string>
+    <string name="card_holder_label">Cardholder</string>
+    <string name="card_number_label">Card Number</string>
+    <string name="card_expiration_date_label">Expiration Date</string>
+    <string name="card_expiration_date_placeholder">MM/YY</string>
+    <string name="card_security_code_label">Security Code</string>
+    <string name="card_notes_label">Notes</string>
+    <string name="card_details_header">Card Details</string>
+    <string name="card_view_action_copy_card_holder">Copy cardholder</string>
+    <string name="card_view_action_copy_card_number">Copy card number</string>
+    <string name="card_view_action_copy_expiration_date">Copy expiration date</string>
+    <string name="card_view_action_copy_security_code">Copy security code</string>
+    <string name="content_type_card_name">Card</string>
+    <string name="content_type_filter_card_name">Cards</string>
+    <string name="toast_card_number_copied">Card number copied</string>
+    <string name="toast_card_security_code_copied">Security code copied</string>
+    <string name="card_error_copy_number">Error while copying card number</string>
+    <string name="card_error_copy_security_code">Error while copying security code</string>
+    <string name="login_view_action_common_copy">Copy</string>
 </resources>

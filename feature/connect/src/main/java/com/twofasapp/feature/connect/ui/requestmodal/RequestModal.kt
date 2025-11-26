@@ -34,6 +34,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemEntry
@@ -265,8 +266,18 @@ private fun Content(
                         is RequestState.InsideFrame.SecretFieldRequest -> {
                             RequestState(
                                 item = secretFieldRequestState.item,
-                                title = strings.requestModalPasswordRequestTitle,
-                                subtitle = strings.requestModalPasswordRequestSubtitle,
+                                title = when (secretFieldRequestState.item.contentType) {
+                                    is ItemContentType.Unknown -> ""
+                                    is ItemContentType.Login -> strings.requestModalPasswordRequestTitle
+                                    is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestTitle
+                                    is ItemContentType.CreditCard -> strings.requestModalCardRequestTitle
+                                },
+                                subtitle = when (secretFieldRequestState.item.contentType) {
+                                    is ItemContentType.Unknown -> ""
+                                    is ItemContentType.Login -> strings.requestModalPasswordRequestSubtitle
+                                    is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestSubtitle
+                                    is ItemContentType.CreditCard -> strings.requestModalCardRequestSubtitle
+                                },
                                 icon = MdtIcons.Downloading,
                                 iconTint = MdtTheme.color.primary,
                                 positiveCta = strings.requestModalPasswordRequestCtaPositive,

@@ -483,6 +483,12 @@ class Strings(private val c: Context) {
     val requestModalPasswordRequestCtaPositive = c.getString(R.string.request_modal_password_request_cta_positive)
     val requestModalPasswordRequestCtaNegative = c.getString(R.string.request_modal_password_request_cta_negative)
 
+    val requestModalSecureNoteRequestTitle = c.getString(R.string.request_modal_secure_note_request_title)
+    val requestModalSecureNoteRequestSubtitle = c.getString(R.string.request_modal_secure_note_request_subtitle)
+
+    val requestModalCardRequestTitle = c.getString(R.string.request_modal_card_request_title)
+    val requestModalCardRequestSubtitle = c.getString(R.string.request_modal_card_request_subtitle)
+
     val requestModalNewItemTitle = c.getString(R.string.request_modal_new_item_title)
     val requestModalNewItemSubtitle = c.getString(R.string.request_modal_new_item_subtitle)
     val requestModalNewItemCtaPositive = c.getString(R.string.request_modal_new_item_cta_positive)
