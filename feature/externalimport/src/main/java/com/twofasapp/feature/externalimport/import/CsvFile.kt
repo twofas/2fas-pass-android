@@ -40,13 +40,17 @@ internal data class CsvFile(
             val rows = csvReader.readAll()
             val expectedColumnCount = rows.firstOrNull()?.size ?: 0
 
-            rows.map { row ->
-                row.toMutableList().apply {
-                    while (size < expectedColumnCount) {
-                        add("") // fill missing columns with empty strings
+            rows
+                .filterNot { row ->
+                    row.isEmpty() || row.all { value -> value.isEmpty() }
+                }
+                .map { row ->
+                    row.toMutableList().apply {
+                        while (size < expectedColumnCount) {
+                            add("") // fill missing columns with empty strings
+                        }
                     }
                 }
-            }
         }
     }
 
