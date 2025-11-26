@@ -44,36 +44,55 @@ internal class BitwardenImportSpec(
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val content = json.decodeFromString<Model>(context.readTextFile(uri))
-        val items = content.items.orEmpty().map { item ->
-            Item.create(
-                contentType = ItemContentType.Login,
-                vaultId = vaultsRepository.getVault().id,
-                content = ItemContent.Login.Empty.copy(
-                    name = item.name.orEmpty(),
-                    username = item.login?.username,
-                    password = item.login?.password?.let { SecretField.ClearText(it) },
-                    uris = item.login?.uris.orEmpty().map { uri ->
-                        ItemUri(
-                            text = uri.uri.orEmpty(),
-                            matcher = when (uri.match) {
-                                0 -> UriMatcher.Domain
-                                1 -> UriMatcher.Host
-                                2 -> UriMatcher.StartsWith
-                                3 -> UriMatcher.Exact
-                                else -> UriMatcher.Domain
-                            },
-                        )
-                    },
-                    iconType = IconType.Icon,
-                    iconUriIndex = if (item.login?.uris.isNullOrEmpty()) null else 0,
-                    notes = item.notes,
-                ),
-            )
+        val vaultId = vaultsRepository.getVault().id
+        var skippedCount = 0
+
+        val items = content.items.orEmpty().mapNotNull { item ->
+            when (item.type) {
+                1 -> Item.create(
+                    contentType = ItemContentType.Login,
+                    vaultId = vaultId,
+                    content = ItemContent.Login.Empty.copy(
+                        name = item.name.orEmpty(),
+                        username = item.login?.username,
+                        password = item.login?.password?.let { SecretField.ClearText(it) },
+                        uris = item.login?.uris.orEmpty().map { uri ->
+                            ItemUri(
+                                text = uri.uri.orEmpty(),
+                                matcher = when (uri.match) {
+                                    0 -> UriMatcher.Domain
+                                    1 -> UriMatcher.Host
+                                    2 -> UriMatcher.StartsWith
+                                    3 -> UriMatcher.Exact
+                                    else -> UriMatcher.Domain
+                                },
+                            )
+                        },
+                        iconType = IconType.Icon,
+                        iconUriIndex = if (item.login?.uris.isNullOrEmpty()) null else 0,
+                        notes = item.notes,
+                    ),
+                )
+
+                2 -> Item.create(
+                    contentType = ItemContentType.SecureNote,
+                    vaultId = vaultId,
+                    content = ItemContent.SecureNote.Empty.copy(
+                        name = item.name.orEmpty(),
+                        text = item.notes?.let { SecretField.ClearText(it) },
+                    ),
+                )
+
+                else -> {
+                    skippedCount++
+                    null
+                }
+            }
         }
 
         return ImportContent(
             items = items,
-            skipped = 0,
+            skipped = skippedCount,
         )
     }
 
@@ -84,6 +103,7 @@ internal class BitwardenImportSpec(
 
     @Serializable
     private data class BitwardenItem(
+        val type: Int?,
         val name: String?,
         val notes: String?,
         val login: LoginItem?,

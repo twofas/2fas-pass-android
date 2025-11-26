@@ -39,12 +39,14 @@ internal class KeepassXcImportSpec(
         val csvFile = CsvFile(
             text = context.readTextFile(uri),
             delimiter = ',',
-            schema = CsvFile.Schema(
-                name = listOf("Title"),
-                url = listOf("URL"),
-                username = listOf("Username"),
-                password = listOf("Password"),
-                notes = listOf("Notes"),
+            schemas = listOf(
+                CsvFile.Schema.Login(
+                    name = listOf("Title"),
+                    url = listOf("URL"),
+                    username = listOf("Username"),
+                    password = listOf("Password"),
+                    notes = listOf("Notes"),
+                ),
             ),
         )
 

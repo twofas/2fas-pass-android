@@ -39,12 +39,14 @@ internal class DashlaneMobileImportSpec(
         val csvFile = CsvFile(
             text = context.readTextFile(uri),
             delimiter = ',',
-            schema = CsvFile.Schema(
-                name = listOf("title"),
-                url = listOf("url"),
-                username = listOf("username", "username2", "username3"),
-                password = listOf("password"),
-                notes = listOf("note"),
+            schemas = listOf(
+                CsvFile.Schema.Login(
+                    name = listOf("title"),
+                    url = listOf("url"),
+                    username = listOf("username", "username2", "username3"),
+                    password = listOf("password"),
+                    notes = listOf("note"),
+                ),
             ),
         )
 

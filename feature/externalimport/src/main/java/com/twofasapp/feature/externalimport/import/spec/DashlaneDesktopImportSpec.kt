@@ -56,12 +56,14 @@ internal class DashlaneDesktopImportSpec(
             val csvFile = CsvFile(
                 text = text,
                 delimiter = ',',
-                schema = CsvFile.Schema(
-                    name = listOf("title"),
-                    url = listOf("url"),
-                    username = listOf("username", "username2", "username3"),
-                    password = listOf("password"),
-                    notes = listOf("note"),
+                schemas = listOf(
+                    CsvFile.Schema.Login(
+                        name = listOf("title"),
+                        url = listOf("url"),
+                        username = listOf("username", "username2", "username3"),
+                        password = listOf("password"),
+                        notes = listOf("note"),
+                    ),
                 ),
             )
 
@@ -72,12 +74,11 @@ internal class DashlaneDesktopImportSpec(
             val csvFile = CsvFile(
                 text = text,
                 delimiter = ',',
-                schema = CsvFile.Schema(
-                    name = listOf("title"),
-                    url = emptyList(),
-                    username = emptyList(),
-                    password = emptyList(),
-                    notes = listOf("note"),
+                schemas = listOf(
+                    CsvFile.Schema.SecureNote(
+                        name = listOf("title"),
+                        text = listOf("content"),
+                    ),
                 ),
             )
 

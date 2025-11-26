@@ -51,12 +51,14 @@ internal class AppleMobileImportSpec(
             val csvFile = CsvFile(
                 text = it,
                 delimiter = ',',
-                schema = CsvFile.Schema(
-                    name = listOf("Title"),
-                    url = listOf("URL"),
-                    username = listOf("Username"),
-                    password = listOf("Password"),
-                    notes = listOf("Notes"),
+                schemas = listOf(
+                    CsvFile.Schema.Login(
+                        name = listOf("Title"),
+                        url = listOf("URL"),
+                        username = listOf("Username"),
+                        password = listOf("Password"),
+                        notes = listOf("Notes"),
+                    ),
                 ),
             )
 

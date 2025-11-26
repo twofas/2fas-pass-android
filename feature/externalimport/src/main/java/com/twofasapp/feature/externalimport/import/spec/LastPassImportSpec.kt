@@ -40,12 +40,14 @@ internal class LastPassImportSpec(
         val csvFile = CsvFile(
             text = context.readTextFile(uri),
             delimiter = ',',
-            schema = CsvFile.Schema(
-                name = listOf("name"),
-                url = listOf("url"),
-                username = listOf("username"),
-                password = listOf("password"),
-                notes = listOf("extra"),
+            schemas = listOf(
+                CsvFile.Schema.Login(
+                    name = listOf("name"),
+                    url = listOf("url"),
+                    username = listOf("username"),
+                    password = listOf("password"),
+                    notes = listOf("extra"),
+                ),
             ),
         )
 
