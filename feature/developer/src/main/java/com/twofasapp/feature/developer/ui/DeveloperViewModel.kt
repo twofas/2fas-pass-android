@@ -279,9 +279,9 @@ internal class DeveloperViewModel(
                 listOf(
                     Item.create(
                         securityType = securityType,
-                        contentType = ItemContentType.CreditCard,
+                        contentType = ItemContentType.PaymentCard,
                         vaultId = vault.id,
-                        content = ItemContent.CreditCard(
+                        content = ItemContent.PaymentCard(
                             name = "$cardBrand - $cardholderName",
                             cardholder = cardholderName,
                             number = SecretField.ClearText(cardNumber),

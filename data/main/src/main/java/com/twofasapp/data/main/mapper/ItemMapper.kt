@@ -224,7 +224,7 @@ internal class ItemMapper(
                 )
             }
 
-            is ItemContent.CreditCard -> {
+            is ItemContent.PaymentCard -> {
                 jsonSerializer.encodeToJsonElement(
                     ItemContentJson.CreditCard(
                         name = content.name,

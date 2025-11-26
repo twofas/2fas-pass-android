@@ -130,7 +130,7 @@ class ItemEncryptionMapper(
 //                        notes = contentEntity.notes,
 //                    )
 //                }
-                is ItemContentType.CreditCard -> unknownItemEncryptionMapper.decrypt(
+                is ItemContentType.PaymentCard -> unknownItemEncryptionMapper.decrypt(
                     rawJson = contentEntityJson,
                     securityType = itemEncrypted.securityType,
                     vaultCipher = vaultCipher,
@@ -219,7 +219,7 @@ class ItemEncryptionMapper(
                     )
                 }
 
-                is ItemContent.CreditCard -> {
+                is ItemContent.PaymentCard -> {
                     json.encodeToString(
                         CreditCardContentEntityV1(
                             name = content.name,
@@ -382,7 +382,7 @@ class ItemEncryptionMapper(
                 )
             }
 
-            is ItemContent.CreditCard -> {
+            is ItemContent.PaymentCard -> {
                 content.copy(
                     number = content.number?.let {
                         when (it) {
@@ -469,7 +469,7 @@ class ItemEncryptionMapper(
                 )
             }
 
-            is ItemContent.CreditCard -> {
+            is ItemContent.PaymentCard -> {
                 content.copy(
                     number = content.number?.let {
                         when (it) {

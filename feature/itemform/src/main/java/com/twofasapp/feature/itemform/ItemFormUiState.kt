@@ -31,7 +31,7 @@ internal data class ItemFormUiState<T : ItemContent>(
         get() = when (itemContent) {
             is ItemContent.Login -> itemContent.name.isNotEmpty() && itemContent.notes.orEmpty().length <= 2048
             is ItemContent.SecureNote -> itemContent.name.isNotEmpty() && itemContent.text.clearTextOrNull.orEmpty().length <= ItemContent.SecureNote.Limit
-            is ItemContent.CreditCard -> false
+            is ItemContent.PaymentCard -> false
             is ItemContent.Unknown -> false
         }
 }

@@ -48,7 +48,7 @@ internal class EditItemViewModel(
                     content = when (itemContentType) {
                         is ItemContentType.Login -> ItemContent.Login.Empty
                         is ItemContentType.SecureNote -> ItemContent.SecureNote.Empty
-                        is ItemContentType.CreditCard -> ItemContent.CreditCard.Empty
+                        is ItemContentType.PaymentCard -> ItemContent.PaymentCard.Empty
                         is ItemContentType.Unknown -> ItemContent.Unknown("")
                     },
                 )

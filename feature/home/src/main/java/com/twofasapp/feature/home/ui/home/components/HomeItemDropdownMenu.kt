@@ -103,7 +103,7 @@ internal fun HomeItemDropdownMenu(
                         )
                     }
 
-                    is ItemContent.CreditCard -> {
+                    is ItemContent.PaymentCard -> {
                     }
                 }
             }

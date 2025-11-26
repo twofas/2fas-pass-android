@@ -272,7 +272,7 @@ private fun Content(
                             }
                         }
 
-                        is ItemContent.CreditCard -> Unit
+                        is ItemContent.PaymentCard -> Unit
                     }
 
                     Entry(

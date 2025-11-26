@@ -525,7 +525,7 @@ internal class RequestWebSocketImpl(
                         )
                     }
 
-                    is ItemContentType.CreditCard -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.PaymentCard -> throw IllegalArgumentException("Unsupported item type")
                 }
 
                 BrowserRequestAction.AddItem(
@@ -623,7 +623,7 @@ internal class RequestWebSocketImpl(
                         )
                     }
 
-                    is ItemContentType.CreditCard -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.PaymentCard -> throw IllegalArgumentException("Unsupported item type")
                 }
 
                 BrowserRequestAction.UpdateItem(
@@ -944,7 +944,7 @@ internal class RequestWebSocketImpl(
                     )
                 }
 
-                is ItemContent.CreditCard -> {
+                is ItemContent.PaymentCard -> {
                     contentWithEncryptedFields.copy(
                         number = if (includeSecretFields) {
                             (contentWithEncryptedFields.number as? SecretField.Encrypted)?.let { encryptedField ->

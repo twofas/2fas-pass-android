@@ -82,7 +82,7 @@ fun ItemImage(
                 )
             }
 
-            is ItemContent.CreditCard -> {
+            is ItemContent.PaymentCard -> {
                 ItemImage(
                     modifier = modifier,
                     iconType = IconType.Label,

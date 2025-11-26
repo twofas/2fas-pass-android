@@ -148,18 +148,18 @@ internal fun HomeSearchBar(
                 )
             }
 
-            item {
-                Tab(
-                    text = "Credit Cards",
-                    icon = MdtIcons.CreditCard,
-                    type = ItemContentType.CreditCard,
-                    selected = selectedItemType is ItemContentType.CreditCard,
-                    onClick = {
-                        focusManager.clearFocus()
-                        onSelectedItemTypeChange(ItemContentType.CreditCard)
-                    },
-                )
-            }
+//            item {
+//                Tab(
+//                    text = "Credit Cards",
+//                    icon = MdtIcons.CreditCard,
+//                    type = ItemContentType.CreditCard,
+//                    selected = selectedItemType is ItemContentType.CreditCard,
+//                    onClick = {
+//                        focusManager.clearFocus()
+//                        onSelectedItemTypeChange(ItemContentType.CreditCard)
+//                    },
+//                )
+//            }
         }
 
         if (selectedTag != null) {
@@ -244,7 +244,7 @@ private fun ItemContentType?.contentColor(): Color {
     return when (this) {
         ItemContentType.Login -> MdtTheme.color.itemLoginContent
         ItemContentType.SecureNote -> MdtTheme.color.itemSecureNoteContent
-        ItemContentType.CreditCard -> MdtTheme.color.itemCreditCardContent
+        ItemContentType.PaymentCard -> MdtTheme.color.itemCreditCardContent
         is ItemContentType.Unknown -> MdtTheme.color.primaryContainer
         null -> MdtTheme.color.primaryContainer
     }

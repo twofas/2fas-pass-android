@@ -92,7 +92,7 @@ internal fun HomeItem(
                                     is ItemContent.Unknown -> Unit
                                     is ItemContent.Login -> content.password?.let { onCopySecretFieldToClipboard(item, it) }
                                     is ItemContent.SecureNote -> content.text?.let { onCopySecretFieldToClipboard(item, it) }
-                                    is ItemContent.CreditCard -> content.number?.let { onCopySecretFieldToClipboard(item, it) }
+                                    is ItemContent.PaymentCard -> content.number?.let { onCopySecretFieldToClipboard(item, it) }
                                 }
                             }
                         }

@@ -63,7 +63,7 @@ sealed interface ItemContent {
         }
     }
 
-    data class CreditCard(
+    data class PaymentCard(
         override val name: String,
         val cardholder: String?,
         val number: SecretField?,
@@ -73,7 +73,7 @@ sealed interface ItemContent {
     ) : ItemContent {
 
         companion object {
-            val Empty = CreditCard(
+            val Empty = PaymentCard(
                 name = "",
                 cardholder = null,
                 number = null,

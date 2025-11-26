@@ -270,13 +270,13 @@ private fun Content(
                                     is ItemContentType.Unknown -> ""
                                     is ItemContentType.Login -> strings.requestModalPasswordRequestTitle
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestTitle
-                                    is ItemContentType.CreditCard -> strings.requestModalCardRequestTitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalCardRequestTitle
                                 },
                                 subtitle = when (secretFieldRequestState.item.contentType) {
                                     is ItemContentType.Unknown -> ""
                                     is ItemContentType.Login -> strings.requestModalPasswordRequestSubtitle
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestSubtitle
-                                    is ItemContentType.CreditCard -> strings.requestModalCardRequestSubtitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalCardRequestSubtitle
                                 },
                                 icon = MdtIcons.Downloading,
                                 iconTint = MdtTheme.color.primary,
@@ -293,7 +293,7 @@ private fun Content(
                                                 put("s_text", content.text.clearTextOrNull.orEmpty())
                                             }
 
-                                            is ItemContent.CreditCard -> Unit
+                                            is ItemContent.PaymentCard -> Unit
                                             is ItemContent.Unknown -> Unit
                                         }
                                     }

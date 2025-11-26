@@ -41,7 +41,7 @@ fun ItemForm(
                 )
             }
 
-            is ItemContent.CreditCard -> Unit
+            is ItemContent.PaymentCard -> Unit
         }
     }
 }

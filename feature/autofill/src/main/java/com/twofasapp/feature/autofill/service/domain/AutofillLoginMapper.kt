@@ -17,7 +17,7 @@ internal fun Item.asSecretAutofillLogin(): AutofillLogin? {
     return content.let { content ->
         when (content) {
             is ItemContent.Unknown -> null
-            is ItemContent.CreditCard -> null
+            is ItemContent.PaymentCard -> null
             is ItemContent.Login -> {
                 AutofillLogin(
                     encrypted = when (securityType) {
@@ -64,7 +64,7 @@ internal fun Item.asAutofillLogin(): AutofillLogin? {
     return content.let { content ->
         when (content) {
             is ItemContent.Unknown -> null
-            is ItemContent.CreditCard -> null
+            is ItemContent.PaymentCard -> null
             is ItemContent.Login -> {
                 AutofillLogin(
                     encrypted = false,
