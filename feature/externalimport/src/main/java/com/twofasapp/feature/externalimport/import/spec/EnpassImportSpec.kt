@@ -51,8 +51,8 @@ internal class EnpassImportSpec(
             .filterNot { item -> item.trashed == 1 || item.archived == 1 }
             .mapNotNull { item ->
                 when {
+                    item.category.isNoteCategory() || item.templateType.isNoteTemplate() -> item.toSecureNote(vaultId)
                     item.templateType.isLoginTemplate() -> item.toLogin(vaultId)
-                    item.templateType.isNoteTemplate() -> item.toSecureNote(vaultId)
                     else -> null
                 }
             }
@@ -78,6 +78,7 @@ internal class EnpassImportSpec(
         val trashed: Int? = null,
         val archived: Int? = null,
         @SerialName("template_type") val templateType: String? = null,
+        val category: String? = null,
     )
 
     @Serializable
@@ -192,6 +193,9 @@ internal class EnpassImportSpec(
     private fun String?.isNoteTemplate(): Boolean = this
         ?.lowercase()
         ?.contains("note") == true
+
+    private fun String?.isNoteCategory(): Boolean = this
+        ?.lowercase() == "note"
 
     private companion object {
         private val UsernameTypes = setOf("username", "email")

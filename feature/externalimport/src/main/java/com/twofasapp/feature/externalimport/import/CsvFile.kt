@@ -56,6 +56,7 @@ internal data class CsvFile(
 
     sealed interface Schema {
         val contentType: ItemContentType
+        val filter: Map<String, String>
 
         fun getColumnNames(): List<List<String>>
 
@@ -65,6 +66,7 @@ internal data class CsvFile(
             val username: List<String>,
             val password: List<String>,
             val notes: List<String>,
+            override val filter: Map<String, String> = emptyMap(),
         ) : Schema {
             override val contentType = ItemContentType.Login
 
@@ -76,6 +78,7 @@ internal data class CsvFile(
         data class SecureNote(
             val name: List<String>,
             val text: List<String>,
+            override val filter: Map<String, String> = emptyMap(),
         ) : Schema {
             override val contentType = ItemContentType.SecureNote
 
@@ -91,6 +94,7 @@ internal data class CsvFile(
             val expiration: List<String>,
             val cvv: List<String>,
             val notes: List<String>,
+            override val filter: Map<String, String> = emptyMap(),
         ) : Schema {
             override val contentType = ItemContentType.PaymentCard
 
@@ -108,6 +112,19 @@ internal data class CsvFile(
         }
 
         return indices
+    }
+
+    private fun matchesFilter(record: List<String>, filter: Map<String, String>): Boolean {
+        if (filter.isEmpty()) return true
+
+        val lowercaseColumns = csvRecords.first().map { it.lowercase() }
+        return filter.all { (columnName, expectedValue) ->
+            val columnIndex = lowercaseColumns.indexOf(columnName.lowercase())
+            if (columnIndex == -1) return@all false
+
+            val actualValue = record.getOrNull(columnIndex)?.trim()?.lowercase() ?: ""
+            actualValue == expectedValue.lowercase()
+        }
     }
 
     private data class SchemaMatch(
@@ -147,6 +164,18 @@ internal data class CsvFile(
     }
 
     fun parse(vaultId: String): List<Item> {
+        // If any schema has filters, parse all schemas and combine results
+        if (schemas.any { it.filter.isNotEmpty() }) {
+            return schemas.flatMap { schema ->
+                when (schema) {
+                    is Schema.Login -> parseLogin(vaultId, schema)
+                    is Schema.SecureNote -> parseSecureNote(vaultId, schema)
+                    is Schema.PaymentCard -> emptyList()
+                }
+            }
+        }
+
+        // Otherwise, use the best matching schema (backward compatibility)
         return when (val bestSchema = findBestMatchingSchema()) {
             is Schema.Login -> parseLogin(vaultId, bestSchema)
             is Schema.SecureNote -> parseSecureNote(vaultId, bestSchema)
@@ -162,46 +191,50 @@ internal data class CsvFile(
         val passwordIndices = indexOf(schema.password)
         val notesIndices = indexOf(schema.notes)
 
-        return csvRecords.drop(1).map { record ->
-            val itemUri = urlIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { url ->
-                ItemUri(
-                    text = url,
-                    matcher = UriMatcher.Domain,
+        return csvRecords.drop(1)
+            .filter { record -> matchesFilter(record, schema.filter) }
+            .map { record ->
+                val itemUri = urlIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { url ->
+                    ItemUri(
+                        text = url,
+                        matcher = UriMatcher.Domain,
+                    )
+                }
+
+                Item.create(
+                    vaultId = vaultId,
+                    contentType = ItemContentType.Login,
+                    content = ItemContent.Login.Empty.copy(
+                        name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
+                        username = usernameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
+                        password = passwordIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
+                        notes = notesIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
+                        iconType = IconType.Icon,
+                        iconUriIndex = if (itemUri == null) null else 0,
+                        uris = listOfNotNull(itemUri),
+                    ),
                 )
             }
-
-            Item.create(
-                vaultId = vaultId,
-                contentType = ItemContentType.Login,
-                content = ItemContent.Login.Empty.copy(
-                    name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
-                    username = usernameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                    password = passwordIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
-                    notes = notesIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                    iconType = IconType.Icon,
-                    iconUriIndex = if (itemUri == null) null else 0,
-                    uris = listOfNotNull(itemUri),
-                ),
-            )
-        }
     }
 
     private fun parseSecureNote(vaultId: String, schema: Schema.SecureNote): List<Item> {
         val nameIndices = indexOf(schema.name)
         val textIndices = indexOf(schema.text)
 
-        return csvRecords.drop(1).map { record ->
-            val text = textIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty()
+        return csvRecords.drop(1)
+            .filter { record -> matchesFilter(record, schema.filter) }
+            .map { record ->
+                val text = textIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty()
 
-            Item.create(
-                vaultId = vaultId,
-                contentType = ItemContentType.SecureNote,
-                content = ItemContent.SecureNote.Empty.copy(
-                    name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
-                    text = if (text.isNotEmpty()) SecretField.ClearText(text) else null,
-                ),
-            )
-        }
+                Item.create(
+                    vaultId = vaultId,
+                    contentType = ItemContentType.SecureNote,
+                    content = ItemContent.SecureNote.Empty.copy(
+                        name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
+                        text = if (text.isNotEmpty()) SecretField.ClearText(text) else null,
+                    ),
+                )
+            }
     }
 
     private fun parsePaymentCard(vaultId: String, schema: Schema.PaymentCard): List<Item> {
@@ -212,19 +245,21 @@ internal data class CsvFile(
         val cvvIndices = indexOf(schema.cvv)
         val notesIndices = indexOf(schema.notes)
 
-        return csvRecords.drop(1).map { record ->
-            Item.create(
-                vaultId = vaultId,
-                contentType = ItemContentType.PaymentCard,
-                content = ItemContent.PaymentCard.Empty.copy(
-                    name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
-                    cardholder = cardholderIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                    number = numberIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
-                    expiration = expirationIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                    cvv = cvvIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
-                    notes = notesIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                ),
-            )
-        }
+        return csvRecords.drop(1)
+            .filter { record -> matchesFilter(record, schema.filter) }
+            .map { record ->
+                Item.create(
+                    vaultId = vaultId,
+                    contentType = ItemContentType.PaymentCard,
+                    content = ItemContent.PaymentCard.Empty.copy(
+                        name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
+                        cardholder = cardholderIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
+                        number = numberIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
+                        expiration = expirationIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
+                        cvv = cvvIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
+                        notes = notesIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
+                    ),
+                )
+            }
     }
 }

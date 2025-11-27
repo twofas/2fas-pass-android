@@ -46,6 +46,12 @@ internal class ProtonPassImportSpec(
                     username = listOf("email", "username"),
                     password = listOf("password"),
                     notes = listOf("note"),
+                    filter = mapOf("type" to "login"),
+                ),
+                CsvFile.Schema.SecureNote(
+                    name = listOf("name"),
+                    text = listOf("note"),
+                    filter = mapOf("type" to "note"),
                 ),
             ),
         )

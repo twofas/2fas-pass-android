@@ -77,7 +77,7 @@ internal class DashlaneDesktopImportSpec(
                 schemas = listOf(
                     CsvFile.Schema.SecureNote(
                         name = listOf("title"),
-                        text = listOf("content"),
+                        text = listOf("note"),
                     ),
                 ),
             )

@@ -47,6 +47,10 @@ internal class DashlaneMobileImportSpec(
                     password = listOf("password"),
                     notes = listOf("note"),
                 ),
+                CsvFile.Schema.SecureNote(
+                    name = listOf("title"),
+                    text = listOf("note"),
+                ),
             ),
         )
 
