@@ -132,7 +132,7 @@ internal fun HomeSearchBar(
                         onSelectedItemTypeChange(ItemContentType.Login)
                     },
 
-                    )
+                )
             }
 
             item {

@@ -232,7 +232,7 @@ private fun Content(
                         }
 
                         is ItemContent.SecureNote -> {
-                            content.text?.let { text ->
+                            content.text?.let {
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 LifecycleResumeEffect(Unit) {
@@ -285,7 +285,136 @@ private fun Content(
                             }
                         }
 
-                        is ItemContent.PaymentCard -> Unit
+                        is ItemContent.PaymentCard -> {
+                            if (content.cardHolder.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = "Card Holder",
+                                    subtitle = content.cardHolder,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.cardHolder.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            content.cardNumber?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                Entry(
+                                    title = "Number",
+                                    subtitle = textDecrypted ?: secretString(count = 16),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.cardNumber,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.cardNumber) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            content.expirationDate?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                Entry(
+                                    title = "Expiration",
+                                    subtitle = textDecrypted ?: secretString(count = 5),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.expirationDate,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.expirationDate) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            content.securityCode?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                Entry(
+                                    title = "Security Code",
+                                    subtitle = textDecrypted ?: secretString(count = 3),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.securityCode,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.securityCode) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            if (content.notes.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginNotes,
+                                    subtitle = content.notes.orEmpty(),
+                                    isCompact = true,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.notes.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
+                        }
                     }
 
                     Entry(
