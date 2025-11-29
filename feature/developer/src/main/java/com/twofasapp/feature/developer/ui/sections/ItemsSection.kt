@@ -101,7 +101,7 @@ internal fun ItemsSection(
 
         OptionEntry(
             title = "Generate credit card",
-            icon = MdtIcons.CreditCard,
+            icon = MdtIcons.PaymentCard,
             onClick = { onInsertRandomCreditCard() },
         )
 

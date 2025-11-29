@@ -154,31 +154,38 @@ internal class ItemMapper(
                 )
             }
 
-            // Uncomment when credit cards done
-//            ItemContentType.CreditCard.key -> {
-//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.CreditCard.serializer(), contentJson)
-//
-//                ItemContent.CreditCard(
-//                    name = content.name,
-//                    cardholder = content.cardholder,
-//                    number = content.number?.let {
-//                        if (hasSecretFieldsEncrypted) {
-//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
-//                        } else {
-//                            SecretField.ClearText(it)
-//                        }
-//                    },
-//                    expiration = content.expiration,
-//                    cvv = content.cvv?.let {
-//                        if (hasSecretFieldsEncrypted) {
-//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
-//                        } else {
-//                            SecretField.ClearText(it)
-//                        }
-//                    },
-//                    notes = content.notes,
-//                )
-//            }
+            ItemContentType.PaymentCard.key -> {
+                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.PaymentCard.serializer(), contentJson)
+
+                ItemContent.PaymentCard(
+                    name = content.name,
+                    cardHolder = content.cardHolder,
+                    cardNumber = content.cardNumber?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                    expirationDate = content.expirationDate?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                    securityCode = content.securityCode?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                    cardNumberMask = content.cardNumber,
+                    issuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
+                    notes = content.notes,
+                )
+            }
 
             else -> {
                 ItemContent.Unknown(rawJson = jsonSerializer.encodeToString(contentJson))
@@ -228,15 +235,15 @@ internal class ItemMapper(
                 jsonSerializer.encodeToJsonElement(
                     ItemContentJson.PaymentCard(
                         name = content.name,
-                        cardHolder = content.cardholder,
-                        cardNumber = when (content.number) {
-                            is SecretField.ClearText -> content.number.clearText
-                            is SecretField.Encrypted -> content.number.encryptedText
+                        cardHolder = content.cardHolder,
+                        cardNumber = when (content.cardNumber) {
+                            is SecretField.ClearText -> content.cardNumber.clearText
+                            is SecretField.Encrypted -> content.cardNumber.encryptedText
                             null -> null
                         },
-                        expirationDate = when (content.expiration) {
-                            is SecretField.ClearText -> content.expiration.clearText
-                            is SecretField.Encrypted -> content.expiration.encryptedText
+                        expirationDate = when (content.expirationDate) {
+                            is SecretField.ClearText -> content.expirationDate.clearText
+                            is SecretField.Encrypted -> content.expirationDate.encryptedText
                             null -> null
                         },
                         securityCode = when (content.securityCode) {
@@ -244,8 +251,8 @@ internal class ItemMapper(
                             is SecretField.Encrypted -> content.securityCode.encryptedText
                             null -> null
                         },
-                        cardNumberMask = null,
-                        cardIssuer = null,
+                        cardNumberMask = content.cardNumberMask,
+                        cardIssuer = content.issuer?.code,
                         notes = content.notes,
                     ),
                 )

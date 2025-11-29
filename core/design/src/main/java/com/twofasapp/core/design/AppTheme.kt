@@ -103,8 +103,8 @@ fun AppTheme(
         itemLoginContainer = if (isInDarkTheme) Color(0xFF002B52) else Color(0xFFD4EBFF),
         itemSecureNoteContent = if (isInDarkTheme) Color(0xFFFF8D28) else Color(0xFFFF8D28),
         itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
-        itemCreditCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
-        itemCreditCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
+        itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
+        itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
     )
 
     CompositionLocalProvider(

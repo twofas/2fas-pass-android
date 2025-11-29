@@ -93,49 +93,56 @@ class ItemEncryptionMapper(
                     )
                 }
 
-                // Uncomment when credit cards done
-//                is ItemContentType.CreditCard -> {
-//                    val contentEntity = json.decodeFromString(CreditCardContentEntityV1.serializer(), contentEntityJson)
-//
-//                    ItemContent.CreditCard(
-//                        name = contentEntity.name,
-//                        cardholder = contentEntity.cardholder,
-//                        number = contentEntity.number?.let {
-//                            if (decryptSecretFields) {
-//                                SecretField.ClearText(
-//                                    when (itemEncrypted.securityType) {
-//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-//                                    },
-//                                )
-//                            } else {
-//                                SecretField.Encrypted(it)
-//                            }
-//                        },
-//                        expiration = contentEntity.expiration,
-//                        cvv = contentEntity.cvv?.let {
-//                            if (decryptSecretFields) {
-//                                SecretField.ClearText(
-//                                    when (itemEncrypted.securityType) {
-//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-//                                    },
-//                                )
-//                            } else {
-//                                SecretField.Encrypted(it)
-//                            }
-//                        },
-//                        notes = contentEntity.notes,
-//                    )
-//                }
-                is ItemContentType.PaymentCard -> unknownItemEncryptionMapper.decrypt(
-                    rawJson = contentEntityJson,
-                    securityType = itemEncrypted.securityType,
-                    vaultCipher = vaultCipher,
-                    decryptSecretFields = decryptSecretFields,
-                )
+                is ItemContentType.PaymentCard -> {
+                    val contentEntity = json.decodeFromString(PaymentCardContentEntityV1.serializer(), contentEntityJson)
+
+                    ItemContent.PaymentCard(
+                        name = contentEntity.name,
+                        cardHolder = contentEntity.cardHolder,
+                        cardNumber = contentEntity.cardNumber?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        expirationDate = contentEntity.expirationDate?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        securityCode = contentEntity.securityCode?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        cardNumberMask = contentEntity.cardNumberMask,
+                        issuer = ItemContent.PaymentCard.Issuer.fromCode(contentEntity.cardIssuer),
+                        notes = contentEntity.notes,
+                    )
+                }
 
                 is ItemContentType.Unknown -> unknownItemEncryptionMapper.decrypt(
                     rawJson = contentEntityJson,
@@ -223,33 +230,33 @@ class ItemEncryptionMapper(
                     json.encodeToString(
                         PaymentCardContentEntityV1(
                             name = content.name,
-                            cardHolder = content.cardholder,
-                            cardNumber = when (content.number) {
-                                is SecretField.Encrypted -> (content.number as SecretField.Encrypted).value
+                            cardHolder = content.cardHolder,
+                            cardNumber = when (content.cardNumber) {
+                                is SecretField.Encrypted -> (content.cardNumber as SecretField.Encrypted).value
                                 is SecretField.ClearText -> {
-                                    if (content.number.clearText.isBlank()) {
+                                    if (content.cardNumber.clearText.isBlank()) {
                                         null
                                     } else {
                                         when (item.securityType) {
-                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.number.clearText)
-                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.number.clearText)
-                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.number.clearText)
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.cardNumber.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.cardNumber.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.cardNumber.clearText)
                                         }
                                     }
                                 }
 
                                 null -> null
                             },
-                            expirationDate = when (content.expiration) {
-                                is SecretField.Encrypted -> (content.expiration as SecretField.Encrypted).value
+                            expirationDate = when (content.expirationDate) {
+                                is SecretField.Encrypted -> (content.expirationDate as SecretField.Encrypted).value
                                 is SecretField.ClearText -> {
-                                    if (content.expiration.clearText.isBlank()) {
+                                    if (content.expirationDate.clearText.isBlank()) {
                                         null
                                     } else {
                                         when (item.securityType) {
-                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.expiration.clearText)
-                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.expiration.clearText)
-                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.expiration.clearText)
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.expirationDate.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.expirationDate.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.expirationDate.clearText)
                                         }
                                     }
                                 }
@@ -272,7 +279,7 @@ class ItemEncryptionMapper(
 
                                 null -> null
                             },
-                            cardNumberMask = content.numberMask,
+                            cardNumberMask = content.cardNumberMask,
                             cardIssuer = content.issuer?.code,
                             notes = content.notes,
                         ),
@@ -401,7 +408,7 @@ class ItemEncryptionMapper(
 
             is ItemContent.PaymentCard -> {
                 content.copy(
-                    number = content.number?.let {
+                    cardNumber = content.cardNumber?.let {
                         when (it) {
                             is SecretField.ClearText -> it
                             is SecretField.Encrypted -> {
@@ -488,7 +495,7 @@ class ItemEncryptionMapper(
 
             is ItemContent.PaymentCard -> {
                 content.copy(
-                    number = content.number?.let {
+                    cardNumber = content.cardNumber?.let {
                         when (it) {
                             is SecretField.Encrypted -> it
                             is SecretField.ClearText -> {

@@ -946,8 +946,8 @@ internal class RequestWebSocketImpl(
 
                 is ItemContent.PaymentCard -> {
                     contentWithEncryptedFields.copy(
-                        number = if (includeSecretFields) {
-                            (contentWithEncryptedFields.number as? SecretField.Encrypted)?.let { encryptedField ->
+                        cardNumber = if (includeSecretFields) {
+                            (contentWithEncryptedFields.cardNumber as? SecretField.Encrypted)?.let { encryptedField ->
                                 SecretField.ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {

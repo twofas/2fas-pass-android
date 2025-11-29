@@ -65,10 +65,10 @@ sealed interface ItemContent {
 
     data class PaymentCard(
         override val name: String,
-        val cardholder: String?,
-        val number: SecretField?,
-        val numberMask: String?,
-        val expiration: SecretField?,
+        val cardHolder: String?,
+        val cardNumber: SecretField?,
+        val cardNumberMask: String?,
+        val expirationDate: SecretField?,
         val securityCode: SecretField?,
         val issuer: Issuer?,
         val notes: String?,
@@ -82,15 +82,22 @@ sealed interface ItemContent {
             DinersClub("DinersClub"),
             Jcb("JCB"),
             UnionPay("UnionPay"),
+            ;
+
+            companion object {
+                fun fromCode(code: String?): Issuer? {
+                    return entries.find { it.code == code }
+                }
+            }
         }
 
         companion object {
             val Empty = PaymentCard(
                 name = "",
-                cardholder = null,
-                number = null,
-                numberMask = null,
-                expiration = null,
+                cardHolder = null,
+                cardNumber = null,
+                cardNumberMask = null,
+                expirationDate = null,
                 securityCode = null,
                 issuer = null,
                 notes = null,
