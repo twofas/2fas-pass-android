@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +38,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -53,6 +56,9 @@ import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.modal.Modal
+import com.twofasapp.core.design.foundation.other.Space
+import com.twofasapp.core.design.foundation.preview.PreviewRow
+import com.twofasapp.core.design.foundation.text.TextIcon
 import com.twofasapp.core.design.foundation.text.secretAnnotatedString
 import com.twofasapp.core.design.foundation.text.secretString
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
@@ -128,6 +134,23 @@ private fun Content(
                     .padding(vertical = 12.dp),
                 textAlign = TextAlign.Center,
             )
+
+            if (tags.isNotEmpty()) {
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
+                        TagPill(tag = tag)
+                    }
+                }
+
+                Space(12.dp)
+            }
 
             Column(
                 modifier = Modifier
@@ -421,13 +444,6 @@ private fun Content(
                         title = MdtLocale.strings.loginSecurityLevel,
                         subtitle = item.securityType.asTitle(),
                     )
-
-                    if (item.tagIds.isNotEmpty()) {
-                        Entry(
-                            title = MdtLocale.strings.loginTags,
-                            subtitle = tags.filter { item.tagIds.contains(it.id) }.joinToString(", ") { it.name },
-                        )
-                    }
                 }
             }
         }
@@ -495,5 +511,38 @@ private fun Entry(
                 actions()
             }
         }
+    }
+}
+
+@Composable
+private fun TagPill(
+    modifier: Modifier = Modifier,
+    tag: Tag,
+) {
+    TextIcon(
+        text = tag.name,
+        leadingIcon = MdtIcons.Tag,
+        leadingIconSize = 14.dp,
+        leadingIconTint = MdtTheme.color.onSecondaryContainer,
+        color = MdtTheme.color.onSecondaryContainer,
+        style = MdtTheme.typo.labelSmall,
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MdtTheme.color.secondaryContainer)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewTagPill() {
+    PreviewRow {
+        TagPill(
+            tag = Tag.Empty.copy(name = "Personal"),
+        )
+
+        TagPill(
+            tag = Tag.Empty.copy(name = "Work"),
+        )
     }
 }
