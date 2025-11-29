@@ -255,8 +255,8 @@ internal data class CsvFile(
                         name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
                         cardholder = cardholderIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
                         number = numberIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
-                        expiration = expirationIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                        cvv = cvvIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
+                        expiration = null, // todo fix
+                        securityCode = cvvIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
                         notes = notesIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
                     ),
                 )

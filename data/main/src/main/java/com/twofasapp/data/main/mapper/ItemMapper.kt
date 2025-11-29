@@ -226,20 +226,26 @@ internal class ItemMapper(
 
             is ItemContent.PaymentCard -> {
                 jsonSerializer.encodeToJsonElement(
-                    ItemContentJson.CreditCard(
+                    ItemContentJson.PaymentCard(
                         name = content.name,
-                        cardholder = content.cardholder,
-                        number = when (content.number) {
+                        cardHolder = content.cardholder,
+                        cardNumber = when (content.number) {
                             is SecretField.ClearText -> content.number.clearText
                             is SecretField.Encrypted -> content.number.encryptedText
                             null -> null
                         },
-                        expiration = content.expiration,
-                        cvv = when (content.cvv) {
-                            is SecretField.ClearText -> content.cvv.clearText
-                            is SecretField.Encrypted -> content.cvv.encryptedText
+                        expirationDate = when (content.expiration) {
+                            is SecretField.ClearText -> content.expiration.clearText
+                            is SecretField.Encrypted -> content.expiration.encryptedText
                             null -> null
                         },
+                        securityCode = when (content.securityCode) {
+                            is SecretField.ClearText -> content.securityCode.clearText
+                            is SecretField.Encrypted -> content.securityCode.encryptedText
+                            null -> null
+                        },
+                        cardNumberMask = null,
+                        cardIssuer = null,
                         notes = content.notes,
                     ),
                 )

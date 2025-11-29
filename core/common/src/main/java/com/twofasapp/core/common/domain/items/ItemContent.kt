@@ -67,18 +67,32 @@ sealed interface ItemContent {
         override val name: String,
         val cardholder: String?,
         val number: SecretField?,
-        val expiration: String?,
-        val cvv: SecretField?,
+        val numberMask: String?,
+        val expiration: SecretField?,
+        val securityCode: SecretField?,
+        val issuer: Issuer?,
         val notes: String?,
     ) : ItemContent {
+
+        enum class Issuer(val code: String) {
+            Visa("Visa"),
+            MasterCard("MC"),
+            AmericanExpress("AMEX"),
+            Discover("Discover"),
+            DinersClub("DinersClub"),
+            Jcb("JCB"),
+            UnionPay("UnionPay"),
+        }
 
         companion object {
             val Empty = PaymentCard(
                 name = "",
                 cardholder = null,
                 number = null,
+                numberMask = null,
                 expiration = null,
-                cvv = null,
+                securityCode = null,
+                issuer = null,
                 notes = null,
             )
         }

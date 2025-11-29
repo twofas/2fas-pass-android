@@ -953,8 +953,8 @@ internal class RequestWebSocketImpl(
                         } else {
                             null
                         },
-                        cvv = if (includeSecretFields) {
-                            (contentWithEncryptedFields.cvv as? SecretField.Encrypted)?.let { encryptedField ->
+                        securityCode = if (includeSecretFields) {
+                            (contentWithEncryptedFields.securityCode as? SecretField.Encrypted)?.let { encryptedField ->
                                 SecretField.ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {
