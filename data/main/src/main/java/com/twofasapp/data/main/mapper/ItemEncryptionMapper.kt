@@ -139,7 +139,7 @@ class ItemEncryptionMapper(
                             }
                         },
                         cardNumberMask = contentEntity.cardNumberMask,
-                        issuer = ItemContent.PaymentCard.Issuer.fromCode(contentEntity.cardIssuer),
+                        cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(contentEntity.cardIssuer),
                         notes = contentEntity.notes,
                     )
                 }
@@ -280,7 +280,7 @@ class ItemEncryptionMapper(
                                 null -> null
                             },
                             cardNumberMask = content.cardNumberMask,
-                            cardIssuer = content.issuer?.code,
+                            cardIssuer = content.cardIssuer?.code,
                             notes = content.notes,
                         ),
                     )

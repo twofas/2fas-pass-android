@@ -289,7 +289,7 @@ internal class DeveloperViewModel(
                             securityCode = SecretField.ClearText(cvv),
                             notes = "Generated test credit card",
                             cardNumberMask = cardNumber.takeLast(4),
-                            issuer = ItemContent.PaymentCard.Issuer.entries.random(),
+                            cardIssuer = ItemContent.PaymentCard.Issuer.entries.random(),
                         ),
                     ).copy(id = Uuid.generate()),
                 ),

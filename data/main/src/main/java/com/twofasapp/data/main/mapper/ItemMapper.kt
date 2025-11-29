@@ -182,7 +182,7 @@ internal class ItemMapper(
                         }
                     },
                     cardNumberMask = content.cardNumber,
-                    issuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
+                    cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
                     notes = content.notes,
                 )
             }
@@ -252,7 +252,7 @@ internal class ItemMapper(
                             null -> null
                         },
                         cardNumberMask = content.cardNumberMask,
-                        cardIssuer = content.issuer?.code,
+                        cardIssuer = content.cardIssuer?.code,
                         notes = content.notes,
                     ),
                 )

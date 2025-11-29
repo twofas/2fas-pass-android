@@ -70,7 +70,7 @@ sealed interface ItemContent {
         val cardNumberMask: String?,
         val expirationDate: SecretField?,
         val securityCode: SecretField?,
-        val issuer: Issuer?,
+        val cardIssuer: Issuer?,
         val notes: String?,
     ) : ItemContent {
 
@@ -99,7 +99,7 @@ sealed interface ItemContent {
                 cardNumberMask = null,
                 expirationDate = null,
                 securityCode = null,
-                issuer = null,
+                cardIssuer = null,
                 notes = null,
             )
         }
