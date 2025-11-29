@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
@@ -235,6 +236,18 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 LifecycleResumeEffect(Unit) {
+                                    if (item.securityType == SecurityType.Tier3) {
+                                        scope.launch(Dispatchers.IO) {
+                                            vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                itemEncryptionMapper.decryptSecretField(
+                                                    secretField = content.text,
+                                                    securityType = item.securityType,
+                                                    vaultCipher = this,
+                                                )?.let { textDecrypted = it }
+                                            }
+                                        }
+                                    }
+
                                     onPauseOrDispose {
                                         textDecrypted = null
                                     }

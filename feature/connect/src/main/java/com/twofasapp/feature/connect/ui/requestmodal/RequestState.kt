@@ -21,10 +21,13 @@ internal sealed interface RequestState {
 
     sealed interface InsideFrame : RequestState {
         data object Loading : InsideFrame
+
         @Deprecated("To be removed")
         data object PasswordRequest : InsideFrame
+
         @Deprecated("To be removed")
         data object AddLogin : InsideFrame
+
         @Deprecated("To be removed")
         data object UpdateLogin : InsideFrame
         data object FullSync : InsideFrame

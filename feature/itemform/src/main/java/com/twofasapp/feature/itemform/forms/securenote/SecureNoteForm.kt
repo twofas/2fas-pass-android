@@ -104,7 +104,7 @@ private fun Content(
     var revealTextClicked by remember { mutableStateOf(false) }
     val showText by remember {
         derivedStateOf {
-            uiState.initialItem.id.isEmpty() || revealTextClicked
+            uiState.initialItem.id.isEmpty() || revealTextClicked || uiState.initialItem.securityType == SecurityType.Tier3
         }
     }
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = "")) }
