@@ -323,7 +323,12 @@ private fun Content(
                         is RequestState.InsideFrame.AddItem -> {
                             RequestState(
                                 item = addItemState.item,
-                                title = strings.requestModalNewItemTitle,
+                                title = when (addItemState.item.contentType) {
+                                    is ItemContentType.Unknown -> strings.requestModalNewItemTitle
+                                    is ItemContentType.Login -> strings.requestModalNewLoginTitle
+                                    is ItemContentType.SecureNote -> strings.requestModalNewSecureNoteTitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalNewCardTitle
+                                },
                                 subtitle = strings.requestModalNewItemSubtitle,
                                 icon = MdtIcons.AddCircle,
                                 iconTint = MdtTheme.color.primary,
@@ -337,7 +342,12 @@ private fun Content(
                         is RequestState.InsideFrame.UpdateItem -> {
                             RequestState(
                                 item = updateItemState.item,
-                                title = strings.requestModalUpdateItemTitle,
+                                title = when (updateItemState.item.contentType) {
+                                    is ItemContentType.Unknown -> strings.requestModalUpdateItemTitle
+                                    is ItemContentType.Login -> strings.requestModalUpdateLoginTitle
+                                    is ItemContentType.SecureNote -> strings.requestModalUpdateSecureNoteTitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalUpdateCardTitle
+                                },
                                 subtitle = strings.requestModalUpdateItemSubtitle,
                                 icon = MdtIcons.RotateLeft,
                                 iconTint = MdtTheme.color.primary,

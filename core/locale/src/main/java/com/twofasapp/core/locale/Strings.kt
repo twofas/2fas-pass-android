@@ -494,10 +494,18 @@ class Strings(private val c: Context) {
     val requestModalNewItemCtaPositive = c.getString(R.string.request_modal_new_item_cta_positive)
     val requestModalNewItemCtaNegative = c.getString(R.string.request_modal_new_item_cta_negative)
 
+    val requestModalNewLoginTitle = c.getString(R.string.request_modal_new_login_title)
+    val requestModalNewSecureNoteTitle = c.getString(R.string.request_modal_new_secure_note_title)
+    val requestModalNewCardTitle = c.getString(R.string.request_modal_new_card_title)
+
     val requestModalUpdateItemTitle = c.getString(R.string.request_modal_update_item_title)
     val requestModalUpdateItemSubtitle = c.getString(R.string.request_modal_update_item_subtitle)
     val requestModalUpdateItemCtaPositive = c.getString(R.string.request_modal_update_item_cta_positive)
     val requestModalUpdateItemCtaNegative = c.getString(R.string.request_modal_update_item_cta_negative)
+
+    val requestModalUpdateLoginTitle = c.getString(R.string.request_modal_update_login_title)
+    val requestModalUpdateSecureNoteTitle = c.getString(R.string.request_modal_update_secure_note_title)
+    val requestModalUpdateCardTitle = c.getString(R.string.request_modal_update_card_title)
 
     val requestModalRemoveItemTitle = c.getString(R.string.request_modal_remove_item_title)
     val requestModalRemoveItemSubtitle = c.getString(R.string.request_modal_remove_item_subtitle)
