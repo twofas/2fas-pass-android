@@ -52,7 +52,7 @@ internal object InlinePresentationBuilder {
             .setContentDescription(title ?: "Pinned")
 
         val sliceSubtitle = subtitle.orEmpty().take(16)
-        val sliceTitle = title.orEmpty().take(16).ifBlank { sliceSubtitle.ifBlank { "Item" } }
+        val sliceTitle = title.orEmpty().take(16).ifBlank { sliceSubtitle }
 
         builder.setTitle(sliceTitle)
 
