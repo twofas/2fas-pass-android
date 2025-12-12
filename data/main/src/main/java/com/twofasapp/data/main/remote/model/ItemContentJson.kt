@@ -54,17 +54,21 @@ sealed interface ItemContentJson {
     ) : ItemContentJson
 
     @Serializable
-    data class CreditCard(
+    data class PaymentCard(
         @SerialName("name")
         val name: String,
-        @SerialName("cardholder")
-        val cardholder: String?,
-        @SerialName("s_number")
-        val number: String?,
-        @SerialName("expiration")
-        val expiration: String?,
-        @SerialName("s_cvv")
-        val cvv: String?,
+        @SerialName("cardHolder")
+        val cardHolder: String?,
+        @SerialName("s_cardNumber")
+        val cardNumber: String?,
+        @SerialName("s_expirationDate")
+        val expirationDate: String?,
+        @SerialName("s_securityCode")
+        val securityCode: String?,
+        @SerialName("cardNumberMask")
+        val cardNumberMask: String?,
+        @SerialName("cardIssuer")
+        val cardIssuer: String?,
         @SerialName("notes")
         val notes: String?,
     ) : ItemContentJson

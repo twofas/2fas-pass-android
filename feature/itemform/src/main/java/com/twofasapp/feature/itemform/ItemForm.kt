@@ -8,6 +8,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.feature.itemform.forms.login.LoginForm
+import com.twofasapp.feature.itemform.forms.paymentcard.PaymentCardForm
 import com.twofasapp.feature.itemform.forms.securenote.SecureNoteForm
 
 @Composable
@@ -41,7 +42,15 @@ fun ItemForm(
                 )
             }
 
-            is ItemContent.PaymentCard -> Unit
+            is ItemContent.PaymentCard -> {
+                PaymentCardForm(
+                    modifier = modifier,
+                    initialItem = initialItem,
+                    containerColor = containerColor,
+                    properties = properties,
+                    listener = listener,
+                )
+            }
         }
     }
 }

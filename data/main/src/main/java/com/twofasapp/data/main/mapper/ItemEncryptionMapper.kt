@@ -19,8 +19,8 @@ import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.domain.VaultKeysExpiredException
-import com.twofasapp.data.main.local.model.items.CreditCardContentEntityV1
 import com.twofasapp.data.main.local.model.items.LoginContentEntityV1
+import com.twofasapp.data.main.local.model.items.PaymentCardContentEntityV1
 import com.twofasapp.data.main.local.model.items.SecureNoteContentEntityV1
 import kotlinx.serialization.json.Json
 
@@ -93,49 +93,56 @@ class ItemEncryptionMapper(
                     )
                 }
 
-                // Uncomment when credit cards done
-//                is ItemContentType.CreditCard -> {
-//                    val contentEntity = json.decodeFromString(CreditCardContentEntityV1.serializer(), contentEntityJson)
-//
-//                    ItemContent.CreditCard(
-//                        name = contentEntity.name,
-//                        cardholder = contentEntity.cardholder,
-//                        number = contentEntity.number?.let {
-//                            if (decryptSecretFields) {
-//                                SecretField.ClearText(
-//                                    when (itemEncrypted.securityType) {
-//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-//                                    },
-//                                )
-//                            } else {
-//                                SecretField.Encrypted(it)
-//                            }
-//                        },
-//                        expiration = contentEntity.expiration,
-//                        cvv = contentEntity.cvv?.let {
-//                            if (decryptSecretFields) {
-//                                SecretField.ClearText(
-//                                    when (itemEncrypted.securityType) {
-//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-//                                    },
-//                                )
-//                            } else {
-//                                SecretField.Encrypted(it)
-//                            }
-//                        },
-//                        notes = contentEntity.notes,
-//                    )
-//                }
-                is ItemContentType.PaymentCard -> unknownItemEncryptionMapper.decrypt(
-                    rawJson = contentEntityJson,
-                    securityType = itemEncrypted.securityType,
-                    vaultCipher = vaultCipher,
-                    decryptSecretFields = decryptSecretFields,
-                )
+                is ItemContentType.PaymentCard -> {
+                    val contentEntity = json.decodeFromString(PaymentCardContentEntityV1.serializer(), contentEntityJson)
+
+                    ItemContent.PaymentCard(
+                        name = contentEntity.name,
+                        cardHolder = contentEntity.cardHolder,
+                        cardNumber = contentEntity.cardNumber?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        expirationDate = contentEntity.expirationDate?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        securityCode = contentEntity.securityCode?.let {
+                            if (decryptSecretFields) {
+                                SecretField.ClearText(
+                                    when (itemEncrypted.securityType) {
+                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+                                    },
+                                )
+                            } else {
+                                SecretField.Encrypted(it)
+                            }
+                        },
+                        cardNumberMask = contentEntity.cardNumberMask,
+                        cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(contentEntity.cardIssuer),
+                        notes = contentEntity.notes,
+                    )
+                }
 
                 is ItemContentType.Unknown -> unknownItemEncryptionMapper.decrypt(
                     rawJson = contentEntityJson,
@@ -221,42 +228,59 @@ class ItemEncryptionMapper(
 
                 is ItemContent.PaymentCard -> {
                     json.encodeToString(
-                        CreditCardContentEntityV1(
+                        PaymentCardContentEntityV1(
                             name = content.name,
-                            cardholder = content.cardholder,
-                            number = when (content.number) {
-                                is SecretField.Encrypted -> (content.number as SecretField.Encrypted).value
+                            cardHolder = content.cardHolder,
+                            cardNumber = when (content.cardNumber) {
+                                is SecretField.Encrypted -> (content.cardNumber as SecretField.Encrypted).value
                                 is SecretField.ClearText -> {
-                                    if (content.number.clearText.isBlank()) {
+                                    if (content.cardNumber.clearText.isBlank()) {
                                         null
                                     } else {
                                         when (item.securityType) {
-                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.number.clearText)
-                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.number.clearText)
-                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.number.clearText)
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.cardNumber.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.cardNumber.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.cardNumber.clearText)
                                         }
                                     }
                                 }
 
                                 null -> null
                             },
-                            expiration = content.expiration,
-                            cvv = when (content.cvv) {
-                                is SecretField.Encrypted -> (content.cvv as SecretField.Encrypted).value
+                            expirationDate = when (content.expirationDate) {
+                                is SecretField.Encrypted -> (content.expirationDate as SecretField.Encrypted).value
                                 is SecretField.ClearText -> {
-                                    if (content.cvv.clearText.isBlank()) {
+                                    if (content.expirationDate.clearText.isBlank()) {
                                         null
                                     } else {
                                         when (item.securityType) {
-                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.cvv.clearText)
-                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.cvv.clearText)
-                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.cvv.clearText)
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.expirationDate.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.expirationDate.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.expirationDate.clearText)
                                         }
                                     }
                                 }
 
                                 null -> null
                             },
+                            securityCode = when (content.securityCode) {
+                                is SecretField.Encrypted -> (content.securityCode as SecretField.Encrypted).value
+                                is SecretField.ClearText -> {
+                                    if (content.securityCode.clearText.isBlank()) {
+                                        null
+                                    } else {
+                                        when (item.securityType) {
+                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.securityCode.clearText)
+                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.securityCode.clearText)
+                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.securityCode.clearText)
+                                        }
+                                    }
+                                }
+
+                                null -> null
+                            },
+                            cardNumberMask = content.cardNumberMask,
+                            cardIssuer = content.cardIssuer?.code,
                             notes = content.notes,
                         ),
                     )
@@ -384,7 +408,7 @@ class ItemEncryptionMapper(
 
             is ItemContent.PaymentCard -> {
                 content.copy(
-                    number = content.number?.let {
+                    cardNumber = content.cardNumber?.let {
                         when (it) {
                             is SecretField.ClearText -> it
                             is SecretField.Encrypted -> {
@@ -398,7 +422,7 @@ class ItemEncryptionMapper(
                             }
                         }
                     },
-                    cvv = content.cvv?.let {
+                    securityCode = content.securityCode?.let {
                         when (it) {
                             is SecretField.ClearText -> it
                             is SecretField.Encrypted -> {
@@ -471,7 +495,7 @@ class ItemEncryptionMapper(
 
             is ItemContent.PaymentCard -> {
                 content.copy(
-                    number = content.number?.let {
+                    cardNumber = content.cardNumber?.let {
                         when (it) {
                             is SecretField.Encrypted -> it
                             is SecretField.ClearText -> {
@@ -485,7 +509,7 @@ class ItemEncryptionMapper(
                             }
                         }
                     },
-                    cvv = content.cvv?.let {
+                    securityCode = content.securityCode?.let {
                         when (it) {
                             is SecretField.Encrypted -> it
                             is SecretField.ClearText -> {

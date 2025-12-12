@@ -83,13 +83,11 @@ fun ItemImage(
             }
 
             is ItemContent.PaymentCard -> {
-                ItemImage(
+                StaticIcon(
                     modifier = modifier,
-                    iconType = IconType.Label,
-                    iconUrl = null,
-                    labelText = content.defaultLabelText,
-                    labelColor = null,
-                    customImageUrl = null,
+                    icon = MdtIcons.PaymentCard,
+                    iconColor = MdtTheme.color.itemPaymentCardContent,
+                    backgroundColor = MdtTheme.color.itemPaymentCardContainer,
                     size = size,
                 )
             }

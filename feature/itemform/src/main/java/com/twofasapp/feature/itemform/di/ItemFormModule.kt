@@ -10,6 +10,7 @@ package com.twofasapp.feature.itemform.di
 
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.feature.itemform.forms.login.LoginFormViewModel
+import com.twofasapp.feature.itemform.forms.paymentcard.PaymentCardFormViewModel
 import com.twofasapp.feature.itemform.forms.securenote.SecureNoteFormViewModel
 import com.twofasapp.feature.itemform.modals.tags.TagsPickerViewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -20,5 +21,6 @@ class ItemFormModule : KoinModule {
         viewModelOf(::TagsPickerViewModel)
         viewModelOf(::LoginFormViewModel)
         viewModelOf(::SecureNoteFormViewModel)
+        viewModelOf(::PaymentCardFormViewModel)
     }
 }

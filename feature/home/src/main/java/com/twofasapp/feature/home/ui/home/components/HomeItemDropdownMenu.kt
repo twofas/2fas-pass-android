@@ -104,6 +104,14 @@ internal fun HomeItemDropdownMenu(
                     }
 
                     is ItemContent.PaymentCard -> {
+                        DropdownMenuItem(
+                            text = "Copy card number",
+                            icon = MdtIcons.PaymentCard,
+                            onClick = {
+                                showDropdown = false
+                                onCopySecretFieldToClipboard(content.cardNumber)
+                            },
+                        )
                     }
                 }
             }

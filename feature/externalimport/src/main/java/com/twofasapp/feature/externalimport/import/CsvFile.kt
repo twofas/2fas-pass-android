@@ -253,10 +253,10 @@ internal data class CsvFile(
                     contentType = ItemContentType.PaymentCard,
                     content = ItemContent.PaymentCard.Empty.copy(
                         name = nameIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }.orEmpty(),
-                        cardholder = cardholderIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                        number = numberIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
-                        expiration = expirationIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
-                        cvv = cvvIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
+                        cardHolder = cardholderIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
+                        cardNumber = numberIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
+                        expirationDate = null, // todo fix
+                        securityCode = cvvIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() }?.let { SecretField.ClearText(it) },
                         notes = notesIndices.map { record[it].trim() }.firstOrNull { it.isNotEmpty() },
                     ),
                 )
