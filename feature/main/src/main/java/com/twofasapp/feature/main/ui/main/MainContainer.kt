@@ -156,7 +156,7 @@ private fun Content(
         )
 
         AnimatedVisibility(
-            visible = bottomBarVisible && homeInEditMode.not() && homeScrollingUp,
+            visible = bottomBarVisible && homeInEditMode.not(),
             enter = slideInVertically { it } + expandVertically(expandFrom = Alignment.Bottom),
             exit = shrinkVertically(shrinkTowards = Alignment.Bottom) + slideOutVertically { it },
         ) {
