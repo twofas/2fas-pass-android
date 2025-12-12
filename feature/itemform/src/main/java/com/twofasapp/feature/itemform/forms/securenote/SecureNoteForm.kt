@@ -177,7 +177,7 @@ private fun Content(
                                 .clickable { revealTextClicked = true },
                         ) {
                             TextIcon(
-                                text = "Reveal Text",
+                                text = strings.secureNoteReveal,
                                 leadingIcon = MdtIcons.Visibility,
                                 leadingIconTint = MdtTheme.color.primary,
                                 leadingIconSpacer = 8.dp,

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.button.Button
@@ -58,10 +59,24 @@ private fun Content(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = if (uiState.item.id.isBlank()) {
-                    strings.loginAddTitle
-                } else {
-                    strings.loginEditTitle
+                title = when {
+                    uiState.item.id.isBlank() -> {
+                        when (uiState.item.contentType) {
+                            ItemContentType.Login -> strings.loginAddTitle
+                            ItemContentType.SecureNote -> strings.secureNoteAddTitle
+                            ItemContentType.PaymentCard -> strings.itemAddTitle
+                            is ItemContentType.Unknown -> strings.itemAddTitle
+                        }
+                    }
+
+                    else -> {
+                        when (uiState.item.contentType) {
+                            ItemContentType.Login -> strings.loginEditTitle
+                            ItemContentType.SecureNote -> strings.secureNoteEditTitle
+                            ItemContentType.PaymentCard -> strings.itemEditTitle
+                            is ItemContentType.Unknown -> strings.itemEditTitle
+                        }
+                    }
                 },
                 actions = {
                     Button(
