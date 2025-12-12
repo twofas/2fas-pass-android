@@ -220,7 +220,7 @@ private fun Content(
                             content.uris.forEachIndexed { index, uri ->
                                 if (uri.text.isNotEmpty()) {
                                     Entry(
-                                        title = if (content.uris.size > 1) "URI ${index + 1}" else "URI",
+                                        title = if (content.uris.size > 1) "${MdtLocale.strings.loginUri} ${index + 1}" else MdtLocale.strings.loginUri,
                                         subtitle = uri.text,
                                         isCompact = true,
                                         maxLines = 3,

@@ -109,8 +109,8 @@ internal fun HomeAppBar(
                         Text(
                             text = when (val count = uiState.selectedItemIds.size) {
                                 0 -> ""
-                                1 -> "1 item"
-                                else -> "$count items"
+                                1 -> "1 Item"
+                                else -> "$count Items"
                             },
                             style = MdtTheme.typo.medium.lg,
                         )
