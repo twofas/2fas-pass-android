@@ -121,8 +121,8 @@ internal fun HomeAppBar(
                         spacing = 8.dp,
                     ) {
                         IconButton(
-                            icon = if (uiState.items.size == uiState.selectedItemIds.size) MdtIcons.Deselect else MdtIcons.SelectAll,
-                            onClick = if (uiState.items.size == uiState.selectedItemIds.size) onDeselectClick else onSelectAllClick,
+                            icon = if (uiState.allFilteredSelected) MdtIcons.Deselect else MdtIcons.SelectAll,
+                            onClick = if (uiState.allFilteredSelected) onDeselectClick else onSelectAllClick,
                         )
 
                         IconButton(
@@ -264,7 +264,7 @@ private fun Preview() {
 private fun PreviewEditMode() {
     PreviewAllThemesInColumn {
         HomeAppBar(
-            uiState = HomeUiState(editMode = true, selectedItemIds = listOf("", "", "")),
+            uiState = HomeUiState(editMode = true, selectedItemIds = setOf("", "", "")),
             screenState = ScreenState.Success,
         )
     }

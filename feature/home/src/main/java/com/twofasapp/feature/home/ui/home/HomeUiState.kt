@@ -28,7 +28,7 @@ internal data class HomeUiState(
     val searchFocused: Boolean = false,
     val editMode: Boolean = false,
     val scrollingUp: Boolean = false,
-    val selectedItemIds: List<String> = emptyList(),
+    val selectedItemIds: Set<String> = emptySet(),
     val itemClickAction: ItemClickAction = ItemClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,
     val maxItems: Int = 0,
@@ -58,6 +58,9 @@ internal data class HomeUiState(
 
     val selectedItems: List<Item>
         get() = items.filter { selectedItemIds.contains(it.id) }
+
+    val allFilteredSelected =
+        itemsFiltered.all { it.id in selectedItemIds }
 }
 
 internal sealed interface HomeUiEvent {

@@ -3,6 +3,9 @@ package com.twofasapp.core.common.ktx
 fun <T> List<T>.toggle(item: T): List<T> =
     if (any { it == item }) filterNot { it == item } else this + item
 
+fun <T> Set<T>.toggle(item: T): Set<T> =
+    if (item in this) this - item else this + item
+
 /**
  * Returns the single element of this list if all elements are equal.
  * Otherwise, returns null.

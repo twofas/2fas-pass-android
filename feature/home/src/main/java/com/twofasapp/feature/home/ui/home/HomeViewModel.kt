@@ -221,7 +221,7 @@ internal class HomeViewModel(
         uiState.update { it.copy(editMode = enabled) }
 
         if (enabled.not()) {
-            uiState.update { it.copy(selectedItemIds = emptyList()) }
+            uiState.update { it.copy(selectedItemIds = emptySet()) }
         }
     }
 
@@ -239,7 +239,7 @@ internal class HomeViewModel(
     fun selectAllItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = state.itemsFiltered.map { it.id },
+                selectedItemIds = state.selectedItemIds.plus(state.itemsFiltered.map { it.id }.toSet()),
             )
         }
     }
@@ -247,18 +247,18 @@ internal class HomeViewModel(
     fun deselectItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = emptyList(),
+                selectedItemIds = state.selectedItemIds.minus(state.itemsFiltered.map { it.id }.toSet()),
             )
         }
     }
 
-    private fun cleatEditModeSelections() {
-        uiState.update { it.copy(selectedItemIds = emptyList(), editMode = false) }
+    private fun clearEditModeSelections() {
+        uiState.update { it.copy(selectedItemIds = emptySet(), editMode = false) }
     }
 
     fun trashSelectedItems() {
         val idsToDelete = uiState.value.selectedItemIds
-        cleatEditModeSelections()
+        clearEditModeSelections()
 
         screenState.loading()
 
@@ -270,7 +270,7 @@ internal class HomeViewModel(
     fun changeSelectedItemsSecurityType(securityType: SecurityType) {
         launchScoped {
             val itemsToEdit = uiState.value.selectedItems.filter { it.securityType != securityType }
-            cleatEditModeSelections()
+            clearEditModeSelections()
             screenState.loading()
 
             val updatedEncryptedItems = vaultCryptoScope.withVaultCipher(vaultId = vaultsRepository.getVault().id) {
@@ -295,7 +295,7 @@ internal class HomeViewModel(
 
     fun changeSelectedItemsTags(changedTags: Map<Item, Set<String>>) {
         launchScoped {
-            cleatEditModeSelections()
+            clearEditModeSelections()
             screenState.loading()
 
             itemsRepository.updateItemsWithTags(changedTags)
