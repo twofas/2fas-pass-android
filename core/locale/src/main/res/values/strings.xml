@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Wed, 26 Nov 2025 12:16:08 -0800
+ Exported at: Fri, 12 Dec 2025 09:12:37 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -317,7 +317,7 @@
     <string name="password_length_requirement">At least 9 characters</string>
     <string name="passwords_match_text">Passwords match</string>
     <string name="login_search_no_results_title">Item not found</string>
-    <string name="login_search_no_results_description">Take another try with a different filter</string>
+    <string name="login_search_no_results_description">Try a different filter</string>
     <string name="scan_decryption_kit_title">Scan the QR code</string>
     <string name="scan_decryption_kit_description">Point your camera at the QR code found in your Decryption Kit.</string>
     <string name="security_biometrics_enable_title">Enable Biometrics</string>
@@ -533,7 +533,7 @@
     <string name="common_modified">Last modified:</string>
     <string name="settings_autofill_toggle">Set app as your AutoFill provider</string>
     <string name="settings_autofill_toggle_description">Automatically fill in your information from the keyboard when you need it.</string>
-    <string name="transfer_instructions_bitwarden">Open Bitwarden and go to **Settings** (gear icon).\n\nGo to **Tools/Vault**, then select **Export Vault**.\n\nChoose **.JSON** as the file format and select **Export Vault**.\n\nCopy the exported file to this device and tap **Upload JSON file** below.</string>
+    <string name="transfer_instructions_bitwarden">Open Bitwarden and go to **Settings** (gear icon).\n\nGo to **Tools/Vault**, then select **Export Vault**.\n\nChoose **JSON or CSV** as the file format, then select **Export Vault**.\n\nCopy the exported file to this device and tap the **Upload button** below.</string>
     <string name="transfer_instructions_onepassword">Open 1Password on your PC.\n\nClick the three dots at the top of the side bar, select **Export** and choose the account you want to export, (on Mac select a specific Vault).\n\nEnter your account password.\n\nChoose the **CSV format** and select **Export data**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
     <string name="transfer_instructions_protonpass">Open Proton Pass via their browser extension, web app or Windows app.\n\nClick the **Proton Pass Logo**, select **Settings**, then **Export**.\n\nChoose the **CSV format** and select **Export**.\n\nFind the CSV file saved in your default download location.\n\nCopy this file to this device and tap **Upload CSV file** below.</string>
     <string name="transfer_instructions_chrome">Open Google Chrome on your PC\n\nSelect your **Profile Icon** at the top right, then select **Passwords**.\n\nSelect **Settings** and **Download file**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
@@ -566,9 +566,9 @@
     <string name="transfer_services_list_footer">Please follow the instructions if you would like to transfer passwords from other applications into 2FAS Pass.\n\nAll product names, logos, and brands are the property of their respective owners. Use of these names does not imply any affiliation with or endorsement by them.</string>
     <string name="transfer_instructions_cta_json">Upload JSON file</string>
     <string name="transfer_instructions_header__0025_0040">Transfer from %s</string>
-    <string name="transfer_file_summary_description">You have transferred the passwords</string>
+    <string name="transfer_file_summary_description">You\'re transferring Items from another app</string>
     <string name="transfer_file_summary_cta">Proceed</string>
-    <string name="transfer_file_summary_counter_description">Passwords transferred</string>
+    <string name="transfer_file_summary_logins_counter_description">Logins detected</string>
     <string name="transfer_importing_file_text">Importing...</string>
     <string name="transfer_importing_success_title">Imported successfully</string>
     <string name="transfer_importing_success_description">Your 2FAS Pass Items have been successfully imported to Vault.</string>
@@ -620,9 +620,9 @@
     <string name="paywall_notice_items_limit_reached_title">Item limit reached</string>
     <string name="paywall_notice_items_limit_reached_msg">You’ve reached the limit of %d Items. Upgrade your plan for unlimited Items.</string>
     <string name="paywall_notice_items_limit_import_title">Can’t import Items</string>
-    <string name="paywall_notice_items_limit_import_msg">You have reached your %d Item limit. Upgrade your plan for unlimited Items.</string>
+    <string name="paywall_notice_items_limit_import_msg">You\'ve reached your %d Item limit. Upgrade your plan for unlimited Items.</string>
     <string name="paywall_notice_items_limit_transfer_title">Can’t transfer Items</string>
-    <string name="paywall_notice_items_limit_transfer_msg">You have reached your %d Item limit. Upgrade your plan for unlimited Items.</string>
+    <string name="paywall_notice_items_limit_transfer_msg">You\'ve reached your %d Item limit. Upgrade your plan for unlimited Items.</string>
     <string name="paywall_notice_items_limit_restore_title">Can’t restore Items</string>
     <string name="paywall_notice_items_limit_restore_msg">Restoring these Items would exceed the %d Item limit. Upgrade your plan for unlimited Items.</string>
     <string name="paywall_notice_multi_device_msg">Matching Vault exists in the backup but is linked to another device. Upgrade your plan to enable multi-device sync.</string>
@@ -637,7 +637,6 @@
     <string name="subscription_unlimited_plan">Unlimited</string>
     <string name="manage_subscription_title">2FAS Pass Unlimited</string>
     <string name="manage_subscription_items_title">Items</string>
-    <string name="manage_subscription_items_subtitle">Your logins and passwords</string>
     <string name="manage_subscription_browsers_title">Connected Web Browsers</string>
     <string name="manage_subscription_price_prefix">Annual Subscription:\u0020</string>
     <string name="manage_subscription_renew_date_prefix">Your plan will automatically renew on\u0020</string>
@@ -661,7 +660,7 @@
     <string name="sync_status_error_limit_devices_reached">Premium plan required</string>
     <string name="sync_status_retry">Retry</string>
     <string name="paywall_notice_browsers_limit_title">Can\'t connect</string>
-    <string name="paywall_notice_browsers_limit_msg">You have reached your limit. Upgrade your plan to sync unlimited devices.</string>
+    <string name="paywall_notice_browsers_limit_msg">You\'ve reached your limit. Upgrade your plan to sync unlimited devices.</string>
     <string name="webdav_disable_icloud_confirm_title">Are you sure?</string>
     <string name="webdav_disable_icloud_confirm_body">Disable iCloud sync</string>
     <string name="sync_status_error_wrong_directory_url">Incorrect URL</string>
@@ -676,7 +675,7 @@
     <string name="general_server_error_details">Server error: %s</string>
     <string name="sync_status_error_incorrect_url">Incorrect URL. Check the path and try again</string>
     <string name="sync_status_error_tls_cert_failed">TLS certificate validation failed</string>
-    <string name="sync_status_error_no_web_dav_server">Server error: Method not allowed. Ensure you\'re connecting to WebDAV server\"</string>
+    <string name="sync_status_error_no_web_dav_server">Server error: Method not allowed. Ensure you\'re connecting to WebDAV server</string>
     <string name="general_not_available">Not Available</string>
     <string name="webdav_disable_webdav_confirm_body">Disable WebDAV</string>
     <string name="sync_syncing">Syncing...</string>
@@ -689,7 +688,7 @@
     <string name="sync_error_icloud_error_details">iCloud error: %s</string>
     <string name="sync_error_icloud_error">iCloud error</string>
     <string name="sync_error_icloud_error_user_logged_in">Check if you\'re correctly logged into iCloud</string>
-    <string name="sync_error_icloud_error_reboot">There was a problem with iCloud sync. Try rebooting the device</string>
+    <string name="sync_error_icloud_error_reboot">There was a problem with iCloud sync. Try reseting the device</string>
     <string name="sync_error_icloud_error_newer_version">iCloud Vault was created on a newer version. Please update the app</string>
     <string name="sync_error_icloud_error_diffrent_encryption">iCloud Vault was created with different encryption. Reinstall the app to recover your data.</string>
     <string name="sync_error_icloud_error_no_account">No iCloud account</string>
@@ -697,7 +696,7 @@
     <string name="general_error_no_local_vault">No local Vault found. Please reinstall the app</string>
     <string name="sync_error_icloud_vault_encryption_restore">Vault in iCloud has a different password or encryption. Restore the backup from your iCloud to use this Vault</string>
     <string name="sync_error_icloud_merge_error">iCloud Vault Sync had a merge error. Try switching the Sync on and off, or restoring the backup from iCloud</string>
-    <string name="sync_error_icloud_sync_not_allowed_description">To sync your Vault on multiple devices, you need to upgrade to the Unlimited plan</string>
+    <string name="sync_error_icloud_sync_not_allowed_description">To sync this Vault across multiple devices, you need to upgrade to the Unlimited plan</string>
     <string name="sync_error_icloud_sync_not_allowed_title">Can\'t enable Vault Sync</string>
     <string name="password_error_copy_username">Error while copying the username</string>
     <string name="password_error_copy_password">Error while copying the password</string>
@@ -723,16 +722,16 @@
     <string name="camera_qr_code_error">Error while scanning the QR Code</string>
     <string name="common_settings">Settings</string>
     <string name="vault_recovery_error_open_file">Can\'t open the file</string>
-    <string name="vault_recovery_error_open_file_details">Can\'t open the file. %s</string>
-    <string name="vault_recovery_error_gallery_access">There was an error while accessing the file from the Gallery. Ensure you\'re connected to the Internet and try again.</string>
+    <string name="vault_recovery_error_open_file_details">Can\'t open the file %s</string>
+    <string name="vault_recovery_error_gallery_access">Error while accessing the file from the Gallery. Ensure you\'re connected to the Internet and try again.</string>
     <string name="vault_recovery_error_scanning_file">Error while scanning the file. Make sure the QR code is visible and that there\'s only one in the image.</string>
     <string name="vault_recovery_error_file_corrupted">File is corrupted and can\'t be decrypted.</string>
-    <string name="vault_recovery_error_wrong_master_password_words">Wrong Master Password or Secret Words. Try again.</string>
+    <string name="vault_recovery_error_wrong_master_password_words">Incorrect Master Password or Secret Words. Try again.</string>
     <string name="vault_recovery_error_open_file_access_explain">Ensure you have access to the file.</string>
-    <string name="camera_error_other_app_uses_camera">Another app is using the camera. If closing other apps doesn\'t help, please reboot the device.</string>
-    <string name="camera_error_system_overload">The camera is unavailable because the system is overloaded. Please reboot the device.</string>
+    <string name="camera_error_other_app_uses_camera">Another app is using the camera. If closing other apps doesn\'t help, please reset the device.</string>
+    <string name="camera_error_system_overload">The camera is unavailable because the system is overloaded. Please reset the device.</string>
     <string name="camera_error_split_mode">Can\'t initialize the camera in Split View mode. Open the app in full screen and try again.</string>
-    <string name="camera_error_general">Can\'t initialize the camera. Try rebooting the device.</string>
+    <string name="camera_error_general">Can\'t initialize the camera. Try resetting the device.</string>
     <string name="restore_enter_words_title">Enter Secret Words manually</string>
     <string name="restore_use_recovery_key_title">Use the Decryption Kit</string>
     <string name="restore_use_recovery_key_description">Scan the QR code on the Recovery Kit or enter the Secret Words manually.</string>
@@ -777,7 +776,7 @@
     <string name="quick_setup_security_tier_description">Decide how to use individual Items with Autofill and share them with the Browser Extension.</string>
     <string name="quick_setup_security_tier_default_label">Default</string>
     <string name="quick_setup_import_items_cta">Import Items from 2FAS Pass backup</string>
-    <string name="quick_setup_transfer_items_cta">Transfer passwords from other apps</string>
+    <string name="quick_setup_transfer_items_cta">Transfer from other apps</string>
     <string name="quick_setup_icloud_sync_failure">Failed to enable Vault Sync</string>
     <string name="transfer_instructions_firefox">Open Firefox on your PC\n\nSelect the **Menu button** (3 horizontal lines) at the top right, then select **Passwords**.\n\nSelect **Firefox menu** (3 dots) and **Export Passwords**.\n\nSelect **Continue with export** and choose the file name and location.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
     <string name="vault_recovery_wrong_decryption_kit_title">Incorrect Decryption Kit</string>
@@ -805,7 +804,7 @@
     <string name="quick_setup_drive_sync_title">Vault Sync</string>
     <string name="quick_setup_drive_sync_description">Securely sync your data using Google Drive in case this device gets lost or damaged.</string>
     <string name="home_list_options_modal_title">List Options</string>
-    <string name="filter_tag_banner_ios">Showing %1$d items tagged: **%2$s**</string>
+    <string name="filter_tag_banner_ios">Showing %1$d Items tagged: **%2$s**</string>
     <string name="login_filter_modal_tag">Filter</string>
     <string name="login_filter_modal_clear">Clear filters</string>
     <string name="login_filter_modal_tag_all">All</string>
@@ -827,7 +826,7 @@
     <string name="transfer_instructions_keepassxc">Open KeePassXC on your PC and log in to your database.\n\nClick **Database** in the menu bar, and select **Export**.\n\nChoose the **CSV format**, confirm and choose the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
     <string name="common_back">Back</string>
     <string name="transfer_instructions_microsoft_edge">Open Microsoft Edge on your PC\n\nSelect the 3 dots next to your profile icon at the top right, then select **Passwords**.\n\nSelect the 3 dots next to Passkeys and click **Export passwords**.\n\nConfirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
-    <string name="transfer_instructions_enpass">Open Enpass on your PC.\n\nOpen the menu at the top right of the app.\n\nSelect **File** then **Export**.\n\nSelect the correct Vault and the .json file format.\n\nChoose the location and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
+    <string name="transfer_instructions_enpass">Open Enpass on your PC.\n\nOpen the menu at the top right of the app.\n\nSelect **File** then **Export**.\n\nSelect the correct Vault and the **json** file format.\n\nChoose the location and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
     <string name="restore_vault_title">Welcome back!</string>
     <string name="restore_vault_message">You\'ve successfully restored your encrypted 2FAS Pass Vault. However, you must decrypt it to restore access to your Items.</string>
     <string name="restore_vault_warning">Do not uninstall 2FAS Pass without decrypting your Vault, as you will lose access to your Items.</string>
@@ -901,4 +900,12 @@
     <string name="card_error_copy_number">Error while copying card number</string>
     <string name="card_error_copy_security_code">Error while copying security code</string>
     <string name="login_view_action_common_copy">Copy</string>
+    <string name="login_view_action_copy_uri">Copy URL</string>
+    <string name="secure_note_additional_info_label">Additional info</string>
+    <string name="common_open">Open</string>
+    <string name="transfer_file_summary_secure_notes_counter_description">Secure Notes detected</string>
+    <string name="transfer_file_summary_payment_cards_counter_description">Cards detected</string>
+    <string name="transfer_file_summary_others_counter_description">Other Items converted to Secure Notes</string>
+    <string name="transfer_instructions_cta_bitwarden">Upload JSON/CSV file</string>
+    <string name="transfer_instructions_additional_info_bitwarden">JSON file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
 </resources>

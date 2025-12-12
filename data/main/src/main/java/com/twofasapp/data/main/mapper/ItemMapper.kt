@@ -120,7 +120,7 @@ internal class ItemMapper(
                 val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.Login.serializer(), contentJson)
 
                 ItemContent.Login(
-                    name = content.name,
+                    name = content.name.orEmpty(),
                     username = content.username,
                     password = content.password?.let {
                         if (hasSecretFieldsEncrypted) {
@@ -143,7 +143,7 @@ internal class ItemMapper(
                 val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
 
                 ItemContent.SecureNote(
-                    name = content.name,
+                    name = content.name.orEmpty(),
                     text = content.text?.let {
                         if (hasSecretFieldsEncrypted) {
                             SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
