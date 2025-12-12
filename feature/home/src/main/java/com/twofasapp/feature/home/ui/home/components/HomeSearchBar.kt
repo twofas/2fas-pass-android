@@ -148,18 +148,19 @@ internal fun HomeSearchBar(
                 )
             }
 
-            item {
-                Tab(
-                    text = "Cards",
-                    icon = MdtIcons.PaymentCard,
-                    type = ItemContentType.PaymentCard,
-                    selected = selectedItemType is ItemContentType.PaymentCard,
-                    onClick = {
-                        focusManager.clearFocus()
-                        onSelectedItemTypeChange(ItemContentType.PaymentCard)
-                    },
-                )
-            }
+            // TODO: Uncomment when payment cards ready
+//            item {
+//                Tab(
+//                    text = "Cards",
+//                    icon = MdtIcons.PaymentCard,
+//                    type = ItemContentType.PaymentCard,
+//                    selected = selectedItemType is ItemContentType.PaymentCard,
+//                    onClick = {
+//                        focusManager.clearFocus()
+//                        onSelectedItemTypeChange(ItemContentType.PaymentCard)
+//                    },
+//                )
+//            }
         }
 
         if (selectedTag != null) {

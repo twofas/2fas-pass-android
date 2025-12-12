@@ -92,56 +92,62 @@ class ItemEncryptionMapper(
                         },
                     )
                 }
-
+                // TODO: Uncomment when payment cards ready
                 is ItemContentType.PaymentCard -> {
-                    val contentEntity = json.decodeFromString(PaymentCardContentEntityV1.serializer(), contentEntityJson)
-
-                    ItemContent.PaymentCard(
-                        name = contentEntity.name,
-                        cardHolder = contentEntity.cardHolder,
-                        cardNumber = contentEntity.cardNumber?.let {
-                            if (decryptSecretFields) {
-                                SecretField.ClearText(
-                                    when (itemEncrypted.securityType) {
-                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-                                    },
-                                )
-                            } else {
-                                SecretField.Encrypted(it)
-                            }
-                        },
-                        expirationDate = contentEntity.expirationDate?.let {
-                            if (decryptSecretFields) {
-                                SecretField.ClearText(
-                                    when (itemEncrypted.securityType) {
-                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-                                    },
-                                )
-                            } else {
-                                SecretField.Encrypted(it)
-                            }
-                        },
-                        securityCode = contentEntity.securityCode?.let {
-                            if (decryptSecretFields) {
-                                SecretField.ClearText(
-                                    when (itemEncrypted.securityType) {
-                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
-                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
-                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
-                                    },
-                                )
-                            } else {
-                                SecretField.Encrypted(it)
-                            }
-                        },
-                        cardNumberMask = contentEntity.cardNumberMask,
-                        cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(contentEntity.cardIssuer),
-                        notes = contentEntity.notes,
+                    unknownItemEncryptionMapper.decrypt(
+                        rawJson = contentEntityJson,
+                        securityType = itemEncrypted.securityType,
+                        vaultCipher = vaultCipher,
+                        decryptSecretFields = decryptSecretFields,
                     )
+//                    val contentEntity = json.decodeFromString(PaymentCardContentEntityV1.serializer(), contentEntityJson)
+//
+//                    ItemContent.PaymentCard(
+//                        name = contentEntity.name,
+//                        cardHolder = contentEntity.cardHolder,
+//                        cardNumber = contentEntity.cardNumber?.let {
+//                            if (decryptSecretFields) {
+//                                SecretField.ClearText(
+//                                    when (itemEncrypted.securityType) {
+//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+//                                    },
+//                                )
+//                            } else {
+//                                SecretField.Encrypted(it)
+//                            }
+//                        },
+//                        expirationDate = contentEntity.expirationDate?.let {
+//                            if (decryptSecretFields) {
+//                                SecretField.ClearText(
+//                                    when (itemEncrypted.securityType) {
+//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+//                                    },
+//                                )
+//                            } else {
+//                                SecretField.Encrypted(it)
+//                            }
+//                        },
+//                        securityCode = contentEntity.securityCode?.let {
+//                            if (decryptSecretFields) {
+//                                SecretField.ClearText(
+//                                    when (itemEncrypted.securityType) {
+//                                        SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it)
+//                                        SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it)
+//                                    },
+//                                )
+//                            } else {
+//                                SecretField.Encrypted(it)
+//                            }
+//                        },
+//                        cardNumberMask = contentEntity.cardNumberMask,
+//                        cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(contentEntity.cardIssuer),
+//                        notes = contentEntity.notes,
+//                    )
                 }
 
                 is ItemContentType.Unknown -> unknownItemEncryptionMapper.decrypt(
@@ -284,6 +290,63 @@ class ItemEncryptionMapper(
                             notes = content.notes,
                         ),
                     )
+//                    json.encodeToString(
+//                        PaymentCardContentEntityV1(
+//                            name = content.name,
+//                            cardHolder = content.cardHolder,
+//                            cardNumber = when (content.cardNumber) {
+//                                is SecretField.Encrypted -> (content.cardNumber as SecretField.Encrypted).value
+//                                is SecretField.ClearText -> {
+//                                    if (content.cardNumber.clearText.isBlank()) {
+//                                        null
+//                                    } else {
+//                                        when (item.securityType) {
+//                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.cardNumber.clearText)
+//                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.cardNumber.clearText)
+//                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.cardNumber.clearText)
+//                                        }
+//                                    }
+//                                }
+//
+//                                null -> null
+//                            },
+//                            expirationDate = when (content.expirationDate) {
+//                                is SecretField.Encrypted -> (content.expirationDate as SecretField.Encrypted).value
+//                                is SecretField.ClearText -> {
+//                                    if (content.expirationDate.clearText.isBlank()) {
+//                                        null
+//                                    } else {
+//                                        when (item.securityType) {
+//                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.expirationDate.clearText)
+//                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.expirationDate.clearText)
+//                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.expirationDate.clearText)
+//                                        }
+//                                    }
+//                                }
+//
+//                                null -> null
+//                            },
+//                            securityCode = when (content.securityCode) {
+//                                is SecretField.Encrypted -> (content.securityCode as SecretField.Encrypted).value
+//                                is SecretField.ClearText -> {
+//                                    if (content.securityCode.clearText.isBlank()) {
+//                                        null
+//                                    } else {
+//                                        when (item.securityType) {
+//                                            SecurityType.Tier1 -> vaultCipher.encryptWithSecretKey(content.securityCode.clearText)
+//                                            SecurityType.Tier2 -> vaultCipher.encryptWithSecretKey(content.securityCode.clearText)
+//                                            SecurityType.Tier3 -> vaultCipher.encryptWithTrustedKey(content.securityCode.clearText)
+//                                        }
+//                                    }
+//                                }
+//
+//                                null -> null
+//                            },
+//                            cardNumberMask = content.cardNumberMask,
+//                            cardIssuer = content.cardIssuer?.code,
+//                            notes = content.notes,
+//                        ),
+//                    )
                 }
             }
         }
