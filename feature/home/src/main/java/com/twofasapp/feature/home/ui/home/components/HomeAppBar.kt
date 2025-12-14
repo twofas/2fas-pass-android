@@ -241,7 +241,6 @@ internal fun HomeAppBar(
 
         TagsPickerMultiModal(
             onDismissRequest = { showTagsPicker = false },
-            tags = uiState.tags,
             items = selectedItems,
             onTagsChanged = onChangeTags,
         )

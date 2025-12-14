@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,14 +51,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TagsPickerModal(
-    tags: List<Tag>,
     item: Item,
     onDismissRequest: () -> Unit,
     onTagsChanged: (List<String>) -> Unit,
 ) {
     ProvidesViewModelStoreOwner {
         TagsPickerContent(
-            tags = tags,
             items = listOf(item),
             onDismissRequest = onDismissRequest,
             onConfirm = { onTagsChanged(it.values.flatten()) },
@@ -65,14 +66,12 @@ fun TagsPickerModal(
 
 @Composable
 fun TagsPickerMultiModal(
-    tags: List<Tag>,
     items: List<Item>,
     onDismissRequest: () -> Unit,
     onTagsChanged: (Map<Item, Set<String>>) -> Unit,
 ) {
     ProvidesViewModelStoreOwner {
         TagsPickerContent(
-            tags = tags,
             items = items,
             onDismissRequest = onDismissRequest,
             onConfirm = onTagsChanged,
@@ -83,57 +82,51 @@ fun TagsPickerMultiModal(
 @Composable
 private fun TagsPickerContent(
     viewModel: TagsPickerViewModel = koinViewModel(),
-    tags: List<Tag>,
     items: List<Item>,
     onDismissRequest: () -> Unit,
     onConfirm: (Map<Item, Set<String>>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showAddTagDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.init(tags, items)
+        viewModel.init(items)
     }
 
-    when (uiState.state) {
-        TagsPickerUiState.State.PickerModal -> {
-            Modal(
-                onDismissRequest = onDismissRequest,
-                headerText = MdtLocale.strings.loginTags,
-                headerProperties = ModalHeaderProperties(
-                    showCloseButton = true,
-                ),
-            ) { dismissAction ->
-                ModalContent(
-                    tags = uiState.tags,
-                    uiState = uiState,
-                    onAddNewTag = { viewModel.openAddTag() },
-                    onSelect = { viewModel.selectTag(it) },
-                    onDeselect = { viewModel.deselectTag(it) },
-                    onConfirm = { dismissAction { onConfirm(uiState.changedSelection) } },
-                )
-            }
-        }
+    Modal(
+        onDismissRequest = onDismissRequest,
+        headerText = MdtLocale.strings.loginTags,
+        headerProperties = ModalHeaderProperties(
+            showCloseButton = true,
+        ),
+    ) { dismissAction ->
+        ModalContent(
+            uiState = uiState,
+            onAddNewTag = { showAddTagDialog = true },
+            onSelect = { viewModel.selectTag(it) },
+            onDeselect = { viewModel.deselectTag(it) },
+            onConfirm = { dismissAction { onConfirm(uiState.changedSelection) } },
+        )
+    }
 
-        TagsPickerUiState.State.AddTagDialog -> {
-            TagDialog(
-                onDismissRequest = { viewModel.openPicker() },
-                tag = Tag.Empty.copy(vaultId = uiState.vaultId),
-                onSaveClick = { viewModel.addTag(it) },
-            )
-        }
+    if (showAddTagDialog) {
+        TagDialog(
+            onDismissRequest = { showAddTagDialog = false },
+            tag = Tag.Empty.copy(vaultId = uiState.vaultId),
+            onSaveClick = { viewModel.addTag(it) },
+        )
     }
 }
 
 @Composable
 private fun ModalContent(
-    tags: List<Tag>,
     uiState: TagsPickerUiState,
     onAddNewTag: () -> Unit = {},
     onSelect: (String) -> Unit = {},
     onDeselect: (String) -> Unit = {},
     onConfirm: () -> Unit = {},
 ) {
-    if (tags.isEmpty()) {
+    if (uiState.tags.isEmpty()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -176,8 +169,8 @@ private fun ModalContent(
                 )
             }
 
-            tags.forEachIndexed { _, isFirst, isLast, tag ->
-                item("Tag:${tag.id}", "Tag") {
+            uiState.tags.forEachIndexed { _, isFirst, isLast, tag ->
+                item {
                     val isSelected = uiState.selectedTagIds.contains(tag.id)
                     val isSelectedInAllItems = uiState.selection.values.all { it.contains(tag.id) }
 
@@ -254,13 +247,14 @@ private fun ModalContent(
 private fun Preview() {
     PreviewTheme {
         ModalContent(
-            tags = listOf(
-                Tag.Empty.copy(id = "1", name = "Tag 1"),
-                Tag.Empty.copy(id = "2", name = "Tag 2"),
-                Tag.Empty.copy(id = "3", name = "Tag 3"),
+            uiState = TagsPickerUiState(
+                tags = listOf(
+                    Tag.Empty.copy(id = "1", name = "Tag 1"),
+                    Tag.Empty.copy(id = "2", name = "Tag 2"),
+                    Tag.Empty.copy(id = "3", name = "Tag 3"),
+                ),
             ),
             onAddNewTag = {},
-            uiState = TagsPickerUiState(),
             onConfirm = {},
         )
     }

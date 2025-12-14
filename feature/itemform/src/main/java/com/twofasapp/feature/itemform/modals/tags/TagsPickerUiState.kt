@@ -13,7 +13,6 @@ import com.twofasapp.core.common.domain.items.Item
 
 data class TagsPickerUiState(
     val vaultId: String = "",
-    val state: State = State.PickerModal,
     val tags: List<Tag> = emptyList(),
     val initialSelection: Map<Item, Set<String>> = emptyMap(),
     val selection: Map<Item, Set<String>> = emptyMap(),
@@ -26,8 +25,4 @@ data class TagsPickerUiState(
             val oldSet = initialSelection[item]
             oldSet == null || oldSet != newSet
         }
-
-    enum class State {
-        PickerModal, AddTagDialog
-    }
 }

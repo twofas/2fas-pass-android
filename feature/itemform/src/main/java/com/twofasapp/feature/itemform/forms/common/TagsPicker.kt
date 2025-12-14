@@ -76,7 +76,6 @@ internal fun TagsPicker(
 
     if (showTagsModal) {
         TagsPickerModal(
-            tags = tags,
             item = item,
             onDismissRequest = { showTagsModal = false },
             onTagsChanged = onConfirmTagsSelections,

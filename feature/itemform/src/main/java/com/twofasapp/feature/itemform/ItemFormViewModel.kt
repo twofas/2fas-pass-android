@@ -30,11 +30,7 @@ internal open class ItemFormViewModel<T : ItemContent>(
     val itemState = MutableStateFlow(ItemFormUiState<T>())
 
     init {
-        launchScoped {
-            tagsRepository.observeTags(vaultsRepository.getVault().id).collect { tags ->
-                itemState.update { it.copy(tags = tags) }
-            }
-        }
+        updateTagsList()
     }
 
     fun init(initialItem: Item) {
@@ -84,8 +80,18 @@ internal open class ItemFormViewModel<T : ItemContent>(
     }
 
     fun updateTags(tags: List<String>) {
+        updateTagsList()
+
         itemState.update { state ->
             state.copy(item = state.item.copy(tagIds = tags))
+        }
+    }
+
+    fun updateTagsList() {
+        launchScoped {
+            itemState.update { state ->
+                state.copy(tags = tagsRepository.getTags(vaultsRepository.getVault().id))
+            }
         }
     }
 }

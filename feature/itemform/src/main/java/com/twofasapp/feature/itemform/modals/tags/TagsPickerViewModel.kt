@@ -36,22 +36,16 @@ internal class TagsPickerViewModel(
         }
     }
 
-    fun init(tags: List<Tag>, items: List<Item>) {
-        uiState.update {
-            it.copy(
-                tags = tags,
-                initialSelection = items.associateWith { item -> item.tagIds.toSet() },
-                selection = items.associateWith { item -> item.tagIds.toSet() },
-            )
+    fun init(items: List<Item>) {
+        launchScoped {
+            uiState.update {
+                it.copy(
+                    tags = tagsRepository.getTags(vaultId = vaultsRepository.getVault().id),
+                    initialSelection = items.associateWith { item -> item.tagIds.toSet() },
+                    selection = items.associateWith { item -> item.tagIds.toSet() },
+                )
+            }
         }
-    }
-
-    fun openPicker() {
-        uiState.update { it.copy(state = TagsPickerUiState.State.PickerModal) }
-    }
-
-    fun openAddTag() {
-        uiState.update { it.copy(state = TagsPickerUiState.State.AddTagDialog) }
     }
 
     fun selectTag(tagId: String) {
