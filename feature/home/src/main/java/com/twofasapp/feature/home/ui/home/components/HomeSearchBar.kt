@@ -58,6 +58,7 @@ internal fun HomeSearchBar(
     searchFocused: Boolean = false,
     selectedTag: Tag? = null,
     selectedItemType: ItemContentType? = null,
+    filteredItemsCount: Int = 0,
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
     onSelectedItemTypeChange: (ItemContentType?) -> Unit = {},
@@ -178,7 +179,7 @@ internal fun HomeSearchBar(
                         withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
                             append(selectedTag.name)
                         }
-                        append(" (${if (selectedTag.assignedItemsCount == 1) "1 item" else "${selectedTag.assignedItemsCount} items"})")
+                        append(" (${if (filteredItemsCount == 1) "1 item" else "$filteredItemsCount items"})")
                     },
                     leadingIcon = MdtIcons.Tag,
                     leadingIconTint = MdtTheme.color.onSurface,

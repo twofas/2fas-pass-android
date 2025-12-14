@@ -250,6 +250,7 @@ private fun Content(
                             searchFocused = uiState.searchFocused,
                             selectedTag = uiState.selectedTag,
                             selectedItemType = uiState.selectedItemType,
+                            filteredItemsCount = uiState.itemsFiltered.size,
                             onSearchQueryChange = onSearchQueryChange,
                             onSearchFocusChange = onSearchFocusChange,
                             onSelectedItemTypeChange = onSelectedItemTypeChange,
