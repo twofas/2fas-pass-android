@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
@@ -34,6 +35,7 @@ internal fun ItemFormState(
 ) {
     var itemState by remember { mutableStateOf(itemFormState.item) }
     var isValid by remember { mutableStateOf(false) }
+    val strings = MdtLocale.strings
 
     BackHandler {
         itemFormState.onCancel()
@@ -41,10 +43,24 @@ internal fun ItemFormState(
 
     Column {
         TopAppBar(
-            title = if (itemFormState.item.id.isBlank()) {
-                MdtLocale.strings.loginAddTitle
-            } else {
-                MdtLocale.strings.loginEditTitle
+            title = when {
+                itemFormState.item.id.isBlank() -> {
+                    when (itemFormState.item.contentType) {
+                        ItemContentType.Login -> strings.loginAddTitle
+                        ItemContentType.SecureNote -> strings.secureNoteAddTitle
+                        ItemContentType.PaymentCard -> strings.itemAddTitle
+                        is ItemContentType.Unknown -> strings.itemAddTitle
+                    }
+                }
+
+                else -> {
+                    when (itemFormState.item.contentType) {
+                        ItemContentType.Login -> strings.loginEditTitle
+                        ItemContentType.SecureNote -> strings.secureNoteEditTitle
+                        ItemContentType.PaymentCard -> strings.itemEditTitle
+                        is ItemContentType.Unknown -> strings.itemEditTitle
+                    }
+                }
             },
             onBackClick = { itemFormState.onCancel() },
             containerColor = MdtTheme.color.surfaceContainerLow,
