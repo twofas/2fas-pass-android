@@ -58,4 +58,10 @@ internal class VaultsRepositoryImpl(
             localVaults.deleteAll()
         }
     }
+
+    override suspend fun setUpdatedTimestamp(id: String, timestamp: Long) {
+        return withContext(dispatchers.io) {
+            localVaults.updateLastModificationTime(id, timestamp)
+        }
+    }
 }

@@ -14,6 +14,7 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TagsRepository
@@ -30,6 +31,7 @@ internal class ImportExportViewModel(
     private val backupRepository: BackupRepository,
     private val purchasesRepository: PurchasesRepository,
     private val tagsRepository: TagsRepository,
+    private val timeProvider: TimeProvider,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ImportExportUiState())
     private var importJob: Job? = null
@@ -130,6 +132,11 @@ internal class ImportExportViewModel(
             runSafely {
                 itemsRepository.importItems(items)
                 tagsRepository.importTags(tags)
+
+                vaultsRepository.setUpdatedTimestamp(
+                    id = vaultsRepository.getVault().id,
+                    timestamp = timeProvider.currentTimeUtc(),
+                )
             }
                 .onSuccess {
                     showImportLoading(false)
