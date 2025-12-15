@@ -34,6 +34,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemEntry
@@ -49,8 +50,8 @@ import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.BrowserRequestResponse
 import com.twofasapp.data.main.domain.Identicon
 import com.twofasapp.feature.connect.ui.commonmodal.ErrorState
+import com.twofasapp.feature.connect.ui.commonmodal.ItemFormState
 import com.twofasapp.feature.connect.ui.commonmodal.LoadingState
-import com.twofasapp.feature.connect.ui.commonmodal.LoginFormState
 import com.twofasapp.feature.connect.ui.commonmodal.ModalFrame
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddItemState
 import com.twofasapp.feature.connect.ui.requestmodal.states.AddLoginState
@@ -179,7 +180,7 @@ private fun Content(
             is RequestState.FullSize -> {
                 when (uiState.requestState) {
                     is RequestState.FullSize.ItemForm -> {
-                        LoginFormState(
+                        ItemFormState(
                             itemFormState = uiState.requestState,
                         )
                     }
@@ -265,8 +266,18 @@ private fun Content(
                         is RequestState.InsideFrame.SecretFieldRequest -> {
                             RequestState(
                                 item = secretFieldRequestState.item,
-                                title = strings.requestModalPasswordRequestTitle,
-                                subtitle = strings.requestModalPasswordRequestSubtitle,
+                                title = when (secretFieldRequestState.item.contentType) {
+                                    is ItemContentType.Unknown -> ""
+                                    is ItemContentType.Login -> strings.requestModalPasswordRequestTitle
+                                    is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestTitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalCardRequestTitle
+                                },
+                                subtitle = when (secretFieldRequestState.item.contentType) {
+                                    is ItemContentType.Unknown -> ""
+                                    is ItemContentType.Login -> strings.requestModalPasswordRequestSubtitle
+                                    is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestSubtitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalCardRequestSubtitle
+                                },
                                 icon = MdtIcons.Downloading,
                                 iconTint = MdtTheme.color.primary,
                                 positiveCta = strings.requestModalPasswordRequestCtaPositive,
@@ -282,6 +293,7 @@ private fun Content(
                                                 put("s_text", content.text.clearTextOrNull.orEmpty())
                                             }
 
+                                            is ItemContent.PaymentCard -> Unit
                                             is ItemContent.Unknown -> Unit
                                         }
                                     }
@@ -311,7 +323,12 @@ private fun Content(
                         is RequestState.InsideFrame.AddItem -> {
                             RequestState(
                                 item = addItemState.item,
-                                title = strings.requestModalNewItemTitle,
+                                title = when (addItemState.item.contentType) {
+                                    is ItemContentType.Unknown -> strings.requestModalNewItemTitle
+                                    is ItemContentType.Login -> strings.requestModalNewLoginTitle
+                                    is ItemContentType.SecureNote -> strings.requestModalNewSecureNoteTitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalNewCardTitle
+                                },
                                 subtitle = strings.requestModalNewItemSubtitle,
                                 icon = MdtIcons.AddCircle,
                                 iconTint = MdtTheme.color.primary,
@@ -325,7 +342,12 @@ private fun Content(
                         is RequestState.InsideFrame.UpdateItem -> {
                             RequestState(
                                 item = updateItemState.item,
-                                title = strings.requestModalUpdateItemTitle,
+                                title = when (updateItemState.item.contentType) {
+                                    is ItemContentType.Unknown -> strings.requestModalUpdateItemTitle
+                                    is ItemContentType.Login -> strings.requestModalUpdateLoginTitle
+                                    is ItemContentType.SecureNote -> strings.requestModalUpdateSecureNoteTitle
+                                    is ItemContentType.PaymentCard -> strings.requestModalUpdateCardTitle
+                                },
                                 subtitle = strings.requestModalUpdateItemSubtitle,
                                 icon = MdtIcons.RotateLeft,
                                 iconTint = MdtTheme.color.primary,

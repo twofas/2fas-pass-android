@@ -23,20 +23,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -44,7 +42,6 @@ import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.layout.ActionsRow
-import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.screen.LazyContent
 import com.twofasapp.core.design.foundation.text.TextIcon
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
@@ -53,8 +50,6 @@ import com.twofasapp.core.design.theme.RoundedTopShape
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.purchases.PurchasesDialog
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -63,6 +58,7 @@ internal fun TrashScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Content(
         uiState = uiState,
@@ -70,8 +66,16 @@ internal fun TrashScreen(
         onItemToggled = { viewModel.toggle(it) },
         onSelectAll = { viewModel.selectAll() },
         onClearSelections = { viewModel.clearSelections() },
-        onRestoreClick = { viewModel.restore() },
-        onDeleteConfirmed = { viewModel.delete() },
+        onRestoreClick = {
+            viewModel.restore {
+                context.toastShort(it)
+            }
+        },
+        onDeleteConfirmed = {
+            viewModel.delete {
+                context.toastShort(it)
+            }
+        },
     )
 }
 
@@ -85,15 +89,12 @@ private fun Content(
     onRestoreClick: () -> Unit = {},
     onDeleteConfirmed: () -> Unit = {},
 ) {
-    val scope = rememberCoroutineScope()
     val strings = MdtLocale.strings
     val onBackDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
-    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = if (uiState.hasSelections) "${uiState.selected.size} selected" else strings.settingsEntryTrash,
@@ -155,7 +156,7 @@ private fun Content(
             )
 
             AnimatedVisibility(
-                visible = uiState.hasSelections,
+                visible = uiState.hasSelections && screenState.loading.not(),
                 enter = slideInVertically(initialOffsetY = { it / 2 }),
                 exit = slideOutVertically(targetOffsetY = { it }),
                 modifier = Modifier
@@ -177,10 +178,6 @@ private fun Content(
                                 showPaywall = true
                             } else {
                                 onRestoreClick()
-                                scope.launch {
-                                    delay(300)
-                                    snackbarHostState.showSnackbar("Items restored!")
-                                }
                             }
                         },
                         content = {
@@ -217,10 +214,6 @@ private fun Content(
             icon = MdtIcons.DeleteForever,
             onPositive = {
                 onDeleteConfirmed()
-                scope.launch {
-                    delay(300)
-                    snackbarHostState.showSnackbar("Items deleted!")
-                }
             },
         )
     }
@@ -231,16 +224,5 @@ private fun Content(
             body = MdtLocale.strings.paywallNoticeItemsLimitRestoreMsg.format(uiState.maxItems),
             onDismissRequest = { showPaywall = false },
         )
-    }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    PreviewTheme {
-//        Content(
-//            uiState = TrashUiState(trashedItems = listOf(Login.Preview), selected = listOf("")),
-//            screenState = ScreenState.Success,
-//        )
     }
 }

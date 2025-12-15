@@ -17,6 +17,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.twofasapp.core.common.domain.AuthStatus
 import com.twofasapp.core.design.theme.ColorTokens
@@ -97,6 +98,13 @@ fun AppTheme(
         surfaceContainer = colorScheme.surfaceContainer,
         surfaceContainerHigh = colorScheme.surfaceContainerHigh,
         surfaceContainerHighest = colorScheme.surfaceContainerHighest,
+        bottomBar = if (isInDarkTheme) colorScheme.background else colorScheme.background,
+        itemLoginContent = if (isInDarkTheme) Color(0xFF0088FF) else Color(0xFF0088FF),
+        itemLoginContainer = if (isInDarkTheme) Color(0xFF002B52) else Color(0xFFD4EBFF),
+        itemSecureNoteContent = if (isInDarkTheme) Color(0xFFFF8D28) else Color(0xFFFF8D28),
+        itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
+        itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
+        itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
     )
 
     CompositionLocalProvider(

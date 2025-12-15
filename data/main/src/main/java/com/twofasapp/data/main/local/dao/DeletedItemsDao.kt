@@ -33,6 +33,13 @@ interface DeletedItemsDao {
     @Query("DELETE FROM deleted_items WHERE id IN (:ids)")
     suspend fun delete(ids: List<String>)
 
+    @Transaction
+    suspend fun deleteInTransaction(ids: List<String>) {
+        ids.chunked(500).forEach { chunk ->
+            delete(chunk)
+        }
+    }
+
     @Query("DELETE FROM deleted_items WHERE vault_id == :vaultId")
     suspend fun deleteAll(vaultId: String)
 }

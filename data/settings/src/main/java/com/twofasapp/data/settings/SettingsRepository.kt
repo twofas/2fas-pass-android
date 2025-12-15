@@ -15,7 +15,7 @@ import com.twofasapp.data.settings.domain.AppLockAttempts
 import com.twofasapp.data.settings.domain.AppLockTime
 import com.twofasapp.data.settings.domain.AutofillLockTime
 import com.twofasapp.data.settings.domain.AutofillSettings
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
 import kotlinx.coroutines.flow.Flow
 
@@ -24,8 +24,8 @@ interface SettingsRepository {
     suspend fun setSelectedTheme(theme: SelectedTheme)
     fun observeDynamicColors(): Flow<Boolean>
     suspend fun setDynamicColors(enabled: Boolean)
-    fun observeLoginClickAction(): Flow<LoginClickAction>
-    suspend fun setLoginClickAction(action: LoginClickAction)
+    fun observeItemClickAction(): Flow<ItemClickAction>
+    suspend fun setItemClickAction(action: ItemClickAction)
     fun observeAutofillSettings(): Flow<AutofillSettings>
     suspend fun setAutofillSettings(useInline: Boolean? = null)
     fun observeSortingMethod(): Flow<SortingMethod>

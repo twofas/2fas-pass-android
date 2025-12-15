@@ -54,6 +54,8 @@ import com.twofasapp.feature.settings.navigation.TrashRoute
 internal fun MainNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    onHomeInEditModeChanged: (Boolean) -> Unit,
+    onHomeScrollingUpChanged: (Boolean) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -64,19 +66,21 @@ internal fun MainNavHost(
     ) {
         composable<Screen.Home> {
             HomeRoute(
-                openAddLogin = { vaultId ->
+                openAddItem = { vaultId, itemContentType ->
                     navController.navigate(
                         Screen.EditItem(
                             itemId = "",
                             vaultId = vaultId,
+                            itemContentTypeKey = itemContentType.key,
                         ),
                     )
                 },
-                openEditLogin = { loginId, vaultId ->
+                openEditItem = { itemId, vaultId, itemContentType ->
                     navController.navigate(
                         Screen.EditItem(
-                            itemId = loginId,
+                            itemId = itemId,
                             vaultId = vaultId,
+                            itemContentTypeKey = itemContentType.key,
                         ),
                     )
                 },
@@ -89,6 +93,8 @@ internal fun MainNavHost(
                 openDeveloper = {
                     navController.navigateTopLevel(Screen.Developer)
                 },
+                onHomeInEditModeChanged = onHomeInEditModeChanged,
+                onHomeScrollingUpChanged = onHomeScrollingUpChanged,
             )
         }
 

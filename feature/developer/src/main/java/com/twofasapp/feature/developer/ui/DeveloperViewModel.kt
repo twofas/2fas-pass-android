@@ -256,8 +256,40 @@ internal class DeveloperViewModel(
                         contentType = ItemContentType.SecureNote,
                         vaultId = vault.id,
                         content = ItemContent.SecureNote(
-                            name = "Secure Note: $nameSeed",
+                            name = "$nameSeed note",
                             text = SecretField.ClearText(body),
+                        ),
+                    ).copy(id = Uuid.generate()),
+                ),
+            )
+        }
+    }
+
+    fun insertRandomCreditCard() {
+        launchScoped(Dispatchers.IO) {
+            val vault = vaultsRepository.getVault()
+            val securityType = SecurityType.entries.random()
+            val cardholderName = "${WordList.words.random().replaceFirstChar { it.uppercase() }} ${WordList.words.random().replaceFirstChar { it.uppercase() }}"
+            val cardNumber = generateRandomCardNumber()
+            val expiration = generateRandomExpiration()
+            val cvv = generateRandomCvv()
+            val cardBrand = listOf("Visa", "Mastercard", "American Express", "Discover").random()
+
+            itemsRepository.importItems(
+                listOf(
+                    Item.create(
+                        securityType = securityType,
+                        contentType = ItemContentType.PaymentCard,
+                        vaultId = vault.id,
+                        content = ItemContent.PaymentCard(
+                            name = "$cardBrand - $cardholderName",
+                            cardHolder = cardholderName,
+                            cardNumber = SecretField.ClearText(cardNumber),
+                            expirationDate = SecretField.ClearText(expiration),
+                            securityCode = SecretField.ClearText(cvv),
+                            notes = "Generated test credit card",
+                            cardNumberMask = cardNumber.takeLast(4),
+                            cardIssuer = ItemContent.PaymentCard.Issuer.entries.random(),
                         ),
                     ).copy(id = Uuid.generate()),
                 ),
@@ -290,5 +322,22 @@ internal class DeveloperViewModel(
             "Donec efficitur elit eu massa vulputate, vitae porta sapien aliquet.",
             "Sed vehicula magna a nunc viverra, in tincidunt ipsum volutpat.",
         )
+
+        fun generateRandomCardNumber(): String {
+            // Generate a realistic looking card number (16 digits for Visa/Mastercard)
+            val bin = Random.nextInt(400000, 600000) // Valid BIN range
+            val accountNumber = (0..9).joinToString("") { Random.nextInt(10).toString() }
+            return "$bin$accountNumber"
+        }
+
+        fun generateRandomExpiration(): String {
+            val currentMonth = (1..12).random()
+            val currentYear = (24..28).random() // 2024-2028
+            return String.format("%02d/%02d", currentMonth, currentYear)
+        }
+
+        fun generateRandomCvv(): String {
+            return (0..2).joinToString("") { Random.nextInt(10).toString() }
+        }
     }
 }

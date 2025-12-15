@@ -6,8 +6,10 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.data.settings.domain
+package com.twofasapp.data.settings.local.model
 
-enum class LoginClickAction {
-    View, Edit, CopyPassword, OpenUri,
+internal enum class ItemClickActionEntity {
+    View,
+    Edit,
+    Copy,
 }

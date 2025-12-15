@@ -12,8 +12,9 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.Vault
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.filterBySearchQuery
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
 
 internal data class HomeUiState(
@@ -22,9 +23,13 @@ internal data class HomeUiState(
     val items: List<Item> = emptyList(),
     val tags: List<Tag> = emptyList(),
     val selectedTag: Tag? = null,
+    val selectedItemType: ItemContentType? = null,
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
-    val loginClickAction: LoginClickAction = LoginClickAction.View,
+    val editMode: Boolean = false,
+    val scrollingUp: Boolean = false,
+    val selectedItemIds: Set<String> = emptySet(),
+    val itemClickAction: ItemClickAction = ItemClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,
     val maxItems: Int = 0,
     val events: List<HomeUiEvent> = emptyList(),
@@ -32,6 +37,13 @@ internal data class HomeUiState(
     val itemsFiltered: List<Item>
         get() = items
             .filter { it.content !is ItemContent.Unknown }
+            .filter { item ->
+                if (selectedItemType == null) {
+                    true
+                } else {
+                    item.contentType == selectedItemType
+                }
+            }
             .filter { item ->
                 if (selectedTag == null) {
                     true
@@ -43,8 +55,15 @@ internal data class HomeUiState(
 
     val isItemsLimitReached: Boolean
         get() = items.size >= maxItems
+
+    val selectedItems: List<Item>
+        get() = items.filter { selectedItemIds.contains(it.id) }
+
+    val allFilteredSelected =
+        itemsFiltered.all { it.id in selectedItemIds }
 }
 
 internal sealed interface HomeUiEvent {
     data object OpenQuickSetup : HomeUiEvent
+    data class ShowToast(val message: String) : HomeUiEvent
 }

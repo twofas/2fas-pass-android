@@ -11,7 +11,10 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
@@ -40,27 +43,52 @@ internal class LastPassImportSpec(
         val csvFile = CsvFile(
             text = context.readTextFile(uri),
             delimiter = ',',
-            schema = CsvFile.Schema(
-                name = listOf("name"),
-                url = listOf("url"),
-                username = listOf("username"),
-                password = listOf("password"),
-                notes = listOf("extra"),
+            schemas = listOf(
+                CsvFile.Schema.Login(
+                    name = listOf("name"),
+                    url = listOf("url"),
+                    username = listOf("username"),
+                    password = listOf("password"),
+                    notes = listOf("extra"),
+                ),
             ),
         )
 
         return ImportContent(
             items = csvFile.parse(vaultId).map { item ->
-                val filteredUris = (item.content as ItemContent.Login).uris.filterNot { it.text.equals("http://sn", true) }
+                val loginContent = item.content as ItemContent.Login
+                val url = loginContent.uris.firstOrNull()?.text.orEmpty()
+                val notes = loginContent.notes.orEmpty()
 
-                item.copy(
-                    content = (item.content as ItemContent.Login).copy(
-                        uris = filteredUris,
-                        iconUriIndex = if (filteredUris.isEmpty()) null else 0,
-                    ),
-                )
+                // Check if this is a secure note (url starts with "http://sn" and extra/notes doesn't start with "NoteType:")
+//                if (url.startsWith("http://sn", ignoreCase = true) && !notes.startsWith("NoteType:", ignoreCase = true)) {
+                if (url.startsWith("http://sn", ignoreCase = true)) {
+                    convertToSecureNote(item, vaultId)
+                } else {
+                    val filteredUris = loginContent.uris.filterNot { it.text.equals("http://sn", true) }
+
+                    item.copy(
+                        content = loginContent.copy(
+                            uris = filteredUris,
+                            iconUriIndex = if (filteredUris.isEmpty()) null else 0,
+                        ),
+                    )
+                }
             },
             skipped = 0,
+        )
+    }
+
+    private fun convertToSecureNote(item: Item, vaultId: String): Item {
+        val loginContent = item.content as ItemContent.Login
+
+        return Item.create(
+            vaultId = vaultId,
+            contentType = ItemContentType.SecureNote,
+            content = ItemContent.SecureNote(
+                name = loginContent.name,
+                text = loginContent.notes?.let { SecretField.ClearText(it) },
+            ),
         )
     }
 }

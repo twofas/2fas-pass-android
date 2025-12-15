@@ -14,12 +14,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,13 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.feature.tags.TagDialog
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
-import com.twofasapp.core.design.foundation.checked.CheckIcon
 import com.twofasapp.core.design.foundation.lazy.forEachIndexed
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.modal.ModalHeaderProperties
@@ -45,18 +50,31 @@ import com.twofasapp.core.locale.MdtLocale
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun TagsPickerModal(
-    tags: List<Tag>,
-    selectedTagIds: List<String>,
+fun TagsPickerModal(
+    item: Item,
     onDismissRequest: () -> Unit,
-    onConfirmTagsSelections: (List<String>) -> Unit,
+    onTagsChanged: (List<String>) -> Unit,
 ) {
     ProvidesViewModelStoreOwner {
         TagsPickerContent(
-            tags = tags,
-            selectedTagIds = selectedTagIds,
+            items = listOf(item),
             onDismissRequest = onDismissRequest,
-            onConfirmTagsSelections = onConfirmTagsSelections,
+            onConfirm = { onTagsChanged(it.values.flatten()) },
+        )
+    }
+}
+
+@Composable
+fun TagsPickerMultiModal(
+    items: List<Item>,
+    onDismissRequest: () -> Unit,
+    onTagsChanged: (Map<Item, Set<String>>) -> Unit,
+) {
+    ProvidesViewModelStoreOwner {
+        TagsPickerContent(
+            items = items,
+            onDismissRequest = onDismissRequest,
+            onConfirm = onTagsChanged,
         )
     }
 }
@@ -64,57 +82,51 @@ internal fun TagsPickerModal(
 @Composable
 private fun TagsPickerContent(
     viewModel: TagsPickerViewModel = koinViewModel(),
-    tags: List<Tag>,
-    selectedTagIds: List<String>,
+    items: List<Item>,
     onDismissRequest: () -> Unit,
-    onConfirmTagsSelections: (List<String>) -> Unit = {},
+    onConfirm: (Map<Item, Set<String>>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showAddTagDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.init(tags, selectedTagIds)
+        viewModel.init(items)
     }
 
-    when (uiState.state) {
-        TagsPickerUiState.State.PickerModal -> {
-            Modal(
-                onDismissRequest = onDismissRequest,
-                headerText = MdtLocale.strings.loginTags,
-                headerProperties = ModalHeaderProperties(
-                    showCloseButton = true,
-                ),
-            ) { dismissAction ->
-                ModalContent(
-                    tags = uiState.tags,
-                    initiallySelectedTagIds = selectedTagIds,
-                    selectedTagIds = uiState.selectedTagIds,
-                    onAddNewTag = { viewModel.openAddTag() },
-                    onToggle = { viewModel.toggleTagId(it) },
-                    onConfirm = { dismissAction { onConfirmTagsSelections(uiState.selectedTagIds) } },
-                )
-            }
-        }
+    Modal(
+        onDismissRequest = onDismissRequest,
+        headerText = MdtLocale.strings.loginTags,
+        headerProperties = ModalHeaderProperties(
+            showCloseButton = true,
+        ),
+    ) { dismissAction ->
+        ModalContent(
+            uiState = uiState,
+            onAddNewTag = { showAddTagDialog = true },
+            onSelect = { viewModel.selectTag(it) },
+            onDeselect = { viewModel.deselectTag(it) },
+            onConfirm = { dismissAction { onConfirm(uiState.changedSelection) } },
+        )
+    }
 
-        TagsPickerUiState.State.AddTagDialog -> {
-            TagDialog(
-                onDismissRequest = { viewModel.openPicker() },
-                tag = Tag.Empty.copy(vaultId = uiState.vaultId),
-                onSaveClick = { viewModel.addTag(it) },
-            )
-        }
+    if (showAddTagDialog) {
+        TagDialog(
+            onDismissRequest = { showAddTagDialog = false },
+            tag = Tag.Empty.copy(vaultId = uiState.vaultId),
+            onSaveClick = { viewModel.addTag(it) },
+        )
     }
 }
 
 @Composable
 private fun ModalContent(
-    tags: List<Tag>,
-    initiallySelectedTagIds: List<String>,
-    selectedTagIds: List<String>,
-    onAddNewTag: (List<String>) -> Unit = {},
-    onToggle: (String) -> Unit = {},
-    onConfirm: (List<String>) -> Unit = {},
+    uiState: TagsPickerUiState,
+    onAddNewTag: () -> Unit = {},
+    onSelect: (String) -> Unit = {},
+    onDeselect: (String) -> Unit = {},
+    onConfirm: () -> Unit = {},
 ) {
-    if (tags.isEmpty()) {
+    if (uiState.tags.isEmpty()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -131,7 +143,7 @@ private fun ModalContent(
 
             Button(
                 text = "Add new Tag",
-                onClick = { onAddNewTag(selectedTagIds) },
+                onClick = { onAddNewTag() },
                 leadingIcon = MdtIcons.Add,
                 style = ButtonStyle.Text,
                 modifier = Modifier
@@ -157,12 +169,40 @@ private fun ModalContent(
                 )
             }
 
-            tags.forEachIndexed { _, isFirst, isLast, tag ->
-                item("Tag:${tag.id}", "Tag") {
+            uiState.tags.forEachIndexed { _, isFirst, isLast, tag ->
+                item {
+                    val isSelected = uiState.selectedTagIds.contains(tag.id)
+                    val isSelectedInAllItems = uiState.selection.values.all { it.contains(tag.id) }
+
                     OptionEntry(
                         title = tag.name,
-                        onClick = { onToggle(tag.id) },
-                        content = { CheckIcon(checked = selectedTagIds.contains(tag.id)) },
+                        onClick = {
+                            if (isSelected) {
+                                onDeselect(tag.id)
+                            } else {
+                                onSelect(tag.id)
+                            }
+                        },
+                        content = {
+                            Icon(
+                                painter = if (isSelected) {
+                                    if (isSelectedInAllItems) {
+                                        MdtIcons.CircleCheckFilled
+                                    } else {
+                                        MdtIcons.MinusCircle
+                                    }
+                                } else {
+                                    MdtIcons.CircleUncheck
+                                },
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = if (isSelected) {
+                                    MdtTheme.color.primary
+                                } else {
+                                    MdtTheme.color.surfaceContainerHighest
+                                },
+                            )
+                        },
                         modifier = Modifier
                             .padding(horizontal = 12.dp)
                             .clip(RoundedShapeIndexed(isFirst, isLast))
@@ -177,7 +217,7 @@ private fun ModalContent(
 
                     Button(
                         text = "Add new Tag",
-                        onClick = { onAddNewTag(selectedTagIds) },
+                        onClick = { onAddNewTag() },
                         leadingIcon = MdtIcons.Add,
                         style = ButtonStyle.Text,
                         modifier = Modifier
@@ -188,8 +228,8 @@ private fun ModalContent(
 
                     Button(
                         text = MdtLocale.strings.commonConfirm,
-                        enabled = initiallySelectedTagIds != selectedTagIds,
-                        onClick = { onConfirm(selectedTagIds) },
+                        enabled = uiState.initialSelection != uiState.selection,
+                        onClick = { onConfirm() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp),
@@ -207,30 +247,14 @@ private fun ModalContent(
 private fun Preview() {
     PreviewTheme {
         ModalContent(
-            tags = listOf(
-                Tag.Empty.copy(id = "1", name = "Tag 1"),
-                Tag.Empty.copy(id = "2", name = "Tag 2"),
-                Tag.Empty.copy(id = "3", name = "Tag 3"),
+            uiState = TagsPickerUiState(
+                tags = listOf(
+                    Tag.Empty.copy(id = "1", name = "Tag 1"),
+                    Tag.Empty.copy(id = "2", name = "Tag 2"),
+                    Tag.Empty.copy(id = "3", name = "Tag 3"),
+                ),
             ),
-            initiallySelectedTagIds = emptyList(),
-            selectedTagIds = emptyList(),
             onAddNewTag = {},
-            onToggle = {},
-            onConfirm = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewEmpty() {
-    PreviewTheme {
-        ModalContent(
-            tags = emptyList(),
-            initiallySelectedTagIds = emptyList(),
-            selectedTagIds = emptyList(),
-            onAddNewTag = {},
-            onToggle = {},
             onConfirm = {},
         )
     }

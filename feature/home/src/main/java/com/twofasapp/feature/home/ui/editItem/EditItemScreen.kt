@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.button.Button
@@ -24,6 +25,7 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemForm
+import com.twofasapp.feature.itemform.ItemFormListener
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -57,10 +59,24 @@ private fun Content(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = if (uiState.item.id.isBlank()) {
-                    strings.loginAddTitle
-                } else {
-                    strings.loginEditTitle
+                title = when {
+                    uiState.item.id.isBlank() -> {
+                        when (uiState.item.contentType) {
+                            ItemContentType.Login -> strings.loginAddTitle
+                            ItemContentType.SecureNote -> strings.secureNoteAddTitle
+                            ItemContentType.PaymentCard -> strings.itemAddTitle
+                            is ItemContentType.Unknown -> strings.itemAddTitle
+                        }
+                    }
+
+                    else -> {
+                        when (uiState.item.contentType) {
+                            ItemContentType.Login -> strings.loginEditTitle
+                            ItemContentType.SecureNote -> strings.secureNoteEditTitle
+                            ItemContentType.PaymentCard -> strings.itemEditTitle
+                            is ItemContentType.Unknown -> strings.itemEditTitle
+                        }
+                    }
                 },
                 actions = {
                     Button(
@@ -77,10 +93,23 @@ private fun Content(
             ItemForm(
                 modifier = Modifier.padding(top = padding.calculateTopPadding()),
                 initialItem = uiState.initialItem,
-                onItemUpdated = onItemUpdated,
-                onIsValidUpdated = onIsValidUpdated,
-                onHasUnsavedChangesUpdated = onHasUnsavedChangesUpdated,
-                onCloseWithoutSaving = onCloseWithoutSaving,
+                listener = object : ItemFormListener {
+                    override fun onItemUpdated(item: Item) {
+                        onItemUpdated(item)
+                    }
+
+                    override fun onIsValidUpdated(valid: Boolean) {
+                        onIsValidUpdated(valid)
+                    }
+
+                    override fun onHasUnsavedChangesUpdated(hasUnsavedChanges: Boolean) {
+                        onHasUnsavedChangesUpdated(hasUnsavedChanges)
+                    }
+
+                    override fun onCloseWithoutSaving() {
+                        onCloseWithoutSaving()
+                    }
+                },
             )
         }
     }

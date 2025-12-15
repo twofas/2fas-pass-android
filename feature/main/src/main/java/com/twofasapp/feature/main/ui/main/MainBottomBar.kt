@@ -11,11 +11,13 @@ package com.twofasapp.feature.main.ui.main
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -102,23 +104,33 @@ internal fun MainBottomBar(
         navController.navigateTopLevel(startScreen)
     }
 
-    NavigationBar(
-        modifier = modifier,
+    Column(
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        bottomNavItems.forEach { item ->
-            val selected = currentBackStack.findMostRecentTopLevelScreenRoute(bottomNavRoutes) == item.screen.route
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            color = MdtTheme.color.surfaceContainerLow,
+        )
 
-            Item(
-                text = item.title,
-                icon = painterResource(item.iconRes),
-                showDot = item.showDot,
-                selected = selected,
-                onClick = {
-                    if (selected.not()) {
-                        navController.navigateTopLevel(item.screen)
-                    }
-                },
-            )
+        NavigationBar(
+            modifier = modifier,
+            containerColor = MdtTheme.color.bottomBar,
+        ) {
+            bottomNavItems.forEach { item ->
+                val selected = currentBackStack.findMostRecentTopLevelScreenRoute(bottomNavRoutes) == item.screen.route
+
+                Item(
+                    text = item.title,
+                    icon = painterResource(item.iconRes),
+                    showDot = item.showDot,
+                    selected = selected,
+                    onClick = {
+                        if (selected.not()) {
+                            navController.navigateTopLevel(item.screen)
+                        }
+                    },
+                )
+            }
         }
     }
 }

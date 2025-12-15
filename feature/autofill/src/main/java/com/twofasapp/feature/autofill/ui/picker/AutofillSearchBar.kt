@@ -10,8 +10,6 @@ package com.twofasapp.feature.autofill.ui.picker
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -20,7 +18,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.search.SearchBar
 import kotlinx.coroutines.android.awaitFrame
@@ -63,13 +60,6 @@ internal fun AutofillSearchbar(
         onSearchQueryChange = onSearchQueryChange,
         onSearchFocusChange = onSearchFocusChange,
         focusRequester = focusRequester,
-        startContent = {
-            Icon(
-                painter = MdtIcons.Search,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-        },
     )
 }
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -42,6 +44,7 @@ import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.AppTheme
+import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.image.AsyncImage
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
@@ -70,13 +73,21 @@ fun ItemImage(
             }
 
             is ItemContent.SecureNote -> {
-                ItemImage(
+                StaticIcon(
                     modifier = modifier,
-                    iconType = IconType.Label,
-                    iconUrl = null,
-                    labelText = content.defaultLabelText,
-                    labelColor = null,
-                    customImageUrl = null,
+                    icon = MdtIcons.SecureNote,
+                    iconColor = MdtTheme.color.itemSecureNoteContent,
+                    backgroundColor = MdtTheme.color.itemSecureNoteContainer,
+                    size = size,
+                )
+            }
+
+            is ItemContent.PaymentCard -> {
+                StaticIcon(
+                    modifier = modifier,
+                    icon = MdtIcons.PaymentCard,
+                    iconColor = MdtTheme.color.itemPaymentCardContent,
+                    backgroundColor = MdtTheme.color.itemPaymentCardContainer,
                     size = size,
                 )
             }
@@ -94,7 +105,7 @@ fun ItemImage(
     customImageUrl: String? = null,
     size: Dp = 40.dp,
 ) {
-    val color = labelColor?.hexToColor() ?: MdtTheme.color.surfaceContainerHigh
+    val color = labelColor?.hexToColor()
 
     Box(
         modifier = modifier.size(size),
@@ -174,20 +185,24 @@ fun ItemImage(
 @Composable
 private fun Label(
     text: String?,
-    color: Color,
+    color: Color?,
     size: Dp,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedShape12)
-            .background(color),
+            .background(color ?: MdtTheme.color.itemLoginContainer),
     ) {
         Text(
             text = text.orEmpty().uppercase(),
             style = MdtTheme.typo.bold.base.copy(fontSize = (size.value / 3).sp),
             modifier = Modifier.align(Alignment.Center),
-            color = if (color.luminance() > 0.5f) Color.Black else Color.White,
+            color = if (color == null) {
+                MdtTheme.color.itemLoginContent
+            } else {
+                if (color.luminance() > 0.5f) Color.Black else Color.White
+            },
         )
     }
 }
@@ -203,6 +218,30 @@ private fun RemoteImageBox(
             .background(color = MdtTheme.color.surfaceContainerHigh),
     ) {
         content()
+    }
+}
+
+@Composable
+fun StaticIcon(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    iconColor: Color,
+    backgroundColor: Color,
+    size: Dp = 40.dp,
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(RoundedShape12)
+            .background(backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier.size(size / 2),
+            painter = icon,
+            contentDescription = null,
+            tint = iconColor,
+        )
     }
 }
 

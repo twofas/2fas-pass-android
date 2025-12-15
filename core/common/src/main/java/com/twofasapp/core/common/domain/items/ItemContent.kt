@@ -52,5 +52,56 @@ sealed interface ItemContent {
     data class SecureNote(
         override val name: String,
         val text: SecretField?,
-    ) : ItemContent
+    ) : ItemContent {
+        companion object {
+            val Empty = SecureNote(
+                name = "",
+                text = null,
+            )
+
+            val Limit: Int = 16_384
+        }
+    }
+
+    data class PaymentCard(
+        override val name: String,
+        val cardHolder: String?,
+        val cardNumber: SecretField?,
+        val cardNumberMask: String?,
+        val expirationDate: SecretField?,
+        val securityCode: SecretField?,
+        val cardIssuer: Issuer?,
+        val notes: String?,
+    ) : ItemContent {
+
+        enum class Issuer(val code: String) {
+            Visa("Visa"),
+            MasterCard("MC"),
+            AmericanExpress("AMEX"),
+            Discover("Discover"),
+            DinersClub("DinersClub"),
+            Jcb("JCB"),
+            UnionPay("UnionPay"),
+            ;
+
+            companion object {
+                fun fromCode(code: String?): Issuer? {
+                    return entries.find { it.code == code }
+                }
+            }
+        }
+
+        companion object {
+            val Empty = PaymentCard(
+                name = "",
+                cardHolder = null,
+                cardNumber = null,
+                cardNumberMask = null,
+                expirationDate = null,
+                securityCode = null,
+                cardIssuer = null,
+                notes = null,
+            )
+        }
+    }
 }

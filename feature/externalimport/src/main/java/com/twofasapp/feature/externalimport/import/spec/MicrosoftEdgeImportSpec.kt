@@ -39,12 +39,14 @@ internal class MicrosoftEdgeImportSpec(
         val csvFile = CsvFile(
             text = context.readTextFile(uri),
             delimiter = ',',
-            schema = CsvFile.Schema(
-                name = listOf("name"),
-                url = listOf("url"),
-                username = listOf("username"),
-                password = listOf("password"),
-                notes = listOf("note"),
+            schemas = listOf(
+                CsvFile.Schema.Login(
+                    name = listOf("name"),
+                    url = listOf("url"),
+                    username = listOf("username"),
+                    password = listOf("password"),
+                    notes = listOf("note"),
+                ),
             ),
         )
 

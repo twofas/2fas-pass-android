@@ -186,6 +186,30 @@ internal class ItemsRepositoryImpl(
         lockObservability.emit(false)
     }
 
+    override suspend fun updateTags(itemId: String, tagIds: List<String>) {
+        val now = timeProvider.currentTimeUtc()
+        val item = itemsLocalSource.getItem(itemId)
+        val updatedItem = item.copy(
+            tagIds = tagIds,
+            updatedAt = now,
+        )
+
+        itemsLocalSource.saveItem(updatedItem)
+    }
+
+    override suspend fun updateItemsWithTags(map: Map<Item, Set<String>>) {
+        val now = timeProvider.currentTimeUtc()
+        val entities = itemsLocalSource.getItems()
+        val updatedEntities = map.mapNotNull { (item, tags) ->
+            entities.firstOrNull { entity -> entity.id == item.id }?.copy(
+                updatedAt = now,
+                tagIds = tags.toList(),
+            )
+        }
+
+        itemsLocalSource.saveItems(updatedEntities)
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun deleteTag(tagId: String) {
         GlobalScope.launch(dispatchers.io) {

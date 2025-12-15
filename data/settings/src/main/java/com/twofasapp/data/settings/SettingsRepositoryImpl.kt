@@ -16,17 +16,19 @@ import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.common.storage.booleanPref
 import com.twofasapp.core.common.storage.enumPref
+import com.twofasapp.core.common.storage.enumPrefNullable
 import com.twofasapp.core.common.storage.intPref
 import com.twofasapp.core.common.storage.serializedPrefNullable
 import com.twofasapp.data.settings.domain.AppLockAttempts
 import com.twofasapp.data.settings.domain.AppLockTime
 import com.twofasapp.data.settings.domain.AutofillLockTime
 import com.twofasapp.data.settings.domain.AutofillSettings
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
 import com.twofasapp.data.settings.local.model.AppLockAttemptsEntity
 import com.twofasapp.data.settings.local.model.AppLockTimeEntity
 import com.twofasapp.data.settings.local.model.AutofillLockTimeEntity
+import com.twofasapp.data.settings.local.model.ItemClickActionEntity
 import com.twofasapp.data.settings.local.model.LoginClickActionEntity
 import com.twofasapp.data.settings.local.model.PasswordGeneratorSettingsEntity
 import com.twofasapp.data.settings.local.model.SelectedThemeEntity
@@ -34,6 +36,8 @@ import com.twofasapp.data.settings.local.model.SortingMethodEntity
 import com.twofasapp.data.settings.mapper.asDomain
 import com.twofasapp.data.settings.mapper.asEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
@@ -44,7 +48,8 @@ internal class SettingsRepositoryImpl(
 
     private val selectedTheme by enumPref(cls = SelectedThemeEntity::class.java, default = SelectedThemeEntity.Auto)
     private val dynamicColors by booleanPref(default = false)
-    private val loginClickAction by enumPref(cls = LoginClickActionEntity::class.java, default = LoginClickActionEntity.View)
+    private val loginClickAction by enumPrefNullable(cls = LoginClickActionEntity::class.java)
+    private val itemClickAction by enumPref(cls = ItemClickActionEntity::class.java, default = ItemClickActionEntity.View)
     private val autofillUseInline by booleanPref(default = true)
     private val sortingMethod by enumPref(cls = SortingMethodEntity::class.java, default = SortingMethodEntity.NameAsc)
     private val appLockTime by enumPref(
@@ -88,12 +93,33 @@ internal class SettingsRepositoryImpl(
         dynamicColors.set(enabled)
     }
 
-    override fun observeLoginClickAction(): Flow<LoginClickAction> {
-        return loginClickAction.asFlow().map { it.asDomain() }
+    override fun observeItemClickAction(): Flow<ItemClickAction> {
+        return combine(
+            loginClickAction.asFlow(),
+            itemClickAction.asFlow().map { it.asDomain() },
+        ) { a, b -> Pair(a, b) }
+            .distinctUntilChanged()
+            .map { (loginClickActionEntity, itemClickAction) ->
+                // Migrate
+                if (loginClickActionEntity != LoginClickActionEntity.View && loginClickActionEntity != null) {
+                    val migratedClickAction = when (loginClickActionEntity) {
+                        LoginClickActionEntity.View -> ItemClickAction.View
+                        LoginClickActionEntity.Edit -> ItemClickAction.Edit
+                        LoginClickActionEntity.CopyPassword -> ItemClickAction.Copy
+                        LoginClickActionEntity.OpenUri -> ItemClickAction.View
+                    }
+
+                    setItemClickAction(migratedClickAction)
+                    loginClickAction.delete()
+                    migratedClickAction
+                } else {
+                    itemClickAction
+                }
+            }
     }
 
-    override suspend fun setLoginClickAction(action: LoginClickAction) {
-        loginClickAction.set(action.asEntity())
+    override suspend fun setItemClickAction(action: ItemClickAction) {
+        itemClickAction.set(action.asEntity())
     }
 
     override fun observeAutofillSettings(): Flow<AutofillSettings> {

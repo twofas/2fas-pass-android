@@ -16,7 +16,7 @@ sealed interface ItemContentJson {
     @Serializable
     data class Login(
         @SerialName("name")
-        val name: String,
+        val name: String?,
         @SerialName("username")
         val username: String?,
         @SerialName("s_password")
@@ -48,8 +48,28 @@ sealed interface ItemContentJson {
     @Serializable
     data class SecureNote(
         @SerialName("name")
-        val name: String,
+        val name: String?,
         @SerialName("s_text")
         val text: String?,
+    ) : ItemContentJson
+
+    @Serializable
+    data class PaymentCard(
+        @SerialName("name")
+        val name: String?,
+        @SerialName("cardHolder")
+        val cardHolder: String?,
+        @SerialName("s_cardNumber")
+        val cardNumber: String?,
+        @SerialName("s_expirationDate")
+        val expirationDate: String?,
+        @SerialName("s_securityCode")
+        val securityCode: String?,
+        @SerialName("cardNumberMask")
+        val cardNumberMask: String?,
+        @SerialName("cardIssuer")
+        val cardIssuer: String?,
+        @SerialName("notes")
+        val notes: String?,
     ) : ItemContentJson
 }

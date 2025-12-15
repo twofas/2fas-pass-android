@@ -40,12 +40,14 @@ internal class FirefoxImportSpec(
         val csvFile = CsvFile(
             text = context.readTextFile(uri),
             delimiter = ',',
-            schema = CsvFile.Schema(
-                name = listOf("url"),
-                url = listOf("url"),
-                username = listOf("username"),
-                password = listOf("password"),
-                notes = emptyList(),
+            schemas = listOf(
+                CsvFile.Schema.Login(
+                    name = listOf("url"),
+                    url = listOf("url"),
+                    username = listOf("username"),
+                    password = listOf("password"),
+                    notes = emptyList(),
+                ),
             ),
         )
 

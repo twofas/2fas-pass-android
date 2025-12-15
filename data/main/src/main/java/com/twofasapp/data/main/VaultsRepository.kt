@@ -18,4 +18,5 @@ interface VaultsRepository {
     suspend fun createVault(vault: Vault)
     suspend fun deleteVault(vararg id: String)
     suspend fun deleteAll()
+    suspend fun setUpdatedTimestamp(id: String, timestamp: Long)
 }

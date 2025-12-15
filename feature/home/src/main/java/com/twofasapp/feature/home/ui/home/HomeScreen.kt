@@ -13,9 +13,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +25,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,23 +34,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
+import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
-import com.twofasapp.core.design.foundation.button.IconButton
-import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.lazy.isScrollingUp
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.lazy.stickyListItem
@@ -59,18 +58,18 @@ import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.screen.EmptySearchResults
 import com.twofasapp.core.design.foundation.screen.ScreenLoading
-import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.design.window.DeviceType
 import com.twofasapp.core.design.window.currentDeviceType
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.SortingMethod
+import com.twofasapp.feature.home.ui.home.components.HomeAppBar
 import com.twofasapp.feature.home.ui.home.components.HomeFab
 import com.twofasapp.feature.home.ui.home.components.HomeItem
 import com.twofasapp.feature.home.ui.home.components.HomeSearchBar
+import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
-import com.twofasapp.feature.home.ui.home.modal.ListOptionsModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
 import org.koin.androidx.compose.koinViewModel
@@ -78,22 +77,32 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
-    openAddLogin: (String) -> Unit,
-    openEditLogin: (String, String) -> Unit,
+    openAddItem: (vaultId: String, itemContentType: ItemContentType) -> Unit,
+    openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
+    onHomeInEditModeChanged: (Boolean) -> Unit,
+    onHomeScrollingUpChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(uiState.editMode) {
+        onHomeInEditModeChanged(uiState.editMode)
+    }
+
+    LaunchedEffect(uiState.scrollingUp) {
+        onHomeScrollingUpChanged(uiState.scrollingUp)
+    }
+
     Content(
         uiState = uiState,
         screenState = screenState,
         onEventConsumed = { viewModel.consumeEvent(it) },
-        onAddLoginClick = openAddLogin,
-        onEditLoginClick = openEditLogin,
+        onAddItemClick = openAddItem,
+        onEditItemClick = openEditItem,
         onCopySecretFieldToClipboard = { item, secretField ->
             viewModel.decryptSecretField(
                 item = item,
@@ -105,11 +114,20 @@ internal fun HomeScreen(
         onTrashConfirmed = { viewModel.trash(it) },
         onSearchQueryChange = { viewModel.search(it) },
         onSearchFocusChange = { viewModel.focusSearch(it) },
+        onSelectedItemTypeChange = { viewModel.updateSelectedItemType(it) },
         onSortingMethodSelect = { viewModel.updateSortingMethod(it) },
+        onChangeEditMode = { viewModel.changeEditMode(it) },
+        onScrollingUpChanged = { viewModel.updateScrollingUp(it) },
+        onToggleItemSelection = { viewModel.toggleItemSelection(it) },
+        onSelectAllClick = { viewModel.selectAllItems() },
+        onDeselectClick = { viewModel.deselectItems() },
         onToggleTag = { viewModel.toggleTag(it) },
-        onClearTag = { viewModel.clearTag() },
+        onClearFiltersClick = { viewModel.clearFilters() },
         onManageTagsClick = openManageTags,
         onDeveloperClick = openDeveloper,
+        onDeleteSelectedItemsClick = { viewModel.trashSelectedItems() },
+        onChangeSelectedItemsSecurityType = { viewModel.changeSelectedItemsSecurityType(it) },
+        onChangeSelectedItemsTags = { viewModel.changeSelectedItemsTags(it) },
     )
 }
 
@@ -118,83 +136,77 @@ private fun Content(
     uiState: HomeUiState,
     screenState: ScreenState,
     onEventConsumed: (HomeUiEvent) -> Unit = {},
-    onAddLoginClick: (String) -> Unit = {},
-    onEditLoginClick: (String, String) -> Unit = { _, _ -> },
+    onAddItemClick: (vaultId: String, ItemContentType) -> Unit = { _, _ -> },
+    onEditItemClick: (String, String, itemContentType: ItemContentType) -> Unit = { _, _, _ -> },
     onCopySecretFieldToClipboard: (Item, SecretField?) -> Unit = { _, _ -> },
     onOpenQuickSetupClick: () -> Unit = {},
     onTrashConfirmed: (String) -> Unit = {},
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
+    onSelectedItemTypeChange: (ItemContentType?) -> Unit = {},
     onSortingMethodSelect: (SortingMethod) -> Unit = {},
+    onChangeEditMode: (Boolean) -> Unit = {},
+    onScrollingUpChanged: (Boolean) -> Unit = {},
+    onToggleItemSelection: (String) -> Unit = {},
+    onSelectAllClick: () -> Unit = {},
+    onDeselectClick: () -> Unit = {},
     onToggleTag: (Tag) -> Unit = {},
-    onClearTag: () -> Unit = {},
+    onClearFiltersClick: () -> Unit = {},
     onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
+    onDeleteSelectedItemsClick: () -> Unit = {},
+    onChangeSelectedItemsSecurityType: (SecurityType) -> Unit = {},
+    onChangeSelectedItemsTags: (Map<Item, Set<String>>) -> Unit = {},
 ) {
+    val context = LocalContext.current
     val listState = rememberLazyListState()
-    val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
-    var showListOptionsModal by remember { mutableStateOf(false) }
+    var scrollingUp by remember { mutableStateOf(false) }
     var showSortModal by remember { mutableStateOf(false) }
     var showFilterModal by remember { mutableStateOf(false) }
+    var showAddItemModal by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
     val deviceType = currentDeviceType()
-    val loginsPerRow = when (deviceType) {
+    val itemsPerRow = when (deviceType) {
         DeviceType.Compact -> 1
         DeviceType.Medium -> 2
         DeviceType.Expanded -> 3
     }
 
+    scrollingUp = listState.isScrollingUp()
+
     uiState.events.firstOrNull()?.let { uiEvent ->
         LaunchedEffect(Unit) {
             when (uiEvent) {
                 is HomeUiEvent.OpenQuickSetup -> onOpenQuickSetupClick()
+                is HomeUiEvent.ShowToast -> context.toastShort(uiEvent.message)
             }
 
             onEventConsumed(uiEvent)
         }
     }
 
+    LaunchedEffect(scrollingUp) {
+        onScrollingUpChanged(scrollingUp)
+    }
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                showBackButton = false,
-                scrollBehavior = scrollBehavior,
-                content = { Text(text = MdtLocale.strings.homeTitle, style = MdtTheme.typo.medium.xl2) },
-                actions = {
-                    ActionsRow {
-                        if (uiState.developerModeEnabled) {
-                            IconButton(
-                                icon = MdtIcons.Placeholder,
-                                onClick = onDeveloperClick,
-                            )
-                        }
-
-                        if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
-                            Box {
-                                IconButton(
-                                    icon = MdtIcons.Filter,
-                                    onClick = { showListOptionsModal = true },
-                                )
-
-                                if (uiState.selectedTag != null) {
-                                    Icon(
-                                        painter = MdtIcons.CircleFilled,
-                                        contentDescription = null,
-                                        tint = MdtTheme.color.notice,
-                                        modifier = Modifier
-                                            .size(12.dp)
-                                            .align(Alignment.TopEnd)
-                                            .offset(x = (-6).dp, y = 6.dp),
-                                    )
-                                }
-                            }
-                        }
-                    }
-                },
+            HomeAppBar(
+                uiState = uiState,
+                screenState = screenState,
+                onDeveloperClick = { onDeveloperClick() },
+                onChangeEditMode = { onChangeEditMode(it) },
+                onSortClick = { showSortModal = true },
+                onFilterClick = { showFilterModal = true },
+                onClearFiltersClick = { onClearFiltersClick() },
+                onSelectAllClick = { onSelectAllClick() },
+                onDeselectClick = { onDeselectClick() },
+                onDeleteItemsConfirmed = { onDeleteSelectedItemsClick() },
+                onChangeSecurityType = { onChangeSelectedItemsSecurityType(it) },
+                onChangeTags = { onChangeSelectedItemsTags(it) },
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier,
     ) { padding ->
 
         Box(
@@ -233,16 +245,16 @@ private fun Content(
                 ) {
                     stickyListItem(HomeListItem.SearchBar) {
                         HomeSearchBar(
-                            modifier = Modifier
-                                .background(MdtTheme.color.background)
-                                .padding(horizontal = 12.dp)
-                                .padding(bottom = 8.dp, top = 4.dp),
+                            modifier = Modifier.background(MdtTheme.color.background),
                             searchQuery = uiState.searchQuery,
                             searchFocused = uiState.searchFocused,
                             selectedTag = uiState.selectedTag,
+                            selectedItemType = uiState.selectedItemType,
+                            filteredItemsCount = uiState.itemsFiltered.size,
                             onSearchQueryChange = onSearchQueryChange,
                             onSearchFocusChange = onSearchFocusChange,
-                            onClearFilter = onClearTag,
+                            onSelectedItemTypeChange = onSelectedItemTypeChange,
+                            onClearFilter = onClearFiltersClick,
                         )
                     }
 
@@ -256,22 +268,26 @@ private fun Content(
                         }
                     }
 
-                    if (loginsPerRow > 1) {
-                        uiState.itemsFiltered.chunked(loginsPerRow).forEachIndexed { index, logins ->
-                            listItem(HomeListItem.HomeItemsRow(index = index, ids = logins.map { it.id })) {
+                    if (itemsPerRow > 1) {
+                        uiState.itemsFiltered.chunked(itemsPerRow).forEachIndexed { index, items ->
+                            listItem(HomeListItem.HomeItemsRow(index = index, ids = items.map { it.id })) {
                                 Row(
                                     modifier = Modifier.animateItem(),
                                 ) {
-                                    logins.forEach { item ->
+                                    items.forEach { item ->
                                         HomeItem(
                                             item = item,
                                             tags = uiState.tags,
-                                            loginClickAction = uiState.loginClickAction,
+                                            itemClickAction = uiState.itemClickAction,
                                             query = uiState.searchQuery,
+                                            editMode = uiState.editMode,
+                                            selected = uiState.selectedItemIds.contains(item.id),
                                             modifier = Modifier.weight(1f),
-                                            onEditClick = { itemId, vaultId -> onEditLoginClick(itemId, vaultId) },
+                                            onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
                                             onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
+                                            onEnabledEditMode = { onChangeEditMode(true) },
+                                            onToggleSelection = { onToggleItemSelection(it) },
                                         )
                                     }
                                 }
@@ -283,15 +299,28 @@ private fun Content(
                                 HomeItem(
                                     item = item,
                                     tags = uiState.tags,
-                                    loginClickAction = uiState.loginClickAction,
+                                    itemClickAction = uiState.itemClickAction,
                                     query = uiState.searchQuery,
+                                    editMode = uiState.editMode,
+                                    selected = uiState.selectedItemIds.contains(item.id),
                                     modifier = Modifier.animateItem(),
-                                    onEditClick = { itemId, vaultId -> onEditLoginClick(itemId, vaultId) },
+                                    onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
                                     onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
+                                    onEnabledEditMode = { onChangeEditMode(true) },
+                                    onToggleSelection = { onToggleItemSelection(it) },
                                 )
                             }
                         }
+                    }
+
+                    listItem(HomeListItem.Footer) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .animateItem(),
+                        )
                     }
                 }
             }
@@ -300,26 +329,16 @@ private fun Content(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(ScreenPadding),
-                visible = listState.isScrollingUp(),
+                visible = listState.isScrollingUp() && uiState.editMode.not(),
                 onClick = {
                     if (uiState.isItemsLimitReached) {
                         showPaywall = true
                     } else {
-                        onAddLoginClick(uiState.vault.id)
+                        showAddItemModal = true
                     }
                 },
             )
         }
-    }
-
-    if (showListOptionsModal) {
-        ListOptionsModal(
-            selectedTag = uiState.selectedTag,
-            onDismissRequest = { showListOptionsModal = false },
-            onSortClick = { showSortModal = true },
-            onFilterClick = { showFilterModal = true },
-            onClearClick = { onClearTag() },
-        )
     }
 
     if (showSortModal) {
@@ -337,6 +356,15 @@ private fun Content(
             selectedTag = uiState.selectedTag,
             onToggle = { onToggleTag(it) },
             onManageTagsClick = onManageTagsClick,
+        )
+    }
+
+    if (showAddItemModal) {
+        AddItemModal(
+            onDismissRequest = { showAddItemModal = false },
+            onSelect = { itemContentType ->
+                onAddItemClick(uiState.vault.id, itemContentType)
+            },
         )
     }
 

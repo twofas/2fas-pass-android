@@ -14,10 +14,14 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.common.ktx.toggle
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
+import com.twofasapp.core.design.state.loading
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ItemsRepository
@@ -68,8 +72,8 @@ internal class HomeViewModel(
         }
 
         launchScoped {
-            settingsRepository.observeLoginClickAction().collect { action ->
-                uiState.update { it.copy(loginClickAction = action) }
+            settingsRepository.observeItemClickAction().collect { action ->
+                uiState.update { it.copy(itemClickAction = action) }
             }
         }
 
@@ -127,15 +131,10 @@ internal class HomeViewModel(
                             }
                             .sortedWith(
                                 when (sortingMethod) {
-                                    SortingMethod.NameAsc -> compareBy<Item> { it.content?.name.orEmpty().lowercase() }.thenBy { it.createdAt }
-                                    SortingMethod.NameDesc -> compareByDescending<Item> {
-                                        it.content?.name.orEmpty().lowercase()
-                                    }.thenByDescending { it.createdAt }
-
-                                    SortingMethod.CreationDateAsc -> compareBy<Item> { it.createdAt }.thenBy { it.content?.name.orEmpty().lowercase() }
-                                    SortingMethod.CreationDateDesc -> compareByDescending<Item> { it.createdAt }.thenByDescending {
-                                        it.content?.name.orEmpty().lowercase()
-                                    }
+                                    SortingMethod.NameAsc -> compareBy<Item> { it.content.name.lowercase() }.thenBy { it.createdAt }
+                                    SortingMethod.NameDesc -> compareByDescending<Item> { it.content.name.lowercase() }.thenByDescending { it.createdAt }
+                                    SortingMethod.CreationDateAsc -> compareBy<Item> { it.createdAt }.thenBy { it.content.name.lowercase() }
+                                    SortingMethod.CreationDateDesc -> compareByDescending<Item> { it.createdAt }.thenByDescending { it.content.name.lowercase() }
                                 },
                             )
                     }
@@ -184,7 +183,7 @@ internal class HomeViewModel(
         launchScoped { tagsRepository.toggleSelectedTag(uiState.value.vault.id, tag) }
     }
 
-    fun clearTag() {
+    fun clearFilters() {
         launchScoped {
             tagsRepository.clearSelectedTag(uiState.value.vault.id)
         }
@@ -216,5 +215,100 @@ internal class HomeViewModel(
 
     private fun publishEvent(event: HomeUiEvent) {
         uiState.update { it.copy(events = it.events.plus(event).distinct()) }
+    }
+
+    fun changeEditMode(enabled: Boolean) {
+        uiState.update { it.copy(editMode = enabled) }
+
+        if (enabled.not()) {
+            uiState.update { it.copy(selectedItemIds = emptySet()) }
+        }
+    }
+
+    fun toggleItemSelection(itemId: String) {
+        uiState.update { state ->
+            val selectedItemIds = state.selectedItemIds.toggle(itemId)
+
+            state.copy(
+                selectedItemIds = selectedItemIds,
+                editMode = selectedItemIds.isNotEmpty(),
+            )
+        }
+    }
+
+    fun selectAllItems() {
+        uiState.update { state ->
+            state.copy(
+                selectedItemIds = state.selectedItemIds.plus(state.itemsFiltered.map { it.id }.toSet()),
+            )
+        }
+    }
+
+    fun deselectItems() {
+        uiState.update { state ->
+            state.copy(
+                selectedItemIds = state.selectedItemIds.minus(state.itemsFiltered.map { it.id }.toSet()),
+            )
+        }
+    }
+
+    private fun clearEditModeSelections() {
+        uiState.update { it.copy(selectedItemIds = emptySet(), editMode = false) }
+    }
+
+    fun trashSelectedItems() {
+        val idsToDelete = uiState.value.selectedItemIds
+        clearEditModeSelections()
+
+        screenState.loading()
+
+        launchScoped {
+            trashRepository.trash(*idsToDelete.toTypedArray())
+        }
+    }
+
+    fun changeSelectedItemsSecurityType(securityType: SecurityType) {
+        launchScoped {
+            val itemsToEdit = uiState.value.selectedItems.filter { it.securityType != securityType }
+            clearEditModeSelections()
+            screenState.loading()
+
+            val updatedEncryptedItems = vaultCryptoScope.withVaultCipher(vaultId = vaultsRepository.getVault().id) {
+                val updatedItems = itemsToEdit.map { item ->
+                    item.copy(
+                        securityType = securityType,
+                        content = itemEncryptionMapper.decryptSecretFields(this, item.securityType, item.content),
+                    )
+                }
+
+                itemEncryptionMapper.encryptItems(
+                    vaultCipher = this,
+                    items = updatedItems,
+                )
+            }
+
+            itemsRepository.saveItems(updatedEncryptedItems)
+
+            publishEvent(HomeUiEvent.ShowToast("Items updated!"))
+        }
+    }
+
+    fun changeSelectedItemsTags(changedTags: Map<Item, Set<String>>) {
+        launchScoped {
+            clearEditModeSelections()
+            screenState.loading()
+
+            itemsRepository.updateItemsWithTags(changedTags)
+
+            publishEvent(HomeUiEvent.ShowToast("Items updated!"))
+        }
+    }
+
+    fun updateScrollingUp(scrollingUp: Boolean) {
+        uiState.update { it.copy(scrollingUp = scrollingUp) }
+    }
+
+    fun updateSelectedItemType(itemContentType: ItemContentType?) {
+        uiState.update { it.copy(selectedItemType = itemContentType) }
     }
 }

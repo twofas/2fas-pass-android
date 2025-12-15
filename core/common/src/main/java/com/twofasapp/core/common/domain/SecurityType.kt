@@ -9,7 +9,7 @@
 package com.twofasapp.core.common.domain
 
 enum class SecurityType {
-    Tier1,
-    Tier2,
-    Tier3,
+    Tier1, // Top Secret
+    Tier2, // Highly Secret
+    Tier3, // Secret
 }

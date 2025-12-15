@@ -36,6 +36,7 @@ class Strings(private val c: Context) {
     val commonCreated = c.getString(R.string.common_created)
     val commonClose = c.getString(R.string.common_close)
     val commonConfirm = c.getString(R.string.common_confirm)
+    val commonCopy = c.getString(R.string.common_copy)
 
     // Permissions
     val permissionCameraTitle = c.getString(R.string.permission_camera_title)
@@ -168,7 +169,8 @@ class Strings(private val c: Context) {
     val homeItemDelete = c.getString(R.string.login_view_action_delete)
     val homeEmptyTitle = c.getString(R.string.home_empty_title)
     val homeEmptyImportCta = c.getString(R.string.home_empty_import_cta)
-    val homeListOptionsModalTitle = c.getString(R.string.home_list_options_modal_title)
+    val homeDeleteConfirmTitle = c.getString(R.string.home_delete_confirm_title)
+    val homeDeleteConfirmBody = c.getString(R.string.home_delete_confirm_body)
 
     // Login
     val loginPassword = c.getString(R.string.login_password_label)
@@ -183,6 +185,25 @@ class Strings(private val c: Context) {
     val loginUnsavedChangesDialogTitle = c.getString(R.string.login_unsaved_changes_dialog_title)
     val loginUnsavedChangesDialogDescription = c.getString(R.string.login_unsaved_changes_dialog_description)
     val loginNoItemName = c.getString(R.string.login_no_item_name)
+
+    // Item (Generic)
+    val itemAddTitle = c.getString(R.string.item_add_title)
+    val itemEditTitle = c.getString(R.string.item_edit_title)
+
+    // Secure Note
+    val secureNoteAddTitle = c.getString(R.string.secure_note_add_title)
+    val secureNoteEditTitle = c.getString(R.string.secure_note_edit_title)
+    val secureNoteName = c.getString(R.string.secure_note_name_label)
+    val secureNoteText = c.getString(R.string.secure_note_text_label)
+    val secureNoteReveal = c.getString(R.string.secure_note_text_reveal_view_action)
+
+    // Credit Card
+    val creditCardName = c.getString(R.string.credit_card_name_label)
+    val creditCardCardholder = c.getString(R.string.credit_card_cardholder_label)
+    val creditCardNumber = c.getString(R.string.credit_card_number_label)
+    val creditCardExpiration = c.getString(R.string.credit_card_expiration_label)
+    val creditCardCvv = c.getString(R.string.credit_card_cvv_label)
+    val creditCardNotes = c.getString(R.string.credit_card_notes_label)
 
     // Connect
     val connectTitle = c.getString(R.string.connect_title)
@@ -469,15 +490,29 @@ class Strings(private val c: Context) {
     val requestModalPasswordRequestCtaPositive = c.getString(R.string.request_modal_password_request_cta_positive)
     val requestModalPasswordRequestCtaNegative = c.getString(R.string.request_modal_password_request_cta_negative)
 
+    val requestModalSecureNoteRequestTitle = c.getString(R.string.request_modal_secure_note_request_title)
+    val requestModalSecureNoteRequestSubtitle = c.getString(R.string.request_modal_secure_note_request_subtitle)
+
+    val requestModalCardRequestTitle = c.getString(R.string.request_modal_card_request_title)
+    val requestModalCardRequestSubtitle = c.getString(R.string.request_modal_card_request_subtitle)
+
     val requestModalNewItemTitle = c.getString(R.string.request_modal_new_item_title)
     val requestModalNewItemSubtitle = c.getString(R.string.request_modal_new_item_subtitle)
     val requestModalNewItemCtaPositive = c.getString(R.string.request_modal_new_item_cta_positive)
     val requestModalNewItemCtaNegative = c.getString(R.string.request_modal_new_item_cta_negative)
 
+    val requestModalNewLoginTitle = c.getString(R.string.request_modal_new_login_title)
+    val requestModalNewSecureNoteTitle = c.getString(R.string.request_modal_new_secure_note_title)
+    val requestModalNewCardTitle = c.getString(R.string.request_modal_new_card_title)
+
     val requestModalUpdateItemTitle = c.getString(R.string.request_modal_update_item_title)
     val requestModalUpdateItemSubtitle = c.getString(R.string.request_modal_update_item_subtitle)
     val requestModalUpdateItemCtaPositive = c.getString(R.string.request_modal_update_item_cta_positive)
     val requestModalUpdateItemCtaNegative = c.getString(R.string.request_modal_update_item_cta_negative)
+
+    val requestModalUpdateLoginTitle = c.getString(R.string.request_modal_update_login_title)
+    val requestModalUpdateSecureNoteTitle = c.getString(R.string.request_modal_update_secure_note_title)
+    val requestModalUpdateCardTitle = c.getString(R.string.request_modal_update_card_title)
 
     val requestModalRemoveItemTitle = c.getString(R.string.request_modal_remove_item_title)
     val requestModalRemoveItemSubtitle = c.getString(R.string.request_modal_remove_item_subtitle)

@@ -78,8 +78,9 @@ internal class TrashRepositoryImpl(
 
     override suspend fun delete(vararg id: String) {
         withContext(dispatchers.io) {
-            val logins = itemsLocalSource.getItemsDeleted(id.toList())
-            itemsLocalSource.delete(id.toList())
+            val ids = id.toList()
+            val logins = itemsLocalSource.getItemsDeleted(ids)
+            itemsLocalSource.delete(ids)
 
             deletedItemsRepository.saveDeletedItems(logins.map { it.let(itemMapper::mapToDeletedItem) })
         }

@@ -10,6 +10,7 @@ sealed interface ItemContentType {
             return when (key) {
                 Login.key -> Login
                 SecureNote.key -> SecureNote
+                PaymentCard.key -> PaymentCard
                 else -> Unknown(key = key)
             }
         }
@@ -23,6 +24,12 @@ sealed interface ItemContentType {
 
     object SecureNote : ItemContentType {
         override val key: String = "secureNote"
+        override val version: Int = 1
+        override val fillable: Boolean = false
+    }
+
+    object PaymentCard : ItemContentType {
+        override val key: String = "paymentCard"
         override val version: Int = 1
         override val fillable: Boolean = false
     }

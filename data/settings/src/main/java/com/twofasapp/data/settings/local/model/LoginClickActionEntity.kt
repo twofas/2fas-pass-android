@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.settings.local.model
 
+@Deprecated("Replaced with ItemClickActionEntity")
 internal enum class LoginClickActionEntity {
     View, Edit, CopyPassword, OpenUri,
 }

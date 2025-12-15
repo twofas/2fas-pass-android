@@ -27,6 +27,7 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_SAVE_LOGIN_DATA
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import com.twofasapp.feature.itemform.ItemForm
+import com.twofasapp.feature.itemform.ItemFormListener
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -91,8 +92,15 @@ private fun Content(
             ItemForm(
                 modifier = Modifier.padding(top = padding.calculateTopPadding()),
                 initialItem = it,
-                onItemUpdated = onItemUpdated,
-                onIsValidUpdated = onIsValidUpdated,
+                listener = object : ItemFormListener {
+                    override fun onItemUpdated(item: Item) {
+                        onItemUpdated(item)
+                    }
+
+                    override fun onIsValidUpdated(valid: Boolean) {
+                        onIsValidUpdated(valid)
+                    }
+                },
             )
         }
     }

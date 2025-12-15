@@ -9,14 +9,20 @@
 package com.twofasapp.feature.itemform.modals.tags
 
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 
 data class TagsPickerUiState(
     val vaultId: String = "",
-    val state: State = State.PickerModal,
     val tags: List<Tag> = emptyList(),
-    val selectedTagIds: List<String> = emptyList(),
+    val initialSelection: Map<Item, Set<String>> = emptyMap(),
+    val selection: Map<Item, Set<String>> = emptyMap(),
 ) {
-    enum class State {
-        PickerModal, AddTagDialog
-    }
+    val selectedTagIds: List<String>
+        get() = selection.values.flatten().distinct()
+
+    val changedSelection: Map<Item, Set<String>> =
+        selection.filter { (item, newSet) ->
+            val oldSet = initialSelection[item]
+            oldSet == null || oldSet != newSet
+        }
 }

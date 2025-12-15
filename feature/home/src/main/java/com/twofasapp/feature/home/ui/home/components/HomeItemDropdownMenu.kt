@@ -93,6 +93,25 @@ internal fun HomeItemDropdownMenu(
                     }
 
                     is ItemContent.SecureNote -> {
+                        DropdownMenuItem(
+                            text = "Copy note",
+                            icon = MdtIcons.Document,
+                            onClick = {
+                                showDropdown = false
+                                onCopySecretFieldToClipboard(content.text)
+                            },
+                        )
+                    }
+
+                    is ItemContent.PaymentCard -> {
+                        DropdownMenuItem(
+                            text = "Copy card number",
+                            icon = MdtIcons.PaymentCard,
+                            onClick = {
+                                showDropdown = false
+                                onCopySecretFieldToClipboard(content.cardNumber)
+                            },
+                        )
                     }
                 }
             }

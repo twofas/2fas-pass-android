@@ -50,6 +50,7 @@ internal class AutofillAuthViewModel(
                             )
 
                             is ItemContent.SecureNote -> autofillLogin // TODO: Migrate
+                            is ItemContent.PaymentCard -> autofillLogin // TODO: Migrate
                         }
                     } ?: autofillLogin // TODO: Migrate
 

@@ -9,11 +9,11 @@
 package com.twofasapp.feature.settings.ui.customization
 
 import com.twofasapp.core.common.domain.SelectedTheme
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 
 internal data class CustomizationUiState(
     val selectedTheme: SelectedTheme = SelectedTheme.Auto,
     val dynamicColors: Boolean = false,
-    val loginClickAction: LoginClickAction = LoginClickAction.View,
+    val itemClickAction: ItemClickAction = ItemClickAction.View,
     val deviceName: String = "",
 )

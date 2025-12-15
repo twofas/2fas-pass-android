@@ -120,7 +120,7 @@ internal class ItemMapper(
                 val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.Login.serializer(), contentJson)
 
                 ItemContent.Login(
-                    name = content.name,
+                    name = content.name.orEmpty(),
                     username = content.username,
                     password = content.password?.let {
                         if (hasSecretFieldsEncrypted) {
@@ -139,19 +139,53 @@ internal class ItemMapper(
                 )
             }
 
-            // TODO: Uncomment when SecureNote is implemented
-//            ItemContentType.SecureNote.key -> {
-//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
+            ItemContentType.SecureNote.key -> {
+                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
+
+                ItemContent.SecureNote(
+                    name = content.name.orEmpty(),
+                    text = content.text?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                )
+            }
+
+            // TODO: Uncomment when payment cards ready
+
+//            ItemContentType.PaymentCard.key -> {
+//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.PaymentCard.serializer(), contentJson)
 //
-//                ItemContent.SecureNote(
+//                ItemContent.PaymentCard(
 //                    name = content.name,
-//                    text = content.text?.let {
+//                    cardHolder = content.cardHolder,
+//                    cardNumber = content.cardNumber?.let {
 //                        if (hasSecretFieldsEncrypted) {
 //                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
 //                        } else {
 //                            SecretField.ClearText(it)
 //                        }
 //                    },
+//                    expirationDate = content.expirationDate?.let {
+//                        if (hasSecretFieldsEncrypted) {
+//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+//                        } else {
+//                            SecretField.ClearText(it)
+//                        }
+//                    },
+//                    securityCode = content.securityCode?.let {
+//                        if (hasSecretFieldsEncrypted) {
+//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+//                        } else {
+//                            SecretField.ClearText(it)
+//                        }
+//                    },
+//                    cardNumberMask = content.cardNumber,
+//                    cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
+//                    notes = content.notes,
 //                )
 //            }
 
@@ -195,6 +229,33 @@ internal class ItemMapper(
                             is SecretField.Encrypted -> content.text.encryptedText
                             null -> null
                         },
+                    ),
+                )
+            }
+
+            is ItemContent.PaymentCard -> {
+                jsonSerializer.encodeToJsonElement(
+                    ItemContentJson.PaymentCard(
+                        name = content.name,
+                        cardHolder = content.cardHolder,
+                        cardNumber = when (content.cardNumber) {
+                            is SecretField.ClearText -> content.cardNumber.clearText
+                            is SecretField.Encrypted -> content.cardNumber.encryptedText
+                            null -> null
+                        },
+                        expirationDate = when (content.expirationDate) {
+                            is SecretField.ClearText -> content.expirationDate.clearText
+                            is SecretField.Encrypted -> content.expirationDate.encryptedText
+                            null -> null
+                        },
+                        securityCode = when (content.securityCode) {
+                            is SecretField.ClearText -> content.securityCode.clearText
+                            is SecretField.Encrypted -> content.securityCode.encryptedText
+                            null -> null
+                        },
+                        cardNumberMask = content.cardNumberMask,
+                        cardIssuer = content.cardIssuer?.code,
+                        notes = content.notes,
                     ),
                 )
             }

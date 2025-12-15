@@ -13,7 +13,7 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.data.settings.SettingsRepository
-import com.twofasapp.data.settings.domain.LoginClickAction
+import com.twofasapp.data.settings.domain.ItemClickAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -38,8 +38,8 @@ internal class CustomizationViewModel(
         }
 
         launchScoped {
-            settingsRepository.observeLoginClickAction().collect { action ->
-                uiState.update { it.copy(loginClickAction = action) }
+            settingsRepository.observeItemClickAction().collect { action ->
+                uiState.update { it.copy(itemClickAction = action) }
             }
         }
 
@@ -58,8 +58,8 @@ internal class CustomizationViewModel(
         launchScoped { settingsRepository.setDynamicColors(enabled) }
     }
 
-    fun updateLoginClickAction(action: LoginClickAction) {
-        launchScoped { settingsRepository.setLoginClickAction(action) }
+    fun updateItemClickAction(action: ItemClickAction) {
+        launchScoped { settingsRepository.setItemClickAction(action) }
     }
 
     fun updateDeviceName(name: String) {

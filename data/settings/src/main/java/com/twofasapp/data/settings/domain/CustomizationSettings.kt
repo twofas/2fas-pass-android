@@ -13,5 +13,5 @@ import com.twofasapp.core.common.domain.SelectedTheme
 data class CustomizationSettings(
     val selectedTheme: SelectedTheme = SelectedTheme.Auto,
     val dynamicColors: Boolean = false,
-    val loginClickAction: LoginClickAction = LoginClickAction.View,
+    val itemClickAction: ItemClickAction = ItemClickAction.View,
 )

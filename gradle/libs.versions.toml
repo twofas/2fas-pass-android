@@ -40,7 +40,7 @@ coilCacheControl = { module = "io.coil-kt.coil3:coil-network-cache-control", ver
 composeActivity = { module = "androidx.activity:activity-compose", version.ref = "composeActivity" }
 composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-composeFoundation = { module = "androidx.compose.animation:animation" }
+composeFoundation = { module = "androidx.compose.foundation:foundation" }
 composeAnimation = { module = "androidx.compose.animation:animation" }
 composeMaterial2 = { module = "androidx.compose.material:material" }
 composeMaterial3 = { module = "androidx.compose.material3:material3" }

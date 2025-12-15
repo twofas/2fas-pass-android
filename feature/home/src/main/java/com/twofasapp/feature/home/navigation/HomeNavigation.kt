@@ -9,23 +9,28 @@
 package com.twofasapp.feature.home.navigation
 
 import androidx.compose.runtime.Composable
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.feature.home.ui.editItem.EditItemScreen
 import com.twofasapp.feature.home.ui.home.HomeScreen
 
 @Composable
 fun HomeRoute(
-    openAddLogin: (String) -> Unit,
-    openEditLogin: (String, String) -> Unit,
+    openAddItem: (vaultId: String, itemContentType: ItemContentType) -> Unit,
+    openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
+    onHomeInEditModeChanged: (Boolean) -> Unit,
+    onHomeScrollingUpChanged: (Boolean) -> Unit,
 ) {
     HomeScreen(
-        openAddLogin = openAddLogin,
-        openEditLogin = openEditLogin,
+        openAddItem = openAddItem,
+        openEditItem = openEditItem,
         openManageTags = openManageTags,
         openQuickSetup = openQuickSetup,
         openDeveloper = openDeveloper,
+        onHomeInEditModeChanged = onHomeInEditModeChanged,
+        onHomeScrollingUpChanged = onHomeScrollingUpChanged,
     )
 }
 

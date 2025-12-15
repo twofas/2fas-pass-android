@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,12 +38,14 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
@@ -52,7 +56,11 @@ import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.modal.Modal
+import com.twofasapp.core.design.foundation.other.Space
+import com.twofasapp.core.design.foundation.preview.PreviewRow
+import com.twofasapp.core.design.foundation.text.TextIcon
 import com.twofasapp.core.design.foundation.text.secretAnnotatedString
+import com.twofasapp.core.design.foundation.text.secretString
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.passwordColorized
 import com.twofasapp.core.design.theme.ButtonHeight
@@ -127,6 +135,23 @@ private fun Content(
                 textAlign = TextAlign.Center,
             )
 
+            if (tags.isNotEmpty()) {
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    itemVerticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
+                        TagPill(tag = tag)
+                    }
+                }
+
+                Space(12.dp)
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,16 +164,18 @@ private fun Content(
                     when (content) {
                         is ItemContent.Unknown -> Unit
                         is ItemContent.Login -> {
-                            Entry(
-                                title = MdtLocale.strings.loginUsername,
-                                subtitle = content.username.orEmpty(),
-                                actions = {
-                                    IconButton(
-                                        icon = MdtIcons.Copy,
-                                        onClick = { context.copyToClipboard(content.username.orEmpty()) },
-                                    )
-                                },
-                            )
+                            if (content.username.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginUsername,
+                                    subtitle = content.username.orEmpty(),
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.username.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
 
                             content.password?.let { password ->
                                 var passwordDecrypted: String? by remember { mutableStateOf(null) }
@@ -193,9 +220,10 @@ private fun Content(
                             content.uris.forEachIndexed { index, uri ->
                                 if (uri.text.isNotEmpty()) {
                                     Entry(
-                                        title = if (content.uris.size > 1) "URI ${index + 1}" else "URI",
+                                        title = if (content.uris.size > 1) "${MdtLocale.strings.loginUri} ${index + 1}" else MdtLocale.strings.loginUri,
                                         subtitle = uri.text,
                                         isCompact = true,
+                                        maxLines = 3,
                                         actions = {
                                             IconButton(
                                                 icon = MdtIcons.Open,
@@ -210,9 +238,205 @@ private fun Content(
                                     )
                                 }
                             }
+
+                            if (content.notes.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginNotes,
+                                    subtitle = content.notes.orEmpty(),
+                                    isCompact = true,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.notes.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
                         }
 
                         is ItemContent.SecureNote -> {
+                            content.text?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                LifecycleResumeEffect(Unit) {
+                                    if (item.securityType == SecurityType.Tier3) {
+                                        scope.launch(Dispatchers.IO) {
+                                            vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                itemEncryptionMapper.decryptSecretField(
+                                                    secretField = content.text,
+                                                    securityType = item.securityType,
+                                                    vaultCipher = this,
+                                                )?.let { textDecrypted = it }
+                                            }
+                                        }
+                                    }
+
+                                    onPauseOrDispose {
+                                        textDecrypted = null
+                                    }
+                                }
+
+                                Entry(
+                                    title = "Note",
+                                    subtitle = textDecrypted ?: secretString(),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.text,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.text) },
+                                        )
+                                    },
+                                )
+                            }
+                        }
+
+                        is ItemContent.PaymentCard -> {
+                            if (content.cardHolder.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = "Card Holder",
+                                    subtitle = content.cardHolder,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.cardHolder.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            content.cardNumber?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                Entry(
+                                    title = "Number",
+                                    subtitle = textDecrypted ?: secretString(count = 16),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.cardNumber,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.cardNumber) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            content.expirationDate?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                Entry(
+                                    title = "Expiration",
+                                    subtitle = textDecrypted ?: secretString(count = 5),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.expirationDate,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.expirationDate) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            content.securityCode?.let {
+                                var textDecrypted: String? by remember { mutableStateOf(null) }
+
+                                Entry(
+                                    title = "Security Code",
+                                    subtitle = textDecrypted ?: secretString(count = 3),
+                                    actions = {
+                                        SecretFieldTrailingIcon(
+                                            visible = textDecrypted != null,
+                                            onToggle = {
+                                                if (textDecrypted != null) {
+                                                    textDecrypted = null
+                                                } else {
+                                                    scope.launch(Dispatchers.IO) {
+                                                        vaultCryptoScope.withVaultCipher(item.vaultId) {
+                                                            itemEncryptionMapper.decryptSecretField(
+                                                                secretField = content.securityCode,
+                                                                securityType = item.securityType,
+                                                                vaultCipher = this,
+                                                            )?.let { textDecrypted = it }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        )
+
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { onCopySecretFieldToClipboard(content.securityCode) },
+                                        )
+                                    },
+                                )
+                            }
+
+                            if (content.notes.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginNotes,
+                                    subtitle = content.notes.orEmpty(),
+                                    isCompact = true,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.notes.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
 
@@ -220,13 +444,6 @@ private fun Content(
                         title = MdtLocale.strings.loginSecurityLevel,
                         subtitle = item.securityType.asTitle(),
                     )
-
-                    if (item.tagIds.isNotEmpty()) {
-                        Entry(
-                            title = MdtLocale.strings.loginTags,
-                            subtitle = tags.filter { item.tagIds.contains(it.id) }.joinToString(", ") { it.name },
-                        )
-                    }
                 }
             }
         }
@@ -247,6 +464,7 @@ private fun Entry(
     subtitle: String? = null,
     subtitleAnnotated: AnnotatedString? = null,
     isCompact: Boolean = false,
+    maxLines: Int = Int.MAX_VALUE,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Column(
@@ -274,7 +492,7 @@ private fun Entry(
                         text = subtitle,
                         style = if (isCompact) MdtTheme.typo.regular.base.copy(lineHeight = 18.sp) else MdtTheme.typo.regular.base,
                         color = MdtTheme.color.onSurfaceVariant,
-                        maxLines = 3,
+                        maxLines = maxLines,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -293,5 +511,38 @@ private fun Entry(
                 actions()
             }
         }
+    }
+}
+
+@Composable
+private fun TagPill(
+    modifier: Modifier = Modifier,
+    tag: Tag,
+) {
+    TextIcon(
+        text = tag.name,
+        leadingIcon = MdtIcons.Tag,
+        leadingIconSize = 14.dp,
+        leadingIconTint = MdtTheme.color.onSecondaryContainer,
+        color = MdtTheme.color.onSecondaryContainer,
+        style = MdtTheme.typo.labelSmall,
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MdtTheme.color.secondaryContainer)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewTagPill() {
+    PreviewRow {
+        TagPill(
+            tag = Tag.Empty.copy(name = "Personal"),
+        )
+
+        TagPill(
+            tag = Tag.Empty.copy(name = "Work"),
+        )
     }
 }

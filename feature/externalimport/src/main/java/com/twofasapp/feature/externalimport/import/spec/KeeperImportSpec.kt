@@ -89,12 +89,19 @@ internal class KeeperImportSpec(
     }
 
     private fun importEncryptedNotesRecord(record: KeeperRecord, vaultId: String): Item {
+        // For encryptedNotes, the actual content is in custom_fields.$note::1
+        val noteText = record.customFields?.entries
+            ?.firstOrNull { it.key.startsWith("\$note::") }
+            ?.value
+            ?.toString()
+            ?: record.notes
+
         return Item.create(
             contentType = ItemContentType.SecureNote,
             vaultId = vaultId,
             content = ItemContent.SecureNote(
                 name = record.title.orEmpty(),
-                text = record.notes?.let { SecretField.ClearText(it) },
+                text = noteText?.let { SecretField.ClearText(it) },
             ),
         )
     }
@@ -114,5 +121,15 @@ internal class KeeperImportSpec(
         val login: String?,
         val password: String?,
         val login_url: String?,
-    )
+        val custom_fields: Map<String, kotlinx.serialization.json.JsonElement>? = null,
+    ) {
+        val customFields: Map<String, Any>?
+            get() = custom_fields?.mapValues { (_, value) ->
+                when {
+                    value is kotlinx.serialization.json.JsonPrimitive && value.isString -> value.content
+                    value is kotlinx.serialization.json.JsonPrimitive -> value.toString()
+                    else -> value.toString()
+                }
+            }
+    }
 }
