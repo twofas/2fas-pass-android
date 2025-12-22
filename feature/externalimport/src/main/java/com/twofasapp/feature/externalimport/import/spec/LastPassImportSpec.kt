@@ -10,15 +10,16 @@ package com.twofasapp.feature.externalimport.import.spec
 
 import android.content.Context
 import android.net.Uri
+import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.ImportType
-import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.feature.externalimport.import.CsvFile
+import com.twofasapp.feature.externalimport.import.CsvParser
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
 
@@ -39,57 +40,97 @@ internal class LastPassImportSpec(
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val vaultId = vaultsRepository.getVault().id
+        var unknownItems = 0
+        val tags = mutableListOf<Tag>()
 
-        val csvFile = CsvFile(
-            text = context.readTextFile(uri),
-            delimiter = ',',
-            schemas = listOf(
-                CsvFile.Schema.Login(
-                    name = listOf("name"),
-                    url = listOf("url"),
-                    username = listOf("username"),
-                    password = listOf("password"),
-                    notes = listOf("extra"),
-                ),
-            ),
-        )
+        val items = buildList {
+            CsvParser.parse(
+                text = context.readTextFile(uri),
+            ) { row ->
 
-        return ImportContent(
-            items = csvFile.parse(vaultId).map { item ->
-                val loginContent = item.content as ItemContent.Login
-                val url = loginContent.uris.firstOrNull()?.text.orEmpty()
-                val notes = loginContent.notes.orEmpty()
+                val tagIds: List<String> = row.get("grouping")
+                    .orEmpty()
+                    .split('\\')
+                    .asSequence()
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .distinct()
+                    .map { tagName ->
+                        val existingTag = tags.firstOrNull { it.name == tagName }
 
-                // Check if this is a secure note (url starts with "http://sn" and extra/notes doesn't start with "NoteType:")
-//                if (url.startsWith("http://sn", ignoreCase = true) && !notes.startsWith("NoteType:", ignoreCase = true)) {
-                if (url.startsWith("http://sn", ignoreCase = true)) {
-                    convertToSecureNote(item, vaultId)
+                        val tag = existingTag ?: Tag.create(
+                            vaultId = vaultId,
+                            id = Uuid.generate(),
+                            name = tagName,
+                        ).also {
+                            tags.add(it)
+                        }
+
+                        tag.id
+                    }
+                    .toList()
+
+                if (row.get("url").orEmpty().startsWith("http://sn", ignoreCase = true)) {
+                    val extras = row.get("extra").orEmpty()
+
+                    when {
+                        // TODO: Handle "NoteType:Credit Card" when Payment Cards implemented
+                        extras.startsWith("NoteType:") -> {
+                            // Add unknown types as note
+                            add(
+                                Item.create(
+                                    vaultId = vaultId,
+                                    tagIds = tagIds,
+                                    contentType = ItemContentType.SecureNote,
+                                    content = ItemContent.SecureNote.create(
+                                        name = row.get("name"),
+                                        text = row.get("extra"),
+                                    ),
+                                ),
+                            )
+
+                            unknownItems++
+                        }
+
+                        else -> {
+                            // Add secure note
+                            add(
+                                Item.create(
+                                    vaultId = vaultId,
+                                    tagIds = tagIds,
+                                    contentType = ItemContentType.SecureNote,
+                                    content = ItemContent.SecureNote.create(
+                                        name = row.get("name"),
+                                        text = row.get("extra"),
+                                    ),
+                                ),
+                            )
+                        }
+                    }
                 } else {
-                    val filteredUris = loginContent.uris.filterNot { it.text.equals("http://sn", true) }
-
-                    item.copy(
-                        content = loginContent.copy(
-                            uris = filteredUris,
-                            iconUriIndex = if (filteredUris.isEmpty()) null else 0,
+                    // Add login
+                    add(
+                        Item.create(
+                            vaultId = vaultId,
+                            tagIds = tagIds,
+                            contentType = ItemContentType.Login,
+                            content = ItemContent.Login.create(
+                                name = row.get("name"),
+                                username = row.get("username"),
+                                password = row.get("password"),
+                                url = row.get("url"),
+                                notes = row.get("extra"),
+                            ),
                         ),
                     )
                 }
-            },
-            tags = emptyList(),
-            unknownItems = 0,
-        )
-    }
+            }
+        }
 
-    private fun convertToSecureNote(item: Item, vaultId: String): Item {
-        val loginContent = item.content as ItemContent.Login
-
-        return Item.create(
-            vaultId = vaultId,
-            contentType = ItemContentType.SecureNote,
-            content = ItemContent.SecureNote(
-                name = loginContent.name,
-                text = loginContent.notes?.let { SecretField.ClearText(it) },
-            ),
+        return ImportContent(
+            items = items,
+            tags = tags,
+            unknownItems = unknownItems,
         )
     }
 }

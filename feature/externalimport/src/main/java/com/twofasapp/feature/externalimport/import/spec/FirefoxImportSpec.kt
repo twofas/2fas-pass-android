@@ -63,7 +63,6 @@ internal class FirefoxImportSpec(
             }
         }
 
-
         return ImportContent(
             items = items,
             tags = emptyList(),

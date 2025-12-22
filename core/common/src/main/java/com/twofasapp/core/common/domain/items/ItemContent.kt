@@ -88,6 +88,16 @@ sealed interface ItemContent {
                 text = null,
             )
 
+            fun create(
+                name: String? = null,
+                text: String? = null,
+            ): SecureNote {
+                return SecureNote(
+                    name = name.orEmpty(),
+                    text = text?.let { SecretField.ClearText(it) },
+                )
+            }
+
             val Limit: Int = 16_384
         }
     }
