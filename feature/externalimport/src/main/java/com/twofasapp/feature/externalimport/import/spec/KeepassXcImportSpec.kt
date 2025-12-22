@@ -48,11 +48,11 @@ internal class KeepassXcImportSpec(
                         vaultId = vaultId,
                         contentType = ItemContentType.Login,
                         content = ItemContent.Login.create(
-                            name = row["title"],
-                            username = row["username"],
-                            password = row["password"],
-                            url = row["url"],
-                            notes = row["notes"],
+                            name = row.get("Title"),
+                            username = row.get("Username"),
+                            password = row.get("Password"),
+                            url = row.get("Url"),
+                            notes = row.get("Notes"),
                         ),
                     ),
                 )

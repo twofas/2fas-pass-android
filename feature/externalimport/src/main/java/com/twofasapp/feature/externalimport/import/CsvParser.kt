@@ -9,7 +9,7 @@ internal object CsvParser {
     fun parse(
         text: String,
         delimiter: Char = ',',
-        readRow: (row: Map<String, String>) -> Unit,
+        readRow: (row: CsvRow) -> Unit,
     ) {
         val csvReader = CSVReaderBuilder(StringReader(text))
             .withCSVParser(
@@ -47,7 +47,11 @@ internal object CsvParser {
                 // Map column names to values
                 val rowMap = headers.zip(normalizedValues).toMap()
 
-                readRow(rowMap)
+                readRow(
+                    CsvRow(
+                        map = rowMap,
+                    ),
+                )
             }
         }
     }

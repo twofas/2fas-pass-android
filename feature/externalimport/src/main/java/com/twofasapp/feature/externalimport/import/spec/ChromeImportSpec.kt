@@ -48,11 +48,11 @@ internal class ChromeImportSpec(
                         vaultId = vaultId,
                         contentType = ItemContentType.Login,
                         content = ItemContent.Login.create(
-                            name = row["name"],
-                            username = row["username"],
-                            password = row["password"],
-                            url = row["url"],
-                            notes = row["note"],
+                            name = row.get("name"),
+                            username = row.get("username"),
+                            password = row.get("password"),
+                            url = row.get("url"),
+                            notes = row.get("note"),
                         ),
                     ),
                 )
