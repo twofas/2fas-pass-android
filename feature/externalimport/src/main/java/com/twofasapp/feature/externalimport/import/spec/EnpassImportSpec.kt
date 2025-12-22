@@ -59,7 +59,8 @@ internal class EnpassImportSpec(
 
         return ImportContent(
             items = items,
-            skipped = 0,
+            tags = emptyList(),
+            unknownItems = 0,
         )
     }
 

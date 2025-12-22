@@ -39,7 +39,7 @@ internal interface ImportSpec {
             override val image = com.twofasapp.core.design.R.drawable.ic_android
             override val instructions = "$PreviewTextMedium\n\n$PreviewTextMedium\n\n$PreviewTextMedium"
             override val cta = listOf<Cta>(Cta.Primary(text = "Choose file", action = CtaAction.ChooseFile))
-            override suspend fun readContent(uri: Uri): ImportContent = ImportContent(emptyList(), 0)
+            override suspend fun readContent(uri: Uri): ImportContent = ImportContent(emptyList(), emptyList(), 0)
         }
     }
 }

@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Fri, 12 Dec 2025 09:12:37 -0800
+ Exported at: Mon, 22 Dec 2025 11:42:14 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -534,11 +534,11 @@
     <string name="settings_autofill_toggle">Set app as your AutoFill provider</string>
     <string name="settings_autofill_toggle_description">Automatically fill in your information from the keyboard when you need it.</string>
     <string name="transfer_instructions_bitwarden">Open Bitwarden and go to **Settings** (gear icon).\n\nGo to **Tools/Vault**, then select **Export Vault**.\n\nChoose **JSON or CSV** as the file format, then select **Export Vault**.\n\nCopy the exported file to this device and tap the **Upload button** below.</string>
-    <string name="transfer_instructions_onepassword">Open 1Password on your PC.\n\nClick the three dots at the top of the side bar, select **Export** and choose the account you want to export, (on Mac select a specific Vault).\n\nEnter your account password.\n\nChoose the **CSV format** and select **Export data**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
-    <string name="transfer_instructions_protonpass">Open Proton Pass via their browser extension, web app or Windows app.\n\nClick the **Proton Pass Logo**, select **Settings**, then **Export**.\n\nChoose the **CSV format** and select **Export**.\n\nFind the CSV file saved in your default download location.\n\nCopy this file to this device and tap **Upload CSV file** below.</string>
+    <string name="transfer_instructions_onepassword">Open 1Password on your PC.\n\nClick the three dots at the top of the sidebar, select **Export** and choose the account you want to export (on Mac select a specific Vault).\n\nEnter your account password.\n\nChoose the **1PUX or CSV format** and select **Export data**.\n\nCopy the exported file to this device and tap **Upload 1PUX/CSV file** below.</string>
+    <string name="transfer_instructions_protonpass">Open Proton Pass via their browser extension, web app or Windows app.\n\nClick the **Proton Pass Logo**, select **Settings**, then **Export**.\n\nChoose the **ZIP or CSV format** and select **Export**.\n\nFind the saved file in your default download location.\n\nCopy this file to this device and tap **Upload ZIP/CSV file** below.</string>
     <string name="transfer_instructions_chrome">Open Google Chrome on your PC\n\nSelect your **Profile Icon** at the top right, then select **Passwords**.\n\nSelect **Settings** and **Download file**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
     <string name="transfer_instructions_lastpass">Log in to LastPass on your browser and go to **Advanced Options**.\n\nUnder **Manage Your Vault**, select **Export**. This will send you a verification email.\n\nOpen the received mail and select **Continue export**.\n\nBack in the export window, enter your Master Password and save the **CSV file**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
-    <string name="transfer_instructions_dashlane_mobile">Open Dashlane on your mobile phone.\n\nGo to **Settings** and select **General**.\n\nSelect **Export data to CSV**, then confirm the export to a folder.\n\nSelect the CSV file labelled as **credentials** in the created folder.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
+    <string name="transfer_instructions_dashlane_mobile">Open Dashlane on your mobile phone.\n\nGo to **Settings** and select **General**.\n\nSelect **Export data to CSV**, then confirm the export to a folder.\n\nCopy the exported **Dashlane CSV folder or specific files** to this device. \n\nTap **Upload folder or CSV file** below.\u0020</string>
     <string name="push_browser_request_generic_message">New request from browser</string>
     <string name="backup_import_header">Import 2FAS Pass Items</string>
     <string name="backup_import_footer">Import your 2FAS Pass Items to increase (not replace) the number of Items stored in the application.</string>
@@ -799,7 +799,7 @@
     <string name="tag_editor_new_title">New Tag</string>
     <string name="login_tags_header">Tags</string>
     <string name="login_tags">Tags</string>
-    <string name="login_tags_description">Assign Tags to find your Items more easily.</string>
+    <string name="login_tags_description">Assign Tags to easily find your Items.</string>
     <string name="login_selected_tags">Selected Tags</string>
     <string name="quick_setup_drive_sync_title">Vault Sync</string>
     <string name="quick_setup_drive_sync_description">Securely sync your data using Google Drive in case this device gets lost or damaged.</string>
@@ -908,4 +908,10 @@
     <string name="transfer_file_summary_others_counter_description">Other Items converted to Secure Notes</string>
     <string name="transfer_instructions_cta_bitwarden">Upload JSON/CSV file</string>
     <string name="transfer_instructions_additional_info_bitwarden">JSON file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
+    <string name="transfer_file_summary_tags_counter_description">Tags detected</string>
+    <string name="transfer_instructions_cta_onepassword">Upload 1PUX/CSV file</string>
+    <string name="transfer_instructions_additional_info_onepassword">1PUX file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
+    <string name="transfer_instructions_cta_dashlane_mobile">Upload folder or CSV file</string>
+    <string name="transfer_instructions_cta_proton_pass">Upload ZIP/CSV file</string>
+    <string name="transfer_instructions_additional_info_proton_pass">ZIP file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
 </resources>

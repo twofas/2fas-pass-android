@@ -544,6 +544,14 @@ class Strings(private val c: Context) {
     val lockScreenTryAgainIn = c.getString(R.string.lock_screen_try_again__0025_0040)
 
     val transferServicesDisclaimer = c.getString(R.string.transfer_services_list_footer)
+    val transferResultDescription = c.getString(R.string.transfer_file_summary_description)
+    val transferResultCta = c.getString(R.string.transfer_file_summary_cta)
+    val transferResultUnknownItems = c.getString(R.string.transfer_file_summary_others_counter_description)
+    val transferResultTagsItems = c.getString(R.string.transfer_file_summary_tags_counter_description)
+    val transferResultLoginsDetected = c.getString(R.string.transfer_file_summary_logins_counter_description)
+    val transferResultSecureNotesDetected = c.getString(R.string.transfer_file_summary_secure_notes_counter_description)
+    val transferResultPaymentCardsDetected = c.getString(R.string.transfer_file_summary_payment_cards_counter_description)
+    val transferResultTagsDetected = c.getString(R.string.transfer_file_summary_tags_counter_description)
 
     val subscriptionFreePlan = c.getString(R.string.subscription_free_plan)
     val subscriptionPaidPlan = "Unlimited"

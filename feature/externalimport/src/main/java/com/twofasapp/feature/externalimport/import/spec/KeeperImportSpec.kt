@@ -57,7 +57,8 @@ internal class KeeperImportSpec(
 
         return ImportContent(
             items = items,
-            skipped = 0,
+            tags = emptyList(),
+            unknownItems = 0,
         )
     }
 

@@ -63,7 +63,8 @@ internal class FirefoxImportSpec(
                         ),
                     )
                 },
-            skipped = 0,
+            tags = emptyList(),
+            unknownItems = 0,
         )
     }
 }

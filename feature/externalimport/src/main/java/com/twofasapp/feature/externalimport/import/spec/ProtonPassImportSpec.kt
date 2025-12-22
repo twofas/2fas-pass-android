@@ -58,7 +58,8 @@ internal class ProtonPassImportSpec(
 
         return ImportContent(
             items = csvFile.parse(vaultId),
-            skipped = 0,
+            tags = emptyList(),
+            unknownItems = 0,
         )
     }
 }

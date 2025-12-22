@@ -75,7 +75,8 @@ internal class LastPassImportSpec(
                     )
                 }
             },
-            skipped = 0,
+            tags = emptyList(),
+            unknownItems = 0,
         )
     }
 

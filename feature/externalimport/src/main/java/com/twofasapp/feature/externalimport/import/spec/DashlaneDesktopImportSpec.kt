@@ -87,7 +87,8 @@ internal class DashlaneDesktopImportSpec(
 
         return ImportContent(
             items = items,
-            skipped = 0,
+            tags = emptyList(),
+            unknownItems = 0,
         )
     }
 }

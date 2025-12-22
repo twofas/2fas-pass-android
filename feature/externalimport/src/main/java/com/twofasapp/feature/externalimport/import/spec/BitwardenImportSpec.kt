@@ -92,7 +92,8 @@ internal class BitwardenImportSpec(
 
         return ImportContent(
             items = items,
-            skipped = skippedCount,
+            tags = emptyList(),
+            unknownItems = skippedCount,
         )
     }
 
