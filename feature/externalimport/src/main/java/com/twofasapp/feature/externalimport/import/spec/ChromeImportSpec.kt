@@ -11,10 +11,13 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.feature.externalimport.import.CsvFile
+import com.twofasapp.feature.externalimport.import.CsvParser
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
 
@@ -36,22 +39,28 @@ internal class ChromeImportSpec(
     override suspend fun readContent(uri: Uri): ImportContent {
         val vaultId = vaultsRepository.getVault().id
 
-        val csvFile = CsvFile(
-            text = context.readTextFile(uri),
-            delimiter = ',',
-            schemas = listOf(
-                CsvFile.Schema.Login(
-                    name = listOf("name"),
-                    url = listOf("url"),
-                    username = listOf("username"),
-                    password = listOf("password"),
-                    notes = listOf("note"),
-                ),
-            ),
-        )
+        val items = buildList {
+            CsvParser.parse(
+                text = context.readTextFile(uri),
+            ) { row ->
+                add(
+                    Item.create(
+                        vaultId = vaultId,
+                        contentType = ItemContentType.Login,
+                        content = ItemContent.Login.create(
+                            name = row["name"],
+                            username = row["username"],
+                            password = row["password"],
+                            url = row["url"],
+                            notes = row["note"],
+                        ),
+                    ),
+                )
+            }
+        }
 
         return ImportContent(
-            items = csvFile.parse(vaultId),
+            items = items,
             tags = emptyList(),
             unknownItems = 0,
         )
