@@ -24,7 +24,7 @@ import com.twofasapp.feature.externalimport.import.ImportSpec
 internal class KeepassXcImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.KeePassXC
     override val name = "KeePassXC"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keepassxc

@@ -31,7 +31,7 @@ internal class KeeperImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
     private val json: Json,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.Keeper
     override val name = "Keeper"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keeper

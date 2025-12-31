@@ -24,7 +24,7 @@ import com.twofasapp.feature.externalimport.import.ImportSpec
 internal class FirefoxImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.Firefox
     override val name = "Firefox"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_firefox

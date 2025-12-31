@@ -31,7 +31,7 @@ internal class EnpassImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
     private val json: Json,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.Enpass
     override val name = "Enpass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_enpass

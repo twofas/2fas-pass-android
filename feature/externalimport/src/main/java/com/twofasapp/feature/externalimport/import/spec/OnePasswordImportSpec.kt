@@ -21,7 +21,7 @@ import com.twofasapp.feature.externalimport.import.ImportSpec
 internal class OnePasswordImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.OnePassword
     override val name = "1Password"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_onepassword

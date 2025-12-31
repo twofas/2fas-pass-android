@@ -21,15 +21,15 @@ import com.twofasapp.feature.externalimport.import.ImportSpec
 internal class AppleDesktopImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.AppleDesktop
     override val name = "Apple Passwords (Desktop)"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_apple
     override val instructions = context.getString(R.string.transfer_instructions_apple_passwords_pc)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 

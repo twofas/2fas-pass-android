@@ -30,7 +30,7 @@ internal class BitwardenImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
     private val json: Json,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.Bitwarden
     override val name = "Bitwarden"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_bitwarden

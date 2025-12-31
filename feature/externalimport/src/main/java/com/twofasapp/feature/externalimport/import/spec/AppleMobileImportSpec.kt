@@ -22,7 +22,7 @@ import com.twofasapp.feature.externalimport.import.ZipFile
 internal class AppleMobileImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.AppleDesktop
     override val name = "Apple Passwords (Mobile)"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_apple

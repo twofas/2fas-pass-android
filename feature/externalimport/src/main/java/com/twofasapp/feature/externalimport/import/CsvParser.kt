@@ -6,10 +6,11 @@ import com.opencsv.CSVReaderBuilder
 import java.io.StringReader
 
 internal object CsvParser {
+
     fun parse(
         text: String,
         delimiter: Char = ',',
-        readRow: (row: CsvRow) -> Unit,
+        listener: CsvListener,
     ) {
         val csvReader = CSVReaderBuilder(StringReader(text))
             .withCSVParser(
@@ -25,6 +26,8 @@ internal object CsvParser {
             // Read header row
             val headers = reader.readNext()?.map { it.trim().lowercase() } ?: return
 
+            listener.onHeaders(headers)
+
             // Read data rows until EOF
             while (true) {
                 val row = reader.readNext() ?: break
@@ -35,7 +38,7 @@ internal object CsvParser {
                 // Skip rows with no actual values (all fields blank)
                 if (row.all { it.isBlank() }) continue
 
-                val values = row.toList().map { it.trim() }
+                val values = row.map { it.trim() }
 
                 // Normalize row length to match headers count
                 val normalizedValues = when {
@@ -47,12 +50,30 @@ internal object CsvParser {
                 // Map column names to values
                 val rowMap = headers.zip(normalizedValues).toMap()
 
-                readRow(
+                listener.onRow(
                     CsvRow(
                         map = rowMap,
                     ),
                 )
             }
         }
+    }
+
+    fun parse(
+        text: String,
+        delimiter: Char = ',',
+        onRow: (row: CsvRow) -> Unit,
+    ) {
+        parse(
+            text = text,
+            delimiter = delimiter,
+            listener = object : CsvListener {
+                override fun onHeaders(headersList: List<String>) = Unit
+
+                override fun onRow(row: CsvRow) {
+                    onRow(row)
+                }
+            },
+        )
     }
 }

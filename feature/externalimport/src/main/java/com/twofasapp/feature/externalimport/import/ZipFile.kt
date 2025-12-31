@@ -18,7 +18,7 @@ data class ZipFile(
 ) {
     fun read(
         context: Context,
-        filter: (String) -> Boolean,
+        filter: (String) -> Boolean = { true },
     ): Map<String, String> {
         val fileContents = mutableMapOf<String, String>()
         val mimeType = context.contentResolver.getType(uri)
