@@ -10,10 +10,12 @@ package com.twofasapp.feature.externalimport.import.spec
 
 import android.content.Context
 import android.net.Uri
+import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.UriMatcher
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
@@ -45,28 +47,93 @@ internal class EnpassImportSpec(
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val vaultId = vaultsRepository.getVault().id
+        var unknownItems = 0
+        tags.clear()
+
         val model = json.decodeFromString<Model>(context.readTextFile(uri))
+
+        // Create tags from folders
+        val folderToTagId: MutableMap<String, String> = mutableMapOf()
+        model.folders?.forEach { folder ->
+            val tagId = Uuid.generate()
+            folderToTagId[folder.uuid] = tagId
+        }
+
+        // Build parent lookup for folder hierarchy
+        val folderParentMap: Map<String, String> = model.folders?.mapNotNull { folder ->
+            folder.parentUuid?.takeIf { it.isNotEmpty() }?.let { folder.uuid to it }
+        }?.toMap().orEmpty()
+
+        // Create tags with folder names
+        model.folders?.forEachIndexed { index, folder ->
+            folderToTagId[folder.uuid]?.let { tagId ->
+                tags.add(
+                    Tag.create(
+                        vaultId = vaultId,
+                        id = tagId,
+                        name = folder.title,
+                    ),
+                )
+            }
+        }
+
+        // Helper to get all tag IDs including parent folders
+        fun resolveAllTagIds(folderIds: List<String>?): List<String>? {
+            if (folderIds.isNullOrEmpty()) return null
+            val allTagIds = mutableSetOf<String>()
+
+            folderIds.forEach { folderId ->
+                var currentId: String? = folderId
+                while (currentId != null) {
+                    folderToTagId[currentId]?.let { allTagIds.add(it) }
+                    currentId = folderParentMap[currentId]
+                }
+            }
+
+            return if (allTagIds.isEmpty()) null else allTagIds.toList()
+        }
 
         val items = model.items.orEmpty()
             .filterNot { item -> item.trashed == 1 || item.archived == 1 }
             .mapNotNull { item ->
-                when {
-                    item.category.isNoteCategory() || item.templateType.isNoteTemplate() -> item.toSecureNote(vaultId)
-                    item.templateType.isLoginTemplate() -> item.toLogin(vaultId)
-                    else -> null
+                val tagIds = resolveAllTagIds(item.folders)
+
+                when (item.category?.lowercase()) {
+                    "login", "password" -> item.parseLogin(vaultId, tagIds)
+                    "creditcard" -> {
+                        // TODO: Uncomment when payment cards are supported in Android app
+                        // item.parseCreditCard(vaultId, tagIds)
+                        // For now, convert to secure note with card details
+                        unknownItems++
+                        item.parseCreditCardAsSecureNote(vaultId, tagIds)
+                    }
+                    "note" -> item.parseSecureNote(vaultId, tagIds)
+                    else -> {
+                        // finance, identity, and other categories -> secure note
+                        unknownItems++
+                        item.parseAsSecureNote(vaultId, tagIds)
+                    }
                 }
             }
 
         return ImportContent(
             items = items,
-            tags = emptyList(),
-            unknownItems = 0,
+            tags = tags,
+            unknownItems = unknownItems,
         )
     }
 
     @Serializable
     private data class Model(
         val items: List<EnpassItem>? = null,
+        val folders: List<EnpassFolder>? = null,
+    )
+
+    @Serializable
+    private data class EnpassFolder(
+        val uuid: String,
+        val title: String,
+        @SerialName("parent_uuid") val parentUuid: String? = null,
     )
 
     @Serializable
@@ -80,6 +147,10 @@ internal class EnpassImportSpec(
         val archived: Int? = null,
         @SerialName("template_type") val templateType: String? = null,
         val category: String? = null,
+        @SerialName("category_name") val categoryName: String? = null,
+        val folders: List<String>? = null,
+        @SerialName("created_at") val createdAt: Long? = null,
+        @SerialName("updated_at") val updatedAt: Long? = null,
     )
 
     @Serializable
@@ -88,47 +159,83 @@ internal class EnpassImportSpec(
         val label: String? = null,
         val value: String? = null,
         val deleted: Int? = null,
+        val sensitive: Int? = null,
     )
 
-    private fun EnpassItem.toLogin(vaultId: String): Item? {
-        val fields = fields.orEmpty().filterNot { it.deleted == 1 }
+    private fun EnpassItem.parseLogin(vaultId: String, tagIds: List<String>?): Item? {
+        val name = title?.trim()?.takeIf { it.isNotBlank() } ?: return null
+        val noteText = note?.trim()?.takeIf { it.isNotBlank() }
 
-        val username = fields.firstValue(UsernameTypes)
-            ?: subtitle?.takeIf { it.isNotBlank() }?.trim()
-        val password = fields.firstValue(PasswordTypes)
-        val url = fields.firstValue(UrlTypes)?.sanitizeUrl()
+        var username: String? = null
+        var email: String? = null
+        var password: String? = null
+        var urlString: String? = null
+        val additionalFields = mutableListOf<Pair<String, String>>()
 
-        val notesParts = buildList {
-            note?.takeIf { it.isNotBlank() }?.let { add(it.trim()) }
-            notes?.takeIf { it.isNotBlank() }?.let { add(it.trim()) }
-            addAll(fields.values(NoteTypes))
+        fields?.forEach { field ->
+            if (field.deleted == 1) return@forEach
+            val value = field.value?.trim()?.takeIf { it.isNotBlank() } ?: return@forEach
+
+            when (field.type?.lowercase()) {
+                "username" -> {
+                    if (username == null) {
+                        username = value
+                    } else {
+                        additionalFields.add((field.label ?: "Username") to value)
+                    }
+                }
+                "email" -> {
+                    if (email == null) {
+                        email = value
+                    } else {
+                        additionalFields.add((field.label ?: "E-mail") to value)
+                    }
+                }
+                "password" -> {
+                    if (password == null) {
+                        password = value
+                    } else {
+                        additionalFields.add((field.label ?: "Password") to value)
+                    }
+                }
+                "url" -> {
+                    if (urlString == null) {
+                        urlString = value
+                    } else {
+                        additionalFields.add((field.label ?: "URL") to value)
+                    }
+                }
+                "section" -> {
+                    // Skip section headers
+                }
+                else -> {
+                    val label = field.label ?: formatFieldType(field.type)
+                    additionalFields.add(label to value)
+                }
+            }
         }
 
-        val notes = notesParts
-            .filter { it.isNotBlank() }
-            .distinct()
-            .joinToString(separator = "\n\n")
-            .ifBlank { null }
+        username = username ?: email
 
-        if (username.isNullOrBlank() && password == null && url == null && notes == null && title.isNullOrBlank()) {
-            return null
+        // If both username and email exist, add email to additional fields
+        if (username != null && email != null && username != email) {
+            additionalFields.add(0, "E-mail" to email)
         }
 
-        val itemUri = url?.let { ItemUri(text = it, matcher = UriMatcher.Domain) }
-        val itemName = title?.takeIf { it.isNotBlank() }?.trim()
-            ?: url
-            ?: username
-            ?: notes
-            ?: return null
+        val itemUri = urlString?.let { ItemUri(text = it, matcher = UriMatcher.Domain) }
+
+        val additionalInfo = formatAdditionalFields(additionalFields)
+        val mergedNotes = mergeNote(noteText, additionalInfo)
 
         return Item.create(
             contentType = ItemContentType.Login,
             vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
             content = ItemContent.Login.Empty.copy(
-                name = itemName,
+                name = name,
                 username = username,
                 password = password?.let { SecretField.ClearText(it) },
-                notes = notes,
+                notes = mergedNotes,
                 iconType = IconType.Icon,
                 iconUriIndex = if (itemUri == null) null else 0,
                 uris = listOfNotNull(itemUri),
@@ -136,72 +243,242 @@ internal class EnpassImportSpec(
         )
     }
 
-    private fun EnpassItem.toSecureNote(vaultId: String): Item? {
-        val name = title?.takeIf { it.isNotBlank() }?.trim() ?: return null
-        val fields = fields.orEmpty().filterNot { it.deleted == 1 }
+    // TODO: Uncomment when payment cards are supported in Android app
+    // Change parseCreditCardAsSecureNote to parseCreditCard and uncomment the return type below
+    private fun EnpassItem.parseCreditCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+        val itemName = title?.trim()?.takeIf { it.isNotBlank() }
+        val noteText = note?.trim()?.takeIf { it.isNotBlank() }
 
-        val content = buildList {
-            note?.takeIf { it.isNotBlank() }?.let { add(it.trim()) }
-            notes?.takeIf { it.isNotBlank() }?.let { add(it.trim()) }
-            addAll(fields.values(NoteTypes))
+        var cardHolder: String? = null
+        var cardNumberString: String? = null
+        var securityCodeString: String? = null
+        var pinString: String? = null
+        var expirationMonth: String? = null
+        var expirationYear: String? = null
+        val additionalFields = mutableListOf<Pair<String, String>>()
+
+        fields?.forEach { field ->
+            if (field.deleted == 1) return@forEach
+            val value = field.value?.trim()?.takeIf { it.isNotBlank() } ?: return@forEach
+
+            when (field.type?.lowercase()) {
+                "ccname" -> {
+                    if (cardHolder == null) {
+                        cardHolder = value
+                    } else {
+                        additionalFields.add((field.label ?: "Cardholder") to value)
+                    }
+                }
+                "ccnumber" -> {
+                    if (cardNumberString == null) {
+                        cardNumberString = value
+                    } else {
+                        additionalFields.add((field.label ?: "Card number") to value)
+                    }
+                }
+                "cccvc" -> {
+                    if (securityCodeString == null) {
+                        securityCodeString = value
+                    } else {
+                        additionalFields.add((field.label ?: "CVC") to value)
+                    }
+                }
+                "ccpin" -> {
+                    if (pinString == null) {
+                        pinString = value
+                    } else {
+                        additionalFields.add((field.label ?: "PIN") to value)
+                    }
+                }
+                "ccexpiry" -> {
+                    // Format is usually "MM/YYYY" or "MM/YY"
+                    val parts = value.split("/")
+                    if (parts.size == 2) {
+                        expirationMonth = parts[0]
+                        expirationYear = parts[1]
+                    } else {
+                        additionalFields.add((field.label ?: "Expiry") to value)
+                    }
+                }
+                "section", "cctype" -> {
+                    // Skip section headers and card type
+                }
+                "ccbankname", "ccvalidfrom", "cctxnpassword" -> {
+                    additionalFields.add((field.label ?: formatFieldType(field.type)) to value)
+                }
+                else -> {
+                    val label = field.label ?: formatFieldType(field.type)
+                    additionalFields.add(label to value)
+                }
+            }
         }
-            .filter { it.isNotBlank() }
-            .joinToString(separator = "\n\n")
-            .ifBlank { null } ?: return null
+
+        val expirationDateString = if (expirationMonth != null && expirationYear != null) {
+            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear
+            "$expirationMonth/$yearSuffix"
+        } else {
+            null
+        }
+
+        // Format card details as text for secure note
+        val cardDetails = buildList {
+            cardHolder?.let { add("Cardholder: $it") }
+            cardNumberString?.let { add("Card Number: $it") }
+            expirationDateString?.let { add("Expiration Date: $it") }
+            securityCodeString?.let { add("Security Code: $it") }
+            pinString?.let { add("PIN: $it") }
+            additionalFields.forEach { (label, value) ->
+                add("$label: $value")
+            }
+        }.joinToString("\n")
+
+        val displayName = if (itemName != null) {
+            "$itemName (Credit Card)"
+        } else {
+            "(Credit Card)"
+        }
+
+        val fullNoteText = mergeNote(noteText, cardDetails)
+        val text = fullNoteText?.let { SecretField.ClearText(it) }
+
+        // TODO: When payment cards are supported, replace the return below with this:
+        /*
+        val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
+        val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
+
+        return Item.create(
+            contentType = ItemContentType.PaymentCard,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.PaymentCard.Empty.copy(
+                name = itemName.orEmpty(),
+                cardHolder = cardHolder,
+                cardIssuer = cardIssuer,
+                cardNumber = cardNumber,
+                cardNumberMask = cardNumberMask,
+                expirationDate = expirationDate,
+                securityCode = securityCode,
+                notes = mergeNote(noteText, formatAdditionalFields(additionalFields)),
+            ),
+        )
+         */
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
             vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
             content = ItemContent.SecureNote(
-                name = name,
-                text = SecretField.ClearText(content),
+                name = displayName,
+                text = text,
             ),
         )
     }
 
-    private fun String.sanitizeUrl(): String {
-        val trimmed = trim()
-        if (trimmed.isEmpty()) return trimmed
-        return if (trimmed.contains("://")) {
-            trimmed
+    private fun EnpassItem.parseSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+        val name = title?.trim()?.takeIf { it.isNotBlank() } ?: return null
+        val noteText = note?.trim()?.takeIf { it.isNotBlank() }
+
+        val additionalFields = mutableListOf<Pair<String, String>>()
+        fields?.forEach { field ->
+            if (field.deleted == 1) return@forEach
+            if (field.type == "section") return@forEach
+            val value = field.value?.trim()?.takeIf { it.isNotBlank() } ?: return@forEach
+            val label = field.label ?: formatFieldType(field.type)
+            additionalFields.add(label to value)
+        }
+
+        val additionalInfo = formatAdditionalFields(additionalFields)
+        val text = mergeNote(noteText, additionalInfo)?.let { SecretField.ClearText(it) }
+
+        return Item.create(
+            contentType = ItemContentType.SecureNote,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.SecureNote(
+                name = name,
+                text = text,
+            ),
+        )
+    }
+
+    private fun EnpassItem.parseAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+        val categoryName = categoryName ?: formatFieldType(category)
+        val itemName = title?.trim()?.takeIf { it.isNotBlank() }
+
+        val name = if (itemName != null) {
+            "$itemName ($categoryName)"
         } else {
-            "https://${trimmed.removePrefix("//")}"
+            "($categoryName)"
+        }
+
+        val additionalFields = mutableListOf<Pair<String, String>>()
+        fields?.forEach { field ->
+            if (field.deleted == 1) return@forEach
+            if (field.type == "section") return@forEach
+            val value = field.value?.trim()?.takeIf { it.isNotBlank() } ?: return@forEach
+            val label = field.label ?: formatFieldType(field.type)
+            additionalFields.add(label to value)
+        }
+
+        val additionalInfo = formatAdditionalFields(additionalFields)
+        val noteText = note?.trim()?.takeIf { it.isNotBlank() }
+        val text = mergeNote(additionalInfo, noteText)?.let { SecretField.ClearText(it) }
+
+        return Item.create(
+            contentType = ItemContentType.SecureNote,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.SecureNote(
+                name = name,
+                text = text,
+            ),
+        )
+    }
+
+    private fun formatAdditionalFields(fields: List<Pair<String, String>>): String? {
+        if (fields.isEmpty()) return null
+        return fields.joinToString("\n") { "${it.first}: ${it.second}" }
+    }
+
+    private fun mergeNote(note1: String?, note2: String?): String? {
+        return when {
+            note1 != null && note2 != null -> "$note1\n\n$note2"
+            note1 != null -> note1
+            note2 != null -> note2
+            else -> null
         }
     }
 
-    private fun List<EnpassField>.firstValue(types: Set<String>): String? = values(types).firstOrNull()
-
-    private fun List<EnpassField>.values(types: Set<String>): List<String> = mapNotNull { field ->
-        val fieldType = field.type?.normalizeType()
-        if (fieldType != null && fieldType in types) {
-            field.value?.takeIf { it.isNotBlank() }?.trim()
-        } else {
-            null
-        }
+    private fun formatFieldType(type: String?): String {
+        if (type == null) return "Field"
+        return type
+            .replace("cc", "Card ", ignoreCase = true)
+            .replace("_", " ")
+            .replace(Regex("([a-z])([A-Z])"), "$1 $2")
+            .replaceFirstChar { it.uppercase() }
     }
 
-    private fun String.normalizeTotpSecret(): String = replace(" ", "")
-        .replace("-", "")
-        .trim()
-        .uppercase()
+    private fun detectCardNumberMask(cardNumber: String): String? {
+        val digitsOnly = cardNumber.filter { it.isDigit() }
+        if (digitsOnly.length < 4) return null
+        return "**** ${digitsOnly.takeLast(4)}"
+    }
 
-    private fun String?.normalizeType(): String? = this?.lowercase()?.replace("_", "")
+    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
+        val digitsOnly = cardNumber.filter { it.isDigit() }
+        if (digitsOnly.isEmpty()) return null
 
-    private fun String?.isLoginTemplate(): Boolean = this
-        ?.lowercase()
-        ?.startsWith("login") == true
-
-    private fun String?.isNoteTemplate(): Boolean = this
-        ?.lowercase()
-        ?.contains("note") == true
-
-    private fun String?.isNoteCategory(): Boolean = this
-        ?.lowercase() == "note"
-
-    private companion object {
-        private val UsernameTypes = setOf("username", "email")
-        private val PasswordTypes = setOf("password")
-        private val UrlTypes = setOf("url", "website")
-        private val NoteTypes = setOf("note", "text", "textarea")
+        return when {
+            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
+            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
+            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
+            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
+            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
+            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
+            else -> null
+        }
     }
 }
