@@ -34,12 +34,6 @@ data class ZipFile(
         context: Context,
         filter: (String) -> Boolean = { true },
     ): Map<String, String> {
-        val mimeType = context.contentResolver.getType(uri)
-
-        if (mimeType !in listOf("application/zip", "application/x-zip-compressed")) {
-            throw RuntimeException("Invalid file type: $mimeType")
-        }
-
         // First pass: Try reading with ZipInputStream (efficient, no temp file)
         val (fileContents, hasProblematicEntries) = tryReadWithZipInputStream(context, filter)
 
