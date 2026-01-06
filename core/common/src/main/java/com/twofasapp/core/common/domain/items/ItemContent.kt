@@ -3,6 +3,7 @@ package com.twofasapp.core.common.domain.items
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.UriMatcher
 
 sealed interface ItemContent {
     val name: String
@@ -43,6 +44,34 @@ sealed interface ItemContent {
                 labelColor = null,
                 notes = null,
             )
+
+            fun create(
+                name: String? = null,
+                username: String? = null,
+                password: String? = null,
+                url: String? = null,
+                notes: String? = null,
+            ): Login {
+                val itemUri = url?.let { url ->
+                    ItemUri(
+                        text = url,
+                        matcher = UriMatcher.Domain,
+                    )
+                }
+
+                return Login(
+                    name = name.orEmpty(),
+                    username = username,
+                    password = password?.let { SecretField.ClearText(it) },
+                    iconType = IconType.Icon,
+                    iconUriIndex = if (itemUri == null) null else 0,
+                    uris = listOfNotNull(itemUri),
+                    customImageUrl = null,
+                    labelText = null,
+                    labelColor = null,
+                    notes = notes,
+                )
+            }
         }
 
         val iconUrl: String?
@@ -58,6 +87,16 @@ sealed interface ItemContent {
                 name = "",
                 text = null,
             )
+
+            fun create(
+                name: String? = null,
+                text: String? = null,
+            ): SecureNote {
+                return SecureNote(
+                    name = name.orEmpty(),
+                    text = text?.let { SecretField.ClearText(it) },
+                )
+            }
 
             val Limit: Int = 16_384
         }

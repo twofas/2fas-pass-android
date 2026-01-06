@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 22 Dec 2025 11:42:14 -0800
+ Exported at: Tue, 06 Jan 2026 13:38:21 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -836,7 +836,7 @@
     <string name="request_modal_full_sync_subtitle">Send your Vault\'s data to the browser extension.</string>
     <string name="request_modal_full_sync_cta_positive">Send</string>
     <string name="request_modal_full_sync_cta_negative">Cancel</string>
-    <string name="transfer_instructions_keeper">Open Keeper on your PC.\n\nClick on your account in the top right corner, select **Settings**, and go to **Export**\n\nUnder **Export file**, select JSON as the format and click **Export**.\n\nEnter your Master Password and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
+    <string name="transfer_instructions_keeper">Open Keeper on your PC.\n\nClick on your account in the top right corner, select **Settings**, and go to **Export**\n\nUnder **Export file**, select **json** as the file format and click **Export**.\n\nEnter your Master Password and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
     <string name="connect_modal_error_no_internet_title">Connection error</string>
     <string name="connect_modal_error_no_internet_subtitle">No Internet connection. Please try again.</string>
     <string name="home_delete_confirm_title">Remove Items?</string>
@@ -912,6 +912,7 @@
     <string name="transfer_instructions_cta_onepassword">Upload 1PUX/CSV file</string>
     <string name="transfer_instructions_additional_info_onepassword">1PUX file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
     <string name="transfer_instructions_cta_dashlane_mobile">Upload folder or CSV file</string>
-    <string name="transfer_instructions_cta_proton_pass">Upload ZIP/CSV file</string>
+    <string name="transfer_instructions_cta_proton_pass">Upload ZIP/CSV filqe</string>
     <string name="transfer_instructions_additional_info_proton_pass">ZIP file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
+    <string name="login_filter_modal_no_tags">No Tags</string>
 </resources>

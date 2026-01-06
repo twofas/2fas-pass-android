@@ -37,6 +37,7 @@ import com.twofasapp.core.design.foundation.lazy.forEachIndexed
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.text.richText
+import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.design.theme.RoundedShapeIndexed
 import com.twofasapp.feature.externalimport.import.ImportSpec
 
@@ -109,6 +110,23 @@ internal fun ImportTemplate(
                     }
                 }
             }
+
+            importSpec.additionalInfo?.let {
+                Space(8.dp)
+
+                Text(
+                    text = richText(it),
+                    color = MdtTheme.color.onSurfaceVariant,
+                    style = MdtTheme.typo.bodySmall,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedShape12)
+                        .background(MdtTheme.color.surfaceContainer)
+                        .padding(16.dp),
+                )
+            }
+
+            Space(8.dp)
         }
 
         importSpec.cta.forEach { cta ->

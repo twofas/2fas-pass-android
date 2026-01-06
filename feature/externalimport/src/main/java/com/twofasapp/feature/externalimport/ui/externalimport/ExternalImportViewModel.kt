@@ -18,6 +18,7 @@ import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.data.main.ItemsRepository
+import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.spec.AppleDesktopImportSpec
 import com.twofasapp.feature.externalimport.import.spec.AppleMobileImportSpec
@@ -42,6 +43,7 @@ internal class ExternalImportViewModel(
     savedStateHandle: SavedStateHandle,
     private val dispatchers: Dispatchers,
     private val itemsRepository: ItemsRepository,
+    private val tagsRepository: TagsRepository,
     private val bitwardenImportSpec: BitwardenImportSpec,
     private val onePasswordImportSpec: OnePasswordImportSpec,
     private val protonPassImportSpec: ProtonPassImportSpec,
@@ -102,7 +104,10 @@ internal class ExternalImportViewModel(
         uiState.update { it.copy(loading = true) }
 
         launchScoped {
-            runSafely { itemsRepository.importItems(importContent.items) }
+            runSafely {
+                itemsRepository.importItems(importContent.items)
+                tagsRepository.importTags(importContent.tags)
+            }
                 .onSuccess { onSuccess() }
                 .onFailure { updateState(ImportState.Error(it.message)) }
         }

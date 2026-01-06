@@ -11,47 +11,57 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.feature.externalimport.import.CsvFile
+import com.twofasapp.feature.externalimport.import.CsvParser
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
 
 internal class KeepassImportSpec(
     private val vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec {
+) : ImportSpec() {
     override val type = ImportType.KeePass
     override val name = "KeePass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keepass
     override val instructions = context.getString(R.string.transfer_instructions_keepass)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 
     override suspend fun readContent(uri: Uri): ImportContent {
         val vaultId = vaultsRepository.getVault().id
 
-        val csvFile = CsvFile(
-            text = context.readTextFile(uri),
-            delimiter = ',',
-            schemas = listOf(
-                CsvFile.Schema.Login(
-                    name = listOf("Account"),
-                    url = listOf("Web Site"),
-                    username = listOf("Login Name"),
-                    password = listOf("Password"),
-                    notes = listOf("Comments"),
-                ),
-            ),
-        )
+        val items = buildList {
+            CsvParser.parse(
+                text = context.readTextFile(uri),
+            ) { row ->
+                add(
+                    Item.create(
+                        vaultId = vaultId,
+                        contentType = ItemContentType.Login,
+                        content = ItemContent.Login.create(
+                            name = row.get("Account"),
+                            username = row.get("Login Name"),
+                            password = row.get("Password"),
+                            url = row.get("Web Site"),
+                            notes = row.get("Comments"),
+                        ),
+                    ),
+                )
+            }
+        }
 
         return ImportContent(
-            items = csvFile.parse(vaultId),
+            items = items,
             tags = emptyList(),
             unknownItems = 0,
         )
