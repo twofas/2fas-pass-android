@@ -20,6 +20,7 @@ internal abstract class ImportSpec() {
     abstract val name: String
     abstract val image: Int
     abstract val instructions: String
+    abstract val additionalInfo: String?
     abstract val cta: List<Cta>
 
     protected val tags: MutableList<Tag> = mutableListOf()
@@ -43,6 +44,7 @@ internal abstract class ImportSpec() {
             override val name = "Name"
             override val image = R.drawable.ic_android
             override val instructions = "$PreviewTextMedium\n\n$PreviewTextMedium\n\n$PreviewTextMedium"
+            override val additionalInfo = PreviewTextMedium
             override val cta = listOf<Cta>(Cta.Primary(text = "Choose file", action = CtaAction.ChooseFile))
             override suspend fun readContent(uri: Uri): ImportContent = ImportContent(emptyList(), emptyList(), 0)
         }

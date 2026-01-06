@@ -29,10 +29,11 @@ internal class KeepassImportSpec(
     override val name = "KeePass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keepass
     override val instructions = context.getString(R.string.transfer_instructions_keepass)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 

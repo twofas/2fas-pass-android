@@ -29,6 +29,7 @@ internal class LastPassImportSpec(
     override val name = "LastPass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_lastpass
     override val instructions = context.getString(R.string.transfer_instructions_lastpass)
+    override val additionalInfo = null
     override val cta: List<Cta> = listOf(
         Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),

@@ -29,10 +29,11 @@ internal class FirefoxImportSpec(
     override val name = "Firefox"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_firefox
     override val instructions = context.getString(R.string.transfer_instructions_firefox)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 

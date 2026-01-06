@@ -38,10 +38,11 @@ internal class EnpassImportSpec(
     override val name = "Enpass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_enpass
     override val instructions = context.getString(R.string.transfer_instructions_enpass)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_json),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 
@@ -245,7 +246,7 @@ internal class EnpassImportSpec(
 
     // TODO: Uncomment when payment cards are supported in Android app
     // Change parseCreditCardAsSecureNote to parseCreditCard and uncomment the return type below
-    private fun EnpassItem.parseCreditCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun EnpassItem.parseCreditCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item {
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = note?.trim()?.takeIf { it.isNotBlank() }
 
@@ -404,7 +405,7 @@ internal class EnpassImportSpec(
         )
     }
 
-    private fun EnpassItem.parseAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun EnpassItem.parseAsSecureNote(vaultId: String, tagIds: List<String>?): Item {
         val categoryName = categoryName ?: formatFieldType(category)
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
 

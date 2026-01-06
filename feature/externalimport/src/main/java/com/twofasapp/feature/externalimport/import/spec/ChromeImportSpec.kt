@@ -28,11 +28,12 @@ internal class ChromeImportSpec(
     override val type = ImportType.Chrome
     override val name = "Chrome"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_chrome
-    override val instructions = context.getString(com.twofasapp.core.locale.R.string.transfer_instructions_chrome)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val instructions = context.getString(R.string.transfer_instructions_chrome)
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 

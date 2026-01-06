@@ -32,6 +32,7 @@ internal class DashlaneMobileImportSpec(
     override val name = "Dashlane (Mobile)"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_dashlane
     override val instructions = context.getString(R.string.transfer_instructions_dashlane_mobile)
+    override val additionalInfo = null
     override val cta: List<Cta> = listOf(
         Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),

@@ -29,6 +29,7 @@ internal class AppleDesktopImportSpec(
     override val name = "Apple Passwords (Desktop)"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_apple
     override val instructions = context.getString(R.string.transfer_instructions_apple_passwords_pc)
+    override val additionalInfo = null
     override val cta: List<Cta> = listOf(
         Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),

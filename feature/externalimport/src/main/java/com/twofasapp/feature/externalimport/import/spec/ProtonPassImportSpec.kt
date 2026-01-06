@@ -45,9 +45,10 @@ internal class ProtonPassImportSpec(
     override val name = "Proton Pass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_protonpass
     override val instructions = context.getString(R.string.transfer_instructions_protonpass)
+    override val additionalInfo = context.getString(R.string.transfer_instructions_additional_info_proton_pass)
     override val cta: List<Cta> = listOf(
         Cta.Primary(
-            text = context.getString(R.string.transfer_instructions_cta_generic),
+            text = context.getString(R.string.transfer_instructions_cta_proton_pass),
             action = CtaAction.ChooseFile,
         ),
     )

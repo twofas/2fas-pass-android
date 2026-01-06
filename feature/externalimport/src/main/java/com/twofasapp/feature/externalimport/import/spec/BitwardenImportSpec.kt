@@ -39,10 +39,11 @@ internal class BitwardenImportSpec(
     override val name = "Bitwarden"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_bitwarden
     override val instructions = context.getString(R.string.transfer_instructions_bitwarden)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
-            text = context.getString(R.string.transfer_instructions_cta_json),
-            action = ImportSpec.CtaAction.ChooseFile,
+    override val additionalInfo = context.getString(R.string.transfer_instructions_additional_info_bitwarden)
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
+            text = context.getString(R.string.transfer_instructions_cta_bitwarden),
+            action = CtaAction.ChooseFile,
         ),
     )
 
@@ -234,7 +235,7 @@ internal class BitwardenImportSpec(
         )
     }
 
-    private fun BitwardenItem.parseSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun BitwardenItem.parseSecureNote(vaultId: String, tagIds: List<String>?): Item {
         val itemName = name?.trim()?.takeIf { it.isNotBlank() }
         val noteText = notes?.trim()?.takeIf { it.isNotBlank() }
 
@@ -361,7 +362,7 @@ internal class BitwardenImportSpec(
         tagIds: List<String>?,
         contentTypeName: String,
         data: JsonObject?,
-    ): Item? {
+    ): Item {
         val itemName = name?.trim()?.takeIf { it.isNotBlank() }
 
         val displayName = if (itemName != null) {

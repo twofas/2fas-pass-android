@@ -32,11 +32,12 @@ internal class DashlaneDesktopImportSpec(
     override val type = ImportType.DashlaneDesktop
     override val name = "Dashlane (Desktop)"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_dashlane
-    override val instructions = context.getString(com.twofasapp.core.locale.R.string.transfer_instructions_dashlane_pc)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val instructions = context.getString(R.string.transfer_instructions_dashlane_pc)
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_zip),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 

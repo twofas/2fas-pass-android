@@ -42,10 +42,11 @@ internal class KeeperImportSpec(
     override val name = "Keeper"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keeper
     override val instructions = context.getString(R.string.transfer_instructions_keeper)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_json),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 
@@ -127,7 +128,7 @@ internal class KeeperImportSpec(
         val folder: String? = null,
     )
 
-    private fun KeeperRecord.parseLogin(vaultId: String, tagIds: List<String>?): Item? {
+    private fun KeeperRecord.parseLogin(vaultId: String, tagIds: List<String>?): Item {
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = notes?.trim()?.takeIf { it.isNotBlank() }
         val username = login?.trim()?.takeIf { it.isNotBlank() }
@@ -156,7 +157,7 @@ internal class KeeperImportSpec(
         )
     }
 
-    private fun KeeperRecord.parseSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun KeeperRecord.parseSecureNote(vaultId: String, tagIds: List<String>?): Item {
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
 
         // For encrypted notes, the main content is in custom_fields.$note::1
@@ -262,7 +263,7 @@ internal class KeeperImportSpec(
 
     // Temporary method to convert payment cards to secure notes
     // TODO: Remove this method when payment cards are supported, and uncomment parsePaymentCard above
-    private fun KeeperRecord.parsePaymentCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun KeeperRecord.parsePaymentCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item {
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = notes?.trim()?.takeIf { it.isNotBlank() }
 
@@ -340,7 +341,7 @@ internal class KeeperImportSpec(
         )
     }
 
-    private fun KeeperRecord.parseAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun KeeperRecord.parseAsSecureNote(vaultId: String, tagIds: List<String>?): Item {
         val recordType = type ?: "Unknown"
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
 
@@ -572,7 +573,7 @@ internal class KeeperImportSpec(
         return if (components.isEmpty()) null else components.joinToString("\n")
     }
 
-    private fun formatExpirationDate(expDate: String): String? {
+    private fun formatExpirationDate(expDate: String): String {
         // Keeper uses format like "MM/YYYY" or "MMYYYY"
         val cleaned = expDate.replace("/", "").trim()
         if (cleaned.length >= 4) {

@@ -33,6 +33,7 @@ internal class AppleMobileImportSpec(
     override val name = "Apple Passwords (Mobile)"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_apple
     override val instructions = context.getString(R.string.transfer_instructions_apple_passwords_mobile)
+    override val additionalInfo = null
     override val cta: List<Cta> = listOf(
         Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_zip),

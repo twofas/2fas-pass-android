@@ -29,10 +29,11 @@ internal class MicrosoftEdgeImportSpec(
     override val name = "Microsoft Edge"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_microsoft_edge
     override val instructions = context.getString(R.string.transfer_instructions_microsoft_edge)
-    override val cta: List<ImportSpec.Cta> = listOf(
-        ImportSpec.Cta.Primary(
+    override val additionalInfo = null
+    override val cta: List<Cta> = listOf(
+        Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_csv),
-            action = ImportSpec.CtaAction.ChooseFile,
+            action = CtaAction.ChooseFile,
         ),
     )
 

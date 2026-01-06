@@ -37,9 +37,10 @@ internal class OnePasswordImportSpec(
     override val name = "1Password"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_onepassword
     override val instructions = context.getString(R.string.transfer_instructions_onepassword)
+    override val additionalInfo = context.getString(R.string.transfer_instructions_additional_info_onepassword)
     override val cta: List<Cta> = listOf(
         Cta.Primary(
-            text = context.getString(R.string.transfer_instructions_cta_generic),
+            text = context.getString(R.string.transfer_instructions_cta_onepassword),
             action = CtaAction.ChooseFile,
         ),
     )
