@@ -132,9 +132,9 @@ private fun Content(
             title = MdtLocale.strings.setNewPasswordConfirmTitle,
             bodyAnnotated = richText(
                 buildString {
-                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart1)
+                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart1Ios)
                     append("\n\n")
-                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart2)
+                    append(MdtLocale.strings.setNewPasswordConfirmBodyPart2Ios)
                 },
             ),
             icon = MdtIcons.Info,
