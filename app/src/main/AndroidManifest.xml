@@ -76,4 +76,13 @@
         <receiver android:name=".notifications.browserrequest.BrowserRequestNotificationDismissReceiver" />
     </application>
 
+    <!-- Detect autofill in browsers -->
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+
+    <queries>
+        <package android:name="com.android.chrome" />
+        <package android:name="com.chrome.beta" />
+        <package android:name="com.brave.browser" />
+    </queries>
+
 </manifest>

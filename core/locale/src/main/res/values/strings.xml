@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 06 Jan 2026 13:38:21 -0800
+ Exported at: Tue, 06 Jan 2026 16:18:27 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -912,7 +912,10 @@
     <string name="transfer_instructions_cta_onepassword">Upload 1PUX/CSV file</string>
     <string name="transfer_instructions_additional_info_onepassword">1PUX file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
     <string name="transfer_instructions_cta_dashlane_mobile">Upload folder or CSV file</string>
-    <string name="transfer_instructions_cta_proton_pass">Upload ZIP/CSV filqe</string>
+    <string name="transfer_instructions_cta_proton_pass">Upload ZIP/CSV file</string>
     <string name="transfer_instructions_additional_info_proton_pass">ZIP file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
     <string name="login_filter_modal_no_tags">No Tags</string>
+    <string name="settings_autofill_system">System</string>
+    <string name="settings_autofill_browsers">Browsers</string>
+    <string name="settings_autofill_browsers_description">To use 2FAS Pass with browsers that have built-in password autofill, enable support for third-party autofill services in the browser\'s settings.</string>
 </resources>
