@@ -94,7 +94,7 @@ internal fun HomeItemDropdownMenu(
 
                     is ItemContent.SecureNote -> {
                         DropdownMenuItem(
-                            text = "Copy note",
+                            text = MdtLocale.strings.secureNoteViewActionCopy,
                             icon = MdtIcons.Document,
                             onClick = {
                                 showDropdown = false
@@ -105,7 +105,7 @@ internal fun HomeItemDropdownMenu(
 
                     is ItemContent.PaymentCard -> {
                         DropdownMenuItem(
-                            text = "Copy card number",
+                            text = MdtLocale.strings.cardViewActionCopyCardNumber,
                             icon = MdtIcons.PaymentCard,
                             onClick = {
                                 showDropdown = false

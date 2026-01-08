@@ -277,7 +277,7 @@ private fun Content(
                                 }
 
                                 Entry(
-                                    title = "Note",
+                                    title = MdtLocale.strings.secureNoteText,
                                     subtitle = textDecrypted ?: secretString(),
                                     actions = {
                                         SecretFieldTrailingIcon(
@@ -311,7 +311,7 @@ private fun Content(
                         is ItemContent.PaymentCard -> {
                             if (content.cardHolder.isNullOrEmpty().not()) {
                                 Entry(
-                                    title = "Card Holder",
+                                    title = MdtLocale.strings.cardHolderLabel,
                                     subtitle = content.cardHolder,
                                     actions = {
                                         IconButton(
@@ -326,7 +326,7 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 Entry(
-                                    title = "Number",
+                                    title = MdtLocale.strings.cardNumberLabel,
                                     subtitle = textDecrypted ?: secretString(count = 16),
                                     actions = {
                                         SecretFieldTrailingIcon(
@@ -360,7 +360,7 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 Entry(
-                                    title = "Expiration",
+                                    title = MdtLocale.strings.cardExpirationDateLabel,
                                     subtitle = textDecrypted ?: secretString(count = 5),
                                     actions = {
                                         SecretFieldTrailingIcon(
@@ -394,7 +394,7 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 Entry(
-                                    title = "Security Code",
+                                    title = MdtLocale.strings.cardSecurityCodeLabel,
                                     subtitle = textDecrypted ?: secretString(count = 3),
                                     actions = {
                                         SecretFieldTrailingIcon(

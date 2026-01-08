@@ -24,6 +24,7 @@ import com.twofasapp.core.design.feature.password.PasswordGeneratorForm
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun PasswordGeneratorModal(
@@ -31,9 +32,10 @@ internal fun PasswordGeneratorModal(
     settings: PasswordGeneratorSettings,
     onUsePasswordClick: (String, PasswordGeneratorSettings) -> Unit = { _, _ -> },
 ) {
+    val strings = MdtLocale.strings
     Modal(
         onDismissRequest = onDismissRequest,
-        headerText = "Password Generator",
+        headerText = strings.passwordGeneratorHeader,
     ) { dismissAction ->
         Content(
             settings = settings,
@@ -50,6 +52,7 @@ private fun Content(
     var password by remember { mutableStateOf("") }
     var settings by remember { mutableStateOf(settings) }
 
+    val strings = MdtLocale.strings
     Column {
         PasswordGeneratorForm(
             modifier = Modifier,
@@ -61,7 +64,7 @@ private fun Content(
         )
 
         Button(
-            text = "Use password",
+            text = strings.passwordGeneratorUseCta,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

@@ -38,6 +38,7 @@ import com.twofasapp.core.android.ktx.screenWidth
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.lazy.forEachIndexed
 import com.twofasapp.core.design.foundation.preview.PreviewAllThemesInRow
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun UsernameSuggestionsBar(
@@ -45,6 +46,7 @@ internal fun UsernameSuggestionsBar(
     usernameSuggestions: List<String>,
     onUsernameClick: (String) -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     val lazyListState = rememberLazyListState()
     val maxItemWidth: Dp = when (usernameSuggestions.size) {
         0 -> screenWidth
@@ -67,7 +69,7 @@ internal fun UsernameSuggestionsBar(
         if (usernameSuggestions.isEmpty()) {
             item(key = "Empty", contentType = "Empty") {
                 Text(
-                    text = "No username suggestions available",
+                    text = strings.usernameSuggestionsEmpty,
                     style = MdtTheme.typo.regular.sm,
                     color = MdtTheme.color.onSurfaceVariant,
                     textAlign = TextAlign.Center,

@@ -18,6 +18,7 @@ class Links {
     val terms = "https://2fas.com/pass/eula"
     val privacyPolicy = "https://2fas.com/pass/privacy-policy"
     val support = "https://2fas.com/support"
+    val browserExtension = "https://2fas.com/pass/browser-extension/"
     val youtube = "https://www.youtube.com/@2fas"
     val x = "https://twitter.com/2FAS_com"
     val discord = "https://2fas.com/discord/"

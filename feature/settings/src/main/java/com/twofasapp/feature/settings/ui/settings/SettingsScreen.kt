@@ -145,10 +145,10 @@ private fun Content(
                 )
             }
 
-            listItem(SettingsListItem.Entry(strings.settingsEntryPushNotification)) {
+            listItem(SettingsListItem.Entry(strings.settingsEntryPushNotifications)) {
                 OptionEntry(
-                    title = strings.settingsEntryPushNotification,
-                    subtitle = strings.settingsEntryPushNotificationDesc,
+                    title = strings.settingsEntryPushNotifications,
+                    subtitle = strings.settingsEntryPushNotificationsDesc,
                     icon = MdtIcons.Notifications,
                     onClick = { deeplinks.openScreen(Screen.PushNotifications) },
                 )
@@ -215,7 +215,7 @@ private fun Content(
                     is SubscriptionPlan.Free -> {
                         OptionEntry(
                             title = strings.settingsEntrySubscription,
-                            subtitle = "Upgrade your plan for more features.",
+                            subtitle = strings.settingsEntrySubscriptionFreePlanSubtitle,
                             value = uiState.subscriptionPlan.displayName,
                             icon = MdtIcons.Star,
                             onClick = { showPaywall = true },
@@ -225,7 +225,7 @@ private fun Content(
                     is SubscriptionPlan.Paid -> {
                         OptionEntry(
                             title = strings.settingsEntrySubscription,
-                            subtitle = "Check your current plan.",
+                            subtitle = strings.settingsEntrySubscriptionPaidPlanSubtitle,
                             value = uiState.subscriptionPlan.displayName,
                             icon = MdtIcons.Star,
                             onClick = { deeplinks.openScreen(Screen.ManageSubscription) },

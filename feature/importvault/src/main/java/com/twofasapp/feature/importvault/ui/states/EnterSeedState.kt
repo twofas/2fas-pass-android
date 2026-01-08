@@ -93,7 +93,7 @@ fun EnterSeedState(
                                 errors = errors.toMutableList().apply { this[index] = false }
                             }
                         },
-                    labelText = "Word ${index + 1}",
+                    labelText = MdtLocale.strings.restoreManualWord.format(index + 1),
                     isError = errors[index],
                     leadingIcon = {
                         Box(

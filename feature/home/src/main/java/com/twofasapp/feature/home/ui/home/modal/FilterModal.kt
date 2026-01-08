@@ -43,7 +43,7 @@ internal fun FilterModal(
 ) {
     Modal(
         onDismissRequest = onDismissRequest,
-        headerText = "Filter",
+        headerText = MdtLocale.strings.loginFilterModalTag,
     ) { dismissAction ->
         Content(
             tags = tags,
@@ -61,6 +61,7 @@ private fun Content(
     onToggle: (Tag) -> Unit = {},
     onManageTagsClick: () -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -73,7 +74,7 @@ private fun Content(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = MdtLocale.strings.tagsEmptyList,
+                        text = strings.tagsEmptyList,
                         style = MdtTheme.typo.bodyLarge,
                         color = MdtTheme.color.onSurface,
                     )
@@ -81,7 +82,7 @@ private fun Content(
                     Space(16.dp)
 
                     Button(
-                        text = MdtLocale.strings.settingsEntryManageTags,
+                        text = strings.settingsEntryManageTags,
                         onClick = onManageTagsClick,
                         leadingIcon = MdtIcons.Tag,
                         style = ButtonStyle.Text,
@@ -96,7 +97,7 @@ private fun Content(
         tags.forEach { tag ->
             item("Tag:${tag.id}", "Tag") {
                 OptionEntry(
-                    title = "${tag.name} (${tag.assignedItemsCount})",
+                    title = strings.homeFilterTagWithCount.format(tag.name, tag.assignedItemsCount),
                     titleColor = if (selectedTag?.id == tag.id) MdtTheme.color.primary else MdtTheme.color.onSurface,
                     icon = MdtIcons.Tag,
                     onClick = { onToggle(tag) },

@@ -172,8 +172,8 @@ internal fun LockScreen(
                         title = strings.migrationErrorTitle,
                         body = strings.migrationErrorBody,
                         icon = MdtIcons.Error,
-                        positive = "Restart app",
-                        neutral = "Copy error",
+                        positive = strings.lockScreenResetApp,
+                        neutral = strings.lockCopyError,
                         onPositive = { activity.restartApp() },
                         onNeutral = { activity.copyToClipboard(uiState.appUpdateError!!.stackTraceToString()) },
                         properties = DialogProperties(

@@ -25,6 +25,7 @@ import com.twofasapp.core.common.crypto.decrypt
 import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.crypto.CipherMode
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.locale.MdtLocale
 import org.koin.compose.koinInject
 
 @Composable
@@ -99,10 +100,11 @@ private fun Modal(
     }
 
     val context = LocalContext.current
+    val strings = MdtLocale.strings
     val activity = LocalContext.currentActivity as? FragmentActivity
 
     if (activity == null) {
-        context.toastLong("Could not find FragmentActivity. Restart the app and try again.")
+        context.toastLong(strings.biometricsMissingActivityError)
         onDismissRequest()
         return
     }
@@ -112,7 +114,7 @@ private fun Modal(
     val promptInfo = PromptInfo.Builder()
         .setTitle(title)
         .setSubtitle(subtitle)
-        .setNegativeButtonText(negative ?: "Cancel")
+        .setNegativeButtonText(negative ?: strings.commonCancel)
         .build()
 
     val callback = object : BiometricPrompt.AuthenticationCallback() {
@@ -171,7 +173,7 @@ private fun Modal(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            context.toastLong("Error: ${e.message}")
+            context.toastLong(strings.biometricsGenericError.format(e.message ?: ""))
             onDismissRequest()
         }
     }

@@ -44,6 +44,7 @@ import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.lock.ui.composables.AuthenticationForm
 import com.twofasapp.feature.lock.ui.composables.BiometricsModal
 import kotlinx.coroutines.android.awaitFrame
@@ -89,6 +90,7 @@ private fun AuthenticationPromptContent(
     onClose: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val strings = MdtLocale.strings
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (uiState.initialising) {
@@ -100,9 +102,9 @@ private fun AuthenticationPromptContent(
 
     if (uiState.biometricsEnabled && uiState.masterKeyEncryptedWithBiometrics != null && biometricsAllowed && biometricsDismissed.not()) {
         BiometricsModal(
-            title = "Authenticate",
+            title = strings.lockScreenBiometricsModalTitle,
             subtitle = title,
-            negative = "Use password",
+            negative = strings.lockUsePassword,
             encryptedBytes = uiState.masterKeyEncryptedWithBiometrics!!,
             onSuccessDecrypt = { masterKeyDecrypted ->
                 onAuthenticated(masterKeyDecrypted)

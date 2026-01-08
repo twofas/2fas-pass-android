@@ -47,6 +47,7 @@ import com.twofasapp.core.design.foundation.screen.ScreenLoading
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.theme.ScreenPadding
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_NODE_STRUCTURE
 import com.twofasapp.feature.autofill.service.builders.IntentBuilders.replyWithSuccess
 import com.twofasapp.feature.autofill.service.parser.NodeStructure
@@ -98,6 +99,7 @@ private fun Content(
     onFillAndRememberClick: (Item) -> Unit = {},
     onFillClick: (Item) -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     val listState = rememberLazyListState()
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
@@ -105,7 +107,7 @@ private fun Content(
     Scaffold(
         topBar = {
             TopAppBar(
-                content = { Text(text = "Autofill", style = MdtTheme.typo.medium.xl2) },
+                content = { Text(text = strings.autofillLoginDialogTitle, style = MdtTheme.typo.medium.xl2) },
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -136,7 +138,7 @@ private fun Content(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(ScreenPadding),
-                    text = "It looks like there are no logins yet.",
+                    text = strings.autofillPickerEmptyState,
                     icon = MdtIcons.Info,
                 )
             }
@@ -161,9 +163,9 @@ private fun Content(
                     }
 
                     if (uiState.suggestedItemsFiltered.isNotEmpty()) {
-                        listItem(AutofillPickerListItem.Header("Suggested")) {
+                        listItem(AutofillPickerListItem.Header(strings.commonSuggested)) {
                             OptionHeader(
-                                text = "Suggested",
+                                text = strings.commonSuggested,
                                 contentPadding = OptionHeaderContentPaddingFirst,
                                 modifier = Modifier.animateItem(),
                             )
@@ -184,9 +186,9 @@ private fun Content(
                     }
 
                     if (uiState.otherItemsFiltered.isNotEmpty() && uiState.suggestedItemsFiltered.isNotEmpty()) {
-                        listItem(AutofillPickerListItem.Header("Other")) {
+                        listItem(AutofillPickerListItem.Header(strings.commonOther)) {
                             OptionHeader(
-                                text = "Other",
+                                text = strings.commonOther,
                                 modifier = Modifier.animateItem(),
                             )
                         }

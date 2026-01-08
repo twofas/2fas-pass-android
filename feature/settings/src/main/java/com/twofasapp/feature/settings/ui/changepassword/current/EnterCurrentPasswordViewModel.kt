@@ -10,12 +10,14 @@ package com.twofasapp.feature.settings.ui.changepassword.current
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
+import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.SecurityRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class EnterCurrentPasswordViewModel(
     private val securityRepository: SecurityRepository,
+    private val strings: Strings,
 ) : ViewModel() {
     val uiState = MutableStateFlow(EnterCurrentPasswordUiState())
 
@@ -31,7 +33,7 @@ internal class EnterCurrentPasswordViewModel(
                 uiState.update { it.copy(loading = false) }
                 onComplete()
             } else {
-                uiState.update { it.copy(loading = false, error = "Invalid password") }
+                uiState.update { it.copy(loading = false, error = strings.lockScreenUnlockInvalidPassword) }
             }
         }
     }

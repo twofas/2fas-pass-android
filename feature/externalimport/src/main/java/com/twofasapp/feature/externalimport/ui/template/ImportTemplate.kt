@@ -39,6 +39,7 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.text.richText
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.design.theme.RoundedShapeIndexed
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.externalimport.import.ImportSpec
 
 @Composable
@@ -48,6 +49,7 @@ internal fun ImportTemplate(
     loading: Boolean,
     onFilePicked: (Uri) -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     val filePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let(onFilePicked)
     }
@@ -70,7 +72,7 @@ internal fun ImportTemplate(
             Space(16.dp)
 
             Text(
-                text = "Transfer from ${importSpec.name}",
+                text = strings.externalImportTransferTitle.format(importSpec.name),
                 style = MdtTheme.typo.headlineSmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),

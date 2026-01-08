@@ -87,7 +87,7 @@ private fun Content(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = "WebDAV Server",
+                title = strings.cloudSyncWebdavTitle,
                 actions = {
                     if (uiState.syncEnabled) {
                         DropdownMenu(
@@ -106,7 +106,7 @@ private fun Content(
                             },
                             content = {
                                 DropdownMenuItem(
-                                    text = "Sync Now",
+                                    text = strings.cloudSyncActionSyncNow,
                                     icon = MdtIcons.Refresh,
                                     onClick = {
                                         onSyncClick()
@@ -115,7 +115,7 @@ private fun Content(
                                 )
 
                                 DropdownMenuItem(
-                                    text = "Disconnect",
+                                    text = strings.webdavDisconnect,
                                     icon = MdtIcons.Logout,
                                     onClick = {
                                         onDisconnectClick()

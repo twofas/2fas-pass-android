@@ -67,6 +67,7 @@ internal fun ExternalImportScreen(
     openLogins: () -> Unit,
 ) {
     val context = LocalContext.currentActivity
+    val strings = MdtLocale.strings
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Content(
@@ -74,7 +75,7 @@ internal fun ExternalImportScreen(
         onFilePicked = { viewModel.readContent(it) },
         onStartImportClick = {
             viewModel.startImport(it) {
-                context.toastLong("Import successful!")
+                context.toastLong(strings.transferImportingSuccessTitle)
                 openLogins()
             }
         },
@@ -118,7 +119,7 @@ private fun Content(
                             .padding(ScreenPadding),
                         image = painterResource(uiState.importSpec.image),
                         text = buildAnnotatedString { append(strings.transferResultDescription) },
-                        title = "${uiState.importSpec.name} ➞ 2FAS Pass",
+                        title = strings.externalImportSuccessTitle.format(uiState.importSpec.name),
                         cta = strings.transferResultCta,
                         loading = uiState.loading,
                         onCtaClick = { onStartImportClick(state.importContent) },
@@ -162,7 +163,7 @@ private fun Content(
                             .padding(ScreenPadding),
                         icon = MdtIcons.Error,
                         text = buildAnnotatedString {
-                            append("An error occurred while trying to read the file. Please check that the file content is correct and try again.")
+                            append(strings.externalImportErrorGeneric)
                             append("\n\n")
                             withStyle(
                                 SpanStyle(
@@ -171,11 +172,11 @@ private fun Content(
                                     color = MdtTheme.color.error,
                                 ),
                             ) {
-                                append("Error: ${state.msg}")
+                                append(strings.externalImportErrorPrefix.format(state.msg))
                             }
                         },
-                        title = "Transfer Error",
-                        cta = "Try again",
+                        title = strings.externalImportErrorTitle,
+                        cta = strings.commonTryAgain,
                         loading = uiState.loading,
                         onCtaClick = onTryAgainClick,
                     )

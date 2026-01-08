@@ -55,8 +55,8 @@ fun ErrorState(
 private fun Preview() {
     PreviewTheme {
         ErrorState(
-            title = "Error",
-            text = "We were unable to read the backup file. It may be corrupt or damaged.",
+            title = MdtLocale.strings.commonError,
+            text = MdtLocale.strings.importVaultErrorCorruptFile,
         )
     }
 }

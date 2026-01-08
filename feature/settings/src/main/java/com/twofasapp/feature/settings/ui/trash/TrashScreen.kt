@@ -97,7 +97,7 @@ private fun Content(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = if (uiState.hasSelections) "${uiState.selected.size} selected" else strings.settingsEntryTrash,
+                title = if (uiState.hasSelections) strings.trashSelectedItems.format(uiState.selected.size) else strings.settingsEntryTrash,
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -182,7 +182,7 @@ private fun Content(
                         },
                         content = {
                             TextIcon(
-                                text = "Restore",
+                                text = strings.trashRestore,
                                 leadingIcon = MdtIcons.Restore,
                                 leadingIconTint = MdtTheme.color.onPrimary,
                             )
@@ -195,7 +195,7 @@ private fun Content(
                         onClick = { showDeleteDialog = true },
                         content = {
                             TextIcon(
-                                text = "Delete",
+                                text = strings.trashRemovePermanently,
                                 leadingIcon = MdtIcons.DeleteForever,
                                 leadingIconTint = MdtTheme.color.onPrimary,
                             )
@@ -209,8 +209,8 @@ private fun Content(
     if (showDeleteDialog) {
         ConfirmDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = "Delete ${uiState.selected.size} ${if (uiState.selected.size == 1) "item" else "items"}?",
-            body = "Are you sure you want to permanently delete ${uiState.selected.size} ${if (uiState.selected.size == 1) "item" else "items"}? This cannot be undone!",
+            title = strings.trashDeleteConfirmTitle.format(uiState.selected.size, if (uiState.selected.size == 1) "item" else "items"),
+            body = strings.trashDeleteConfirmBody.format(uiState.selected.size, if (uiState.selected.size == 1) "item" else "items"),
             icon = MdtIcons.DeleteForever,
             onPositive = {
                 onDeleteConfirmed()

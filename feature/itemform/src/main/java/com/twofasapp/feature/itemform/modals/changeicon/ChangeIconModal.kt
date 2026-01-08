@@ -48,6 +48,7 @@ import com.twofasapp.core.design.foundation.modal.ModalHeaderProperties
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.text.TextIcon
 import com.twofasapp.core.design.theme.ScreenPadding
+import com.twofasapp.core.locale.MdtLocale
 
 internal data class ChangeIconState(
     val iconType: IconType,
@@ -69,11 +70,12 @@ internal fun ChangeIconModal(
     onLabelColorChange: (String?) -> Unit = {},
     onImageUrlChange: (String?) -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     Modal(
         onDismissRequest = onDismissRequest,
         dismissOnSwipe = false,
         headerProperties = ModalHeaderProperties(showCloseButton = true, showDragHandle = false),
-        headerText = "Customise Icon",
+        headerText = strings.customizeIcon,
     ) { dismissAction ->
         Content(
             state = state,
@@ -111,6 +113,7 @@ private fun Content(
 ) {
     val colorController = rememberColorPickerController()
     val focusManager = LocalFocusManager.current
+    val strings = MdtLocale.strings
 
     var iconType by remember { mutableStateOf(state.iconType) }
 
@@ -153,7 +156,7 @@ private fun Content(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 SegmentedButton(
-                    text = "Icon",
+                    text = strings.customizeIconIcon,
                     checked = iconType == IconType.Icon,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -165,7 +168,7 @@ private fun Content(
                 VerticalDivider(color = MdtTheme.color.outline)
 
                 SegmentedButton(
-                    text = "Label",
+                    text = strings.customizeIconLabelKey,
                     checked = iconType == IconType.Label,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -177,7 +180,7 @@ private fun Content(
                 VerticalDivider(color = MdtTheme.color.outline)
 
                 SegmentedButton(
-                    text = "Image URL",
+                    text = strings.changeIconSegmentImageUrl,
                     checked = iconType == IconType.CustomImageUrl,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -216,7 +219,7 @@ private fun Content(
         }
 
         Button(
-            text = "Save",
+            text = strings.commonSave,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = ScreenPadding)

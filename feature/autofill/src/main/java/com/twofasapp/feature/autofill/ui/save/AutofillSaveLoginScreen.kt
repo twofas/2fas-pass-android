@@ -36,6 +36,7 @@ internal fun AutofillSaveLoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activity = LocalContext.currentActivity
+    val strings = MdtLocale.strings
     val saveLoginData = activity.intent.extras.getSafelyParcelable<SaveLoginData>(EXTRA_SAVE_LOGIN_DATA)
 
     if (saveLoginData == null) {
@@ -56,7 +57,7 @@ internal fun AutofillSaveLoginScreen(
                 viewModel.save(
                     onComplete = {
                         activity.finishAndRemoveTask()
-                        activity.toastShort("Login saved!")
+                        activity.toastShort(strings.autofillSaveLoginToastSuccess)
                     },
                 )
             },
@@ -76,7 +77,7 @@ private fun Content(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = "Save Login",
+                title = strings.autofillSaveLoginTitle,
                 actions = {
                     Button(
                         text = strings.commonSave,

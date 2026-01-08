@@ -142,7 +142,7 @@ private fun ModalContent(
             Space(16.dp)
 
             Button(
-                text = "Add new Tag",
+                text = MdtLocale.strings.tagsAddNewCta,
                 onClick = { onAddNewTag() },
                 leadingIcon = MdtIcons.Add,
                 style = ButtonStyle.Text,
@@ -216,7 +216,7 @@ private fun ModalContent(
                     Space(8.dp)
 
                     Button(
-                        text = "Add new Tag",
+                        text = MdtLocale.strings.tagsAddNewCta,
                         onClick = { onAddNewTag() },
                         leadingIcon = MdtIcons.Add,
                         style = ButtonStyle.Text,

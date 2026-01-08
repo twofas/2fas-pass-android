@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.ktx.decodeHex
+import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.SecurityRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.update
 
 internal class AuthenticationPromptViewModel(
     private val securityRepository: SecurityRepository,
+    private val strings: Strings,
 ) : ViewModel() {
     val uiState = MutableStateFlow(AuthenticationPromptUiState())
 
@@ -50,7 +52,7 @@ internal class AuthenticationPromptViewModel(
                     onSuccess(masterKey.decodeHex())
                 }
                 .onFailure {
-                    uiState.update { it.copy(passwordError = "The password you entered is incorrect.", loading = false) }
+                    uiState.update { it.copy(passwordError = strings.lockScreenUnlockInvalidPassword, loading = false) }
                 }
         }
     }

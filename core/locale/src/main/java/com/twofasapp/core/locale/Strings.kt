@@ -34,10 +34,12 @@ class Strings(private val c: Context) {
     val commonContinue = c.getString(R.string.common_continue)
     val commonOther = c.getString(R.string.common_other)
     val commonTryAgain = c.getString(R.string.common_try_again)
+    val commonUseDefault = c.getString(R.string.common_use_default)
     val commonCreated = c.getString(R.string.common_created)
     val commonClose = c.getString(R.string.common_close)
     val commonConfirm = c.getString(R.string.common_confirm)
     val commonCopy = c.getString(R.string.common_copy)
+    val commonStatus = c.getString(R.string.common_status)
     val commonOpen = c.getString(R.string.common_open)
     val commonOpenSystemSettings = c.getString(R.string.common_open_system_settings)
     val commonBack = c.getString(R.string.common_back)
@@ -54,6 +56,7 @@ class Strings(private val c: Context) {
     val commonDecrypting = c.getString(R.string.common_decrypting)
     val commonSettings = c.getString(R.string.common_settings)
     val commonDone = c.getString(R.string.common_done)
+    val commonLoading = c.getString(R.string.common_loading)
 
     val generalNotAvailable = c.getString(R.string.general_not_available)
     val generalNetworkErrorDetails = c.getString(R.string.general_network_error_details)
@@ -181,6 +184,7 @@ class Strings(private val c: Context) {
     val restoreReadingFileText = c.getString(R.string.restore_reading_file_text)
     val restoreImportingFileText = c.getString(R.string.restore_importing_file_text)
     val restoreImportingFileErrorText = c.getString(R.string.restore_importing_file_error_text)
+    val importVaultErrorCorruptFile = c.getString(R.string.import_vault_error_corrupt_file)
 
     val restoreSuccessTitle = c.getString(R.string.restore_success_title)
     val restoreSuccessDescription = c.getString(R.string.restore_success_description)
@@ -327,6 +331,17 @@ class Strings(private val c: Context) {
     val homeDeleteConfirmTitle = c.getString(R.string.home_delete_confirm_title)
     val homeDeleteConfirmBody = c.getString(R.string.home_delete_confirm_body)
     val homeListOptionsModalTitle = c.getString(R.string.home_list_options_modal_title)
+    val homeListMenuEdit = c.getString(R.string.home_list_menu_edit)
+    val homeListMenuSort = c.getString(R.string.home_list_menu_sort)
+    val homeListMenuFilter = c.getString(R.string.home_list_menu_filter)
+    val homeListMenuClearFilters = c.getString(R.string.home_list_menu_clear_filters)
+    val homeFilterTagWithCount = c.getString(R.string.home_filter_tag_with_count)
+    val homeFilterSelectedTagCountSingle =
+        c.getString(R.string.home_filter_selected_tag_count_single)
+    val homeFilterSelectedTagCountPlural =
+        c.getString(R.string.home_filter_selected_tag_count_plural)
+    val homeSelectionCountSingle = c.getString(R.string.home_selection_count_single)
+    val homeSelectionCountPlural = c.getString(R.string.home_selection_count_plural)
 
     // Login
     val loginPassword = c.getString(R.string.login_password_label)
@@ -341,6 +356,7 @@ class Strings(private val c: Context) {
     val loginUnsavedChangesDialogTitle = c.getString(R.string.login_unsaved_changes_dialog_title)
     val loginUnsavedChangesDialogDescription = c.getString(R.string.login_unsaved_changes_dialog_description)
     val loginNoItemName = c.getString(R.string.login_no_item_name)
+    val usernameSuggestionsEmpty = c.getString(R.string.username_suggestions_empty)
     val loginSecurityTypeSecureTitle = c.getString(R.string.login_security_type_secure_title)
     val loginSecurityTypeUltraSecureTitle = c.getString(R.string.login_security_type_ultra_secure_title)
     val loginSecurityTypeTopSecretTitle = c.getString(R.string.login_security_type_top_secret_title)
@@ -389,6 +405,7 @@ class Strings(private val c: Context) {
     // Item (Generic)
     val itemAddTitle = c.getString(R.string.item_add_title)
     val itemEditTitle = c.getString(R.string.item_edit_title)
+    val noteItemLengthError = c.getString(R.string.note_item_length_error)
 
     // Content Types
     val contentTypeLoginName = c.getString(R.string.content_type_login_name)
@@ -450,6 +467,14 @@ class Strings(private val c: Context) {
     val customizeIcon = c.getString(R.string.customize_icon)
     val customizeIconIcon = c.getString(R.string.customize_icon_icon)
     val customizeIconCustom = c.getString(R.string.customize_icon_custom)
+    val changeIconLabelHeader = c.getString(R.string.change_icon_label_header)
+    val changeIconLabelPlaceholder = c.getString(R.string.change_icon_label_placeholder)
+    val changeIconBackgroundHeader = c.getString(R.string.change_icon_background_header)
+    val changeIconSelectIconHeader = c.getString(R.string.change_icon_select_icon_header)
+    val changeIconNoUris = c.getString(R.string.change_icon_no_uris)
+    val changeIconCustomImageHeader = c.getString(R.string.change_icon_custom_image_header)
+    val changeIconCustomImagePlaceholder = c.getString(R.string.change_icon_custom_image_placeholder)
+    val changeIconSegmentImageUrl = c.getString(R.string.change_icon_segment_image_url)
 
     // Connect
     val connectTitle = c.getString(R.string.connect_title)
@@ -542,6 +567,11 @@ class Strings(private val c: Context) {
     val settingsCloudSyncWebdavLabel = c.getString(R.string.settings_cloud_sync_webdav_label)
     val settingsCloudSyncStatus = c.getString(R.string.settings_cloud_sync_status__0025_0040)
     val settingsCloudSyncLastSync = c.getString(R.string.settings_cloud_sync_last_sync__0025_0040)
+    val cloudSyncActionSyncNow = c.getString(R.string.cloud_sync_action_sync_now)
+    val cloudSyncWebdavTitle = c.getString(R.string.cloud_sync_webdav_title)
+    val cloudSyncShowErrorDetails = c.getString(R.string.cloud_sync_show_error_details)
+    val cloudSyncActionReplaceBackup = c.getString(R.string.cloud_sync_action_replace_backup)
+    val cloudSyncActionChangePassword = c.getString(R.string.cloud_sync_action_change_password)
     val settingsEntrySyncInfo = c.getString(R.string.settings_entry_sync_info)
     val settingsEntrySyncAccount = c.getString(R.string.settings_entry_sync_account)
     val settingsEntrySyncLast = c.getString(R.string.settings_entry_sync_last)
@@ -577,7 +607,7 @@ class Strings(private val c: Context) {
     val settingsEntrySecurityTier2Desc = c.getString(R.string.settings_entry_protection_level1_description)
     val settingsEntrySecurityTier3 = c.getString(R.string.settings_entry_protection_level2)
     val settingsEntrySecurityTier3Desc = c.getString(R.string.settings_entry_protection_level2_description)
-    
+
     // Security Tiers Help
     val securityTiersHelpTitle = c.getString(R.string.security_tiers_help_title)
     val securityTiersHelpSubtitle = c.getString(R.string.security_tiers_help_subtitle)
@@ -625,10 +655,16 @@ class Strings(private val c: Context) {
         c.getString(R.string.settings_entry_screenshots_confirm_description)
     val settingsEntryKnownBrowsers = c.getString(R.string.settings_entry_known_browsers)
     val settingsEntryKnownBrowsersDesc = c.getString(R.string.settings_entry_known_browsers_description)
-    val settingsEntryPushNotification = c.getString(R.string.settings_entry_push_notifications)
-    val settingsEntryPushNotificationDesc = c.getString(R.string.settings_entry_push_notifications_description)
+    val settingsEntryPushNotifications = c.getString(R.string.settings_entry_push_notifications)
+    val settingsEntryPushNotificationsDesc = c.getString(R.string.settings_entry_push_notifications_description)
     val settingsPushNotificationsEnableCta =
         c.getString(R.string.settings_push_notifications_enable_cta)
+    val settingsPushNotificationsDescription =
+        c.getString(R.string.settings_push_notifications_description)
+    val settingsPushNotificationsAllowTitle =
+        c.getString(R.string.settings_push_notifications_allow_title)
+    val settingsPushNotificationsAllowSubtitle =
+        c.getString(R.string.settings_push_notifications_allow_subtitle)
     val settingsPushNotificationsOpenSystemSettingsDescription =
         c.getString(R.string.settings_push_notifications_open_system_settings_description)
     val settingsPushNotificationsStatusLabel =
@@ -637,9 +673,55 @@ class Strings(private val c: Context) {
     val settingsEntryDiscord = c.getString(R.string.settings_entry_discord)
     val settingsEntryManageTags = c.getString(R.string.settings_entry_manage_tags)
     val settingsEntryManageTagsDescription = c.getString(R.string.settings_entry_manage_tags_description)
+    val settingsEntrySubscriptionFreePlanSubtitle = c.getString(R.string.settings_entry_subscription_free_plan_subtitle)
+    val settingsEntrySubscriptionPaidPlanSubtitle = c.getString(R.string.settings_entry_subscription_paid_plan_subtitle)
     val settingsManageTokensTitle = c.getString(R.string.settings_manage_tokens_title)
     val settings2fasOpen = c.getString(R.string.settings_2fas_open)
     val settings2fasGet = c.getString(R.string.settings_2fas_get)
+    val settingsChangePasswordProcessingTitle =
+        c.getString(R.string.settings_change_password_processing_title)
+    val settingsChangePasswordProcessingDescription =
+        c.getString(R.string.settings_change_password_processing_description)
+    val settingsChangePasswordProcessingMessageLocal =
+        c.getString(R.string.settings_change_password_processing_message_local)
+    val settingsChangePasswordProcessingMessageCloud =
+        c.getString(R.string.settings_change_password_processing_message_cloud)
+    val settingsChangePasswordSuccessTitle =
+        c.getString(R.string.settings_change_password_success_title)
+    val settingsChangePasswordSuccessDescription =
+        c.getString(R.string.settings_change_password_success_description)
+    val settingsChangePasswordSuccessCardTitle =
+        c.getString(R.string.settings_change_password_success_card_title)
+    val settingsChangePasswordSuccessCardDescription =
+        c.getString(R.string.settings_change_password_success_card_description)
+    val settingsChangePasswordCtaProcessing =
+        c.getString(R.string.settings_change_password_cta_processing)
+    val settingsChangePasswordCtaSuccess =
+        c.getString(R.string.settings_change_password_cta_success)
+    val settingsKnownBrowserPlaceholderExtensionName =
+        c.getString(R.string.settings_known_browser_placeholder_extension_name)
+    val settingsKnownBrowserPlaceholderBrowserName =
+        c.getString(R.string.settings_known_browser_placeholder_browser_name)
+    val settingsCloudSyncDescriptionLong =
+        c.getString(R.string.settings_cloud_sync_description_long)
+    val settingsBackupSeedErrorMismatch =
+        c.getString(R.string.settings_backup_seed_error_mismatch)
+    val settingsBackupErrorReadingKit =
+        c.getString(R.string.settings_backup_error_reading_kit)
+    val settingsBackupErrorReadingKitDescription =
+        c.getString(R.string.settings_backup_error_reading_kit_description)
+    val settingsBackupErrorMismatchKit =
+        c.getString(R.string.settings_backup_error_mismatch_kit)
+    val settingsBackupErrorScanningKit =
+        c.getString(R.string.settings_backup_error_scanning_kit)
+    val settingsBackupErrorScanningKitDescription =
+        c.getString(R.string.settings_backup_error_scanning_kit_description)
+    val settingsBackupErrorScanningGeneric =
+        c.getString(R.string.settings_backup_error_scanning_generic)
+    val settingsBackupErrorWrongPassword =
+        c.getString(R.string.settings_backup_error_wrong_password)
+    val settingsBackupErrorDecryptionKitFile =
+        c.getString(R.string.settings_backup_error_decryption_kit_file)
 
     val webdavServerUrl = c.getString(R.string.webdav_server_url)
     val webdavAllowUntrustedCertificates = c.getString(R.string.webdav_allow_untrusted_certificates)
@@ -725,6 +807,7 @@ class Strings(private val c: Context) {
     val aboutSectionShare = c.getString(R.string.about_section_share)
     val aboutInviteFriends = c.getString(R.string.about_invite_friends)
     val aboutInviteFriendsShareText = c.getString(R.string.about_invite_friends_share_text)
+    val aboutShareTitle = c.getString(R.string.about_share_title)
     val aboutSectionConnect = c.getString(R.string.about_section_connect)
     val aboutDiscord = c.getString(R.string.about_discord)
     val aboutGithub = c.getString(R.string.about_github)
@@ -750,7 +833,12 @@ class Strings(private val c: Context) {
     val authPreviewTitle = c.getString(R.string.auth_preview_title)
     val authPreviewDescription = c.getString(R.string.auth_preview_description)
     val authPreviewCta = c.getString(R.string.auth_preview_cta)
+    val biometricsMissingActivityError = c.getString(R.string.biometrics_missing_activity_error)
+    val biometricsGenericError = c.getString(R.string.biometrics_generic_error)
 
+    val autofillSaveLoginTitle = c.getString(R.string.autofill_save_login_title)
+    val autofillSaveLoginToastSuccess = c.getString(R.string.autofill_save_login_toast_success)
+    val autofillPickerEmptyState = c.getString(R.string.autofill_picker_empty_state)
     val autofillPromptTitle = c.getString(R.string.autofill_prompt_title)
     val autofillPromptDescription = c.getString(R.string.autofill_prompt_description)
     val autofillPromptCta = c.getString(R.string.autofill_prompt_cta)
@@ -831,6 +919,8 @@ class Strings(private val c: Context) {
     val lockScreenUnlockTitleIos = c.getString(R.string.lock_screen_unlock_title_ios)
     val lockScreenUnlockUseFaceid = c.getString(R.string.lock_screen_unlock_use_faceid)
     val lockScreenUnlockUseTouchid = c.getString(R.string.lock_screen_unlock_use_touchid)
+    val lockUsePassword = c.getString(R.string.lock_use_password)
+    val lockCopyError = c.getString(R.string.lock_copy_error)
     val lockScreenTryAgainIn = c.getString(R.string.lock_screen_try_again__0025_0040)
     val lockScreenEnterMasterPassword = c.getString(R.string.lock_screen_enter_master_password)
     val lockScreenResetApp = c.getString(R.string.lock_screen_reset_app)
@@ -854,6 +944,7 @@ class Strings(private val c: Context) {
 
     val scanDecryptionKitTitle = c.getString(R.string.scan_decryption_kit_title)
     val scanDecryptionKitDescription = c.getString(R.string.scan_decryption_kit_description)
+    val qrScanCameraLaunchError = c.getString(R.string.qrscan_camera_launch_error)
 
     val securityBiometricsEnableTitle = c.getString(R.string.security_biometrics_enable_title)
     val securityBiometricsEnableDescription = c.getString(R.string.security_biometrics_enable_description)
@@ -1025,6 +1116,18 @@ class Strings(private val c: Context) {
         c.getString(R.string.manage_subscription_user_identifier_title)
     val manageSubscriptionMultiDeviceSyncTitle =
         c.getString(R.string.manage_subscription_multi_device_sync_title)
+    val manageSubscriptionUnlimitedDescription = c.getString(R.string.manage_subscription_unlimited_description)
+    val manageSubscriptionPlanTitle = c.getString(R.string.manage_subscription_plan_title)
+    val manageSubscriptionPlanNamePrefix = c.getString(R.string.manage_subscription_plan_name_prefix)
+    val manageSubscriptionPlanPricePrefix = c.getString(R.string.manage_subscription_plan_price_prefix)
+    val manageSubscriptionRenewsAt = c.getString(R.string.manage_subscription_renews_at)
+    val manageSubscriptionEndsAt = c.getString(R.string.manage_subscription_ends_at)
+    val manageSubscriptionBenefitsHeader = c.getString(R.string.manage_subscription_benefits_header)
+    val manageSubscriptionItemsInVaultTitle = c.getString(R.string.manage_subscription_items_in_vault_title)
+    val manageSubscriptionItemsInVaultSubtitle = c.getString(R.string.manage_subscription_items_in_vault_subtitle)
+    val manageSubscriptionTrustedExtensionsTitle = c.getString(R.string.manage_subscription_trusted_extensions_title)
+    val manageSubscriptionTrustedExtensionsSubtitle = c.getString(R.string.manage_subscription_trusted_extensions_subtitle)
+    val manageSubscriptionUnlimited = c.getString(R.string.manage_subscription_unlimited)
 
     // Transfer
     val transferServicesListHeader = c.getString(R.string.transfer_services_list_header)
@@ -1069,10 +1172,17 @@ class Strings(private val c: Context) {
     val transferImportingFailureTitle = c.getString(R.string.transfer_importing_failure_title)
     val transferImportingFailureDescription =
         c.getString(R.string.transfer_importing_failure_description)
+    val externalImportTransferTitle = c.getString(R.string.external_import_transfer_title)
+    val externalImportSuccessTitle = c.getString(R.string.external_import_success_title)
+    val externalImportErrorGeneric = c.getString(R.string.external_import_error_generic)
+    val externalImportErrorPrefix = c.getString(R.string.external_import_error_prefix)
+    val externalImportErrorTitle = c.getString(R.string.external_import_error_title)
 
     val setupConnectIntroTitle = c.getString(R.string.connect_intro_header)
     val setupConnectIntroDescription = c.getString(R.string.connect_intro_description)
     val setupConnectLearnMore = c.getString(R.string.connect_intro_learn_more_cta)
+    val connectEnterBrowserQrTitle = c.getString(R.string.connect_enter_browser_qr_title)
+    val connectPermissionsEnable = c.getString(R.string.connect_permissions_enable)
 
     val setupConnectTitle = c.getString(R.string.connect_setup_header)
     val setupConnectDescription = c.getString(R.string.connect_setup_description)
@@ -1133,6 +1243,17 @@ class Strings(private val c: Context) {
     val loginTagsDescription = c.getString(R.string.login_tags_description)
     val loginSelectedTags = c.getString(R.string.login_selected_tags)
     val filterTagBannerIos = c.getString(R.string.filter_tag_banner_ios)
+
+    // Customization
+    val customizationDeviceNameErrorEmpty = c.getString(R.string.customization_device_name_error_empty)
+    val customizationDeviceNameErrorMaxLength = c.getString(R.string.customization_device_name_error_max_length)
+
+    // Import/Export
+    val importExportBackupSavedToast = c.getString(R.string.import_export_backup_saved_toast)
+    val importExportBackupFileTitle = c.getString(R.string.import_export_backup_file_title)
+    val importExportImportSuccessfulToast = c.getString(R.string.import_export_import_successful_toast)
+    val importExportSubtitle = c.getString(R.string.import_export_subtitle)
+    val importExportAuthDescription = c.getString(R.string.import_export_auth_description)
     val cloudSyncInvalidSchemaErrorCta = c.getString(R.string.cloud_sync_invalid_schema_error_cta)
     val cloudSyncInvalidSchemaErrorMsg = c.getString(R.string.cloud_sync_invalid_schema_error_msg)
     val importInvalidSchemaErrorCta = c.getString(R.string.import_invalid_schema_error_cta)
@@ -1145,6 +1266,9 @@ class Strings(private val c: Context) {
     val trashRestore = c.getString(R.string.trash_restore)
     val trashDeleteConfirmTitleIos = c.getString(R.string.trash_delete_confirm_title_ios)
     val trashDeleteConfirmBodyIos = c.getString(R.string.trash_delete_confirm_body_ios)
+    val trashSelectedItems = c.getString(R.string.trash_selected_items)
+    val trashDeleteConfirmTitle = c.getString(R.string.trash_delete_confirm_title)
+    val trashDeleteConfirmBody = c.getString(R.string.trash_delete_confirm_body)
 
     val appUpdateModalTitle = c.getString(R.string.app_update_modal_title)
     val appUpdateModalSubtitle = c.getString(R.string.app_update_modal_subtitle)
@@ -1157,8 +1281,6 @@ class Strings(private val c: Context) {
     val toastSecureNoteCopied = c.getString(R.string.toast_secure_note_copied)
     val toastCardNumberCopied = c.getString(R.string.toast_card_number_copied)
     val toastCardSecurityCodeCopied = c.getString(R.string.toast_card_security_code_copied)
-
-
 
     fun formatDuration(millis: Long): String {
         val diff = System.currentTimeMillis() - millis

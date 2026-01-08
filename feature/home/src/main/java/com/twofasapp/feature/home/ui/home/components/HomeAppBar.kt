@@ -58,6 +58,7 @@ internal fun HomeAppBar(
     var showDeleteConfirmationPrompt by remember { mutableStateOf(false) }
     var showSecurityTypePicker by remember { mutableStateOf(false) }
     var showTagsPicker by remember { mutableStateOf(false) }
+    val strings = MdtLocale.strings
     val focusManager = LocalFocusManager.current
 
     BackHandler(uiState.editMode) {
@@ -106,12 +107,14 @@ internal fun HomeAppBar(
                             modifier = Modifier.offset(x = (-10).dp),
                         )
 
+                        val selectionText = when (val count = uiState.selectedItemIds.size) {
+                            0 -> ""
+                            1 -> strings.homeSelectionCountSingle.format(count)
+                            else -> strings.homeSelectionCountPlural.format(count)
+                        }
+
                         Text(
-                            text = when (val count = uiState.selectedItemIds.size) {
-                                0 -> ""
-                                1 -> "1 Item"
-                                else -> "$count Items"
-                            },
+                            text = selectionText,
                             style = MdtTheme.typo.medium.lg,
                         )
                     }

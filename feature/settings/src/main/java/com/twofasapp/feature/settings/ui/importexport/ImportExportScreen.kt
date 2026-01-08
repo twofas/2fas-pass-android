@@ -60,6 +60,7 @@ internal fun ImportExportScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var backupContent by remember { mutableStateOf("") }
+    val strings = MdtLocale.strings
 
     DisposableEffect(Unit) {
         onDispose { context.clearTmpDir() }
@@ -77,7 +78,7 @@ internal fun ImportExportScreen(
 
             backupContent = ""
             context.clearTmpDir()
-            context.toastShort("Backup file saved!")
+            context.toastShort(strings.importExportBackupSavedToast)
         }
     }
 
@@ -91,7 +92,7 @@ internal fun ImportExportScreen(
             viewModel.generateBackup(encrypted = encrypted) { filename, backup ->
                 context.showShareFilePicker(
                     filename = filename,
-                    title = "2FAS Pass Backup File",
+                    title = strings.importExportBackupFileTitle,
                     save = { outputStream -> outputStream.write(backup.toByteArray(Charsets.UTF_8)) },
                 )
             }
@@ -140,7 +141,7 @@ private fun Content(
                 }
 
                 is ImportExportUiEvent.ImportSuccess -> {
-                    context.toastLong("Import successful!")
+                    context.toastLong(strings.importExportImportSuccessfulToast)
                     onImportSuccess()
                 }
             }
@@ -161,7 +162,7 @@ private fun Content(
         ) {
             OptionEntry(
                 title = null,
-                subtitle = "Safely store your Vault data on your device. Choose to import a previous backup to restore your data or export your current data for safekeeping.",
+                subtitle = strings.importExportSubtitle,
                 contentPadding = PaddingValues(horizontal = 16.dp),
             )
             OptionHeader(
@@ -207,7 +208,7 @@ private fun Content(
         InfoDialog(
             onDismissRequest = { showInvalidSchemaErrorDialog = false },
             icon = MdtIcons.Warning,
-            title = "Import error",
+            title = strings.commonError,
             body = strings.importInvalidSchemaErrorMsg.format(uiState.vaultBackupToImport.schemaVersion),
             positive = strings.importInvalidSchemaErrorCta,
             onPositive = { uriHandler.openSafely(MdtLocale.links.playStore) },
@@ -220,7 +221,7 @@ private fun Content(
                 onDismissRequest = { showBackupDecryptionModal = false },
                 onSuccess = {
                     showBackupDecryptionModal = false
-                    context.toastLong("Import successful!")
+                    context.toastLong(strings.importExportImportSuccessfulToast)
                     onImportSuccess()
                 },
                 backup = uiState.vaultBackupToImport,
@@ -232,17 +233,17 @@ private fun Content(
         InfoDialog(
             onDismissRequest = { showErrorDialog = false },
             icon = MdtIcons.Error,
-            title = "Error",
-            body = "We were unable to read the backup file. It may be corrupt or damaged.",
-            positive = "Try again",
+            title = strings.commonError,
+            body = strings.importVaultErrorCorruptFile,
+            positive = strings.commonTryAgain,
         )
     }
 
     if (showExportAuthenticationPrompt) {
         AuthenticationPrompt(
-            title = "Export Backup",
-            description = "Authentication is required to export backup file",
-            cta = "Authenticate",
+            title = strings.exportBackupModalTitle,
+            description = strings.importExportAuthDescription,
+            cta = strings.autofillPromptCta,
             icon = MdtIcons.Export,
             biometricsAllowed = true,
             onAuthenticated = {
@@ -265,7 +266,7 @@ private fun Content(
         LoadingDialog(
             onDismissRequest = {},
             onCancelClick = { onCancelImport() },
-            title = "Importing...",
+            title = strings.transferImportingFileText,
         )
     }
 }

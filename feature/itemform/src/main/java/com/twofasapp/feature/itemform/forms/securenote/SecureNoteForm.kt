@@ -159,7 +159,11 @@ private fun Content(
                         labelText = strings.secureNoteText,
                         minLines = 10,
                         maxLines = 10,
-                        supportingText = if (textFieldValue.text.length > ItemContent.SecureNote.Limit) "Notes can not be longer than ${ItemContent.SecureNote.Limit} characters" else null,
+                        supportingText = if (textFieldValue.text.length > ItemContent.SecureNote.Limit) {
+                            strings.noteItemLengthError.format(ItemContent.SecureNote.Limit)
+                        } else {
+                            null
+                        },
                         isError = textFieldValue.text.length > ItemContent.SecureNote.Limit,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default),
                         enabled = showText,
