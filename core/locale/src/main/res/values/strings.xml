@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Thu, 08 Jan 2026 14:19:19 -0800
+ Exported at: Sun, 11 Jan 2026 04:36:15 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -78,7 +78,7 @@
     <string name="decryption_kit_settings_title">Decryption Kit Settings</string>
     <string name="decryption_kit_settings_description">The file contains the QR code that allows you to recover access to your 2FAS Pass Vault.</string>
     <string name="decryption_kit_settings_qr_label">Your QR code consists of:</string>
-    <string name="decryption_kit_settings_secret_words">Secret Words (15-word phrase),</string>
+    <string name="decryption_kit_settings_secret_words">Secret Words (15-word phrase)</string>
     <string name="decryption_kit_settings_master_key">Master Password hash</string>
     <string name="decryption_kit_settings_toggle_title">Include the Master Password hash\u0020</string>
     <string name="decryption_kit_settings_toggle_msg">to avoid entering the Master Password during Vault recovery.</string>
@@ -612,7 +612,7 @@
     <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">When setting up a new device, you\'ll need a 15-word recovery phrase to restore your SEED. It\'s securely stored in Apple\'s Secure Enclave, a dedicated, tamper-resistant chip, ensuring your encryption keys never leave your device.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Apple Advanced Data Protection</string>
-    <string name="security_tiers_help_tiers_layers_adp_subtitle">When you enable ADP and iCloud sync, your data is encrypted twice — first with your E2EE and then with Apple\'s encryption keys. Even if someone gains access to your iCloud, they will only find fully encrypted E2EE data, keeping it secure.</string>
+    <string name="security_tiers_help_tiers_layers_adp_subtitle">When you enable ADP and iCloud sync, your data is encrypted twice, first with your E2EE and then with Apple\'s encryption keys. Even if someone gains access to your iCloud, they will only find fully encrypted E2EE data, keeping it secure.</string>
     <string name="transfer_instructions_apple_passwords_mobile">Open **System settings** on your mobile device.\n\nGo to **Apps** and select **Safari**.\n\nScroll down to **History and Website Data** and tap **Export**.\n\nMake sure that only **Passwords** are selected and tap **Save to Downloads**.\n\nFind the **Safari Export** ZIP file in Downloads.\n\nCopy this ZIP file to this device and tap **Upload ZIP file** below.\u0020</string>
     <string name="trash_delete_confirm_title_ios">Delete Item?</string>
     <string name="trash_delete_confirm_body_ios">Are you sure you want to permanently delete this Item? This cannot be undone!</string>
@@ -760,7 +760,7 @@
     <string name="login_edit">Edit Item</string>
     <string name="common_done">Done</string>
     <string name="cloud_vault_delete_confirm_title">Delete backup?</string>
-    <string name="cloud_vault_delete_confirm_body">Are you sure you want to delete this backup? You cannot restore it later.</string>
+    <string name="cloud_vault_delete_confirm_body">Are you sure you want to permanently delete this backup? You cannot restore it later.</string>
     <string name="cloud_vault_removing_failure">Vault deletion failed</string>
     <string name="settings_manage_tokens_title">Manage 2FA Tokens</string>
     <string name="settings_2fas_open">Open 2FAS Auth</string>
@@ -788,7 +788,7 @@
     <string name="tag_delete_cta">Remove permanently</string>
     <string name="tag_description">Items assigned: %s</string>
     <string name="tag_delete_confirm_title">Delete Tag</string>
-    <string name="tag_delete_confirm_description">Are you sure you want to delete \"%s\"? This action cannot be undone.</string>
+    <string name="tag_delete_confirm_description">Are you sure you want to permanently delete \"%s\"? This action cannot be undone.</string>
     <string name="tags_empty_list">You don\'t have any Tags yet</string>
     <string name="tags_title">Manage Tags</string>
     <string name="select_tags_title">Manage Tags</string>
@@ -822,8 +822,8 @@
     <string name="app_update_modal_subtitle">You’re using an old app version. Please update it to get the latest features and improvements.</string>
     <string name="app_update_modal_cta_positive">Update</string>
     <string name="app_update_modal_cta_negative">Not now</string>
-    <string name="transfer_instructions_keepass">Open KeePass on your PC and log in to your database.\n\nClick **File** in the menu bar, and select **Export**.\n\nChoose the **KeePass CSV format**, the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
-    <string name="transfer_instructions_keepassxc">Open KeePassXC on your PC and log in to your database.\n\nClick **Database** in the menu bar, and select **Export**.\n\nChoose the **CSV format**, confirm and choose the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
+    <string name="transfer_instructions_keepass">Open KeePass on your PC and log in to your database.\n\nClick **File** in the menu bar, and select **Export**.\n\nChoose the **file format**, the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload file** below.</string>
+    <string name="transfer_instructions_keepassxc">Open KeePassXC on your PC and log in to your database.\n\nClick **Database** in the menu bar, and select **Export**.\n\nChoose the **file format**, confirm and choose the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload file** below.</string>
     <string name="common_back">Back</string>
     <string name="transfer_instructions_microsoft_edge">Open Microsoft Edge on your PC\n\nSelect the 3 dots next to your profile icon at the top right, then select **Passwords**.\n\nSelect the 3 dots next to Passkeys and click **Export passwords**.\n\nConfirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
     <string name="transfer_instructions_enpass">Open Enpass on your PC.\n\nOpen the menu at the top right of the app.\n\nSelect **File** then **Export**.\n\nSelect the correct Vault and the **json** file format.\n\nChoose the location and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
@@ -922,13 +922,13 @@
     <string name="transfer_instructions_additional_info_keepass">XML file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
     <string name="transfer_instructions_cta_keepassxc">Upload XML/CSV file</string>
     <string name="transfer_instructions_additional_info_keepassxc">XML file is recommended to fully transfer your Vault. CSV format doesn\'t support all Item types.</string>
-    <string name="common_use_default">Use Default</string>
+    <string name="common_use_default">Default</string>
     <string name="import_vault_error_corrupt_file">We were unable to read the backup file. It may be corrupt or damaged.</string>
     <string name="biometrics_missing_activity_error">Could not find FragmentActivity. Restart the app and try again.</string>
     <string name="biometrics_generic_error">Error: %s</string>
     <string name="autofill_save_login_title">Save Login</string>
     <string name="autofill_save_login_toast_success">Login saved!</string>
-    <string name="autofill_picker_empty_state">It looks like there are no logins yet.</string>
+    <string name="autofill_picker_empty_state">No Logins available.</string>
     <string name="qrscan_camera_launch_error">Camera could not be launched. Try again.</string>
     <string name="common_loading">Loading...</string>
     <string name="lock_use_password">Use password</string>
@@ -947,28 +947,28 @@
     <string name="note_item_length_error">Notes cannot be longer than %d characters</string>
     <string name="settings_push_notifications_description">Allow the browser extension to send you push notifications when you need to enter password data while browsing the web.</string>
     <string name="settings_push_notifications_allow_title">Allow notifications</string>
-    <string name="settings_push_notifications_allow_subtitle">Allow 2FAS Pass browser extension notifications</string>
+    <string name="settings_push_notifications_allow_subtitle">Allow 2FAS Pass Browser Extension notifications</string>
     <string name="settings_change_password_processing_title">Processing…</string>
     <string name="settings_change_password_processing_description">Changing your password and re-encrypting your data.\nPlease do not close the app during this process.</string>
     <string name="settings_change_password_processing_message_local">Re-encrypting local data…</string>
     <string name="settings_change_password_processing_message_cloud">Syncing cloud…</string>
     <string name="settings_change_password_success_title">Master Password successfully changed!</string>
-    <string name="settings_change_password_success_description">Your encryption key has been updated. Download a new Decryption Kit and re-enable Cloud Sync on other devices.</string>
+    <string name="settings_change_password_success_description">Your Master Password has been changed. Download a new Decryption Kit and re-enable Cloud Sync on other devices.</string>
     <string name="settings_change_password_success_card_title">Download Decryption Kit</string>
     <string name="settings_change_password_success_card_description">You need to download a new kit because you have changed your Master Password.</string>
     <string name="settings_change_password_cta_processing">Please wait…</string>
     <string name="settings_change_password_cta_success">Download new Decryption Kit</string>
     <string name="settings_known_browser_placeholder_extension_name">Extension Name</string>
     <string name="settings_known_browser_placeholder_browser_name">Chrome on Windows 11</string>
-    <string name="settings_cloud_sync_description_long">Securely sync your 2FAS Pass Vault with Google Drive or WebDAV to protect your data if this device gets lost or damaged.</string>
-    <string name="settings_backup_seed_error_mismatch">Entered Secret Key does not match imported Vault. Please make sure you have entered correct words.</string>
-    <string name="settings_backup_error_reading_kit">Error reading Decryption Kit</string>
-    <string name="settings_backup_error_reading_kit_description">Error occurred while reading Decryption Kit.</string>
+    <string name="settings_cloud_sync_description_long">Securely sync your 2FAS Pass Vault with Google Drive or WebDAV to protect your data in case this device gets lost or damaged.</string>
+    <string name="settings_backup_seed_error_mismatch">Entered Secret Words do not match the imported Vault. Please make sure you have entered the correct words.</string>
+    <string name="settings_backup_error_reading_kit">Error while reading Decryption Kit</string>
+    <string name="settings_backup_error_reading_kit_description">Error while reading Decryption Kit.</string>
     <string name="settings_backup_error_mismatch_kit">Selected Decryption Kit does not match imported Vault. Please select a different Decryption Kit file.</string>
-    <string name="settings_backup_error_scanning_kit">Error scanning Decryption Kit</string>
+    <string name="settings_backup_error_scanning_kit">Error while scanning Decryption Kit</string>
     <string name="settings_backup_error_scanning_kit_description">Scanned Decryption Kit does not match imported Vault. Please scan a different Decryption Kit.</string>
-    <string name="settings_backup_error_scanning_generic">There was an error when scanning Decryption Kit QR Code. Try again or select a different Decryption Kit.\n\n(%s)</string>
-    <string name="settings_backup_error_wrong_password">The password you entered is incorrect.</string>
+    <string name="settings_backup_error_scanning_generic">Error while scanning the Decryption Kit\'s QR Code. Try again or select a different Decryption Kit.\n\n(%s)</string>
+    <string name="settings_backup_error_wrong_password">Incorrect password.</string>
     <string name="settings_backup_error_decryption_kit_file">Selected Decryption Kit has a different Master Key than the one used to encrypt your backup file. Please choose a different Decryption Kit or enter the Secret Key and Master Password manually.</string>
     <string name="change_icon_label_header">Text (1 or 2 characters)</string>
     <string name="change_icon_label_placeholder">1 or 2 characters</string>
@@ -985,7 +985,7 @@
     <string name="connect_permissions_enable">Enable Permissions</string>
     <string name="about_share_title">Share 2FAS</string>
     <string name="common_status">Status</string>
-    <string name="manage_subscription_unlimited_description">You\'ve now got the full package - enjoy using 2FAS Pass with zero boundaries.</string>
+    <string name="manage_subscription_unlimited_description">You\'ve now got the full package. Enjoy using 2FAS Pass with zero boundaries.</string>
     <string name="manage_subscription_plan_title">Plan</string>
     <string name="manage_subscription_plan_name_prefix">Name:</string>
     <string name="manage_subscription_plan_price_prefix">Price:</string>
