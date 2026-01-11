@@ -23,6 +23,8 @@ import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
+import com.twofasapp.feature.externalimport.import.CsvParser
+import com.twofasapp.feature.externalimport.import.CsvRow
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
 import kotlinx.serialization.Serializable
@@ -52,7 +54,15 @@ internal class BitwardenImportSpec(
         var unknownItems = 0
         tags.clear()
 
-        val model = json.decodeFromString<Model>(context.readTextFile(uri))
+        val fileContent = context.readTextFile(uri)
+
+        // Try JSON parsing first
+        val model = try {
+            json.decodeFromString<Model>(fileContent)
+        } catch (e: Exception) {
+            // If JSON parsing fails, try CSV parsing
+            return readCsvContent(fileContent, vaultId)
+        }
 
         // Skip encrypted exports
         if (model.encrypted == true) {
@@ -98,14 +108,17 @@ internal class BitwardenImportSpec(
                     unknownItems++
                     item.parseCardAsSecureNote(vaultId, tagIds)
                 }
+
                 ItemType.IDENTITY.value -> {
                     unknownItems++
                     item.parseAsSecureNote(vaultId, tagIds, "Identity", item.identity)
                 }
+
                 ItemType.SSH_KEY.value -> {
                     unknownItems++
                     item.parseAsSecureNote(vaultId, tagIds, "SSH Key", item.sshKey)
                 }
+
                 else -> {
                     unknownItems++
                     null
@@ -117,6 +130,174 @@ internal class BitwardenImportSpec(
             items = items,
             tags = tags,
             unknownItems = unknownItems,
+        )
+    }
+
+    private fun readCsvContent(fileContent: String, vaultId: String): ImportContent {
+        var unknownItems = 0
+        val items = mutableListOf<Item>()
+        val folderToTagId = mutableMapOf<String, String>()
+
+        CsvParser.parse(
+            text = fileContent,
+            delimiter = ',',
+        ) { row ->
+            // Skip completely empty rows
+            if (row.map.values.all { it.isBlank() }) return@parse
+
+            // Verify this is a Bitwarden CSV by checking for required columns
+            if (items.isEmpty() && !row.map.containsKey("type") && !row.map.containsKey("name")) {
+                throw IllegalArgumentException("Invalid Bitwarden CSV format")
+            }
+
+            // Handle folder -> tag mapping
+            val tagIds = row.get("folder")?.takeIf { it.isNotBlank() }?.let { folderName ->
+                val tagId = folderToTagId.getOrPut(folderName) {
+                    val newTagId = Uuid.generate()
+                    tags.add(
+                        Tag.create(
+                            vaultId = vaultId,
+                            id = newTagId,
+                            name = folderName,
+                        ),
+                    )
+                    newTagId
+                }
+                listOf(tagId)
+            }
+
+            val itemType = row.get("type") ?: "login"
+
+            when (itemType.lowercase()) {
+                "login" -> {
+                    parseCsvLogin(row, vaultId, tagIds)?.let { items.add(it) }
+                }
+
+                "note" -> {
+                    parseCsvSecureNote(row, vaultId, tagIds)?.let { items.add(it) }
+                }
+
+                "card" -> {
+                    // TODO: Uncomment when payment cards are supported in Android app
+                    // parseCsvCard(row, vaultId, tagIds)?.let { items.add(it) }
+                    // For now, convert to secure note
+                    unknownItems++
+                    parseCsvCardAsSecureNote(row, vaultId, tagIds)?.let { items.add(it) }
+                }
+
+                else -> {
+                    unknownItems++
+                }
+            }
+        }
+
+        return ImportContent(
+            items = items,
+            tags = tags,
+            unknownItems = unknownItems,
+        )
+    }
+
+    private fun parseCsvLogin(row: CsvRow, vaultId: String, tagIds: List<String>?): Item? {
+        val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
+        val noteText = row.get("notes")?.trim()?.takeIf { it.isNotBlank() }
+        val username = row.get("login_username")?.trim()?.takeIf { it.isNotBlank() }
+        val password = row.get("login_password")?.trim()?.takeIf { it.isNotBlank() }
+
+        val uris = row.get("login_uri")
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?.split(Regex(",(?=[a-zA-Z][a-zA-Z0-9+.-]*://)"))
+            ?.map { uriString ->
+                ItemUri(text = uriString, matcher = UriMatcher.Domain)
+            }
+
+        val fieldsInfo = row.get("fields")?.trim()?.takeIf { it.isNotBlank() }
+        val mergedNotes = mergeNote(noteText, fieldsInfo)
+
+        return Item.create(
+            contentType = ItemContentType.Login,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.Login.Empty.copy(
+                name = itemName.orEmpty(),
+                username = username,
+                password = password?.let { SecretField.ClearText(it) },
+                notes = mergedNotes,
+                iconType = IconType.Icon,
+                iconUriIndex = if (uris == null) null else 0,
+                uris = uris.orEmpty(),
+            ),
+        )
+    }
+
+    private fun parseCsvSecureNote(row: CsvRow, vaultId: String, tagIds: List<String>?): Item? {
+        val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
+        val noteText = row.get("notes")?.trim()?.takeIf { it.isNotBlank() }
+        val fieldsInfo = row.get("fields")?.trim()?.takeIf { it.isNotBlank() }
+
+        val mergedText = mergeNote(noteText, fieldsInfo)
+        val text = mergedText?.let { SecretField.ClearText(it) }
+
+        return Item.create(
+            contentType = ItemContentType.SecureNote,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.SecureNote(
+                name = itemName.orEmpty(),
+                text = text,
+            ),
+        )
+    }
+
+    private fun parseCsvCardAsSecureNote(row: CsvRow, vaultId: String, tagIds: List<String>?): Item? {
+        val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
+        val noteText = row.get("notes")?.trim()?.takeIf { it.isNotBlank() }
+
+        val cardHolder = row.get("card_cardholdername")?.trim()?.takeIf { it.isNotBlank() }
+        val cardNumberString = row.get("card_number")?.trim()?.takeIf { it.isNotBlank() }
+        val securityCodeString = row.get("card_code")?.trim()?.takeIf { it.isNotBlank() }
+        val brand = row.get("card_brand")?.trim()?.takeIf { it.isNotBlank() }
+
+        val expirationMonth = row.get("card_expmonth")?.trim()?.takeIf { it.isNotBlank() }
+        val expirationYear = row.get("card_expyear")?.trim()?.takeIf { it.isNotBlank() }
+
+        val expirationDateString = if (expirationMonth != null && expirationYear != null) {
+            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear
+            "$expirationMonth/$yearSuffix"
+        } else {
+            null
+        }
+
+        // Format card details as text for secure note
+        val cardDetails = buildList {
+            cardHolder?.let { add("Cardholder: $it") }
+            cardNumberString?.let { add("Card Number: $it") }
+            expirationDateString?.let { add("Expiration Date: $it") }
+            securityCodeString?.let { add("Security Code: $it") }
+            brand?.let { add("Brand: $it") }
+        }.joinToString("\n")
+
+        val fieldsInfo = row.get("fields")?.trim()?.takeIf { it.isNotBlank() }
+        val cardInfo = mergeNote(cardDetails, fieldsInfo)
+
+        val displayName = if (itemName != null) {
+            "$itemName (Payment Card)"
+        } else {
+            "(Payment Card)"
+        }
+
+        val fullNoteText = mergeNote(noteText, cardInfo)
+        val text = fullNoteText?.let { SecretField.ClearText(it) }
+
+        return Item.create(
+            contentType = ItemContentType.SecureNote,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.SecureNote(
+                name = displayName,
+                text = text,
+            ),
         )
     }
 

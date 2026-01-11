@@ -335,7 +335,7 @@ internal class ProtonPassImportSpec(
         // Add content fields
         itemData.content?.let { content ->
             val contentFields = content.entries.mapNotNull { (key, value) ->
-                val valueStr = value.toStringOrNull() ?: return@mapNotNull null
+                val valueStr = value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
                 formatFieldType(key) to valueStr
             }
             formatAdditionalFields(contentFields)?.let { additionalInfoComponents.add(it) }
@@ -386,7 +386,7 @@ internal class ProtonPassImportSpec(
         // Add content fields
         itemData.content?.let { content ->
             val contentFields = content.entries.mapNotNull { (key, value) ->
-                val valueStr = value.toStringOrNull() ?: return@mapNotNull null
+                val valueStr = value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
                 formatFieldType(key) to valueStr
             }
             formatAdditionalFields(contentFields)?.let { noteComponents.add(it) }
@@ -459,9 +459,13 @@ internal class ProtonPassImportSpec(
         val username = itemUsername ?: itemEmail
         val password = row.get("password")?.trim()?.takeIf { it.isNotBlank() }
 
-        val uris = row.get("url")?.trim()?.takeIf { it.isNotBlank() }?.let {
-            listOf(ItemUri(text = it, matcher = UriMatcher.Domain))
-        }
+        val uris = row.get("url")
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?.split(", ")
+            ?.map { uriString ->
+                ItemUri(text = uriString, matcher = UriMatcher.Domain)
+            }
 
         // Build notes
         val noteComponents = mutableListOf<String>()

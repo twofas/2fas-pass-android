@@ -67,7 +67,7 @@ internal class LastPassImportSpec(
                                     contentType = ItemContentType.SecureNote,
                                     content = ItemContent.SecureNote.create(
                                         name = row.get("name"),
-                                        text = row.get("extra"),
+                                        text = row.get("extra")?.normalizeExtraLine(),
                                     ),
                                 ),
                             )
@@ -84,7 +84,7 @@ internal class LastPassImportSpec(
                                     contentType = ItemContentType.SecureNote,
                                     content = ItemContent.SecureNote.create(
                                         name = row.get("name"),
-                                        text = row.get("extra"),
+                                        text = row.get("extra")?.normalizeExtraLine(),
                                     ),
                                 ),
                             )
@@ -102,7 +102,7 @@ internal class LastPassImportSpec(
                                 username = row.get("username"),
                                 password = row.get("password"),
                                 url = row.get("url"),
-                                notes = row.get("extra"),
+                                notes = row.get("extra")?.normalizeExtraLine(),
                             ),
                         ),
                     )
@@ -116,4 +116,8 @@ internal class LastPassImportSpec(
             unknownItems = unknownItems,
         )
     }
+
+    private fun String.normalizeExtraLine(): String =
+        this.lines()
+            .joinToString("\n") { it.replaceFirst(":", ": ") }
 }

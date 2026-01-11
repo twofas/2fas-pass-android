@@ -40,6 +40,6 @@ internal object TransferUtils {
             baseNote != null && extra != null -> "$baseNote\n\n$extra"
             baseNote != null -> baseNote
             else -> extra
-        }
+        }?.trim()
     }
 }

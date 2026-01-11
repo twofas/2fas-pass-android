@@ -28,7 +28,6 @@ data class ZipFile(
      * @param context Android context for accessing content resolver and cache directory
      * @param filter Predicate to filter which entries to read (applied to lowercase entry name)
      * @return Map of entry names to their text content (UTF-8)
-     * @throws RuntimeException if the file is not a valid ZIP file
      */
     fun read(
         context: Context,
@@ -39,9 +38,9 @@ data class ZipFile(
 
         // If we found STORED entries with unknown size, use temp file approach
         return if (hasProblematicEntries) {
-            readWithTempFile(context, filter)
+            readWithTempFile(context, filter).ifEmpty { throw RuntimeException("Could not find matching files!") }
         } else {
-            fileContents
+            fileContents.ifEmpty { throw RuntimeException("Could not find matching files!") }
         }
     }
 

@@ -176,7 +176,9 @@ internal class KeeperImportSpec(
         // Format remaining custom fields (excluding note)
         val customFieldsInfo = formatCustomFields(customFields, excludeNote = true)
 
-        val text = mergeNote(fullNoteText, customFieldsInfo)?.let { SecretField.ClearText(it) }
+        // Merge custom fields into the text (since SecureNote doesn't have additionalInfo)
+        val finalText = mergeNote(fullNoteText, customFieldsInfo)
+        val text = finalText?.let { SecretField.ClearText(it) }
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
@@ -398,57 +400,18 @@ internal class KeeperImportSpec(
                 key.startsWith("\$text::") || key.startsWith("\$text:") -> {
                     try {
                         val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add(it) }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
+                        if (valueStr != null) {
+                            // Extract label from key like "$text:company:1" -> "Company"
+                            val label = key.split(":").getOrNull(1)
+                                ?.takeIf { it.isNotBlank() && !it.matches(Regex("\\d+")) }
+                                ?.let { formatFieldType(it) }
 
-                // Email fields
-                key.startsWith("\$email::") -> {
-                    try {
-                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add("Email: $it") }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
-
-                // URL fields
-                key.startsWith("\$url::") -> {
-                    try {
-                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add("URL: $it") }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
-
-                // License number
-                key.startsWith("\$licenseNumber::") -> {
-                    try {
-                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add("License Number: $it") }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
-
-                // Account numbers
-                key.startsWith("\$accountNumber") -> {
-                    try {
-                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add("Account Number: $it") }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
-
-                // Secret fields
-                key.startsWith("\$secret::") -> {
-                    try {
-                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add("Secret: $it") }
+                            if (label != null) {
+                                components.add("$label: $valueStr")
+                            } else {
+                                components.add(valueStr)
+                            }
+                        }
                     } catch (e: Exception) {
                         // Ignore parsing errors
                     }
@@ -459,38 +422,6 @@ internal class KeeperImportSpec(
                     try {
                         val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
                         valueStr?.let { components.add(it) }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
-
-                // Note field
-                key.startsWith("\$note::") -> {
-                    try {
-                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        valueStr?.let { components.add("Note: $it") }
-                    } catch (e: Exception) {
-                        // Ignore parsing errors
-                    }
-                }
-
-                // Phone fields
-                key.startsWith("\$phone::") -> {
-                    try {
-                        val phoneObj = value as? JsonObject
-                        val region = (phoneObj?.get("region") as? kotlinx.serialization.json.JsonPrimitive)?.content
-                        val number = (phoneObj?.get("number") as? kotlinx.serialization.json.JsonPrimitive)?.content
-                        val ext = (phoneObj?.get("ext") as? kotlinx.serialization.json.JsonPrimitive)?.content
-
-                        val phoneStr = buildString {
-                            if (region != null) append("+$region ")
-                            if (number != null) append(number)
-                            if (ext != null) append(" ext. $ext")
-                        }.trim()
-
-                        if (phoneStr.isNotBlank()) {
-                            components.add("Phone: $phoneStr")
-                        }
                     } catch (e: Exception) {
                         // Ignore parsing errors
                     }
@@ -536,22 +467,297 @@ internal class KeeperImportSpec(
                     }
                 }
 
-                // Date fields
-                key.startsWith("\$date") || key.startsWith("\$birthDate::") || key.startsWith("\$expirationDate::") -> {
+                // Phone fields
+                key.startsWith("\$phone::") -> {
+                    try {
+                        val phoneObj = value as? JsonObject
+                        val region = (phoneObj?.get("region") as? kotlinx.serialization.json.JsonPrimitive)?.content
+                        val number = (phoneObj?.get("number") as? kotlinx.serialization.json.JsonPrimitive)?.content
+                        val ext = (phoneObj?.get("ext") as? kotlinx.serialization.json.JsonPrimitive)?.content
+
+                        val phoneStr = buildString {
+                            if (region != null) append("+$region ")
+                            if (number != null) append(number)
+                            if (ext != null) append(" ext. $ext")
+                        }.trim()
+
+                        if (phoneStr.isNotBlank()) {
+                            components.add("Phone: $phoneStr")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Host fields
+                key.startsWith("\$host::") -> {
+                    try {
+                        val hostObj = value as? JsonObject
+                        val hostName = (hostObj?.get("hostName") as? kotlinx.serialization.json.JsonPrimitive)?.content
+                        val port = (hostObj?.get("port") as? kotlinx.serialization.json.JsonPrimitive)?.content
+
+                        val hostStr = buildString {
+                            if (hostName != null) append(hostName)
+                            if (port != null) append(":$port")
+                        }.trim()
+
+                        if (hostStr.isNotBlank()) {
+                            components.add("Host: $hostStr")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Key pair fields
+                key.startsWith("\$keyPair::") -> {
+                    try {
+                        val keyPairObj = value as? JsonObject
+                        val publicKey = (keyPairObj?.get("publicKey") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val privateKey = (keyPairObj?.get("privateKey") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+
+                        publicKey?.let { components.add("Public Key: $it") }
+                        privateKey?.let { components.add("Private Key: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Bank account fields
+                key.startsWith("\$bankAccount::") -> {
+                    try {
+                        val bankAccountObj = value as? JsonObject
+                        val accountType = (bankAccountObj?.get("accountType") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val accountNumber = (bankAccountObj?.get("accountNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val routingNumber = (bankAccountObj?.get("routingNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+
+                        accountType?.let { components.add("Account Type: $it") }
+                        accountNumber?.let { components.add("Account Number: $it") }
+                        routingNumber?.let { components.add("Routing Number: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Security question fields
+                key.startsWith("\$securityQuestion::") -> {
+                    try {
+                        val sqObj = value as? JsonObject
+                        val question = (sqObj?.get("question") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val answer = (sqObj?.get("answer") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+
+                        question?.let { components.add("Security Question: $it") }
+                        answer?.let { components.add("Security Answer: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Email fields
+                key.startsWith("\$email::") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("Email: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Note field
+                key.startsWith("\$note::") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("Note: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // License number
+                key.startsWith("\$licenseNumber::") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("License Number: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Account numbers
+                key.startsWith("\$accountNumber") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        if (valueStr != null) {
+                            // Extract label from key like "$accountNumber:passportNumber:1" -> "Passport Number"
+                            val label = key.split(":").getOrNull(1)
+                                ?.takeIf { it.isNotBlank() && !it.matches(Regex("\\d+")) }
+                                ?.let { formatFieldType(it) }
+                                ?: "Account Number"
+
+                            components.add("$label: $valueStr")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Secret fields
+                key.startsWith("\$secret::") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("Secret: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Payment card fields (for use in custom fields display)
+                key.startsWith("\$paymentCard::") -> {
+                    try {
+                        val cardObj = value as? JsonObject
+                        val cardNumber = (cardObj?.get("cardNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val expirationDate = (cardObj?.get("cardExpirationDate") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val securityCode = (cardObj?.get("cardSecurityCode") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+
+                        cardNumber?.let { components.add("Card Number: $it") }
+                        expirationDate?.let { components.add("Expiration Date: $it") }
+                        securityCode?.let { components.add("Security Code: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Cardholder name
+                key.contains(":cardholderName:") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("Cardholder Name: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // PIN code
+                key.startsWith("\$pinCode::") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("PIN: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // One-time code fields (OTP)
+                key.startsWith("\$oneTimeCode") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("One-Time Code: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // URL fields
+                key.startsWith("\$url::") -> {
+                    try {
+                        val valueStr = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        valueStr?.let { components.add("URL: $it") }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Birth date fields
+                key.startsWith("\$birthDate::") -> {
                     try {
                         val timestamp = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.toLongOrNull()
                         if (timestamp != null) {
                             val date = Date(timestamp)
                             val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
-                            val label = when {
-                                key.startsWith("\$birthDate::") -> "Birth Date"
-                                key.startsWith("\$expirationDate::") -> "Expiration Date"
-                                else -> {
-                                    // Extract label from key like "$date:dateActive:1" -> "Date Active"
-                                    key.split(":").getOrNull(1)?.let { formatFieldType(it) } ?: "Date"
+                            components.add("Birth Date: ${dateFormat.format(date)}")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Expiration date fields
+                key.startsWith("\$expirationDate::") -> {
+                    try {
+                        val timestamp = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.toLongOrNull()
+                        if (timestamp != null) {
+                            val date = Date(timestamp)
+                            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+                            components.add("Expiration Date: ${dateFormat.format(date)}")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // Generic date fields
+                key.startsWith("\$date") -> {
+                    try {
+                        val timestamp = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.toLongOrNull()
+                        if (timestamp != null) {
+                            val date = Date(timestamp)
+                            val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+                            // Extract label from key like "$date:dateActive:1" -> "Date Active"
+                            val label = key.split(":").getOrNull(1)
+                                ?.takeIf { it.isNotBlank() && !it.matches(Regex("\\d+")) }
+                                ?.let { formatFieldType(it) }
+                                ?: "Date"
+                            components.add("$label: ${dateFormat.format(date)}")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // App filler fields
+                key.startsWith("\$appFiller::") -> {
+                    try {
+                        val appFillerObj = value as? JsonObject
+                        val applicationTitle = (appFillerObj?.get("applicationTitle") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val contentFilter = (appFillerObj?.get("contentFilter") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val macroSequence = (appFillerObj?.get("macroSequence") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+
+                        val parts = mutableListOf<String>()
+                        applicationTitle?.let { parts.add("Application: $it") }
+                        contentFilter?.let { parts.add("Content Filter: $it") }
+                        macroSequence?.let { parts.add("Macro Sequence: $it") }
+
+                        if (parts.isNotEmpty()) {
+                            components.add(parts.joinToString(", "))
+                        }
+                    } catch (e: Exception) {
+                        // Ignore parsing errors
+                    }
+                }
+
+                // References object containing address/card refs
+                key == "references" -> {
+                    try {
+                        val refsObj = value as? JsonObject
+                        refsObj?.entries?.forEach { (refKey, refValue) ->
+                            when {
+                                refKey.startsWith("\$addressRef") -> {
+                                    val refs = (refValue as? kotlinx.serialization.json.JsonArray)?.mapNotNull {
+                                        (it as? kotlinx.serialization.json.JsonPrimitive)?.content
+                                    }
+                                    if (!refs.isNullOrEmpty()) {
+                                        components.add("Address Reference: ${refs.joinToString(", ")}")
+                                    }
+                                }
+                                refKey.startsWith("\$cardRef") -> {
+                                    val refs = (refValue as? kotlinx.serialization.json.JsonArray)?.mapNotNull {
+                                        (it as? kotlinx.serialization.json.JsonPrimitive)?.content
+                                    }
+                                    if (!refs.isNullOrEmpty()) {
+                                        components.add("Card Reference: ${refs.joinToString(", ")}")
+                                    }
                                 }
                             }
-                            components.add("$label: ${dateFormat.format(date)}")
                         }
                     } catch (e: Exception) {
                         // Ignore parsing errors
