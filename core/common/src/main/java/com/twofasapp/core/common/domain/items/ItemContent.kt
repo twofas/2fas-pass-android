@@ -4,6 +4,7 @@ import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.clearTextOrNull
 
 sealed interface ItemContent {
     val name: String
@@ -113,14 +114,34 @@ sealed interface ItemContent {
         val notes: String?,
     ) : ItemContent {
 
-        enum class Issuer(val code: String) {
-            Visa("Visa"),
-            MasterCard("MC"),
-            AmericanExpress("AMEX"),
-            Discover("Discover"),
-            DinersClub("DinersClub"),
-            Jcb("JCB"),
-            UnionPay("UnionPay"),
+        val cardNumberMaskDisplay: String
+            get() {
+                if (cardNumberMask == null) return ""
+
+                val expectedLength = cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
+                val dotsCount = expectedLength - 4 // Reserve 4 digits for the mask
+                val dots = "•".repeat(dotsCount)
+
+                val formattedDots = dots.chunked(4).joinToString(" ")
+
+                return "$formattedDots $cardNumberMask".trim()
+            }
+
+        val cardNumberMaskDisplayShort: String
+            get() {
+                if (cardNumberMask == null) return ""
+                val dots = "•".repeat(4)
+                return "$dots $cardNumberMask".trim()
+            }
+
+        enum class Issuer(val code: String, val cardLength: Int) {
+            Visa("Visa", 16),
+            MasterCard("MC", 16),
+            AmericanExpress("AMEX", 15),
+            Discover("Discover", 19),
+            DinersClub("DinersClub", 14),
+            Jcb("JCB", 16),
+            UnionPay("UnionPay", 19),
             ;
 
             companion object {

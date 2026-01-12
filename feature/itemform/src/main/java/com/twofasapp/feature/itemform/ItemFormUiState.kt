@@ -12,6 +12,7 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.data.main.mapper.PaymentCardValidator
 
 /**
  * Common UI state for all item forms.
@@ -31,7 +32,33 @@ internal data class ItemFormUiState<T : ItemContent>(
         get() = when (itemContent) {
             is ItemContent.Login -> itemContent.name.isNotEmpty() && itemContent.notes.orEmpty().length <= 2048
             is ItemContent.SecureNote -> itemContent.name.isNotEmpty() && itemContent.text.clearTextOrNull.orEmpty().length <= ItemContent.SecureNote.Limit
-            is ItemContent.PaymentCard -> itemContent.name.isNotEmpty() && itemContent.notes.orEmpty().length <= 2048
+            is ItemContent.PaymentCard -> validatePaymentCard(itemContent)
             is ItemContent.Unknown -> false
         }
+
+    private fun validatePaymentCard(content: ItemContent.PaymentCard): Boolean {
+        if (content.name.isEmpty()) return false
+
+        if (content.notes.orEmpty().length > 2048) return false
+
+        content.cardNumber.clearTextOrNull?.takeIf { it.isNotBlank() }?.let {
+            if (PaymentCardValidator.validateCardNumber(it, content.cardIssuer).not()) {
+                return false
+            }
+        }
+
+        content.expirationDate.clearTextOrNull?.takeIf { it.isNotBlank() }?.let {
+            if (PaymentCardValidator.validateExpirationDate(it).not()) {
+                return false
+            }
+        }
+
+        content.securityCode.clearTextOrNull?.takeIf { it.isNotBlank() }?.let {
+            if (PaymentCardValidator.validateSecurityCode(it, content.cardIssuer).not()) {
+                return false
+            }
+        }
+
+        return true
+    }
 }

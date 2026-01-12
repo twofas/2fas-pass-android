@@ -293,7 +293,12 @@ private fun Content(
                                                 put("s_text", content.text.clearTextOrNull.orEmpty())
                                             }
 
-                                            is ItemContent.PaymentCard -> Unit
+                                            is ItemContent.PaymentCard -> {
+                                                put("s_cardNumber", content.cardNumber.clearTextOrNull.orEmpty())
+                                                put("s_expirationDate", content.expirationDate.clearTextOrNull.orEmpty())
+                                                put("s_securityCode", content.securityCode.clearTextOrNull.orEmpty())
+                                            }
+
                                             is ItemContent.Unknown -> Unit
                                         }
                                     }

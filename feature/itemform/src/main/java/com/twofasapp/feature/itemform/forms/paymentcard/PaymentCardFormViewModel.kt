@@ -12,6 +12,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultsRepository
+import com.twofasapp.data.main.mapper.PaymentCardValidator
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.feature.itemform.ItemFormViewModel
 
@@ -33,17 +34,31 @@ internal class PaymentCardFormViewModel(
     }
 
     fun updateCardNumber(text: String) {
+        val issuer = PaymentCardValidator.detectCardIssuer(text)
+        val mask = PaymentCardValidator.cardNumberMask(text)
+
         updateItemContent { content ->
             content.copy(
                 cardNumber = SecretField.ClearText(text),
-                cardNumberMask = "TODO",
-                cardIssuer = ItemContent.PaymentCard.Issuer.Visa,
+                cardNumberMask = mask,
+                cardIssuer = issuer,
             )
         }
     }
 
     fun updateExpirationDate(text: String) {
-        updateItemContent { content -> content.copy(expirationDate = SecretField.ClearText(text)) }
+        val formatted = formatExpirationDate(text)
+        updateItemContent { content -> content.copy(expirationDate = SecretField.ClearText(formatted)) }
+    }
+
+    private fun formatExpirationDate(input: String): String {
+        // Input comes as digits only (e.g., "0125")
+        // Store as MM/YY format (e.g., "01/25")
+        return when (input.length) {
+            0, 1, 2 -> input
+            3 -> "${input.take(2)}/${input.substring(2)}"
+            else -> "${input.take(2)}/${input.substring(2, 4)}"
+        }
     }
 
     fun updateSecurityCode(text: String) {

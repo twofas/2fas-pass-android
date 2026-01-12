@@ -57,6 +57,12 @@ private fun Content(
             icon = MdtIcons.SecureNote,
             onClick = { onSelect(ItemContentType.SecureNote) },
         )
+
+        OptionEntry(
+            title = strings.contentTypeCardName,
+            icon = MdtIcons.PaymentCard,
+            onClick = { onSelect(ItemContentType.PaymentCard) },
+        )
     }
 }
 

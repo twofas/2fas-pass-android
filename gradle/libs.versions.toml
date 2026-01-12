@@ -124,6 +124,7 @@ zxing = "com.google.zxing:core:3.5.3"
 uiAndroid = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 aboutLibrariesCore = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutLibrariesCompose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+palette = "androidx.palette:palette:1.0.0"
 
 [bundles]
 aboutLibraries = [

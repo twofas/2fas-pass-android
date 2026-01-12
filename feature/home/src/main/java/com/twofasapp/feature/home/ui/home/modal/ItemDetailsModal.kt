@@ -327,7 +327,7 @@ private fun Content(
 
                                 Entry(
                                     title = MdtLocale.strings.cardNumberLabel,
-                                    subtitle = textDecrypted ?: secretString(count = 16),
+                                    subtitle = textDecrypted ?: content.cardNumberMaskDisplayShort,
                                     actions = {
                                         SecretFieldTrailingIcon(
                                             visible = textDecrypted != null,
@@ -341,7 +341,7 @@ private fun Content(
                                                                 secretField = content.cardNumber,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it }
+                                                            )?.let { textDecrypted = it.chunked(4).joinToString(" ") }
                                                         }
                                                     }
                                                 }

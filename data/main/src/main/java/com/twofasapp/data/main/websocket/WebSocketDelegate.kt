@@ -46,6 +46,7 @@ internal interface WebSocketDelegate {
                     deviceOs = "android",
                     supportedFeatures = listOf(
                         "items.secureNote",
+                        "items.paymentCard",
                     ),
                 ),
             ),

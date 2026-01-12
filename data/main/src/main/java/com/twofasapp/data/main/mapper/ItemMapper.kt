@@ -154,40 +154,38 @@ internal class ItemMapper(
                 )
             }
 
-            // TODO: Uncomment when payment cards ready
+            ItemContentType.PaymentCard.key -> {
+                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.PaymentCard.serializer(), contentJson)
 
-//            ItemContentType.PaymentCard.key -> {
-//                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.PaymentCard.serializer(), contentJson)
-//
-//                ItemContent.PaymentCard(
-//                    name = content.name,
-//                    cardHolder = content.cardHolder,
-//                    cardNumber = content.cardNumber?.let {
-//                        if (hasSecretFieldsEncrypted) {
-//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
-//                        } else {
-//                            SecretField.ClearText(it)
-//                        }
-//                    },
-//                    expirationDate = content.expirationDate?.let {
-//                        if (hasSecretFieldsEncrypted) {
-//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
-//                        } else {
-//                            SecretField.ClearText(it)
-//                        }
-//                    },
-//                    securityCode = content.securityCode?.let {
-//                        if (hasSecretFieldsEncrypted) {
-//                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
-//                        } else {
-//                            SecretField.ClearText(it)
-//                        }
-//                    },
-//                    cardNumberMask = content.cardNumber,
-//                    cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
-//                    notes = content.notes,
-//                )
-//            }
+                ItemContent.PaymentCard(
+                    name = content.name.orEmpty(),
+                    cardHolder = content.cardHolder,
+                    cardNumber = content.cardNumber?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                    expirationDate = content.expirationDate?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                    securityCode = content.securityCode?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            SecretField.ClearText(it)
+                        }
+                    },
+                    cardNumberMask = content.cardNumberMask,
+                    cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
+                    notes = content.notes,
+                )
+            }
 
             else -> {
                 ItemContent.Unknown(rawJson = jsonSerializer.encodeToString(contentJson))
