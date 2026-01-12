@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sun, 11 Jan 2026 04:36:15 -0800
+ Exported at: Mon, 12 Jan 2026 15:18:31 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -193,7 +193,7 @@
     <string name="settings_entry_decryption_kit">Decryption Kit</string>
     <string name="settings_entry_app_lock_time">App lockout time</string>
     <string name="settings_entry_app_lock_time_description">Set the duration after which the app will require the Master Password again.</string>
-    <string name="settings_entry_app_lock_attempts">Max failed attempts</string>
+    <string name="settings_entry_app_lock_attempts">Lockout settings</string>
     <string name="settings_entry_app_lock_attempts_description">After this number of failed attempts, the application will be locked for 1 minute. It will increase progressively to 3 minutes, 5 minutes, 15 minutes, up to 1 hour.</string>
     <string name="settings_entry_autofill_lock_time">Autofill lockout time</string>
     <string name="settings_entry_autofill_lock_time_description">Set the duration after which the autofill service will require the Master Password again. This is only relevant for Items assigned to the Secret Tier.</string>
@@ -945,7 +945,7 @@
     <string name="external_import_error_title">Transfer Error</string>
     <string name="username_suggestions_empty">No username suggestions available</string>
     <string name="note_item_length_error">Notes cannot be longer than %d characters</string>
-    <string name="settings_push_notifications_description">Allow the browser extension to send you push notifications when you need to enter password data while browsing the web.</string>
+    <string name="settings_push_notifications_description">Allow the browser extension to send you push notifications when you need to autofill your data.</string>
     <string name="settings_push_notifications_allow_title">Allow notifications</string>
     <string name="settings_push_notifications_allow_subtitle">Allow 2FAS Pass Browser Extension notifications</string>
     <string name="settings_change_password_processing_title">Processing…</string>
@@ -1015,4 +1015,12 @@
     <string name="home_filter_selected_tag_count_plural">(%d items)</string>
     <string name="home_selection_count_single">%d Item</string>
     <string name="home_selection_count_plural">%d Items</string>
+    <string name="home_multiselect_delete_body">Remove selected Items.</string>
+    <plurals name="home_multiselect_delete_button">
+        <item quantity="one">Remove %d Item</item>
+        <item quantity="other">Remove %d Items</item>
+    </plurals>
+    <string name="home_list_menu_select">Select</string>
+    <string name="home_selection_deselect_all">Deselect all</string>
+    <string name="home_selection_select_all">Select all</string>
 </resources>

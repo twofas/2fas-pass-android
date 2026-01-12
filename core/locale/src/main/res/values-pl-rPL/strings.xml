@@ -2,9 +2,9 @@
 <!--
  Loco xml export: Android strings
  Project: 2FAS Pass App
- Locale: pl, Polish
+ Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Sun, 11 Jan 2026 04:36:15 -0800
+ Exported at: Mon, 12 Jan 2026 15:18:31 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -28,7 +28,7 @@
     <string name="onboarding_welcome1_title">Lokalny menedżer haseł</string>
     <string name="onboarding_welcome1_description">Przechowuj swoje elementy na własnym urządzeniu.</string>
     <string name="onboarding_welcome1_feature1">Brak kontroli stron trzecich nad elementami</string>
-    <string name="onboarding_welcome1_feature2">Gwarantowane bezpieczeństwo i anonimowość danych</string>
+    <string name="onboarding_welcome1_feature2">Pełna ochrona i poufność danych</string>
     <string name="onboarding_welcome1_feature3">Nie wymaga konta</string>
     <string name="onboarding_welcome2_title">Pełna kontrola</string>
     <string name="onboarding_welcome2_description">Tylko Ty masz dostęp do swoich elementów.</string>
@@ -53,14 +53,14 @@
     <string name="onboarding_progress_step1_title">1. Wygeneruj tajne słowa</string>
     <string name="onboarding_progress_step1_description">Jest to 15-wyrazowa fraza służąca do uwierzytelniania twojego sejfu 2FAS Pass.</string>
     <string name="onboarding_progress_step2_title">2. Stwórz hasło główne</string>
-    <string name="onboarding_progress_step2_description">Służy do odblokowania aplikacji i przywracannia twojego sejfu 2FAS Pass.</string>
+    <string name="onboarding_progress_step2_description">Służy do odblokowania aplikacji i przywracania twojego sejfu 2FAS Pass.</string>
     <string name="onboarding_generate_secret_key_title">Wygeneruj tajne słowa</string>
     <string name="onboarding_generate_secret_key_description">Jest to 15-wyrazowa fraza służąca do uwierzytelniania twojego sejfu 2FAS Pass.</string>
     <string name="onboarding_generate_secret_key_cta">Naciśnij i przytrzymaj</string>
     <string name="onboarding_generate_secret_key_success_title">Tajne słowa wygenerowane!</string>
     <string name="onboarding_generate_secret_key_success_description">Tajne słowa zostały pomyślnie wygenerowane i zapisane w sejfie 2FAS Pass.</string>
     <string name="onboarding_create_master_password_title">Stwórz hasło główne</string>
-    <string name="onboarding_create_master_password_description">Służy do odblokowania aplikacji i przywracannia twojego sejfu 2FAS Pass.</string>
+    <string name="onboarding_create_master_password_description">Służy do odblokowania aplikacji i przywracania twojego sejfu 2FAS Pass.</string>
     <string name="decryption_kit_title">Zestaw deszyfrujący</string>
     <string name="decryption_kit_description">Jedyny sposób na przywrócenie twojego sejfu.</string>
     <string name="decryption_kit_step1">Pobierz plik PDF</string>
@@ -120,11 +120,11 @@
     <string name="bottom_bar_passwords">Elementy</string>
     <string name="bottom_bar_connect">Połącz</string>
     <string name="bottom_bar_settings">Ustawienia</string>
-    <string name="login_view_action_view_details">Szczegóły elementu</string>
+    <string name="login_view_action_view_details">Szczegóły</string>
     <string name="login_view_action_copy_username">Kopiuj nazwę użytkownika</string>
     <string name="login_view_action_copy_password">Kopiuj hasło</string>
     <string name="login_view_action_open_uri">Otwórz stronę internetową</string>
-    <string name="login_view_action_delete">Usuń element</string>
+    <string name="login_view_action_delete">Usuń</string>
     <string name="login_add_title">Dodawanie loginu</string>
     <string name="login_edit_title">Edycja loginu</string>
     <string name="login_password_label">Hasło</string>
@@ -171,8 +171,8 @@
     <string name="settings_entry_about">O 2FAS Pass</string>
     <string name="settings_about">Informacje</string>
     <string name="settings_entry_import_export_2pass">Lokalna kopia zapasowa</string>
-    <string name="settings_entry_import_2pass">Importuj plik</string>
-    <string name="settings_entry_export_2pass">Eksportuj do pliku</string>
+    <string name="settings_entry_import_2pass">Import</string>
+    <string name="settings_entry_export_2pass">Eksport</string>
     <string name="settings_entry_import_other_apps">Aplikacje</string>
     <string name="settings_entry_cloud_sync_provider">Wybierz sposób synchronizacji</string>
     <string name="settings_entry_google_drive">Google Drive</string>
@@ -188,12 +188,12 @@
     <string name="settings_entry_change_password">Zmień hasło główne</string>
     <string name="settings_entry_biometrics">Biometria</string>
     <string name="settings_entry_biometrics_description">Użyj biometrii do odblokowywania aplikacji.</string>
-    <string name="settings_entry_lockout_settings">Ustawienia blokad</string>
-    <string name="settings_entry_lockout_settings_description">Zarządzaj ustawieniami blokad aplikacji.</string>
+    <string name="settings_entry_lockout_settings">Ustawienia blokady</string>
+    <string name="settings_entry_lockout_settings_description">Zarządzaj ustawieniami blokady aplikacji.</string>
     <string name="settings_entry_decryption_kit">Zestaw deszyfrujący</string>
     <string name="settings_entry_app_lock_time">Czas blokady aplikacji</string>
     <string name="settings_entry_app_lock_time_description">Ustaw czas, po upływie którego aplikacja ponownie zażąda podania hasła głównego.</string>
-    <string name="settings_entry_app_lock_attempts">Próby wpisania hasła głównego</string>
+    <string name="settings_entry_app_lock_attempts">Ustawienia blokady aplikacji</string>
     <string name="settings_entry_app_lock_attempts_description">Po tej liczbie nieudanych prób aplikacja zostanie zablokowana na 1 minutę. Czas blokady będzie stopniowo wydłużany do 3, 5 i 15 minut, aż do 1 godziny.</string>
     <string name="settings_entry_autofill_lock_time">Czas blokady autouzupełniania</string>
     <string name="settings_entry_autofill_lock_time_description">Ustaw czas, po upływie którego autouzupełnianie zażąda ponownego podania hasła głównego. Dotyczy to wyłącznie poufnych elementów.</string>
@@ -425,7 +425,7 @@
     <string name="login_uri_label__0025lld">URL %d</string>
     <string name="login_username_most_used_empty">Nie znaleziono nazw użytkowników.</string>
     <string name="login_username_most_used_header">Najczęściej używane nazwy użytkownika</string>
-    <string name="login_view_action_uris_title">Andresy URL</string>
+    <string name="login_view_action_uris_title">Adresy URL</string>
     <string name="master_password_min_length__0025lld">Użyj co najmniej %d znaków</string>
     <string name="master_password_not_match">Hasła nie są zgodne</string>
     <string name="onboarding_create_master_password_guide_description">Ten prosty poradnik pomoże Ci przygotować i zapamiętać Twoje hasło główne.</string>
@@ -492,7 +492,7 @@
     <string name="request_modal_update_item_subtitle">Rozszerzenie przeglądarki prosi o zaktualizowanie następujących pól tego elementu.</string>
     <string name="request_modal_update_item_cta_positive">Kontynuuj</string>
     <string name="request_modal_update_item_cta_negative">Anuluj</string>
-    <string name="request_modal_remove_item_title">Usuń element</string>
+    <string name="request_modal_remove_item_title">Usuń</string>
     <string name="request_modal_remove_item_subtitle">Rozszerzenie przeglądarki prosi o usunięcie poniższego elementu z twojego sejfu.</string>
     <string name="request_modal_remove_item_cta_positive">Usuń</string>
     <string name="request_modal_remove_item_cta_negative">Anuluj</string>
@@ -596,7 +596,7 @@
     <string name="security_tiers_help_title">Jak zapewniamy bezpieczeństwo danych?</string>
     <string name="security_tiers_help_subtitle">2FAS Pass gwarantuje wysoki poziom bezpieczeństwa danych dzięki trzem filarom:</string>
     <string name="security_tiers_help_local_first_section_title">1. Lokalność</string>
-    <string name="security_tiers_help_local_first_section_subtitle">2FAS Pass przechowuje wszystkie Twoje elementy w zaszyfrowanym, lokalnym sejfie na urządzeniu mobilnym. Hakerzy nie mogą naruszyć danych użytkowników, ponieważ nie istnieje pojedynczy punkt ataku, a każdy użytkownik przechowuje swoje dane prywatnie.</string>
+    <string name="security_tiers_help_local_first_section_subtitle">2FAS Pass przechowuje wszystkie Twoje elementy w zaszyfrowanym, lokalnym sejfie na urządzeniu mobilnym. Brak centralnego punktu ataku sprawia, że dane użytkowników pozostają bezpieczne, a każdy użytkownik ma nad nimi pełną kontrolę.</string>
     <string name="security_tiers_help_local_first_section_figure_title">Bezpieczeństwo danych</string>
     <string name="security_tiers_help_tiers_section_title">2. Poziomy bezpieczeństwa</string>
     <string name="security_tiers_help_tiers_section_subtitle">Dzięki poziomom bezpieczeństwa ty decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
@@ -604,15 +604,15 @@
     <string name="security_tiers_help_tiers_secret_subtitle">Poufne elementy są bezpiecznie przechowywane na Twoim urządzeniu mobilnym. Są dostępne w funkcji Autofill oraz w rozszerzeniu przeglądarki 2FAS Pass zawsze gdy są potrzebne.</string>
     <string name="security_tiers_help_tiers_highly_secret_subtitle">Tajne elementy zapewniają wyższy standard bezpieczeństwa i wymagają dodatkowego potwierdzenia. Dostęp przez rozszerzenie przeglądarki lub za pomocą Autofill musi zostać potwierdzony w 2FAS Pass.</string>
     <string name="security_tiers_help_tiers_highly_secret_title">Tajny</string>
-    <string name="security_tiers_help_tiers_top_secret_subtitle">Ściśle tajne elementy są odizolowane i nie mogą być używane z Autofill ani z rozszerzeniem przeglądarki 2FAS Pass. Muszą być wpisywane ręcznie.</string>
+    <string name="security_tiers_help_tiers_top_secret_subtitle">Ściśle tajne elementy są odizolowane i nie mogą być używane z autouzupełnianiem ani z rozszerzeniem przeglądarki 2FAS Pass. Muszą być wpisywane ręcznie.</string>
     <string name="security_tiers_help_tiers_top_secret_title">Ściśle tajny</string>
     <string name="security_tiers_help_layers_section_title">3. Szyfrowanie wielowarstwowe</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">Szyfrowanie end-to-end (E2EE)</string>
-    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z Twoim hasłem głównym.\\nNa Twoim urządzeniu SEED jest bezpiecznie przechowywany w Apple Secure Enclave, więc do uzyskania dostępu do danych potrzebujesz jedynie hasła głównego.</string>
-    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest ona bezpiecznie przechowywana w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, co gwarantuje, że fraza szyfrująca nigdy nie opuści twojego urządzenia.</string>
+    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z Twoim hasłem głównym.\\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu do dostępu do danych potrzebujesz tylko hasła głównego.</string>
+    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszcą twojego urządzenia.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Zaawansowana Ochrona Danych Apple</string>
-    <string name="security_tiers_help_tiers_layers_adp_subtitle">Gdy włączysz ADP i synchronizację z iCloud, twoje dane są szyfrowane podwójnie, najpierw przy użyciu E2EE, a następnie za pomocą kluczy szyfrowania Apple. Nawet jeśli ktoś uzyska dostęp do twojego iClouda, znajdzie tam jedynie w pełni zaszyfrowane dane E2EE, co zapewnia ich bezpieczeństwo.</string>
+    <string name="security_tiers_help_tiers_layers_adp_subtitle">Gdy włączysz ADP i synchronizację z iCloud, twoje dane są szyfrowane podwójnie, najpierw przy użyciu E2EE, a następnie za pomocą kluczy szyfrujących Apple. Nawet jeśli ktoś uzyska dostęp do twojego iClouda, znajdzie tam jedynie w pełni zaszyfrowane i bezpieczne dane.</string>
     <string name="transfer_instructions_apple_passwords_mobile">Otwórz **Ustawienia systemowe** na urządzeniu mobilnym.\n\nPrzejdź do sekcji **Aplikacje** i wybierz **Safari**.\n\nPrzewiń w dół do **Historia i dane witryn** i kliknij **Eksportuj**.\n\nUpewnij się, że zaznaczone są tylko **Hasła**, a następnie kliknij **Zachowaj w pobranych**.\n\nZnajdź plik ZIP **Eksport z Safari** w folderze **Pobrane rzeczy**.\n\nSkopiuj ten plik na to urządzenie i kliknij **Wgraj plik ZIP** poniżej.</string>
     <string name="trash_delete_confirm_title_ios">Skasować element?</string>
     <string name="trash_delete_confirm_body_ios">Na pewno chcesz trwale skasować ten element? Tej akcji nie można cofnąć!</string>
@@ -756,7 +756,7 @@
     <string name="open_external_file_error_body">Otwieranie pliku kopii zapasowej 2FAS Pass nie jest obsługiwane. Przejdź do Ustawień 2FAS Pass, aby go zaimportować.</string>
     <string name="migration_error_title">Migracja nieudana</string>
     <string name="migration_error_body">Proszę zrestartować aplikację i spróbować ponownie</string>
-    <string name="login_delete_cta">Usuń element</string>
+    <string name="login_delete_cta">Usuń</string>
     <string name="login_edit">Edytuj</string>
     <string name="common_done">Gotowe</string>
     <string name="cloud_vault_delete_confirm_title">Usunąć kopię zapasową?</string>
@@ -945,9 +945,9 @@
     <string name="external_import_error_title">Błąd transferu</string>
     <string name="username_suggestions_empty">Brak propozycji na nazwę użytkownika</string>
     <string name="note_item_length_error">Notatki nie mogą mieć więcej niż %d znaków</string>
-    <string name="settings_push_notifications_description">Pozwól rozszerzeniu przeglądarki na wysyłanie powiadomień push, gdy podczas przeglądania internetu konieczne będzie wprowadzenie danych logowania.</string>
+    <string name="settings_push_notifications_description">Pozwól rozszerzeniu przeglądarki na wysyłanie powiadomień push, aby autouzupełnić dane.</string>
     <string name="settings_push_notifications_allow_title">Pozwól na powiadomienia</string>
-    <string name="settings_push_notifications_allow_subtitle">Pozwól na powiadomienia rozszerzenia przeglądarki 2FAS Pass</string>
+    <string name="settings_push_notifications_allow_subtitle">Pozwól na powiadomienia z rozszerzenia przeglądarki 2FAS Pass</string>
     <string name="settings_change_password_processing_title">Przetwarzanie…</string>
     <string name="settings_change_password_processing_description">Trwa zmiana hasła i ponowne szyfrowanie danych.\nProsimy nie zamykać aplikacji podczas tego procesu.</string>
     <string name="settings_change_password_processing_message_local">Ponowne szyfrowanie danych lokalnych…</string>
@@ -1015,4 +1015,13 @@
     <string name="home_filter_selected_tag_count_plural">(%d elementów)</string>
     <string name="home_selection_count_single">%d element</string>
     <string name="home_selection_count_plural">%d elementów</string>
+    <string name="home_multiselect_delete_body">Usuń wybrane elementy.</string>
+    <plurals name="home_multiselect_delete_button">
+        <item quantity="one">Usuń %d element</item>
+        <item quantity="few">Usuń %d elementy</item>
+        <item quantity="other">Usuń %d elementów</item>
+    </plurals>
+    <string name="home_list_menu_select">Zaznacz</string>
+    <string name="home_selection_deselect_all">Odznacz wszystko</string>
+    <string name="home_selection_select_all">Zaznacz wszystko</string>
 </resources>
