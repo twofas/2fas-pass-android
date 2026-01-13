@@ -690,6 +690,7 @@ internal class RequestWebSocketImpl(
                             name = data.content.name ?: existingContent.name,
                             cardHolder = data.content.cardHolder ?: existingContent.cardHolder,
                             cardNumber = cardNumber,
+                            cardNumberMask = cardNumber?.clearTextOrNull?.replace(" ", "")?.takeLast(4),
                             expirationDate = data.content.s_expirationDate?.let { encryptedExpirationDate ->
                                 if (encryptedExpirationDate.isEmpty()) {
                                     SecretField.ClearText("")
