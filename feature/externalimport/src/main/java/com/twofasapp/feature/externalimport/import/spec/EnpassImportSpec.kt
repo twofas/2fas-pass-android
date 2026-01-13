@@ -227,7 +227,7 @@ internal class EnpassImportSpec(
 
         val mergedNotes = TransferUtils.formatNote(
             note = noteText,
-            fields = additionalFields.toMap()
+            fields = additionalFields.toMap(),
         )
 
         return Item.create(
@@ -342,7 +342,7 @@ internal class EnpassImportSpec(
 
         val mergedNotes = TransferUtils.formatNote(
             note = noteText,
-            fields = additionalFields.toMap()
+            fields = additionalFields.toMap(),
         )
 
         return Item.create(
@@ -377,7 +377,7 @@ internal class EnpassImportSpec(
 
         val text = TransferUtils.formatNote(
             note = noteText,
-            fields = additionalFields.toMap()
+            fields = additionalFields.toMap(),
         )?.let { SecretField.ClearText(it) }
 
         return Item.create(
@@ -413,7 +413,7 @@ internal class EnpassImportSpec(
         val noteText = note?.trim()?.takeIf { it.isNotBlank() }
         val text = TransferUtils.formatNote(
             note = noteText,
-            fields = additionalFields.toMap()
+            fields = additionalFields.toMap(),
         )?.let { SecretField.ClearText(it) }
 
         return Item.create(

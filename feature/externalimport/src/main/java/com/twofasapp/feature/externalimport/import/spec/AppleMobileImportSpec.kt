@@ -107,7 +107,9 @@ internal class AppleMobileImportSpec(
                         card.card_expiration_year
                     }
                     String.format("%02d/%02d", card.card_expiration_month, yearSuffix)
-                } else null
+                } else {
+                    null
+                }
 
                 val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
                 val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
@@ -128,7 +130,7 @@ internal class AppleMobileImportSpec(
                             securityCode = null,
                             notes = null,
                         ),
-                    )
+                    ),
                 )
             }
 
@@ -137,7 +139,6 @@ internal class AppleMobileImportSpec(
             emptyList()
         }
     }
-
 
     // Apple PaymentCards JSON Models
     @Serializable

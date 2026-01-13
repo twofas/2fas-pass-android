@@ -379,7 +379,7 @@ internal class OnePasswordImportSpec(
         item: OnePasswordItem,
         vaultId: String,
         typeName: String,
-        tagIds: List<String>?
+        tagIds: List<String>?,
     ): Item? {
         val itemName = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
 

@@ -77,8 +77,14 @@ internal class LastPassImportSpec(
 
                             // Build additional info from unknown extra fields
                             val excludedExtraKeys = setOf(
-                                "NoteType", "Language", "Name on Card", "Type", "Number",
-                                "Security Code", "Expiration Date", "Notes"
+                                "NoteType",
+                                "Language",
+                                "Name on Card",
+                                "Type",
+                                "Number",
+                                "Security Code",
+                                "Expiration Date",
+                                "Notes",
                             )
                             val extraAdditionalInfo = fields.filterKeys { !excludedExtraKeys.contains(it) }
 
@@ -89,11 +95,11 @@ internal class LastPassImportSpec(
                             // Merge all additional info
                             val combinedAdditionalInfo = TransferUtils.formatNote(
                                 note = null,
-                                fields = extraAdditionalInfo + csvAdditionalInfo
+                                fields = extraAdditionalInfo + csvAdditionalInfo,
                             )
                             val mergedNotes = TransferUtils.formatNote(
                                 note = noteText,
-                                fields = mapOfNotNull(combinedAdditionalInfo?.let { "Additional Info" to it })
+                                fields = mapOfNotNull(combinedAdditionalInfo?.let { "Additional Info" to it }),
                             )
 
                             add(
@@ -122,7 +128,7 @@ internal class LastPassImportSpec(
 
                             val fullText = TransferUtils.formatNote(
                                 note = extras.normalizeExtraLine(),
-                                fields = csvAdditionalInfo
+                                fields = csvAdditionalInfo,
                             )
 
                             add(
@@ -159,11 +165,11 @@ internal class LastPassImportSpec(
                             val noteText = fields["Notes"]?.trim()?.takeIf { it.isNotBlank() }
                             val combinedAdditionalInfo = TransferUtils.formatNote(
                                 note = null,
-                                fields = extraAdditionalInfo + csvAdditionalInfo
+                                fields = extraAdditionalInfo + csvAdditionalInfo,
                             )
                             val fullText = TransferUtils.formatNote(
                                 note = combinedAdditionalInfo,
-                                fields = mapOfNotNull(noteText?.let { "Notes" to it })
+                                fields = mapOfNotNull(noteText?.let { "Notes" to it }),
                             )
 
                             add(
@@ -188,7 +194,7 @@ internal class LastPassImportSpec(
 
                     val noteWithAdditionalInfo = TransferUtils.formatNote(
                         note = row.get("extra")?.normalizeExtraLine(),
-                        fields = csvAdditionalInfo
+                        fields = csvAdditionalInfo,
                     )
 
                     add(

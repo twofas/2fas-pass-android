@@ -164,7 +164,7 @@ internal class DashlaneDesktopImportSpec(
 
                                         val mergedNotes = TransferUtils.formatNote(
                                             note = noteText,
-                                            fields = additionalFields
+                                            fields = additionalFields,
                                         )
 
                                         add(
