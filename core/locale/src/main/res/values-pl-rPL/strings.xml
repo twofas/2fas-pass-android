@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Tue, 13 Jan 2026 15:30:01 -0800
+ Exported at: Mon, 12 Jan 2026 15:18:31 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -217,7 +217,7 @@
     <string name="settings_entry_help_center">Pomoc</string>
     <string name="settings_entry_discord">Nasza społeczność Discord</string>
     <string name="webdav_server_url">URL serwera</string>
-    <string name="webdav_allow_untrusted_certificates">Pozwól na niezaufane certyfikaty</string>
+    <string name="webdav_allow_untrusted_certificates">Pozwól na nieuznane certyfikaty</string>
     <string name="webdav_credentials">Dane</string>
     <string name="webdav_username">Nazwa użytkownika</string>
     <string name="webdav_password">Hasło</string>
@@ -248,7 +248,7 @@
     <string name="about_send_crash_reports">Wysyłaj anonimowe raporty o awariach</string>
     <string name="about_crash_reports_description">Pomóż 2FAS Pass w identyfikacji i rozwiązywaniu problemów, wysyłając anonimowe raporty o awariach (wymagane ponowne uruchomienie aplikacji).</string>
     <string name="auth_use_biometrics">Użyj biometrii</string>
-    <string name="auth_biometrics_modal_title">Biometria</string>
+    <string name="auth_biometrics_modal_title">Biometryka</string>
     <string name="auth_biometrics_disabled_message">Biomatria została wyłączona z powodu zmian w ustawieniach odcisków palców systemu. Użyj hasła głównego, aby ponownie włączyć biometrię w ustawieniach.</string>
     <string name="auth_preview_title">Odblokuj aplikację</string>
     <string name="auth_preview_description">Wprowadź swoje hasło główne aby oblokować aplikację</string>
@@ -285,7 +285,7 @@
     <string name="known_browser_delete_dialog_body">Czy chcesz rozłączyć to urządzenie z wybranym rozszerzeniem przeglądarki?</string>
     <string name="known_browsers_title">Połączone rozszerzenia</string>
     <string name="known_browsers_description">Lista zaufanych rozszerzeń przeglądarki, które zostały zatwierdzone przez Ciebie i nie wymagają potwierdzenia, aby połączyć się z tym urządzeniem.</string>
-    <string name="known_browsers_empty">Brak przeglądarek</string>
+    <string name="known_browsers_empty">Brak przeglądarek.</string>
     <string name="lockout_settings_app_lockout_header">Blokada aplikacji</string>
     <string name="lockout_settings_autofill_lockout_header">Blokada autouzupełniania</string>
     <string name="lockout_settings_app_lock_time_immediately">Natychmiast</string>
@@ -305,7 +305,7 @@
     <string name="lockout_settings_autofill_lock_time_never">Nigdy</string>
     <string name="lock_screen_biometrics_prompt_title">Włączyć biometrię?</string>
     <string name="lock_screen_biometrics_prompt_body">Czy chcesz włączyć biometrię i używać jej zamiast hasła?</string>
-    <string name="lock_screen_biometrics_modal_title">Biometria</string>
+    <string name="lock_screen_biometrics_modal_title">Biometryka</string>
     <string name="lock_screen_biometrics_modal_subtitle">Włącz biometrię</string>
     <string name="lock_screen_biometrics_error_too_many_attempts">Zbyt wiele nieudanych prób. Biometrię możesz włączyć później w Ustawieniach → Bezpieczeństwo.</string>
     <string name="lock_screen_biometrics_error_title">Błąd biometrii</string>
@@ -332,7 +332,7 @@
     <string name="security_decryption_kit_access_title">Nowy zestaw deszyfrujący</string>
     <string name="security_decryption_kit_access_description">Hasło główne jest wymagane aby pobrać nowy zestaw deszyfrujący</string>
     <string name="security_decryption_kit_access_cta">Autoryzuj</string>
-    <string name="biometrics_modal_title">Biometria</string>
+    <string name="biometrics_modal_title">Biometryka</string>
     <string name="biometrics_modal_subtitle_enable">Włącz logowanie biometryczne</string>
     <string name="biometrics_modal_error_too_many_attempts">Zbyt wiele nieudanych prób. Spróbuj ponownie później.</string>
     <string name="biometrics_error_dialog_title">Błąd biometrii</string>
@@ -370,7 +370,7 @@
     <string name="about_version_ios__0025_0040">Wersja: **%s**</string>
     <string name="autofill_no_vault_message">Przejdź do aplikacji, aby skonfigurować sejf.</string>
     <string name="common_close">Zamknij</string>
-    <string name="common_confirm">Przypisz</string>
+    <string name="common_confirm">Potwierdzam</string>
     <string name="common_disabled">Wył.</string>
     <string name="common_enabled">Wł.</string>
     <string name="common_help">Pomoc</string>
@@ -481,7 +481,7 @@
     <string name="request_modal_header_title">Prośba o dostęp z 2FAS Pass</string>
     <string name="request_modal_loading">Łączenie...</string>
     <string name="request_modal_password_request_title">Prośba o dostęp do hasła</string>
-    <string name="request_modal_password_request_subtitle">Rozszerzenie przeglądarki prosi o dostęp do tego loginu</string>
+    <string name="request_modal_password_request_subtitle">Rozszerzenie przeglądarki prosi o dostęp do hasła tego elementu</string>
     <string name="request_modal_password_request_cta_positive">Wyślij</string>
     <string name="request_modal_password_request_cta_negative">Anuluj</string>
     <string name="request_modal_new_item_title">Nowy element</string>
@@ -585,8 +585,8 @@
     <string name="lock_screen_biometrics_prompt_cancel">Może później</string>
     <string name="customize_icon_header">Styl ikonki</string>
     <string name="customize_icon_label_header">Ustawienia</string>
-    <string name="customize_icon_label_key">Etykieta</string>
-    <string name="customize_icon_label_placeholder">Wpisz treść etykiety</string>
+    <string name="customize_icon_label_key">Etykiera</string>
+    <string name="customize_icon_label_placeholder">Wpisz tekst etykiety</string>
     <string name="customize_icon_label_color">Kolor</string>
     <string name="customize_icon_label_reset">Reset</string>
     <string name="customize_icon_custom_header">URL Favikony</string>
@@ -608,7 +608,7 @@
     <string name="security_tiers_help_tiers_top_secret_title">Ściśle tajny</string>
     <string name="security_tiers_help_layers_section_title">3. Szyfrowanie wielowarstwowe</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">Szyfrowanie end-to-end (E2EE)</string>
-    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z Twoim hasłem głównym.\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu do dostępu do danych potrzebujesz tylko hasła głównego.</string>
+    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z Twoim hasłem głównym.\\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu do dostępu do danych potrzebujesz tylko hasła głównego.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszcą twojego urządzenia.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Zaawansowana Ochrona Danych Apple</string>
@@ -794,7 +794,7 @@
     <string name="select_tags_title">Zarządzaj Tagami</string>
     <string name="tags_add_new_cta">Dodaj nowy Tag</string>
     <string name="tag_editor_placeholder">Nazwa Taga</string>
-    <string name="tag_editor_description">Wprowadź nazwę nowego Taga</string>
+    <string name="tag_editor_description">Wprowadź nazwę nowego Taga i potwierdź</string>
     <string name="tag_editor_edit_title">Edytuj Tag</string>
     <string name="tag_editor_new_title">Nowy Tag</string>
     <string name="login_tags_header">Tagi</string>
@@ -825,7 +825,7 @@
     <string name="transfer_instructions_keepass">Otwórz KeePass na komputerze i zaloguj się do bazy danych.\n\nKliknij **Plik** na pasku menu i wybierz **Export**.\n\nWybierz **format pliku**, lokalizację eksportu i kliknij **OK**.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik** poniżej.</string>
     <string name="transfer_instructions_keepassxc">Otwórz KeePassXC na komputerze i zaloguj się do bazy danych.\n\nKliknij **Baza danych** na pasku menu i wybierz **Export**.\n\nWybierz **format pliku**, lokalizację eksportu i kliknij **OK**.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik** poniżej.</string>
     <string name="common_back">Cofnij</string>
-    <string name="transfer_instructions_microsoft_edge">Otwórz Microsoft Edge na komputerze.\n\nWybierz 3 kropki obok ikony profilu w prawym górnym rogu, a następnie wybierz **Hasła**.\n\nWybierz 3 kropki obok kluczy dostępu i kliknij **Eksportuj hasła**.\n\nPotwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
+    <string name="transfer_instructions_microsoft_edge">Otwórz Microsoft Edge na komputerze.\n\nWybierz 3 kropki obok ikony profilu w prawym górnym rogu, a następnie wybierz **Hasła**.\n\nWybierz 3 kropki obok kluczy dostępu i kliknij **Eksportuj hasła**.\n\nPotwierdź ekposrt.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
     <string name="transfer_instructions_enpass">Otwórz Enpass na komputerze.\n\nOtwórz menu w prawym górnym rogu.\n\nWybierz **Plik** a następnie **Eksportuj**.\n\nWybierz Sejf i **format json**.\n\nWybierz miejsce zapisu i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik JSON** poniżej.</string>
     <string name="restore_vault_title">Witaj z powrotem!</string>
     <string name="restore_vault_message">Pomyślnie przywrócono zaszyfrowany sejf 2FAS Pass. Odszyfruj go, aby odzyskać dostęp do swoich elementów.</string>
@@ -836,7 +836,7 @@
     <string name="request_modal_full_sync_subtitle">Wyślij dane twojego sejfu do rozszerzenia przeglądarki.</string>
     <string name="request_modal_full_sync_cta_positive">Wyślij</string>
     <string name="request_modal_full_sync_cta_negative">Anuluj</string>
-    <string name="transfer_instructions_keeper">Otwórz Keeper na komputerze.\n\nKliknij na twoje konto w prawym górnym rogu, wybierz **Ustawienia**, a następnie **Eksport**.\n\nW **Eksport pliku** wybierz **format json** a następnie kliknij **Eksportuj**.\n\nWpisz swoje hasło główne i potwierdź eksport*.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik JSON** poniżej.</string>
+    <string name="transfer_instructions_keeper">Otwórz Keeper na komputerze.\n\nKliknij na twoje konto w prawym górnym rogu, wybierz **Ustawienia**, a następnie **Eksport**.\n\nW **Eksport pliku** wybierz **format json** a następnie kliknij **Eksportuj**.\n\nWpisz swoje hasło główne i potwierdź ekposrt*.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik JSON** poniżej.</string>
     <string name="connect_modal_error_no_internet_title">Błąd połączenia</string>
     <string name="connect_modal_error_no_internet_subtitle">Brak połączenia z iternetem. Spróbuj ponownie.</string>
     <string name="home_delete_confirm_title">Usunąć elementy?</string>
@@ -1004,7 +1004,7 @@
     <string name="import_export_backup_saved_toast">Zapisano kopię zapasową!</string>
     <string name="import_export_backup_file_title">Kopia zapasowa 2FAS Pass</string>
     <string name="import_export_import_successful_toast">Import przebiegł pomyślnie!</string>
-    <string name="import_export_subtitle">Bezpiecznie przechowuj dane sejfu na swoim urządzeniu. Zrób import kopii zapasowej, aby przywrócić dane, lub eksportuj bieżące dane w celu ich zabezpieczenia.</string>
+    <string name="import_export_subtitle">Bezpiecznie przechowuj dane sejfu na swoim urządzeniu. Zrób import wcześniejszej kopii zapasowej, aby przywrócić dane, lub eksportuj bieżące dane w celu ich zabezpieczenia.</string>
     <string name="import_export_auth_description">Autoryzacja jest wymagana aby wyeksportować kopię zapasową</string>
     <string name="home_list_menu_edit">Edytuj listę</string>
     <string name="home_list_menu_sort">Sortuj</string>
@@ -1013,11 +1013,8 @@
     <string name="home_filter_tag_with_count">%1$s (%2$d)</string>
     <string name="home_filter_selected_tag_count_single">(%d element)</string>
     <string name="home_filter_selected_tag_count_plural">(%d elementów)</string>
-    <plurals name="home_selection_count">
-        <item quantity="one">%d el.</item>
-        <item quantity="few">%d el.</item>
-        <item quantity="other">%d el.</item>
-    </plurals>
+    <string name="home_selection_count_single">%d element</string>
+    <string name="home_selection_count_plural">%d elementów</string>
     <string name="home_multiselect_delete_body">Usuń wybrane elementy.</string>
     <plurals name="home_multiselect_delete_button">
         <item quantity="one">Usuń %d element</item>
@@ -1027,17 +1024,4 @@
     <string name="home_list_menu_select">Zaznacz</string>
     <string name="home_selection_deselect_all">Odznacz wszystko</string>
     <string name="home_selection_select_all">Zaznacz wszystko</string>
-    <string name="home_multiselect_security_tier_title">Poziom bezpieczeństwa</string>
-    <string name="home_multiselect_security_tier_subtitle">Edytuj zaznaczone elementy</string>
-    <plurals name="common_items_count">
-        <item quantity="one">%lld element</item>
-        <item quantity="few">%lld elementy</item>
-        <item quantity="other">%lld elementów</item>
-    </plurals>
-    <string name="home_multiselect_security_tier_change_body">Zmień poziom bezpieczeństwa wybranych elementów.</string>
-    <plurals name="home_multiselect_security_tier_change_button">
-        <item quantity="one">Zmień %lld element</item>
-        <item quantity="few">Zmień %lld elementy</item>
-        <item quantity="other">Zmień %lld elementy</item>
-    </plurals>
 </resources>
