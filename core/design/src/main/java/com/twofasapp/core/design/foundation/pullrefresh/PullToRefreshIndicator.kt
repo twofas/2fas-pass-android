@@ -32,6 +32,6 @@ fun PullToRefreshIndicator(
         modifier = modifier,
         containerColor = containerColor,
         color = color,
-        threshold = threshold,
+        maxDistance = threshold,
     )
 }

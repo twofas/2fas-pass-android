@@ -1,27 +1,27 @@
 [versions]
-agp = "8.12.1"
-cameraX = "1.4.2"
+agp = "8.13.2"
+cameraX = "1.5.2"
 coil = "3.3.0"
-composeActivity = "1.10.1"
-composeNavigation = "2.9.3"
-composeBom = "2025.08.00"
+composeActivity = "1.12.2"
+composeNavigation = "2.9.6"
+composeBom = "2025.12.01"
 credentials = "1.5.0"
-firebase = "34.1.0"
+firebase = "34.7.0"
 elmyr = "1.3.4"
-koin = "4.1.0"
-kotlin = "2.2.10"
+koin = "4.1.1"
+kotlin = "2.3.0"
 kotlinCoroutines = "1.10.2"
-kotlinKsp = "2.2.10-2.0.2"
-ktor = "3.2.3"
+kotlinKsp = "2.3.4"
+ktor = "3.3.3"
 ktlint = "5.1.1"
-lifecycle = "2.9.2"
-room = "2.7.2"
+lifecycle = "2.10.0"
+room = "2.8.4"
 pluto = "3.0.1"
-revenuecat = "9.3.0"
+revenuecat = "9.19.0"
 junit = "4.13.2"
-kotest = "6.0.0"
+kotest = "6.0.7"
 espresso = "3.7.0"
-uiAndroid = "1.9.0"
+uiAndroid = "1.10.0"
 aboutLibraries = "12.2.4"
 
 [libraries]
@@ -29,7 +29,7 @@ appcompat = "androidx.appcompat:appcompat:1.7.1"
 argon2 = "com.lambdapioneer.argon2kt:argon2kt:1.6.0"
 autofill = "androidx.autofill:autofill:1.3.0"
 barcodeScanning = "com.google.mlkit:barcode-scanning:17.3.0"
-biometric = "androidx.biometric:biometric:1.4.0-alpha04"
+biometric = "androidx.biometric:biometric:1.4.0-alpha05"
 camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraX" }
 camera2Lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraX" }
 camera2View = { module = "androidx.camera:camera-view", version.ref = "cameraX" }
@@ -45,14 +45,14 @@ composeAnimation = { module = "androidx.compose.animation:animation" }
 composeMaterial2 = { module = "androidx.compose.material:material" }
 composeMaterial3 = { module = "androidx.compose.material3:material3" }
 composeMaterial3Window = { module = "androidx.compose.material3:material3-window-size-class" }
-composeMaterial3Adaptive = "androidx.compose.material3.adaptive:adaptive:1.1.0"
+composeMaterial3Adaptive = "androidx.compose.material3.adaptive:adaptive:1.2.0"
 composeUi = { module = "androidx.compose.ui:ui" }
 composeUiTooling = { module = "androidx.compose.ui:ui-tooling" }
 credentialsPlayServices = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
-coreSplash = "androidx.core:core-splashscreen:1.0.1"
-colorPicker = "com.github.skydoves:colorpicker-compose:1.1.2"
-dataStore = "androidx.datastore:datastore-preferences:1.1.7"
+coreSplash = "androidx.core:core-splashscreen:1.2.0"
+colorPicker = "com.github.skydoves:colorpicker-compose:1.1.3"
+dataStore = "androidx.datastore:datastore-preferences:1.2.0"
 desugar = "com.android.tools:desugar_jdk_libs:2.1.5"
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
 firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics" }
@@ -60,7 +60,7 @@ firebaseMessaging = { module = "com.google.firebase:firebase-messaging" }
 elmyrCore = { module = "com.github.xgouchet.Elmyr:core", version.ref = "elmyr" }
 elmyrJunit4 = { module = "com.github.xgouchet.Elmyr:junit4", version.ref = "elmyr" }
 googleApiClientAndroid = "com.google.api-client:google-api-client-android:2.8.1"
-googleAuth = "com.google.android.gms:play-services-auth:21.4.0"
+googleAuth = "com.google.android.gms:play-services-auth:21.5.0"
 googleDrive = "com.google.apis:google-api-services-drive:v3-rev20250717-2.0.0"
 googleId = "com.google.android.libraries.identity.googleid:googleid:1.1.1"
 googleApiHttpClientFork = "com.github.cryptomator:google-http-java-client:1.44.2-dev.0001"
@@ -81,8 +81,8 @@ lifecycleComposeRuntime = { module = "androidx.lifecycle:lifecycle-runtime-compo
 lifecycleLifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycleProcess = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 lifecycleSavedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycle" }
-lottie = "com.airbnb.android:lottie-compose:6.6.7"
-material = "com.google.android.material:material:1.12.0"
+lottie = "com.airbnb.android:lottie-compose:6.7.1"
+material = "com.google.android.material:material:1.13.0"
 opencsv = "com.opencsv:opencsv:5.12.0"
 playServicesCorutines = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2"
 revenuecat = { module = "com.revenuecat.purchases:purchases", version.ref = "revenuecat" }
@@ -92,8 +92,8 @@ roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
 roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
 timber = "com.jakewharton.timber:timber:5.0.1"
 truetime = "com.github.instacart:truetime-android:4.0.0.alpha"
-workManager = "androidx.work:work-runtime-ktx:2.10.3"
-webkit = "androidx.webkit:webkit:1.14.0"
+workManager = "androidx.work:work-runtime-ktx:2.11.0"
+webkit = "androidx.webkit:webkit:1.15.0"
 pdfbox = "com.tom-roush:pdfbox-android:2.0.27.0"
 pluto = { module = "com.androidpluto:pluto", version.ref = "pluto" }
 plutoNoOp = { module = "com.androidpluto:pluto-no-op", version.ref = "pluto" }
@@ -103,7 +103,7 @@ plutoDataStore = { module = "com.androidpluto.plugins:datastore-pref", version.r
 plutoDataStoreNoOp = { module = "com.androidpluto.plugins:datastore-pref-no-op", version.ref = "pluto" }
 plutoLogger = { module = "com.androidpluto.plugins:logger", version.ref = "pluto" }
 plutoLoggerNoOp = { module = "com.androidpluto.plugins:logger-no-op", version.ref = "pluto" }
-mockk = "io.mockk:mockk:1.14.5"
+mockk = "io.mockk:mockk:1.14.7"
 junit = { module = "junit:junit", version.ref = "junit" }
 kotest = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 turbine = "app.cash.turbine:turbine:1.2.1"
@@ -113,14 +113,14 @@ uiTestNavigation = { module = "androidx.navigation:navigation-testing", version.
 uiTestRunner = "androidx.test:runner:1.7.0"
 uiTestOrchestrator = "androidx.test:orchestrator:1.6.1"
 testCore = "androidx.test:core:1.7.0"
-robolectric = "org.robolectric:robolectric:4.15.1"
+robolectric = "org.robolectric:robolectric:4.16"
 slf4jNoOp = "org.slf4j:slf4j-nop:2.0.17"
 kotlinCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinCoroutines" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 koinTest = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 koinTestJunit = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
 espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
-zxing = "com.google.zxing:core:3.5.3"
+zxing = "com.google.zxing:core:3.5.4"
 uiAndroid = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 aboutLibrariesCore = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutLibrariesCompose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
