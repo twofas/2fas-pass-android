@@ -185,10 +185,20 @@ private fun Content(
 
                 val maxLength = PaymentCardValidator.maxCardNumberLength(uiState.itemContent.cardIssuer)
 
+                val isCardNumberValid = uiState.itemContent.cardNumber.clearTextOrNull?.let {
+                    PaymentCardValidator.validateCardNumber(
+                        value = it,
+                        issuer = uiState.itemContent.cardIssuer,
+                    )
+                } ?: true
+
+                val cardNumberLength = cardNumberValue.length
+
                 TextField(
                     value = cardNumberValue,
                     onValueChange = {
-                        if (it.length <= maxLength && it.isDigitsOnly()) {
+                        // Allow editing: accept if only digits, enforce maxLength only for adding new characters
+                        if (it.isDigitsOnly() && (it.length <= maxLength || it.length < cardNumberValue.length)) {
                             onCardNumberChange(it.trim())
                         }
                     },
@@ -201,13 +211,8 @@ private fun Content(
                     singleLine = true,
                     maxLines = 1,
                     readOnly = cardNumberFocused.not(),
-                    visualTransformation = if (cardNumberFocused) VisualTransformation.PaymentCard(maxLength) else VisualTransformation.None,
-                    isError = uiState.itemContent.cardNumber.clearTextOrNull?.let {
-                        PaymentCardValidator.validateCardNumber(
-                            value = uiState.itemContent.cardNumber?.clearTextOrNull.orEmpty(),
-                            issuer = uiState.itemContent.cardIssuer,
-                        ).not()
-                    } ?: false,
+                    visualTransformation = if (cardNumberFocused && cardNumberLength <= maxLength) VisualTransformation.PaymentCard(maxLength) else VisualTransformation.None,
+                    isError = isCardNumberValid.not(),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,
                         autoCorrectEnabled = false,

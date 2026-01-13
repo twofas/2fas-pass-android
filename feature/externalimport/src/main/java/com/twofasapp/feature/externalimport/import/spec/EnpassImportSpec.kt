@@ -25,6 +25,7 @@ import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
+import com.twofasapp.feature.externalimport.import.TransferUtils
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -101,13 +102,7 @@ internal class EnpassImportSpec(
 
                 when (item.category?.lowercase()) {
                     "login", "password" -> item.parseLogin(vaultId, tagIds)
-                    "creditcard" -> {
-                        // TODO: Uncomment when payment cards are supported in Android app
-                        // item.parseCreditCard(vaultId, tagIds)
-                        // For now, convert to secure note with card details
-                        unknownItems++
-                        item.parseCreditCardAsSecureNote(vaultId, tagIds)
-                    }
+                    "creditcard" -> item.parseCreditCard(vaultId, tagIds)
                     "note" -> item.parseSecureNote(vaultId, tagIds)
                     else -> {
                         // finance, identity, and other categories -> secure note
@@ -185,6 +180,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "Username") to value)
                     }
                 }
+
                 "email" -> {
                     if (email == null) {
                         email = value
@@ -192,6 +188,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "E-mail") to value)
                     }
                 }
+
                 "password" -> {
                     if (password == null) {
                         password = value
@@ -199,6 +196,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "Password") to value)
                     }
                 }
+
                 "url" -> {
                     if (urlString == null) {
                         urlString = value
@@ -206,9 +204,11 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "URL") to value)
                     }
                 }
+
                 "section" -> {
                     // Skip section headers
                 }
+
                 else -> {
                     val label = field.label ?: formatFieldType(field.type)
                     additionalFields.add(label to value)
@@ -225,8 +225,10 @@ internal class EnpassImportSpec(
 
         val itemUri = urlString?.let { ItemUri(text = it, matcher = UriMatcher.Domain) }
 
-        val additionalInfo = formatAdditionalFields(additionalFields)
-        val mergedNotes = mergeNote(noteText, additionalInfo)
+        val mergedNotes = TransferUtils.formatNote(
+            note = noteText,
+            fields = additionalFields.toMap()
+        )
 
         return Item.create(
             contentType = ItemContentType.Login,
@@ -244,9 +246,7 @@ internal class EnpassImportSpec(
         )
     }
 
-    // TODO: Uncomment when payment cards are supported in Android app
-    // Change parseCreditCardAsSecureNote to parseCreditCard and uncomment the return type below
-    private fun EnpassItem.parseCreditCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item {
+    private fun EnpassItem.parseCreditCard(vaultId: String, tagIds: List<String>?): Item {
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = note?.trim()?.takeIf { it.isNotBlank() }
 
@@ -270,6 +270,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "Cardholder") to value)
                     }
                 }
+
                 "ccnumber" -> {
                     if (cardNumberString == null) {
                         cardNumberString = value
@@ -277,6 +278,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "Card number") to value)
                     }
                 }
+
                 "cccvc" -> {
                     if (securityCodeString == null) {
                         securityCodeString = value
@@ -284,6 +286,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "CVC") to value)
                     }
                 }
+
                 "ccpin" -> {
                     if (pinString == null) {
                         pinString = value
@@ -291,6 +294,7 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "PIN") to value)
                     }
                 }
+
                 "ccexpiry" -> {
                     // Format is usually "MM/YYYY" or "MM/YY"
                     val parts = value.split("/")
@@ -301,12 +305,15 @@ internal class EnpassImportSpec(
                         additionalFields.add((field.label ?: "Expiry") to value)
                     }
                 }
+
                 "section", "cctype" -> {
                     // Skip section headers and card type
                 }
+
                 "ccbankname", "ccvalidfrom", "cctxnpassword" -> {
                     additionalFields.add((field.label ?: formatFieldType(field.type)) to value)
                 }
+
                 else -> {
                     val label = field.label ?: formatFieldType(field.type)
                     additionalFields.add(label to value)
@@ -315,40 +322,28 @@ internal class EnpassImportSpec(
         }
 
         val expirationDateString = if (expirationMonth != null && expirationYear != null) {
-            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear
-            "$expirationMonth/$yearSuffix"
+            val monthPadded = expirationMonth.padStart(2, '0')
+            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
+            "$monthPadded/$yearSuffix"
         } else {
             null
         }
 
-        // Format card details as text for secure note
-        val cardDetails = buildList {
-            cardHolder?.let { add("Cardholder: $it") }
-            cardNumberString?.let { add("Card Number: $it") }
-            expirationDateString?.let { add("Expiration Date: $it") }
-            securityCodeString?.let { add("Security Code: $it") }
-            pinString?.let { add("PIN: $it") }
-            additionalFields.forEach { (label, value) ->
-                add("$label: $value")
-            }
-        }.joinToString("\n")
-
-        val displayName = if (itemName != null) {
-            "$itemName (Credit Card)"
-        } else {
-            "(Credit Card)"
+        // Add PIN to additional fields if present
+        if (pinString != null) {
+            additionalFields.add(0, "PIN" to pinString)
         }
 
-        val fullNoteText = mergeNote(noteText, cardDetails)
-        val text = fullNoteText?.let { SecretField.ClearText(it) }
-
-        // TODO: When payment cards are supported, replace the return below with this:
-        /*
         val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
         val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
         val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
         val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
         val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
+
+        val mergedNotes = TransferUtils.formatNote(
+            note = noteText,
+            fields = additionalFields.toMap()
+        )
 
         return Item.create(
             contentType = ItemContentType.PaymentCard,
@@ -362,18 +357,7 @@ internal class EnpassImportSpec(
                 cardNumberMask = cardNumberMask,
                 expirationDate = expirationDate,
                 securityCode = securityCode,
-                notes = mergeNote(noteText, formatAdditionalFields(additionalFields)),
-            ),
-        )
-         */
-
-        return Item.create(
-            contentType = ItemContentType.SecureNote,
-            vaultId = vaultId,
-            tagIds = tagIds.orEmpty(),
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = text,
+                notes = mergedNotes,
             ),
         )
     }
@@ -391,8 +375,10 @@ internal class EnpassImportSpec(
             additionalFields.add(label to value)
         }
 
-        val additionalInfo = formatAdditionalFields(additionalFields)
-        val text = mergeNote(noteText, additionalInfo)?.let { SecretField.ClearText(it) }
+        val text = TransferUtils.formatNote(
+            note = noteText,
+            fields = additionalFields.toMap()
+        )?.let { SecretField.ClearText(it) }
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
@@ -424,9 +410,11 @@ internal class EnpassImportSpec(
             additionalFields.add(label to value)
         }
 
-        val additionalInfo = formatAdditionalFields(additionalFields)
         val noteText = note?.trim()?.takeIf { it.isNotBlank() }
-        val text = mergeNote(additionalInfo, noteText)?.let { SecretField.ClearText(it) }
+        val text = TransferUtils.formatNote(
+            note = noteText,
+            fields = additionalFields.toMap()
+        )?.let { SecretField.ClearText(it) }
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
@@ -437,20 +425,6 @@ internal class EnpassImportSpec(
                 text = text,
             ),
         )
-    }
-
-    private fun formatAdditionalFields(fields: List<Pair<String, String>>): String? {
-        if (fields.isEmpty()) return null
-        return fields.joinToString("\n") { "${it.first}: ${it.second}" }
-    }
-
-    private fun mergeNote(note1: String?, note2: String?): String? {
-        return when {
-            note1 != null && note2 != null -> "$note1\n\n$note2"
-            note1 != null -> note1
-            note2 != null -> note2
-            else -> null
-        }
     }
 
     private fun formatFieldType(type: String?): String {
@@ -465,7 +439,7 @@ internal class EnpassImportSpec(
     private fun detectCardNumberMask(cardNumber: String): String? {
         val digitsOnly = cardNumber.filter { it.isDigit() }
         if (digitsOnly.length < 4) return null
-        return "**** ${digitsOnly.takeLast(4)}"
+        return digitsOnly.takeLast(4)
     }
 
     private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {

@@ -82,12 +82,8 @@ internal class AppleMobileImportSpec(
         )
 
         jsonFileContents.values.forEach { file ->
-            // TODO: Uncomment when payment cards are supported in Android app
-            // val paymentCardItems = parsePaymentCards(file, vaultId)
-            // For now, convert to secure notes
-            val paymentCardItems = parsePaymentCardsAsSecureNotes(file, vaultId)
+            val paymentCardItems = parsePaymentCards(file, vaultId)
             items.addAll(paymentCardItems)
-            unknownItems += paymentCardItems.size
         }
 
         return ImportContent(
@@ -97,53 +93,7 @@ internal class AppleMobileImportSpec(
         )
     }
 
-    // TODO: When payment cards are supported in Android app, uncomment this method
-    // private fun parsePaymentCards(jsonText: String, vaultId: String): List<Item> {
-    //     return try {
-    //         val model = json.decodeFromString<ApplePaymentCards>(jsonText)
-    //         val items = mutableListOf<Item>()
-    //
-    //         model.payment_cards.forEach { card ->
-    //             val cardNumberString = card.card_number?.trim()?.takeIf { it.isNotBlank() }
-    //             val expirationDateString: String? = if (card.card_expiration_month != null && card.card_expiration_year != null) {
-    //                 val yearSuffix = if (card.card_expiration_year > 99) {
-    //                     card.card_expiration_year % 100
-    //                 } else {
-    //                     card.card_expiration_year
-    //                 }
-    //                 "${card.card_expiration_month}/$yearSuffix"
-    //             } else null
-    //
-    //             val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
-    //             val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
-    //             val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
-    //             val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
-    //
-    //             items.add(
-    //                 Item.create(
-    //                     vaultId = vaultId,
-    //                     contentType = ItemContentType.PaymentCard,
-    //                     content = ItemContent.PaymentCard.Empty.copy(
-    //                         name = card.card_name?.trim()?.takeIf { it.isNotBlank() }.orEmpty(),
-    //                         cardHolder = card.cardholder_name?.trim()?.takeIf { it.isNotBlank() },
-    //                         cardIssuer = cardIssuer,
-    //                         cardNumber = cardNumber,
-    //                         cardNumberMask = cardNumberMask,
-    //                         expirationDate = expirationDate,
-    //                         securityCode = null,
-    //                         notes = null,
-    //                     ),
-    //                 )
-    //             )
-    //         }
-    //
-    //         items
-    //     } catch (e: Exception) {
-    //         emptyList()
-    //     }
-    // }
-
-    private fun parsePaymentCardsAsSecureNotes(jsonText: String, vaultId: String): List<Item> {
+    private fun parsePaymentCards(jsonText: String, vaultId: String): List<Item> {
         return try {
             val model = json.decodeFromString<ApplePaymentCards>(jsonText)
             val items = mutableListOf<Item>()
@@ -156,35 +106,29 @@ internal class AppleMobileImportSpec(
                     } else {
                         card.card_expiration_year
                     }
-                    "${card.card_expiration_month}/$yearSuffix"
-                } else {
-                    null
-                }
+                    String.format("%02d/%02d", card.card_expiration_month, yearSuffix)
+                } else null
 
-                // Format card details
-                val cardDetails = buildList {
-                    card.cardholder_name?.trim()?.takeIf { it.isNotBlank() }?.let { add("Cardholder: $it") }
-                    cardNumberString?.let { add("Card Number: $it") }
-                    expirationDateString?.let { add("Expiration Date: $it") }
-                }.joinToString("\n")
-
-                val displayName = if (card.card_name != null) {
-                    "${card.card_name} (Payment Card)"
-                } else {
-                    "(Payment Card)"
-                }
-
-                val fullText = cardDetails.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+                val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
+                val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
+                val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+                val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
                 items.add(
                     Item.create(
                         vaultId = vaultId,
-                        contentType = ItemContentType.SecureNote,
-                        content = ItemContent.SecureNote(
-                            name = displayName,
-                            text = fullText,
+                        contentType = ItemContentType.PaymentCard,
+                        content = ItemContent.PaymentCard.Empty.copy(
+                            name = card.card_name?.trim()?.takeIf { it.isNotBlank() }.orEmpty(),
+                            cardHolder = card.cardholder_name?.trim()?.takeIf { it.isNotBlank() },
+                            cardIssuer = cardIssuer,
+                            cardNumber = cardNumber,
+                            cardNumberMask = cardNumberMask,
+                            expirationDate = expirationDate,
+                            securityCode = null,
+                            notes = null,
                         ),
-                    ),
+                    )
                 )
             }
 
@@ -193,6 +137,7 @@ internal class AppleMobileImportSpec(
             emptyList()
         }
     }
+
 
     // Apple PaymentCards JSON Models
     @Serializable
@@ -209,12 +154,10 @@ internal class AppleMobileImportSpec(
         val card_expiration_year: Int? = null,
     )
 
-    // Helper methods for payment card parsing
-    // TODO: When payment cards are supported in Android app, these will be used by parsePaymentCards method
     private fun detectCardNumberMask(cardNumber: String): String? {
         val digitsOnly = cardNumber.filter { it.isDigit() }
         if (digitsOnly.length < 4) return null
-        return "**** ${digitsOnly.takeLast(4)}"
+        return digitsOnly.takeLast(4)
     }
 
     private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {

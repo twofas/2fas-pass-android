@@ -81,13 +81,7 @@ internal class KeeperImportSpec(
             when (recordType) {
                 "login" -> record.parseLogin(vaultId, tagIds)
                 "encryptedNotes" -> record.parseSecureNote(vaultId, tagIds)
-                "bankCard" -> {
-                    // TODO: Uncomment when payment cards are supported in Android app
-                    // record.parsePaymentCard(vaultId, tagIds)
-                    // For now, convert to secure note with card details
-                    unknownItems++
-                    record.parsePaymentCardAsSecureNote(vaultId, tagIds)
-                }
+                "bankCard" -> record.parsePaymentCard(vaultId, tagIds)
                 else -> {
                     unknownItems++
                     record.parseAsSecureNote(vaultId, tagIds)
@@ -191,81 +185,7 @@ internal class KeeperImportSpec(
         )
     }
 
-    // TODO: When payment cards are supported in Android app, uncomment this method and update readContent
-    // private fun KeeperRecord.parsePaymentCard(vaultId: String, tagIds: List<String>?): Item? {
-    //     val itemName = title?.trim()?.takeIf { it.isNotBlank() }
-    //     val noteText = notes?.trim()?.takeIf { it.isNotBlank() }
-    //
-    //     // Extract card details from custom_fields
-    //     var cardNumberString: String? = null
-    //     var expirationDateString: String? = null
-    //     var securityCodeString: String? = null
-    //     var cardHolder: String? = null
-    //     var pinCode: String? = null
-    //
-    //     customFields?.entries?.forEach { (key, value) ->
-    //         when {
-    //             key.startsWith("\$paymentCard::") -> {
-    //                 // Parse payment card object if it's JSON
-    //                 try {
-    //                     val cardObj = value as? JsonObject
-    //                     cardNumberString = (cardObj?.get("cardNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content
-    //                     expirationDateString = (cardObj?.get("cardExpirationDate") as? kotlinx.serialization.json.JsonPrimitive)?.content
-    //                     securityCodeString = (cardObj?.get("cardSecurityCode") as? kotlinx.serialization.json.JsonPrimitive)?.content
-    //                 } catch (e: Exception) {
-    //                     // Ignore parsing errors
-    //                 }
-    //             }
-    //             key.contains(":cardholderName:") -> {
-    //                 try {
-    //                     cardHolder = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-    //                 } catch (e: Exception) {
-    //                     // Ignore parsing errors
-    //                 }
-    //             }
-    //             key.startsWith("\$pinCode::") -> {
-    //                 try {
-    //                     pinCode = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-    //                 } catch (e: Exception) {
-    //                     // Ignore parsing errors
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     val formattedExpirationDate = expirationDateString?.let { formatExpirationDate(it) }
-    //
-    //     val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
-    //     val expirationDate = formattedExpirationDate?.let { SecretField.ClearText(it) }
-    //     val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
-    //
-    //     val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
-    //     val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
-    //
-    //     // Add PIN code to notes if present
-    //     val additionalInfo = pinCode?.let { "PIN: $it" }
-    //     val mergedNotes = mergeNote(noteText, additionalInfo)
-    //
-    //     return Item.create(
-    //         contentType = ItemContentType.PaymentCard,
-    //         vaultId = vaultId,
-    //         tagIds = tagIds.orEmpty(),
-    //         content = ItemContent.PaymentCard.Empty.copy(
-    //             name = itemName.orEmpty(),
-    //             cardHolder = cardHolder,
-    //             cardIssuer = cardIssuer,
-    //             cardNumber = cardNumber,
-    //             cardNumberMask = cardNumberMask,
-    //             expirationDate = expirationDate,
-    //             securityCode = securityCode,
-    //             notes = mergedNotes,
-    //         ),
-    //     )
-    // }
-
-    // Temporary method to convert payment cards to secure notes
-    // TODO: Remove this method when payment cards are supported, and uncomment parsePaymentCard above
-    private fun KeeperRecord.parsePaymentCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item {
+    private fun KeeperRecord.parsePaymentCard(vaultId: String, tagIds: List<String>?): Item? {
         val itemName = title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = notes?.trim()?.takeIf { it.isNotBlank() }
 
@@ -289,6 +209,7 @@ internal class KeeperImportSpec(
                         // Ignore parsing errors
                     }
                 }
+
                 key.contains(":cardholderName:") -> {
                     try {
                         cardHolder = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
@@ -296,6 +217,7 @@ internal class KeeperImportSpec(
                         // Ignore parsing errors
                     }
                 }
+
                 key.startsWith("\$pinCode::") -> {
                     try {
                         pinCode = (value as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
@@ -308,37 +230,30 @@ internal class KeeperImportSpec(
 
         val formattedExpirationDate = expirationDateString?.let { formatExpirationDate(it) }
 
-        // Format card details as text for secure note
-        val cardDetails = buildList {
-            cardHolder?.let { add("Cardholder: $it") }
-            cardNumberString?.let {
-                val issuer = detectCardIssuer(it)
-                if (issuer != null) {
-                    add("Card Type: $issuer")
-                }
-                add("Card Number: $it")
-            }
-            formattedExpirationDate?.let { add("Expiration Date: $it") }
-            securityCodeString?.let { add("Security Code: $it") }
-            pinCode?.let { add("PIN: $it") }
-        }.joinToString("\n")
+        val cardNumber = cardNumberString?.let { SecretField.ClearText(it.trim()) }
+        val expirationDate = formattedExpirationDate?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
 
-        val fullNoteText = mergeNote(noteText, cardDetails.takeIf { it.isNotBlank() })
-        val text = fullNoteText?.let { SecretField.ClearText(it) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it.trim()) }
+        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
-        val displayName = if (itemName != null) {
-            "$itemName (Payment Card)"
-        } else {
-            "(Payment Card)"
-        }
+        // Add PIN code to notes if present
+        val additionalInfo = pinCode?.let { "PIN: $it" }
+        val mergedNotes = mergeNote(noteText, additionalInfo)
 
         return Item.create(
-            contentType = ItemContentType.SecureNote,
+            contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = text,
+            content = ItemContent.PaymentCard.Empty.copy(
+                name = itemName.orEmpty(),
+                cardHolder = cardHolder,
+                cardIssuer = cardIssuer,
+                cardNumber = cardNumber,
+                cardNumberMask = cardNumberMask,
+                expirationDate = expirationDate,
+                securityCode = securityCode,
+                notes = mergedNotes,
             ),
         )
     }
@@ -514,7 +429,8 @@ internal class KeeperImportSpec(
                     try {
                         val keyPairObj = value as? JsonObject
                         val publicKey = (keyPairObj?.get("publicKey") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val privateKey = (keyPairObj?.get("privateKey") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val privateKey =
+                            (keyPairObj?.get("privateKey") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
 
                         publicKey?.let { components.add("Public Key: $it") }
                         privateKey?.let { components.add("Private Key: $it") }
@@ -527,9 +443,12 @@ internal class KeeperImportSpec(
                 key.startsWith("\$bankAccount::") -> {
                     try {
                         val bankAccountObj = value as? JsonObject
-                        val accountType = (bankAccountObj?.get("accountType") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val accountNumber = (bankAccountObj?.get("accountNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val routingNumber = (bankAccountObj?.get("routingNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val accountType =
+                            (bankAccountObj?.get("accountType") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val accountNumber =
+                            (bankAccountObj?.get("accountNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val routingNumber =
+                            (bankAccountObj?.get("routingNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
 
                         accountType?.let { components.add("Account Type: $it") }
                         accountNumber?.let { components.add("Account Number: $it") }
@@ -616,8 +535,10 @@ internal class KeeperImportSpec(
                     try {
                         val cardObj = value as? JsonObject
                         val cardNumber = (cardObj?.get("cardNumber") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val expirationDate = (cardObj?.get("cardExpirationDate") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val securityCode = (cardObj?.get("cardSecurityCode") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val expirationDate =
+                            (cardObj?.get("cardExpirationDate") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val securityCode =
+                            (cardObj?.get("cardSecurityCode") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
 
                         cardNumber?.let { components.add("Card Number: $it") }
                         expirationDate?.let { components.add("Expiration Date: $it") }
@@ -718,9 +639,12 @@ internal class KeeperImportSpec(
                 key.startsWith("\$appFiller::") -> {
                     try {
                         val appFillerObj = value as? JsonObject
-                        val applicationTitle = (appFillerObj?.get("applicationTitle") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val contentFilter = (appFillerObj?.get("contentFilter") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
-                        val macroSequence = (appFillerObj?.get("macroSequence") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val applicationTitle =
+                            (appFillerObj?.get("applicationTitle") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val contentFilter =
+                            (appFillerObj?.get("contentFilter") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
+                        val macroSequence =
+                            (appFillerObj?.get("macroSequence") as? kotlinx.serialization.json.JsonPrimitive)?.content?.trim()?.takeIf { it.isNotBlank() }
 
                         val parts = mutableListOf<String>()
                         applicationTitle?.let { parts.add("Application: $it") }
@@ -749,6 +673,7 @@ internal class KeeperImportSpec(
                                         components.add("Address Reference: ${refs.joinToString(", ")}")
                                     }
                                 }
+
                                 refKey.startsWith("\$cardRef") -> {
                                     val refs = (refValue as? kotlinx.serialization.json.JsonArray)?.mapNotNull {
                                         (it as? kotlinx.serialization.json.JsonPrimitive)?.content
@@ -814,7 +739,7 @@ internal class KeeperImportSpec(
     private fun detectCardNumberMask(cardNumber: String): String? {
         val digitsOnly = cardNumber.filter { it.isDigit() }
         if (digitsOnly.length < 4) return null
-        return "**** ${digitsOnly.takeLast(4)}"
+        return digitsOnly.takeLast(4)
     }
 
     private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {

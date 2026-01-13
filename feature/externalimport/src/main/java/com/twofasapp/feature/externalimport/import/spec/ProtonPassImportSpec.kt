@@ -102,11 +102,7 @@ internal class ProtonPassImportSpec(
                         }
 
                         "creditcard" -> {
-                            // TODO: Uncomment when payment cards are supported in Android app
-                            // item.parseCreditCardFromJson(vaultId, sourceVaultName)?.let { add(it) }
-                            // For now, convert to secure note with card details
-                            unknownItems++
-                            item.parseCreditCardAsSecureNoteFromJson(vaultId, sourceVaultName)?.let { add(it) }
+                            item.parseCreditCardFromJson(vaultId, sourceVaultName)?.let { add(it) }
                         }
 
                         "note" -> {
@@ -188,138 +184,72 @@ internal class ProtonPassImportSpec(
         )
     }
 
-    // TODO: When payment cards are supported in Android app, uncomment this method
-    // private fun ProtonPassItem.parseCreditCardFromJson(vaultId: String, sourceVaultName: String?): Item? {
-    //     val itemName = data.metadata.name.trim().takeIf { it.isNotBlank() }
-    //     val content = data.content ?: return null
-    //
-    //     val cardHolder = content["cardholderName"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-    //     val cardNumberString = content["number"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-    //     val securityCodeString = content["verificationNumber"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-    //
-    //     // Parse expiration date from "YYYY-MM" format to "MM/YY"
-    //     val expirationDateString: String? = content["expirationDate"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
-    //         val parts = expDate.split("-")
-    //         if (parts.size == 2) {
-    //             val year = parts[0].takeLast(2)
-    //             val month = parts[1]
-    //             "$month/$year"
-    //         } else {
-    //             expDate
-    //         }
-    //     }
-    //
-    //     val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
-    //     val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
-    //     val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
-    //     val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
-    //     val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
-    //
-    //     // Build notes
-    //     val noteComponents = mutableListOf<String>()
-    //     data.metadata.note.trim().takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
-    //
-    //     // Add unknown content fields
-    //     val usedKeys = setOf("cardholderName", "number", "verificationNumber", "expirationDate", "cardType", "pin")
-    //     val additionalData = content.entries
-    //         .filter { !usedKeys.contains(it.key) }
-    //         .mapNotNull { (key, value) ->
-    //             val valueStr = value.jsonPrimitive.contentOrNull?.trim()?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-    //             formatFieldType(key) to valueStr
-    //         }
-    //     formatAdditionalFields(additionalData)?.let { noteComponents.add(it) }
-    //
-    //     // Add extra fields
-    //     formatExtraFields(data.extraFields)?.let { noteComponents.add(it) }
-    //
-    //     // Add PIN if present
-    //     content["pin"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let {
-    //         noteComponents.add("PIN: $it")
-    //     }
-    //
-    //     sourceVaultName?.let { noteComponents.add("Vault: $it") }
-    //
-    //     val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
-    //
-    //     return Item.create(
-    //         contentType = ItemContentType.PaymentCard,
-    //         vaultId = vaultId,
-    //         content = ItemContent.PaymentCard.Empty.copy(
-    //             name = itemName.orEmpty(),
-    //             cardHolder = cardHolder,
-    //             cardIssuer = cardIssuer,
-    //             cardNumber = cardNumber,
-    //             cardNumberMask = cardNumberMask,
-    //             expirationDate = expirationDate,
-    //             securityCode = securityCode,
-    //             notes = notes,
-    //         ),
-    //     )
-    // }
+    private fun ProtonPassItem.parseCreditCardFromJson(vaultId: String, sourceVaultName: String?): Item? {
+        if (data == null) return null
 
-    private fun ProtonPassItem.parseCreditCardAsSecureNoteFromJson(vaultId: String, sourceVaultName: String?): Item? {
-        val itemData = data ?: return null
-        val metadata = itemData.metadata ?: return null
-        val itemName = metadata.name?.trim()?.takeIf { it.isNotBlank() }
-        val content = itemData.content ?: return null
+        val itemName = data.metadata?.name?.trim().takeIf { it.isNullOrBlank().not() }
+        val content = data.content ?: return null
 
         val cardHolder = content["cardholderName"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
         val cardNumberString = content["number"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
         val securityCodeString = content["verificationNumber"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-        val pinString = content["pin"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
 
         // Parse expiration date from "YYYY-MM" format to "MM/YY"
         val expirationDateString: String? = content["expirationDate"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
             val parts = expDate.split("-")
             if (parts.size == 2) {
-                val year = parts[0].takeLast(2)
-                val month = parts[1]
+                val year = parts[0].takeLast(2).padStart(2, '0')
+                val month = parts[1].padStart(2, '0')
                 "$month/$year"
             } else {
                 expDate
             }
         }
 
-        // Format card details
-        val cardDetails = buildList {
-            cardHolder?.let { add("Cardholder: $it") }
-            cardNumberString?.let { add("Card Number: $it") }
-            expirationDateString?.let { add("Expiration Date: $it") }
-            securityCodeString?.let { add("Security Code: $it") }
-            pinString?.let { add("PIN: $it") }
-
-            // Add other fields
-            val usedKeys = setOf("cardholderName", "number", "verificationNumber", "expirationDate", "cardType", "pin")
-            content.entries
-                .filter { !usedKeys.contains(it.key) }
-                .forEach { (key, value) ->
-                    value.toStringOrNull()?.let { valueStr ->
-                        add("${formatFieldType(key)}: $valueStr")
-                    }
-                }
-        }.joinToString("\n")
+        val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
+        val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
         // Build notes
         val noteComponents = mutableListOf<String>()
-        metadata.note?.trim()?.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
-        cardDetails.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
-        formatExtraFields(itemData.extraFields)?.let { noteComponents.add(it) }
-        sourceVaultName?.let { noteComponents.add("Vault: $it") }
+        data.metadata?.note.orEmpty().trim().takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
 
-        val displayName = if (itemName != null) {
-            "$itemName (Payment Card)"
-        } else {
-            "(Payment Card)"
+        // Add unknown content fields
+        val usedKeys = setOf("cardholderName", "number", "verificationNumber", "expirationDate", "cardType", "pin")
+        val additionalData = content.entries
+            .filter { !usedKeys.contains(it.key) }
+            .mapNotNull { (key, value) ->
+                val valueStr = value.jsonPrimitive.contentOrNull?.trim()?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                formatFieldType(key) to valueStr
+            }
+        formatAdditionalFields(additionalData)?.let { noteComponents.add(it) }
+
+        // Add extra fields
+        formatExtraFields(data.extraFields)?.let { noteComponents.add(it) }
+
+        // Add PIN if present
+        content["pin"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let {
+            noteComponents.add("PIN: $it")
         }
 
-        val text = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        sourceVaultName?.let { noteComponents.add("Vault: $it") }
+
+        val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
 
         return Item.create(
-            contentType = ItemContentType.SecureNote,
+            contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = text,
+            content = ItemContent.PaymentCard.Empty.copy(
+                name = itemName.orEmpty(),
+                cardHolder = cardHolder,
+                cardIssuer = cardIssuer,
+                cardNumber = cardNumber,
+                cardNumberMask = cardNumberMask,
+                expirationDate = expirationDate,
+                securityCode = securityCode,
+                notes = notes,
             ),
         )
     }
@@ -425,11 +355,7 @@ internal class ProtonPassImportSpec(
                     }
 
                     "creditcard" -> {
-                        // TODO: Uncomment when payment cards are supported in Android app
-                        // parseCreditCardFromCsv(row, vaultId)?.let { add(it) }
-                        // For now, convert to secure note with card details
-                        unknownItems++
-                        parseCreditCardAsSecureNoteFromCsv(row, vaultId)?.let { add(it) }
+                        parseCreditCardFromCsv(row, vaultId)?.let { add(it) }
                     }
 
                     "note" -> {
@@ -497,67 +423,7 @@ internal class ProtonPassImportSpec(
         )
     }
 
-    // TODO: When payment cards are supported in Android app, uncomment this method
-    // private fun parseCreditCardFromCsv(row: CsvRow, vaultId: String): Item? {
-    //     val name = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
-    //
-    //     // Credit card data is in the "note" field as JSON
-    //     val noteJSON = row.get("note")?.trim()?.takeIf { it.isNotBlank() } ?: return null
-    //     val cardData = runCatching {
-    //         json.decodeFromString<ProtonPassCSVCreditCard>(noteJSON)
-    //     }.getOrNull() ?: return null
-    //
-    //     val cardHolder = cardData.cardholderName?.trim()?.takeIf { it.isNotBlank() }
-    //     val cardNumberString = cardData.number?.trim()?.takeIf { it.isNotBlank() }
-    //     val securityCodeString = cardData.verificationNumber?.trim()?.takeIf { it.isNotBlank() }
-    //
-    //     // Parse expiration date from "YYYY-MM" format to "MM/YY"
-    //     val expirationDateString: String? = cardData.expirationDate?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
-    //         val parts = expDate.split("-")
-    //         if (parts.size == 2) {
-    //             val year = parts[0].takeLast(2)
-    //             val month = parts[1]
-    //             "$month/$year"
-    //         } else {
-    //             expDate
-    //         }
-    //     }
-    //
-    //     val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
-    //     val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
-    //     val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
-    //     val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
-    //     val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
-    //
-    //     // Build notes
-    //     val noteComponents = mutableListOf<String>()
-    //     cardData.note?.trim()?.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
-    //     cardData.pin?.trim()?.takeIf { it.isNotBlank() }?.let {
-    //         noteComponents.add("PIN: $it")
-    //     }
-    //     row.get("vault")?.trim()?.takeIf { it.isNotBlank() }?.let {
-    //         noteComponents.add("Vault: $it")
-    //     }
-    //
-    //     val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
-    //
-    //     return Item.create(
-    //         contentType = ItemContentType.PaymentCard,
-    //         vaultId = vaultId,
-    //         content = ItemContent.PaymentCard.Empty.copy(
-    //             name = name.orEmpty(),
-    //             cardHolder = cardHolder,
-    //             cardIssuer = cardIssuer,
-    //             cardNumber = cardNumber,
-    //             cardNumberMask = cardNumberMask,
-    //             expirationDate = expirationDate,
-    //             securityCode = securityCode,
-    //             notes = notes,
-    //         ),
-    //     )
-    // }
-
-    private fun parseCreditCardAsSecureNoteFromCsv(row: CsvRow, vaultId: String): Item? {
+    private fun parseCreditCardFromCsv(row: CsvRow, vaultId: String): Item? {
         val name = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
 
         // Credit card data is in the "note" field as JSON
@@ -569,7 +435,6 @@ internal class ProtonPassImportSpec(
         val cardHolder = cardData.cardholderName?.trim()?.takeIf { it.isNotBlank() }
         val cardNumberString = cardData.number?.trim()?.takeIf { it.isNotBlank() }
         val securityCodeString = cardData.verificationNumber?.trim()?.takeIf { it.isNotBlank() }
-        val pinString = cardData.pin?.trim()?.takeIf { it.isNotBlank() }
 
         // Parse expiration date from "YYYY-MM" format to "MM/YY"
         val expirationDateString: String? = cardData.expirationDate?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
@@ -583,36 +448,36 @@ internal class ProtonPassImportSpec(
             }
         }
 
-        // Format card details
-        val cardDetails = buildList {
-            cardHolder?.let { add("Cardholder: $it") }
-            cardNumberString?.let { add("Card Number: $it") }
-            expirationDateString?.let { add("Expiration Date: $it") }
-            securityCodeString?.let { add("Security Code: $it") }
-            pinString?.let { add("PIN: $it") }
-        }.joinToString("\n")
+        val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
+        val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
+        // Build notes
         val noteComponents = mutableListOf<String>()
         cardData.note?.trim()?.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
-        cardDetails.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
+        cardData.pin?.trim()?.takeIf { it.isNotBlank() }?.let {
+            noteComponents.add("PIN: $it")
+        }
         row.get("vault")?.trim()?.takeIf { it.isNotBlank() }?.let {
             noteComponents.add("Vault: $it")
         }
 
-        val displayName = if (name != null) {
-            "$name (Payment Card)"
-        } else {
-            "(Payment Card)"
-        }
-
-        val text = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
 
         return Item.create(
-            contentType = ItemContentType.SecureNote,
+            contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = text,
+            content = ItemContent.PaymentCard.Empty.copy(
+                name = name.orEmpty(),
+                cardHolder = cardHolder,
+                cardIssuer = cardIssuer,
+                cardNumber = cardNumber,
+                cardNumberMask = cardNumberMask,
+                expirationDate = expirationDate,
+                securityCode = securityCode,
+                notes = notes,
             ),
         )
     }
@@ -741,7 +606,7 @@ internal class ProtonPassImportSpec(
     private fun detectCardNumberMask(cardNumber: String): String? {
         val digitsOnly = cardNumber.filter { it.isDigit() }
         if (digitsOnly.length < 4) return null
-        return "**** ${digitsOnly.takeLast(4)}"
+        return digitsOnly.takeLast(4)
     }
 
     private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {

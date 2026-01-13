@@ -102,11 +102,7 @@ internal class BitwardenImportSpec(
                 ItemType.LOGIN.value -> item.parseLogin(vaultId, tagIds)
                 ItemType.SECURE_NOTE.value -> item.parseSecureNote(vaultId, tagIds)
                 ItemType.CARD.value -> {
-                    // TODO: Uncomment when payment cards are supported in Android app
-                    // item.parseCard(vaultId, tagIds)
-                    // For now, convert to secure note with card details
-                    unknownItems++
-                    item.parseCardAsSecureNote(vaultId, tagIds)
+                    item.parseCard(vaultId, tagIds)
                 }
 
                 ItemType.IDENTITY.value -> {
@@ -178,11 +174,7 @@ internal class BitwardenImportSpec(
                 }
 
                 "card" -> {
-                    // TODO: Uncomment when payment cards are supported in Android app
-                    // parseCsvCard(row, vaultId, tagIds)?.let { items.add(it) }
-                    // For now, convert to secure note
-                    unknownItems++
-                    parseCsvCardAsSecureNote(row, vaultId, tagIds)?.let { items.add(it) }
+                    parseCsvCard(row, vaultId, tagIds)?.let { items.add(it) }
                 }
 
                 else -> {
@@ -250,7 +242,7 @@ internal class BitwardenImportSpec(
         )
     }
 
-    private fun parseCsvCardAsSecureNote(row: CsvRow, vaultId: String, tagIds: List<String>?): Item? {
+    private fun parseCsvCard(row: CsvRow, vaultId: String, tagIds: List<String>?): Item? {
         val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
         val noteText = row.get("notes")?.trim()?.takeIf { it.isNotBlank() }
 
@@ -263,40 +255,35 @@ internal class BitwardenImportSpec(
         val expirationYear = row.get("card_expyear")?.trim()?.takeIf { it.isNotBlank() }
 
         val expirationDateString = if (expirationMonth != null && expirationYear != null) {
-            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear
-            "$expirationMonth/$yearSuffix"
+            val monthPadded = expirationMonth.padStart(2, '0')
+            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
+            "$monthPadded/$yearSuffix"
         } else {
             null
         }
 
-        // Format card details as text for secure note
-        val cardDetails = buildList {
-            cardHolder?.let { add("Cardholder: $it") }
-            cardNumberString?.let { add("Card Number: $it") }
-            expirationDateString?.let { add("Expiration Date: $it") }
-            securityCodeString?.let { add("Security Code: $it") }
-            brand?.let { add("Brand: $it") }
-        }.joinToString("\n")
+        val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
+        val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) } ?: brand?.let { detectCardIssuerFromBrand(it) }
 
         val fieldsInfo = row.get("fields")?.trim()?.takeIf { it.isNotBlank() }
-        val cardInfo = mergeNote(cardDetails, fieldsInfo)
-
-        val displayName = if (itemName != null) {
-            "$itemName (Payment Card)"
-        } else {
-            "(Payment Card)"
-        }
-
-        val fullNoteText = mergeNote(noteText, cardInfo)
-        val text = fullNoteText?.let { SecretField.ClearText(it) }
+        val mergedNotes = mergeNote(noteText, fieldsInfo)
 
         return Item.create(
-            contentType = ItemContentType.SecureNote,
+            contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = text,
+            content = ItemContent.PaymentCard.Empty.copy(
+                name = itemName.orEmpty(),
+                cardHolder = cardHolder,
+                cardIssuer = cardIssuer,
+                cardNumber = cardNumber,
+                cardNumberMask = cardNumberMask,
+                expirationDate = expirationDate,
+                securityCode = securityCode,
+                notes = mergedNotes,
             ),
         )
     }
@@ -447,9 +434,7 @@ internal class BitwardenImportSpec(
         )
     }
 
-    // TODO: Uncomment when payment cards are supported in Android app
-    // Change parseCardAsSecureNote to parseCard and uncomment the return type below
-    private fun BitwardenItem.parseCardAsSecureNote(vaultId: String, tagIds: List<String>?): Item? {
+    private fun BitwardenItem.parseCard(vaultId: String, tagIds: List<String>?): Item? {
         val itemName = name?.trim()?.takeIf { it.isNotBlank() }
         val noteText = notes?.trim()?.takeIf { it.isNotBlank() }
 
@@ -463,8 +448,9 @@ internal class BitwardenImportSpec(
         val expirationYear = cardData["expYear"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }
 
         val expirationDateString = if (expirationMonth != null && expirationYear != null) {
-            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear
-            "$expirationMonth/$yearSuffix"
+            val monthPadded = expirationMonth.padStart(2, '0')
+            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
+            "$monthPadded/$yearSuffix"
         } else {
             null
         }
@@ -491,19 +477,7 @@ internal class BitwardenImportSpec(
         }.joinToString("\n")
 
         val fieldsInfo = formatCustomFields(fields)
-        val cardInfo = mergeNote(cardDetails, fieldsInfo)
 
-        val displayName = if (itemName != null) {
-            "$itemName (Payment Card)"
-        } else {
-            "(Payment Card)"
-        }
-
-        val fullNoteText = mergeNote(noteText, cardInfo)
-        val text = fullNoteText?.let { SecretField.ClearText(it) }
-
-        // TODO: When payment cards are supported, replace the return below with this:
-        /*
         val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
         val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
         val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
@@ -523,17 +497,6 @@ internal class BitwardenImportSpec(
                 expirationDate = expirationDate,
                 securityCode = securityCode,
                 notes = mergeNote(noteText, mergeNote(formatAdditionalFields(additionalCardData), fieldsInfo)),
-            ),
-        )
-         */
-
-        return Item.create(
-            contentType = ItemContentType.SecureNote,
-            vaultId = vaultId,
-            tagIds = tagIds.orEmpty(),
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = text,
             ),
         )
     }
@@ -612,7 +575,7 @@ internal class BitwardenImportSpec(
     private fun detectCardNumberMask(cardNumber: String): String? {
         val digitsOnly = cardNumber.filter { it.isDigit() }
         if (digitsOnly.length < 4) return null
-        return "**** ${digitsOnly.takeLast(4)}"
+        return digitsOnly.takeLast(4)
     }
 
     private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {

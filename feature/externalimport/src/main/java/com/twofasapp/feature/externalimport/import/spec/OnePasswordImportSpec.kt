@@ -163,11 +163,7 @@ internal class OnePasswordImportSpec(
                             }
 
                             CATEGORY_CREDIT_CARD -> {
-                                // TODO: Uncomment when payment cards are supported in Android app
-                                // parseCreditCard(item, vaultId, itemTagIds)?.let { add(it) }
-                                // For now, convert to secure note with card details
-                                unknownItems++
-                                parseCreditCardAsSecureNote(item, vaultId, itemTagIds)?.let { add(it) }
+                                parseCreditCard(item, vaultId, itemTagIds)?.let { add(it) }
                             }
 
                             CATEGORY_IDENTITY -> {
@@ -223,9 +219,11 @@ internal class OnePasswordImportSpec(
                     }
                 }.takeIf { it.isNotEmpty() }
             }
+
             item.overview?.url?.trim()?.takeIf { it.isNotBlank() } != null -> {
                 listOf(ItemUri(text = item.overview.url.trim(), matcher = UriMatcher.Domain))
             }
+
             else -> null
         }
 
@@ -290,95 +288,7 @@ internal class OnePasswordImportSpec(
         )
     }
 
-    // TODO: When payment cards are supported in Android app, uncomment this method
-    // private fun parseCreditCard(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
-    //     val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
-    //     val notes = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
-    //
-    //     // Extract card details from sections
-    //     var cardNumberString: String? = null
-    //     var cardHolder: String? = null
-    //     var expirationDateString: String? = null
-    //     var securityCodeString: String? = null
-    //     var pinCode: String? = null
-    //     val additionalFields = mutableListOf<String>()
-    //
-    //     item.details?.sections?.forEach { section ->
-    //         section.fields?.forEach { field ->
-    //             val fieldId = field.id?.lowercase() ?: ""
-    //             val fieldTitle = field.title?.lowercase() ?: ""
-    //
-    //             when {
-    //                 // Card number
-    //                 fieldId == "ccnum" || fieldTitle.contains("card number") -> {
-    //                     cardNumberString = field.value?.creditCardNumber ?: field.value?.stringValue
-    //                 }
-    //                 // Cardholder name
-    //                 fieldId == "cardholder" || fieldTitle.contains("cardholder") -> {
-    //                     cardHolder = field.value?.stringValue
-    //                 }
-    //                 // Expiration date (stored as YYYYMM integer)
-    //                 fieldId == "expiry" || fieldTitle.contains("expir") -> {
-    //                     expirationDateString = field.value?.monthYear?.let { monthYear ->
-    //                         // Convert YYYYMM to MM/YY format
-    //                         val year = monthYear / 100
-    //                         val month = monthYear % 100
-    //                         val shortYear = year % 100
-    //                         String.format("%02d/%02d", month, shortYear)
-    //                     } ?: field.value?.stringValue
-    //                 }
-    //                 // Security code (CVV)
-    //                 fieldId == "cvv" || fieldTitle.contains("security code") || fieldTitle.contains("cvv") -> {
-    //                     securityCodeString = field.value?.concealed ?: field.value?.stringValue
-    //                 }
-    //                 // PIN code
-    //                 fieldId == "pin" || fieldTitle.contains("pin") -> {
-    //                     pinCode = field.value?.concealed ?: field.value?.stringValue
-    //                 }
-    //                 // Other fields
-    //                 else -> {
-    //                     val value = field.value?.stringValue?.trim()?.takeIf { it.isNotBlank() }
-    //                     val title = field.title?.trim()?.takeIf { it.isNotBlank() }
-    //                     if (value != null && title != null) {
-    //                         additionalFields.add("$title: $value")
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     val cardNumber = cardNumberString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
-    //     val expirationDate = expirationDateString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
-    //     val securityCode = securityCodeString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
-    //     val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
-    //     val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
-    //
-    //     // Add PIN code to additional fields if present
-    //     pinCode?.trim()?.takeIf { it.isNotBlank() }?.let {
-    //         additionalFields.add(0, "PIN: $it")
-    //     }
-    //
-    //     val additionalInfo = additionalFields.takeIf { it.isNotEmpty() }?.joinToString("\n")
-    //     val mergedNotes = mergeNotes(notes, additionalInfo)
-    //
-    //     return Item.create(
-    //         vaultId = vaultId,
-    //         tagIds = tagIds.orEmpty(),
-    //         contentType = ItemContentType.PaymentCard,
-    //         content = ItemContent.PaymentCard.Empty.copy(
-    //             name = name.orEmpty(),
-    //             cardHolder = cardHolder?.trim()?.takeIf { it.isNotBlank() },
-    //             cardIssuer = cardIssuer,
-    //             cardNumber = cardNumber,
-    //             cardNumberMask = cardNumberMask,
-    //             expirationDate = expirationDate,
-    //             securityCode = securityCode,
-    //             notes = mergedNotes,
-    //         ),
-    //     )
-    // }
-
-    private fun parseCreditCardAsSecureNote(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
+    private fun parseCreditCard(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
         val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
         val notes = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
 
@@ -434,43 +344,43 @@ internal class OnePasswordImportSpec(
             }
         }
 
-        // Format card details
-        val cardDetails = buildList {
-            cardHolder?.trim()?.takeIf { it.isNotBlank() }?.let { add("Cardholder: $it") }
-            cardNumberString?.trim()?.takeIf { it.isNotBlank() }?.let { add("Card Number: $it") }
-            expirationDateString?.trim()?.takeIf { it.isNotBlank() }?.let { add("Expiration Date: $it") }
-            securityCodeString?.trim()?.takeIf { it.isNotBlank() }?.let { add("Security Code: $it") }
-            pinCode?.trim()?.takeIf { it.isNotBlank() }?.let { add("PIN: $it") }
+        val cardNumber = cardNumberString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val expirationDate = expirationDateString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
-            // Add other fields
-            additionalFields.forEach { add(it) }
-        }.joinToString("\n")
-
-        // Build notes
-        val noteComponents = mutableListOf<String>()
-        notes?.let { noteComponents.add(it) }
-        cardDetails.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
-
-        val displayName = if (name != null) {
-            "$name (Payment Card)"
-        } else {
-            "(Payment Card)"
+        // Add PIN code to additional fields if present
+        pinCode?.trim()?.takeIf { it.isNotBlank() }?.let {
+            additionalFields.add(0, "PIN: $it")
         }
 
-        val fullText = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val additionalInfo = additionalFields.takeIf { it.isNotEmpty() }?.joinToString("\n")
+        val mergedNotes = mergeNotes(notes, additionalInfo)
 
         return Item.create(
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
-            contentType = ItemContentType.SecureNote,
-            content = ItemContent.SecureNote(
-                name = displayName,
-                text = fullText,
+            contentType = ItemContentType.PaymentCard,
+            content = ItemContent.PaymentCard.Empty.copy(
+                name = name.orEmpty(),
+                cardHolder = cardHolder?.trim()?.takeIf { it.isNotBlank() },
+                cardIssuer = cardIssuer,
+                cardNumber = cardNumber,
+                cardNumberMask = cardNumberMask,
+                expirationDate = expirationDate,
+                securityCode = securityCode,
+                notes = mergedNotes,
             ),
         )
     }
 
-    private fun parseAsSecureNote(item: OnePasswordItem, vaultId: String, typeName: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
+    private fun parseAsSecureNote(
+        item: OnePasswordItem,
+        vaultId: String,
+        typeName: String,
+        tagIds: List<String>?
+    ): Item? {
         val itemName = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
 
         val displayName = if (itemName != null) {
@@ -519,12 +429,10 @@ internal class OnePasswordImportSpec(
         }
     }
 
-    // Helper methods for payment card parsing
-    // TODO: When payment cards are supported in Android app, these will be used by parseCreditCard method
     private fun detectCardNumberMask(cardNumber: String): String? {
         val digitsOnly = cardNumber.filter { it.isDigit() }
         if (digitsOnly.length < 4) return null
-        return "**** ${digitsOnly.takeLast(4)}"
+        return digitsOnly.takeLast(4)
     }
 
     private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {

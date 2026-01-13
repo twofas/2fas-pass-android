@@ -140,6 +140,12 @@ private fun Content(
                                 )
 
                                 ItemResultCount(
+                                    icon = MdtIcons.PaymentCard,
+                                    count = state.importContent.countPaymentCards,
+                                    subtitle = strings.transferResultPaymentCardsDetected,
+                                )
+
+                                ItemResultCount(
                                     icon = MdtIcons.Help,
                                     count = state.importContent.unknownItems,
                                     subtitle = strings.transferResultUnknownItems,

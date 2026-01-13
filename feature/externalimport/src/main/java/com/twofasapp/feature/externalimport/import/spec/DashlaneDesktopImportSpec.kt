@@ -11,6 +11,7 @@ package com.twofasapp.feature.externalimport.import.spec
 import android.content.Context
 import android.net.Uri
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
@@ -131,35 +132,85 @@ internal class DashlaneDesktopImportSpec(
                                 }
 
                                 CsvType.Payments -> {
-                                    // TODO: Implement when payment cards done
-                                    unknownItems++
+                                    val paymentType = row.get("type")
 
-                                    add(
-                                        Item.create(
-                                            vaultId = vaultId,
-                                            tagIds = tagIds,
-                                            contentType = ItemContentType.SecureNote,
-                                            content = ItemContent.SecureNote.create(
-                                                name = row.get("name") ?: row.get("account_name"),
-                                                text = TransferUtils.formatNote(
-                                                    note = row.get("note"),
-                                                    fields = buildMap {
-                                                        row.get("type")?.let { put("Type", it) }
-                                                        row.get("account_name")?.let { put("Account name", it) }
-                                                        row.get("account_holder")?.let { put("Account holder", it) }
-                                                        row.get("cc_number")?.let { put("Card number", it) }
-                                                        row.get("code")?.let { put("Security code", it) }
-                                                        row.get("expiration_month")?.let { put("Expiration month", it) }
-                                                        row.get("expiration_year")?.let { put("Expiration year", it) }
-                                                        row.get("routing_number")?.let { put("Routing number", it) }
-                                                        row.get("account_number")?.let { put("Account number", it) }
-                                                        row.get("country")?.let { put("Country", it) }
-                                                        row.get("issuing_bank")?.let { put("Issuing bank", it) }
-                                                    },
+                                    if (paymentType == "payment_card") {
+                                        val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
+                                        val noteText = row.get("note")?.trim()?.takeIf { it.isNotBlank() }
+                                        val cardHolder = row.get("account_holder")?.trim()?.takeIf { it.isNotBlank() }
+                                        val cardNumberString = row.get("cc_number")?.trim()?.takeIf { it.isNotBlank() }
+                                        val securityCodeString = row.get("code")?.trim()?.takeIf { it.isNotBlank() }
+                                        val expirationMonth = row.get("expiration_month")?.trim()?.takeIf { it.isNotBlank() }
+                                        val expirationYear = row.get("expiration_year")?.trim()?.takeIf { it.isNotBlank() }
+
+                                        val expirationDateString = if (expirationMonth != null && expirationYear != null) {
+                                            val monthPadded = expirationMonth.padStart(2, '0')
+                                            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
+                                            "$monthPadded/$yearSuffix"
+                                        } else {
+                                            null
+                                        }
+
+                                        val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
+                                        val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
+                                        val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
+                                        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+                                        val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
+
+                                        val additionalFields = buildMap<String, String> {
+                                            row.get("issuing_bank")?.let { put("Issuing bank", it) }
+                                            row.get("country")?.let { put("Country", it) }
+                                        }
+
+                                        val mergedNotes = TransferUtils.formatNote(
+                                            note = noteText,
+                                            fields = additionalFields
+                                        )
+
+                                        add(
+                                            Item.create(
+                                                contentType = ItemContentType.PaymentCard,
+                                                vaultId = vaultId,
+                                                tagIds = tagIds,
+                                                content = ItemContent.PaymentCard.Empty.copy(
+                                                    name = itemName.orEmpty(),
+                                                    cardHolder = cardHolder,
+                                                    cardIssuer = cardIssuer,
+                                                    cardNumber = cardNumber,
+                                                    cardNumberMask = cardNumberMask,
+                                                    expirationDate = expirationDate,
+                                                    securityCode = securityCode,
+                                                    notes = mergedNotes,
                                                 ),
                                             ),
-                                        ),
-                                    )
+                                        )
+                                    } else {
+                                        // Bank accounts and other payment types -> secure note
+                                        unknownItems++
+
+                                        add(
+                                            Item.create(
+                                                vaultId = vaultId,
+                                                tagIds = tagIds,
+                                                contentType = ItemContentType.SecureNote,
+                                                content = ItemContent.SecureNote.create(
+                                                    name = row.get("name") ?: row.get("account_name"),
+                                                    text = TransferUtils.formatNote(
+                                                        note = row.get("note"),
+                                                        fields = buildMap {
+                                                            row.get("type")?.let { put("Type", it) }
+                                                            row.get("account_name")?.let { put("Account name", it) }
+                                                            row.get("account_holder")?.let { put("Account holder", it) }
+                                                            row.get("routing_number")?.let { put("Routing number", it) }
+                                                            row.get("account_number")?.let { put("Account number", it) }
+                                                            row.get("country")?.let { put("Country", it) }
+                                                            row.get("issuing_bank")?.let { put("Issuing bank", it) }
+                                                        },
+                                                    ),
+                                                ),
+                                            ),
+                                        )
+                                    }
                                 }
 
                                 CsvType.Ids -> {
@@ -313,5 +364,26 @@ internal class DashlaneDesktopImportSpec(
             tags = emptyList(),
             unknownItems = unknownItems,
         )
+    }
+
+    private fun detectCardNumberMask(cardNumber: String): String? {
+        val digitsOnly = cardNumber.filter { it.isDigit() }
+        if (digitsOnly.length < 4) return null
+        return digitsOnly.takeLast(4)
+    }
+
+    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
+        val digitsOnly = cardNumber.filter { it.isDigit() }
+        if (digitsOnly.isEmpty()) return null
+
+        return when {
+            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
+            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
+            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
+            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
+            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
+            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
+            else -> null
+        }
     }
 }
