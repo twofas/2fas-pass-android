@@ -210,7 +210,6 @@ private fun Content(
                         .onFocusChanged { cardNumberFocused = it.isFocused },
                     singleLine = true,
                     maxLines = 1,
-                    readOnly = cardNumberFocused.not(),
                     visualTransformation = if (cardNumberFocused && cardNumberLength <= maxLength) VisualTransformation.PaymentCard(maxLength) else VisualTransformation.None,
                     isError = isCardNumberValid.not(),
                     keyboardOptions = KeyboardOptions(
