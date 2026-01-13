@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 12 Jan 2026 15:18:31 -0800
+ Exported at: Tue, 13 Jan 2026 15:30:01 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -608,7 +608,7 @@
     <string name="security_tiers_help_tiers_top_secret_title">Top Secret</string>
     <string name="security_tiers_help_layers_section_title">3. Multi-Layer Encryption</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">End-to-End Encryption (E2EE)</string>
-    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Your data is protected with a unique, randomly generated SEED combined with your Master Password.\\nOn your device, the SEED is securely stored in Apple\'s Secure Enclave, so you only need your Master Password to access your data.</string>
+    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Your data is protected with a unique, randomly generated SEED combined with your Master Password.\nOn your device, the SEED is securely stored in Apple\'s Secure Enclave, so you only need your Master Password to access your data.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">When setting up a new device, you\'ll need a 15-word recovery phrase to restore your SEED. It\'s securely stored in Apple\'s Secure Enclave, a dedicated, tamper-resistant chip, ensuring your encryption keys never leave your device.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Apple Advanced Data Protection</string>
@@ -794,7 +794,7 @@
     <string name="select_tags_title">Manage Tags</string>
     <string name="tags_add_new_cta">Add new Tag</string>
     <string name="tag_editor_placeholder">Tag Name</string>
-    <string name="tag_editor_description">Enter the name of the new Tag and confirm</string>
+    <string name="tag_editor_description">Enter the name of the new Tag</string>
     <string name="tag_editor_edit_title">Edit Tag</string>
     <string name="tag_editor_new_title">New Tag</string>
     <string name="login_tags_header">Tags</string>
@@ -1023,4 +1023,15 @@
     <string name="home_list_menu_select">Select</string>
     <string name="home_selection_deselect_all">Deselect all</string>
     <string name="home_selection_select_all">Select all</string>
+    <string name="home_multiselect_security_tier_title">Security Tier</string>
+    <string name="home_multiselect_security_tier_subtitle">Edit selected items</string>
+    <plurals name="common_items_count">
+        <item quantity="one">%lld item</item>
+        <item quantity="other">%lld items</item>
+    </plurals>
+    <string name="home_multiselect_security_tier_change_body">Change the Security Tier of selected Items.</string>
+    <plurals name="home_multiselect_security_tier_change_button">
+        <item quantity="one">Change %lld item</item>
+        <item quantity="other">Change %lld items</item>
+    </plurals>
 </resources>
