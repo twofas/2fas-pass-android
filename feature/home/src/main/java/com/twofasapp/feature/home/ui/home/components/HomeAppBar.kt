@@ -237,7 +237,13 @@ internal fun HomeAppBar(
 
         SecurityTypeModal(
             onDismissRequest = { showSecurityTypePicker = false },
-            onSelect = { onChangeSecurityType(it) },
+            onSelect = {
+                if (selectedSecurityType != it) {
+                    onChangeSecurityType(it)
+                } else {
+                    onChangeEditMode(false)
+                }
+            },
             selected = selectedSecurityType,
         )
     }
