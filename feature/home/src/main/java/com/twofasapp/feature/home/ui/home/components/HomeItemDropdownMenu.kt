@@ -112,6 +112,24 @@ internal fun HomeItemDropdownMenu(
                                 onCopySecretFieldToClipboard(content.cardNumber)
                             },
                         )
+
+                        DropdownMenuItem(
+                            text = MdtLocale.strings.cardViewActionCopyExpirationDate,
+                            icon = MdtIcons.PaymentCardDate,
+                            onClick = {
+                                showDropdown = false
+                                onCopySecretFieldToClipboard(content.expirationDate)
+                            },
+                        )
+
+                        DropdownMenuItem(
+                            text = MdtLocale.strings.cardViewActionCopySecurityCode,
+                            icon = MdtIcons.PaymentCardCode,
+                            onClick = {
+                                showDropdown = false
+                                onCopySecretFieldToClipboard(content.securityCode)
+                            },
+                        )
                     }
                 }
             }
