@@ -21,6 +21,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
@@ -247,8 +248,8 @@ internal class BitwardenImportSpec(
         val noteText = row.get("notes")?.trim()?.takeIf { it.isNotBlank() }
 
         val cardHolder = row.get("card_cardholdername")?.trim()?.takeIf { it.isNotBlank() }
-        val cardNumberString = row.get("card_number")?.trim()?.takeIf { it.isNotBlank() }
-        val securityCodeString = row.get("card_code")?.trim()?.takeIf { it.isNotBlank() }
+        val cardNumberString = row.get("card_number")?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
+        val securityCodeString = row.get("card_code")?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
         val brand = row.get("card_brand")?.trim()?.takeIf { it.isNotBlank() }
 
         val expirationMonth = row.get("card_expmonth")?.trim()?.takeIf { it.isNotBlank() }
@@ -440,8 +441,8 @@ internal class BitwardenImportSpec(
 
         val cardData = card ?: return null
         val cardHolder = cardData["cardholderName"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }
-        val cardNumberString = cardData["number"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }
-        val securityCodeString = cardData["code"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }
+        val cardNumberString = cardData["number"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
+        val securityCodeString = cardData["code"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
         val brand = cardData["brand"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }
 
         val expirationMonth = cardData["expMonth"]?.jsonPrimitive?.content?.trim()?.takeIf { it.isNotBlank() }

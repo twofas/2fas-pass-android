@@ -19,6 +19,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
@@ -191,8 +192,8 @@ internal class ProtonPassImportSpec(
         val content = data.content ?: return null
 
         val cardHolder = content["cardholderName"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-        val cardNumberString = content["number"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-        val securityCodeString = content["verificationNumber"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+        val cardNumberString = content["number"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
+        val securityCodeString = content["verificationNumber"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
 
         // Parse expiration date from "YYYY-MM" format to "MM/YY"
         val expirationDateString: String? = content["expirationDate"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->

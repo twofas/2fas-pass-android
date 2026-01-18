@@ -49,6 +49,7 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
@@ -341,7 +342,7 @@ private fun Content(
                                                                 secretField = content.cardNumber,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it.chunked(4).joinToString(" ") }
+                                                            )?.let { textDecrypted = it.removeWhitespace().chunked(4).joinToString(" ") }
                                                         }
                                                     }
                                                 }
@@ -375,7 +376,7 @@ private fun Content(
                                                                 secretField = content.expirationDate,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it }
+                                                            )?.let { textDecrypted = it.removeWhitespace() }
                                                         }
                                                     }
                                                 }
@@ -409,7 +410,7 @@ private fun Content(
                                                                 secretField = content.securityCode,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it }
+                                                            )?.let { textDecrypted = it.removeWhitespace() }
                                                         }
                                                     }
                                                 }

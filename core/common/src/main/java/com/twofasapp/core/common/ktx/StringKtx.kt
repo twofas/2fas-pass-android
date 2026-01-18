@@ -77,3 +77,7 @@ fun String.splitAndMatch(substring: String, ignoreCase: Boolean = false): List<P
 
     return result
 }
+
+fun String.removeWhitespace(): String {
+    return filterNot { it.isWhitespace() }
+}

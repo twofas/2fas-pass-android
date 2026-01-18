@@ -15,6 +15,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
@@ -99,7 +100,7 @@ internal class AppleMobileImportSpec(
             val items = mutableListOf<Item>()
 
             model.payment_cards.forEach { card ->
-                val cardNumberString = card.card_number?.trim()?.takeIf { it.isNotBlank() }
+                val cardNumberString = card.card_number?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
                 val expirationDateString: String? = if (card.card_expiration_month != null && card.card_expiration_year != null) {
                     val yearSuffix = if (card.card_expiration_year > 99) {
                         card.card_expiration_year % 100

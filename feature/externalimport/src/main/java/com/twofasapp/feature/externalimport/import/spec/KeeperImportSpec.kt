@@ -21,6 +21,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
@@ -230,11 +231,11 @@ internal class KeeperImportSpec(
 
         val formattedExpirationDate = expirationDateString?.let { formatExpirationDate(it) }
 
-        val cardNumber = cardNumberString?.let { SecretField.ClearText(it.trim()) }
+        val cardNumber = cardNumberString?.let { SecretField.ClearText(it.removeWhitespace()) }
         val expirationDate = formattedExpirationDate?.let { SecretField.ClearText(it) }
         val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
 
-        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it.trim()) }
+        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it.removeWhitespace()) }
         val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
         // Add PIN code to notes if present

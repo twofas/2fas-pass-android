@@ -18,6 +18,7 @@ import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.data.main.local.model.ItemEntity
 import com.twofasapp.data.main.remote.model.ItemContentJson
 import com.twofasapp.data.main.remote.model.ItemJson
@@ -164,24 +165,24 @@ internal class ItemMapper(
                         if (hasSecretFieldsEncrypted) {
                             SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it)
+                            SecretField.ClearText(it.removeWhitespace())
                         }
                     },
                     expirationDate = content.expirationDate?.let {
                         if (hasSecretFieldsEncrypted) {
                             SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it)
+                            SecretField.ClearText(it.removeWhitespace())
                         }
                     },
                     securityCode = content.securityCode?.let {
                         if (hasSecretFieldsEncrypted) {
                             SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it)
+                            SecretField.ClearText(it.removeWhitespace())
                         }
                     },
-                    cardNumberMask = content.cardNumberMask,
+                    cardNumberMask = content.cardNumberMask?.removeWhitespace(),
                     cardIssuer = ItemContent.PaymentCard.Issuer.fromCode(content.cardIssuer),
                     notes = content.notes,
                 )
@@ -237,21 +238,21 @@ internal class ItemMapper(
                         name = content.name,
                         cardHolder = content.cardHolder,
                         cardNumber = when (content.cardNumber) {
-                            is SecretField.ClearText -> content.cardNumber.clearText
+                            is SecretField.ClearText -> content.cardNumber.clearText.removeWhitespace()
                             is SecretField.Encrypted -> content.cardNumber.encryptedText
                             null -> null
                         },
                         expirationDate = when (content.expirationDate) {
-                            is SecretField.ClearText -> content.expirationDate.clearText
+                            is SecretField.ClearText -> content.expirationDate.clearText.removeWhitespace()
                             is SecretField.Encrypted -> content.expirationDate.encryptedText
                             null -> null
                         },
                         securityCode = when (content.securityCode) {
-                            is SecretField.ClearText -> content.securityCode.clearText
+                            is SecretField.ClearText -> content.securityCode.clearText.removeWhitespace()
                             is SecretField.Encrypted -> content.securityCode.encryptedText
                             null -> null
                         },
-                        cardNumberMask = content.cardNumberMask,
+                        cardNumberMask = content.cardNumberMask?.removeWhitespace(),
                         cardIssuer = content.cardIssuer?.code,
                         notes = content.notes,
                     ),

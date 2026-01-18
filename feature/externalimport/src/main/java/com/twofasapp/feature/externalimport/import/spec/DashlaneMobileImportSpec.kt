@@ -16,6 +16,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvListener
@@ -127,8 +128,8 @@ internal class DashlaneMobileImportSpec(
                                     val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
                                     val noteText = row.get("note")?.trim()?.takeIf { it.isNotBlank() }
                                     val cardHolder = row.get("account_holder")?.trim()?.takeIf { it.isNotBlank() }
-                                    val cardNumberString = row.get("cc_number")?.trim()?.takeIf { it.isNotBlank() }
-                                    val securityCodeString = row.get("code")?.trim()?.takeIf { it.isNotBlank() }
+                                    val cardNumberString = row.get("cc_number")?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
+                                    val securityCodeString = row.get("code")?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
                                     val expirationMonth = row.get("expiration_month")?.trim()?.takeIf { it.isNotBlank() }
                                     val expirationYear = row.get("expiration_year")?.trim()?.takeIf { it.isNotBlank() }
 

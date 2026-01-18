@@ -19,6 +19,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
@@ -344,10 +345,10 @@ internal class OnePasswordImportSpec(
             }
         }
 
-        val cardNumber = cardNumberString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val cardNumber = cardNumberString?.trim()?.removeWhitespace()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
         val expirationDate = expirationDateString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
         val securityCode = securityCodeString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
-        val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+        val cardNumberMask = cardNumberString?.removeWhitespace()?.let { detectCardNumberMask(it) }
         val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
         // Add PIN code to additional fields if present

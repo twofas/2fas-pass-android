@@ -16,6 +16,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.readTextFile
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
@@ -64,8 +65,8 @@ internal class LastPassImportSpec(
                         "Credit Card" -> {
                             val name = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
                             val cardHolder = fields["Name on Card"]?.trim()?.takeIf { it.isNotBlank() }
-                            val cardNumberString = fields["Number"]?.trim()?.takeIf { it.isNotBlank() }
-                            val securityCodeString = fields["Security Code"]?.trim()?.takeIf { it.isNotBlank() }
+                            val cardNumberString = fields["Number"]?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
+                            val securityCodeString = fields["Security Code"]?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
                             val expirationDateString = parseExpirationDate(fields["Expiration Date"])
                             val noteText = fields["Notes"]?.trim()?.takeIf { it.isNotBlank() }
 
