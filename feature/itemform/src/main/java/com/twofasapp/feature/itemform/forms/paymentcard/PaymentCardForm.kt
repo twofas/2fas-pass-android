@@ -42,6 +42,7 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.cardNumberGrouping
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
 import com.twofasapp.core.design.foundation.layout.ActionsRow
@@ -192,12 +193,11 @@ private fun Content(
                     )
                 } ?: true
 
-                val cardNumberLength = cardNumberValue.length
+                val grouping = uiState.itemContent.cardIssuer.cardNumberGrouping()
 
                 TextField(
                     value = cardNumberValue,
                     onValueChange = {
-                        // Allow editing: accept if only digits, enforce maxLength only for adding new characters
                         if (it.isDigitsOnly() && (it.length <= maxLength || it.length < cardNumberValue.length)) {
                             onCardNumberChange(it.trim())
                         }
@@ -210,7 +210,7 @@ private fun Content(
                         .onFocusChanged { cardNumberFocused = it.isFocused },
                     singleLine = true,
                     maxLines = 1,
-                    visualTransformation = if (cardNumberFocused && cardNumberLength <= maxLength) VisualTransformation.PaymentCard(maxLength) else VisualTransformation.None,
+                    visualTransformation = if (cardNumberFocused) VisualTransformation.PaymentCard(grouping) else VisualTransformation.None,
                     isError = isCardNumberValid.not(),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,

@@ -5,27 +5,48 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import com.twofasapp.core.common.domain.items.formatWithGrouping
 
 @Stable
-fun VisualTransformation.Companion.PaymentCard(maxLength: Int): VisualTransformation {
+fun VisualTransformation.Companion.PaymentCard(grouping: List<Int>): VisualTransformation {
     return VisualTransformation { text ->
-        val textTrimmed = if (text.text.length >= maxLength) text.text.substring(0 until maxLength) else text.text
-        var out = ""
+        val textTrimmed = text.text
+        val out = textTrimmed.formatWithGrouping(grouping)
 
-        for (i in textTrimmed.indices) {
-            out += textTrimmed[i]
-            if (i % 4 == 3 && i != maxLength - 1) out += " "
+        // Calculate cumulative group positions for offset mapping
+        val cumulativeGroupSizes = buildList {
+            var sum = 0
+            for (size in grouping) {
+                sum += size
+                add(sum)
+            }
         }
 
-        val spacesCount = (maxLength - 1) / 4
         val paymentCardOffsetTranslator = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                val spaces = minOf(offset / 4, spacesCount)
+                // Count how many spaces should be added before this offset
+                var spaces = 0
+                for (groupEnd in cumulativeGroupSizes) {
+                    if (offset > groupEnd) {
+                        spaces++
+                    } else {
+                        break
+                    }
+                }
                 return offset + spaces
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                val spaces = minOf(offset / 5, spacesCount)
+                // Count how many spaces are in the string before this offset
+                var spaces = 0
+                for (groupEnd in cumulativeGroupSizes) {
+                    val transformedGroupEnd = groupEnd + spaces
+                    if (offset > transformedGroupEnd) {
+                        spaces++
+                    } else {
+                        break
+                    }
+                }
                 return offset - spaces
             }
         }

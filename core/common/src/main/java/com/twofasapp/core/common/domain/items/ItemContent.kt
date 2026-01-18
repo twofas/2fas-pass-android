@@ -119,12 +119,11 @@ sealed interface ItemContent {
                 if (cardNumberMask == null) return ""
 
                 val expectedLength = cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
-                val dotsCount = maxOf(0, expectedLength - 4) // Reserve 4 digits for the mask, but never negative
+                val dotsCount = maxOf(0, expectedLength - 4)
                 val dots = "•".repeat(dotsCount)
+                val fullMasked = dots + cardNumberMask
 
-                val formattedDots = dots.chunked(4).joinToString(" ")
-
-                return "$formattedDots $cardNumberMask".trim()
+                return fullMasked.formatWithGrouping(cardIssuer.cardNumberGrouping())
             }
 
         val cardNumberMaskDisplayShort: String
