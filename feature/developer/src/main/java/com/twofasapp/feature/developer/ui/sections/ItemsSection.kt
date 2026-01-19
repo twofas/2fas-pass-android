@@ -17,8 +17,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.twofasapp.core.android.ktx.resetApp
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -37,6 +39,8 @@ internal fun ItemsSection(
     onInsertRandomSecureNote: () -> Unit = {},
     onInsertRandomCreditCard: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState()),
@@ -106,6 +110,12 @@ internal fun ItemsSection(
         )
 
         OptionEntry(
+            title = "Insert random tag",
+            icon = MdtIcons.Tag,
+            onClick = { onInsertRandomTag() },
+        )
+
+        OptionEntry(
             title = "Delete all items",
             icon = MdtIcons.DeleteForever,
             iconTint = MdtTheme.color.error,
@@ -122,9 +132,11 @@ internal fun ItemsSection(
         )
 
         OptionEntry(
-            title = "Insert random tag",
-            icon = MdtIcons.Tag,
-            onClick = { onInsertRandomTag() },
+            title = "Factory reset",
+            icon = MdtIcons.Restore,
+            iconTint = MdtTheme.color.error,
+            titleColor = MdtTheme.color.error,
+            onClick = { context.resetApp() },
         )
     }
 }

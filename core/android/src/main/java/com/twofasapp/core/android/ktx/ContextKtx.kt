@@ -218,6 +218,11 @@ fun Context.restartApp() {
     Runtime.getRuntime().exit(0)
 }
 
+fun Context.resetApp() {
+    (getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager)
+        .clearApplicationUserData()
+}
+
 fun Activity.makeWindowSecure(allow: Boolean) {
     if (allow) {
         window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
