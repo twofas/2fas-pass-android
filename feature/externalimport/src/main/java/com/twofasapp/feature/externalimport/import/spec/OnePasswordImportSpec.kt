@@ -285,6 +285,7 @@ internal class OnePasswordImportSpec(
             content = ItemContent.SecureNote(
                 name = name.orEmpty(),
                 text = fullText?.let { SecretField.ClearText(it) },
+                additionalInfo = null,
             ),
         )
     }
@@ -417,6 +418,7 @@ internal class OnePasswordImportSpec(
             content = ItemContent.SecureNote(
                 name = displayName,
                 text = fullText?.let { SecretField.ClearText(it) },
+                additionalInfo = null,
             ),
         )
     }

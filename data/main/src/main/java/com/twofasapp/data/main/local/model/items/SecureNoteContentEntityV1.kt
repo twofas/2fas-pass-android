@@ -12,4 +12,6 @@ data class SecureNoteContentEntityV1(
     @SerialName("s_text")
     @Serializable(with = EncryptedBytesSerializer::class)
     val text: EncryptedBytes?,
+    @SerialName("additionalInfo")
+    val additionalInfo: String?,
 )

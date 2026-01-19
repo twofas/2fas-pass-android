@@ -296,6 +296,7 @@ internal class ProtonPassImportSpec(
             content = ItemContent.SecureNote(
                 name = itemName.orEmpty(),
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -339,6 +340,7 @@ internal class ProtonPassImportSpec(
             content = ItemContent.SecureNote(
                 name = displayName,
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -507,6 +509,7 @@ internal class ProtonPassImportSpec(
             content = ItemContent.SecureNote(
                 name = name.orEmpty(),
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -562,6 +565,7 @@ internal class ProtonPassImportSpec(
             content = ItemContent.SecureNote(
                 name = displayName,
                 text = text,
+                additionalInfo = null,
             ),
         )
     }

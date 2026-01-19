@@ -152,6 +152,7 @@ internal class ItemMapper(
                             SecretField.ClearText(it)
                         }
                     },
+                    additionalInfo = content.additionalInfo,
                 )
             }
 
@@ -228,6 +229,7 @@ internal class ItemMapper(
                             is SecretField.Encrypted -> content.text.encryptedText
                             null -> null
                         },
+                        additionalInfo = content.additionalInfo,
                     ),
                 )
             }

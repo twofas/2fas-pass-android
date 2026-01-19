@@ -388,6 +388,7 @@ internal class EnpassImportSpec(
             content = ItemContent.SecureNote(
                 name = name,
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -424,6 +425,7 @@ internal class EnpassImportSpec(
             content = ItemContent.SecureNote(
                 name = name,
                 text = text,
+                additionalInfo = null,
             ),
         )
     }

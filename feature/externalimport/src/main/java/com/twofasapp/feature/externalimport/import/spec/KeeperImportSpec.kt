@@ -182,6 +182,7 @@ internal class KeeperImportSpec(
             content = ItemContent.SecureNote(
                 name = itemName.orEmpty(),
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -298,6 +299,7 @@ internal class KeeperImportSpec(
             content = ItemContent.SecureNote(
                 name = displayName,
                 text = text,
+                additionalInfo = null,
             ),
         )
     }

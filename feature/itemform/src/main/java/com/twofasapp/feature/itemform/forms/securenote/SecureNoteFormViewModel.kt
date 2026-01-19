@@ -31,4 +31,8 @@ internal class SecureNoteFormViewModel(
     fun updateText(text: String) {
         updateItemContent { content -> content.copy(text = SecretField.ClearText(text)) }
     }
+
+    fun updateAdditionalInfo(additionalInfo: String) {
+        updateItemContent { content -> content.copy(additionalInfo = additionalInfo) }
+    }
 }

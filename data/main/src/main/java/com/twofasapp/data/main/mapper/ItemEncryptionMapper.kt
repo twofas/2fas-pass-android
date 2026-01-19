@@ -90,6 +90,7 @@ class ItemEncryptionMapper(
                                 SecretField.Encrypted(it)
                             }
                         },
+                        additionalInfo = contentEntity.additionalInfo,
                     )
                 }
 
@@ -222,6 +223,7 @@ class ItemEncryptionMapper(
 
                                 null -> null
                             },
+                            additionalInfo = content.additionalInfo,
                         ),
                     )
                 }

@@ -258,6 +258,7 @@ internal class DeveloperViewModel(
                         content = ItemContent.SecureNote(
                             name = "$nameSeed note",
                             text = SecretField.ClearText(body),
+                            additionalInfo = null,
                         ),
                     ).copy(id = Uuid.generate()),
                 ),

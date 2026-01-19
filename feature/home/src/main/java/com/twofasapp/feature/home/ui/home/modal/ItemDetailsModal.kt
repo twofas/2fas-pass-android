@@ -309,6 +309,20 @@ private fun Content(
                                     },
                                 )
                             }
+
+                            if (content.additionalInfo.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginNotes,
+                                    subtitle = content.additionalInfo.orEmpty(),
+                                    isCompact = true,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.additionalInfo.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
                         }
 
                         is ItemContent.PaymentCard -> {

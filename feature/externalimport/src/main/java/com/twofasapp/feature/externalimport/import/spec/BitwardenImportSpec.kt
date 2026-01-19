@@ -239,6 +239,7 @@ internal class BitwardenImportSpec(
             content = ItemContent.SecureNote(
                 name = itemName.orEmpty(),
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -431,6 +432,7 @@ internal class BitwardenImportSpec(
             content = ItemContent.SecureNote(
                 name = itemName.orEmpty(),
                 text = text,
+                additionalInfo = null,
             ),
         )
     }
@@ -535,6 +537,7 @@ internal class BitwardenImportSpec(
             content = ItemContent.SecureNote(
                 name = displayName,
                 text = text,
+                additionalInfo = null,
             ),
         )
     }

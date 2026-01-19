@@ -82,11 +82,13 @@ sealed interface ItemContent {
     data class SecureNote(
         override val name: String,
         val text: SecretField?,
+        val additionalInfo: String?,
     ) : ItemContent {
         companion object {
             val Empty = SecureNote(
                 name = "",
                 text = null,
+                additionalInfo = null,
             )
 
             fun create(
@@ -96,6 +98,7 @@ sealed interface ItemContent {
                 return SecureNote(
                     name = name.orEmpty(),
                     text = text?.let { SecretField.ClearText(it) },
+                    additionalInfo = null,
                 )
             }
 
