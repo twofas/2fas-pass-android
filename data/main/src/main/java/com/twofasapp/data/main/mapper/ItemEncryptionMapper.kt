@@ -17,6 +17,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.items.ItemEncrypted
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.domain.VaultKeysExpiredException
 import com.twofasapp.data.main.local.model.items.LoginContentEntityV1
@@ -419,7 +420,7 @@ class ItemEncryptionMapper(
                                         SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it.value)
                                         SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it.value)
                                         SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it.value)
-                                    },
+                                    }.removeWhitespace(),
                                 )
                             }
                         }
@@ -433,7 +434,7 @@ class ItemEncryptionMapper(
                                         SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it.value)
                                         SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it.value)
                                         SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it.value)
-                                    },
+                                    }.removeWhitespace(),
                                 )
                             }
                         }
@@ -447,7 +448,7 @@ class ItemEncryptionMapper(
                                         SecurityType.Tier1 -> vaultCipher.decryptWithSecretKey(it.value)
                                         SecurityType.Tier2 -> vaultCipher.decryptWithSecretKey(it.value)
                                         SecurityType.Tier3 -> vaultCipher.decryptWithTrustedKey(it.value)
-                                    },
+                                    }.removeWhitespace(),
                                 )
                             }
                         }
