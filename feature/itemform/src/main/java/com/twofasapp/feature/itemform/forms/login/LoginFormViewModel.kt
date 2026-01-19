@@ -57,7 +57,7 @@ internal class LoginFormViewModel(
         }
     }
 
-    override suspend fun preInitItemContent(content: ItemContent.Login): ItemContent.Login {
+    override suspend fun preInitItemContent(id: String, content: ItemContent.Login): ItemContent.Login {
         return content.copy(
             username = if (content.username == null) {
                 itemsRepository.getMostCommonUsernames().firstOrNull()
@@ -66,12 +66,14 @@ internal class LoginFormViewModel(
             },
             password = if (content.password != null) {
                 content.password
-            } else {
+            } else if (id.isBlank()) {
                 SecretField.ClearText(
                     PasswordGenerator.generatePassword(
                         settingsRepository.observePasswordGeneratorSettings().first(),
                     ),
                 )
+            } else {
+                null
             },
         )
     }

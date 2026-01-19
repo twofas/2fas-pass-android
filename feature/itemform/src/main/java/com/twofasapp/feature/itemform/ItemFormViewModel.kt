@@ -44,7 +44,7 @@ internal open class ItemFormViewModel<T : ItemContent>(
             }
 
             @Suppress("UNCHECKED_CAST")
-            val itemContent = preInitItemContent(item.content as T)
+            val itemContent = preInitItemContent(item.id, item.content as T)
 
             itemState.update {
                 it.copy(
@@ -58,7 +58,7 @@ internal open class ItemFormViewModel<T : ItemContent>(
         }
     }
 
-    open suspend fun preInitItemContent(content: T): T {
+    open suspend fun preInitItemContent(id: String, content: T): T {
         return content
     }
 
