@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 12 Jan 2026 15:18:31 -0800
+ Exported at: Mon, 19 Jan 2026 14:14:38 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -120,7 +120,7 @@
     <string name="bottom_bar_passwords">Items</string>
     <string name="bottom_bar_connect">Connect</string>
     <string name="bottom_bar_settings">Settings</string>
-    <string name="login_view_action_view_details">Item details</string>
+    <string name="login_view_action_view_details">Details</string>
     <string name="login_view_action_copy_username">Copy username</string>
     <string name="login_view_action_copy_password">Copy password</string>
     <string name="login_view_action_open_uri">Open Website</string>
@@ -608,7 +608,7 @@
     <string name="security_tiers_help_tiers_top_secret_title">Top Secret</string>
     <string name="security_tiers_help_layers_section_title">3. Multi-Layer Encryption</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">End-to-End Encryption (E2EE)</string>
-    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Your data is protected with a unique, randomly generated SEED combined with your Master Password.\\nOn your device, the SEED is securely stored in Apple\'s Secure Enclave, so you only need your Master Password to access your data.</string>
+    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Your data is protected with a unique, randomly generated SEED combined with your Master Password.\nOn your device, the SEED is securely stored in Apple\'s Secure Enclave, so you only need your Master Password to access your data.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">When setting up a new device, you\'ll need a 15-word recovery phrase to restore your SEED. It\'s securely stored in Apple\'s Secure Enclave, a dedicated, tamper-resistant chip, ensuring your encryption keys never leave your device.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Apple Advanced Data Protection</string>
@@ -794,7 +794,7 @@
     <string name="select_tags_title">Manage Tags</string>
     <string name="tags_add_new_cta">Add new Tag</string>
     <string name="tag_editor_placeholder">Tag Name</string>
-    <string name="tag_editor_description">Enter the name of the new Tag and confirm</string>
+    <string name="tag_editor_description">Enter the name of the new Tag</string>
     <string name="tag_editor_edit_title">Edit Tag</string>
     <string name="tag_editor_new_title">New Tag</string>
     <string name="login_tags_header">Tags</string>
@@ -1012,9 +1012,11 @@
     <string name="home_list_menu_clear_filters">Clear filters</string>
     <string name="home_filter_tag_with_count">%1$s (%2$d)</string>
     <string name="home_filter_selected_tag_count_single">(%d item)</string>
-    <string name="home_filter_selected_tag_count_plural">(%d items)</string>
-    <string name="home_selection_count_single">%d Item</string>
-    <string name="home_selection_count_plural">%d Items</string>
+    <string name="home_filter_selected_tag_count_plural">(%d Items)</string>
+    <plurals name="home_selection_count">
+        <item quantity="one">%d Item</item>
+        <item quantity="other">%d Items</item>
+    </plurals>
     <string name="home_multiselect_delete_body">Remove selected Items.</string>
     <plurals name="home_multiselect_delete_button">
         <item quantity="one">Remove %d Item</item>
@@ -1023,4 +1025,17 @@
     <string name="home_list_menu_select">Select</string>
     <string name="home_selection_deselect_all">Deselect all</string>
     <string name="home_selection_select_all">Select all</string>
+    <string name="home_multiselect_security_tier_title">Security Tier</string>
+    <string name="home_multiselect_security_tier_subtitle">Edit selected Items</string>
+    <plurals name="common_items_count">
+        <item quantity="one">%lld Item</item>
+        <item quantity="other">%lld Items</item>
+    </plurals>
+    <string name="home_multiselect_security_tier_change_body">Change the Security Tier of selected Items.</string>
+    <plurals name="home_multiselect_security_tier_change_button">
+        <item quantity="one">Change %lld Item</item>
+        <item quantity="other">Change %lld Items</item>
+    </plurals>
+    <string name="home_multiselect_tags_title">Tags</string>
+    <string name="home_multiselect_tags_subtitle">Edit selected Items</string>
 </resources>

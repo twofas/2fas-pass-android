@@ -110,14 +110,8 @@ internal fun HomeAppBar(
                             modifier = Modifier.offset(x = (-10).dp),
                         )
 
-                        val selectionText = when (val count = uiState.selectedItemIds.size) {
-                            0 -> ""
-                            1 -> strings.homeSelectionCountSingle.format(count)
-                            else -> strings.homeSelectionCountPlural.format(count)
-                        }
-
                         Text(
-                            text = selectionText,
+                            text = strings.homeSelectionCount(uiState.selectedItemIds.size),
                             style = MdtTheme.typo.medium.lg,
                         )
                     }

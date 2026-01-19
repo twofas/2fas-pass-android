@@ -340,8 +340,6 @@ class Strings(private val c: Context) {
         c.getString(R.string.home_filter_selected_tag_count_single)
     val homeFilterSelectedTagCountPlural =
         c.getString(R.string.home_filter_selected_tag_count_plural)
-    val homeSelectionCountSingle = c.getString(R.string.home_selection_count_single)
-    val homeSelectionCountPlural = c.getString(R.string.home_selection_count_plural)
 
     // Login
     val loginPassword = c.getString(R.string.login_password_label)
@@ -1302,6 +1300,11 @@ class Strings(private val c: Context) {
         }
 
         return format(c, diff, diffSign, timeUnits.last())
+    }
+
+    fun homeSelectionCount(count: Int): String {
+        if (count == 0) return ""
+        return c.resources.getQuantityString(R.plurals.home_selection_count, count, count)
     }
 
     private fun format(context: Context, quantity: Long, sign: Int, timeUnit: TimeUnit): String {
