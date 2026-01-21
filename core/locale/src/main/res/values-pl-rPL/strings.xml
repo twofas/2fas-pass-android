@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Mon, 19 Jan 2026 14:14:39 -0800
+ Exported at: Wed, 21 Jan 2026 15:36:18 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -80,7 +80,7 @@
     <string name="decryption_kit_settings_qr_label">Twój kod QR składa się z:</string>
     <string name="decryption_kit_settings_secret_words">Tajnych słów (15-wyrazowej frazy)</string>
     <string name="decryption_kit_settings_master_key">Hasha hasła głównego</string>
-    <string name="decryption_kit_settings_toggle_title">Dodaj hash hasła głównego</string>
+    <string name="decryption_kit_settings_toggle_title">Dodaj hash hasła głównego,</string>
     <string name="decryption_kit_settings_toggle_msg">aby uniknąć konieczności wprowadzania hasła głównego podczas przywracania mojego sejfu.</string>
     <string name="decryption_kit_settings_cta">Gotowe</string>
     <string name="restore_vault_source_title">Wybierz plik kopii zapasowej</string>
@@ -152,8 +152,8 @@
     <string name="settings_entry_convenience">Wygoda</string>
     <string name="settings_entry_dynamic_colors">Dynamiczny motyw</string>
     <string name="settings_entry_dynamic_colors_description">Zmieniaj motyw aplikacji dynamicznie w oparciu o tapetę.</string>
-    <string name="settings_entry_login_click_action">Akcja po dotknięciu</string>
-    <string name="settings_entry_login_click_action_description">Wybierz akcję, która zostanie wykonana po dotknięciu elementu.</string>
+    <string name="settings_entry_login_click_action">Akcja po kliknięciu</string>
+    <string name="settings_entry_login_click_action_description">Wybierz akcję, która zostanie wykonana po kliknięciu elementu.</string>
     <string name="settings_entry_device_nickname">Nazwa tego urządzenia</string>
     <string name="settings_entry_device_nickname_description">Wybierz nazwę do indentyfikowania tego urządzenia.</string>
     <string name="settings_autofill_service">Skonfiguruj autouzupełnianie</string>
@@ -167,8 +167,8 @@
     <string name="settings_entry_transfer_from_other_apps">Transfer z innych aplikacji</string>
     <string name="settings_entry_transfer_from_other_apps_description">Łatwo przenieś swoje dane z innego menedżera haseł i skonfiguruj je w 2FAS Pass.</string>
     <string name="settings_entry_trash">Usunięte elementy</string>
-    <string name="settings_entry_trash_description">Przywróc lub skasuj elementy które usunąłeś z aplikacji.</string>
-    <string name="settings_entry_about">O 2FAS Pass</string>
+    <string name="settings_entry_trash_description">Przywróć lub skasuj elementy, które usunąłeś z aplikacji.</string>
+    <string name="settings_entry_about">O aplikacji</string>
     <string name="settings_about">Informacje</string>
     <string name="settings_entry_import_export_2pass">Lokalna kopia zapasowa</string>
     <string name="settings_entry_import_2pass">Import</string>
@@ -178,7 +178,7 @@
     <string name="settings_entry_google_drive">Google Drive</string>
     <string name="settings_entry_google_drive_sync">Synchronizacja Google Drive</string>
     <string name="settings_entry_google_drive_sync_description">Automatycznie twórz kopie zapasowe i synchronizuj dane między urządzeniami.</string>
-    <string name="settings_entry_google_drive_sync_explanation">Plik kopii zapasowej jest przechowywany w ukrytym folderze na dysku Google Drive. Dostęp do tego folderu ma wyłącznie aplikacja 2FAS Pass. Plik kopii zapasowej jest szyfrowany Twoim hasłem głównym.</string>
+    <string name="settings_entry_google_drive_sync_explanation">Plik kopii zapasowej jest przechowywany w ukrytym folderze na dysku Google Drive. Dostęp do tego folderu ma wyłącznie aplikacja 2FAS Pass. Plik kopii zapasowej jest szyfrowany hasłem głównym.</string>
     <string name="settings_entry_sync_info">Status synchronizacji</string>
     <string name="settings_entry_sync_account">Konto</string>
     <string name="settings_entry_sync_last">Ostatnia synchronizacja</string>
@@ -198,20 +198,20 @@
     <string name="settings_entry_autofill_lock_time">Czas blokady autouzupełniania</string>
     <string name="settings_entry_autofill_lock_time_description">Ustaw czas, po upływie którego autouzupełnianie zażąda ponownego podania hasła głównego. Dotyczy to wyłącznie poufnych elementów.</string>
     <string name="settings_entry_protection_level">Poziom bezpieczeństwa</string>
-    <string name="settings_entry_protection_level_description">Dzięki poziomom bezpieczeństwa Ty decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
+    <string name="settings_entry_protection_level_description">Dzięki poziomom bezpieczeństwa decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
     <string name="settings_header_protection_level">Wybierz poziom bezpieczeństwa</string>
     <string name="settings_entry_protection_level0">Ściśle tajny</string>
     <string name="settings_entry_protection_level0_description">**Poufny** + Elementy są odizolowane w aplikacji mobilnej.\nAutouzupełnianie nie ma dostępu do elementu.\nRozszerzenie przeglądarki nie ma dostępu do elementu.</string>
     <string name="settings_entry_protection_level1">Tajny</string>
     <string name="settings_entry_protection_level1_description">**Poufny** + Wymagane dodatkowe potwierdzenie.\nAutouzupełnianie wymaga potwierdzenia w aplikacji.\nRozszerzenie przeglądarki wymaga potwierdzenia w aplikacji.</string>
     <string name="settings_entry_protection_level2">Poufny</string>
-    <string name="settings_entry_protection_level2_description">**Elementy bezpiecznie przechowywane na Twoim urządzeniu mobilnym.**\nAutouzupełnianie wymaga potwierdzenia systemowego.\nRozszerzenie przeglądarki może korzystać z elementu.</string>
+    <string name="settings_entry_protection_level2_description">**Elementy bezpiecznie przechowywane na urządzeniu mobilnym.**\nAutouzupełnianie wymaga potwierdzenia systemowego.\nRozszerzenie przeglądarki może korzystać z elementu.</string>
     <string name="settings_entry_screen_capture">Zrzuty ekranu</string>
     <string name="settings_entry_screen_capture_description">Pozwól na wykonywanie zrzutów ekranu i nagrywanie ekranu aplikacji przez 5 minut.</string>
     <string name="settings_entry_screenshots_confirm_title">Pozwolić na zrzuty ekranu?</string>
-    <string name="settings_entry_screenshots_confirm_description">Jesteś pewien? Ta opcja umożliwia robienie zrzutów ekranu i nagrywanie wszystkiego w aplikacji. Jednocześnie umożliwia ona próby przechwycenia ekranu przez zewnętrzne aplikacje. Aby zapewnić bezpieczeństwo, opcja ta wyłącza się automatycznie po 5 minutach.</string>
+    <string name="settings_entry_screenshots_confirm_description">Jesteś pewien? Ta opcja pozwala na wykonywanie zrzutów ekranu i nagrywanie wszystkiego w aplikacji. Jednocześnie umożliwia ona próby przechwycenia ekranu przez zewnętrzne aplikacje. Aby zapewnić bezpieczeństwo, opcja ta wyłącza się automatycznie po 5 minutach.</string>
     <string name="settings_entry_known_browsers">Połączone rozszerzenia</string>
-    <string name="settings_entry_known_browsers_description">Zarządzaj zaufanymi rozszerzeniami przeglądarki</string>
+    <string name="settings_entry_known_browsers_description">Zarządzaj zaufanymi rozszerzeniami przeglądarki.</string>
     <string name="settings_entry_push_notifications">Powiadomienia push</string>
     <string name="settings_entry_push_notifications_description">Dostosuj powiadomienia, aby być na bieżąco z bezpieczeństwem i aktywnością aplikacji.</string>
     <string name="settings_entry_help_center">Pomoc</string>
@@ -227,7 +227,7 @@
     <string name="home_title">Elementy</string>
     <string name="home_empty_title">Brak dostępnych elementów</string>
     <string name="home_empty_import_cta">Szybka konfiguracja</string>
-    <string name="about_tagline">Informacje o 2FAS Pass</string>
+    <string name="about_tagline">O aplikacji</string>
     <string name="about_version_prefix">Wersja:</string>
     <string name="about_section_general">Ogólne</string>
     <string name="about_rate_us">Oceń nas w Play Store</string>
@@ -251,10 +251,10 @@
     <string name="auth_biometrics_modal_title">Biometria</string>
     <string name="auth_biometrics_disabled_message">Biomatria została wyłączona z powodu zmian w ustawieniach odcisków palców systemu. Użyj hasła głównego, aby ponownie włączyć biometrię w ustawieniach.</string>
     <string name="auth_preview_title">Odblokuj aplikację</string>
-    <string name="auth_preview_description">Wprowadź swoje hasło główne aby oblokować aplikację</string>
+    <string name="auth_preview_description">Wprowadź swoje hasło główne, aby oblokować aplikację</string>
     <string name="auth_preview_cta">Odblokuj</string>
     <string name="autofill_prompt_title">Prośba autouzupełnienia</string>
-    <string name="autofill_prompt_description">Autoryzacja jest wymagana aby odszyfrować hasło elementu do autouzupełnienia</string>
+    <string name="autofill_prompt_description">Autoryzacja jest wymagana, aby odszyfrować hasło elementu do autouzupełnienia.</string>
     <string name="autofill_prompt_cta">Autoryzuj</string>
     <string name="autofill_login_dialog_title">Autouzupełnianie</string>
     <string name="autofill_login_dialog_body_prefix">Czy chcesz autouzupełniać</string>
@@ -267,7 +267,7 @@
     <string name="connect_confirm_title">Potwierdź</string>
     <string name="connect_confirm_message">Łączysz się z nowym rozszerzeniem przeglądarki. Czy chcesz potwierdzić?</string>
     <string name="enter_current_password_title">Aktualne hasło</string>
-    <string name="enter_current_password_description">Autoryzacja jest wymagana aby zmienić hasło główne</string>
+    <string name="enter_current_password_description">Autoryzacja jest wymagana, aby zmienić hasło główne.</string>
     <string name="export_backup_modal_title">Eksport kopii zapasowej</string>
     <string name="export_backup_modal_encrypted_title">Szyfrowanie</string>
     <string name="export_backup_modal_encrypted_description">Twoja kopia zapasowa zostanie zaszyfrowana przy użyciu hasła głównego i tajnych słów w celu zwiększenia bezpieczeństwa (zalecane).</string>
@@ -284,7 +284,7 @@
     <string name="known_browser_delete_dialog_title">Usunąć rozszerzenie przeglądarki?</string>
     <string name="known_browser_delete_dialog_body">Czy chcesz rozłączyć to urządzenie z wybranym rozszerzeniem przeglądarki?</string>
     <string name="known_browsers_title">Połączone rozszerzenia</string>
-    <string name="known_browsers_description">Lista zaufanych rozszerzeń przeglądarki, które zostały zatwierdzone przez Ciebie i nie wymagają potwierdzenia, aby połączyć się z tym urządzeniem.</string>
+    <string name="known_browsers_description">Lista zaufanych rozszerzeń przeglądarki, które mogą łączyć się z tym urządzeniem bez konieczności potwierdzania.</string>
     <string name="known_browsers_empty">Brak przeglądarek</string>
     <string name="lockout_settings_app_lockout_header">Blokada aplikacji</string>
     <string name="lockout_settings_autofill_lockout_header">Blokada autouzupełniania</string>
@@ -310,11 +310,11 @@
     <string name="lock_screen_biometrics_error_too_many_attempts">Zbyt wiele nieudanych prób. Biometrię możesz włączyć później w Ustawieniach → Bezpieczeństwo.</string>
     <string name="lock_screen_biometrics_error_title">Błąd biometrii</string>
     <string name="lock_screen_unlock_title">Odblokuj aplikacje</string>
-    <string name="lock_screen_unlock_description">Wprowadź hasło główne, aby odblokować aplikację.</string>
+    <string name="lock_screen_unlock_description">Wprowadź hasło główne, aby odblokować aplikację</string>
     <string name="lock_screen_unlock_cta">Odblokuj</string>
     <string name="login_delete_confirm_title">Usunąć element?</string>
     <string name="login_delete_confirm_body">Na pewno chcesz usunąć ten element? Możesz go przywrócić później.</string>
-    <string name="password_length_requirement">Minumum 9 znaków</string>
+    <string name="password_length_requirement">Minimum 9 znaków</string>
     <string name="passwords_match_text">Hasła są zgodne</string>
     <string name="login_search_no_results_title">Nie znaleziono elementu</string>
     <string name="login_search_no_results_description">Spróbuj inny filtr</string>
@@ -324,20 +324,20 @@
     <string name="security_biometrics_enable_description">Do włączenia biometrii wymagane jest hasło główne.</string>
     <string name="security_biometrics_enable_cta">Włącz biometrię</string>
     <string name="security_lockout_settings_title">Zmień ustawienia blokady</string>
-    <string name="security_lockout_settings_description">Autoryzacja jest wymagana aby zmienić ustawienia blokady</string>
+    <string name="security_lockout_settings_description">Autoryzacja jest wymagana, aby zmienić ustawienia blokady</string>
     <string name="security_lockout_settings_cta">Autoryzuj</string>
     <string name="security_screen_capture_enable_title">Pozwól na zrzuty ekranu</string>
-    <string name="security_screen_capture_enable_description">Autoryzacja jest wymagana aby pozwolić na zrzuty ekranu</string>
+    <string name="security_screen_capture_enable_description">Autoryzacja jest wymagana, aby pozwolić na zrzuty ekranu</string>
     <string name="security_screen_capture_enable_cta">Pozwól na zrzuty ekranu</string>
     <string name="security_decryption_kit_access_title">Nowy zestaw deszyfrujący</string>
-    <string name="security_decryption_kit_access_description">Hasło główne jest wymagane aby pobrać nowy zestaw deszyfrujący</string>
+    <string name="security_decryption_kit_access_description">Hasło główne jest wymagane, aby pobrać nowy zestaw deszyfrujący.</string>
     <string name="security_decryption_kit_access_cta">Autoryzuj</string>
     <string name="biometrics_modal_title">Biometria</string>
     <string name="biometrics_modal_subtitle_enable">Włącz logowanie biometryczne</string>
     <string name="biometrics_modal_error_too_many_attempts">Zbyt wiele nieudanych prób. Spróbuj ponownie później.</string>
     <string name="biometrics_error_dialog_title">Błąd biometrii</string>
     <string name="security_type_modal_header">Wybierz poziom bezpieczeństwa</string>
-    <string name="security_type_modal_description">Dzięki poziomom bezpieczeństwa ty decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
+    <string name="security_type_modal_description">Dzięki poziomom bezpieczeństwa decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
     <string name="login_security_type_secure_title">Poufny</string>
     <string name="login_security_type_ultra_secure_title">Tajny</string>
     <string name="login_security_type_top_secret_title">Ściśle tajny</string>
@@ -376,7 +376,7 @@
     <string name="common_help">Pomoc</string>
     <string name="common_off">Wył.</string>
     <string name="common_on">Wł.</string>
-    <string name="common_open_system_settings">Otwórz ustawienia systemowe</string>
+    <string name="common_open_system_settings">Przejdź do ustawień</string>
     <string name="connect_connection_connecting">Łączenie…</string>
     <string name="connect_connection_failed_cta">Zeskanuj ponownie</string>
     <string name="connect_connection_failed_description">Spróbuj zeskanować ponownie.</string>
@@ -404,9 +404,9 @@
     <string name="connect_setup_steps_header">Konfiguracja rozszerzenia przeglądarki 2FAS Pass</string>
     <string name="decryption_kit_settings_secret_words_ios">**Tajne słowa** (15-wyrazowa fraza),</string>
     <string name="known_browsers_header">Zaufane rozszerzenia przeglądarki</string>
-    <string name="lock_screen_too_many_attempts_description">Dostęp do 2FAS Pass został tymczasowo zablokowany z powodu nieudanych prób wpisania hasła głównego.</string>
+    <string name="lock_screen_too_many_attempts_description">Dostęp do 2FAS Pass został tymczasowo zablokowany z powodu nieudanych prób wpisania hasła głównego</string>
     <string name="lock_screen_try_again__0025_0040">Spróbuj ponownie za: %s</string>
-    <string name="lock_screen_unlock_biometrics_error">Błąd podczas odblokowywania za pomocą biometrii.</string>
+    <string name="lock_screen_unlock_biometrics_error">Błąd podczas odblokowywania za pomocą biometrii</string>
     <string name="lock_screen_unlock_biometrics_reason">Odblokowywanie biometryczne</string>
     <string name="lock_screen_unlock_invalid_password">Nieprawidłowe hasło</string>
     <string name="lock_screen_unlock_title_ios">Hasło główne</string>
@@ -424,11 +424,11 @@
     <string name="login_uri_header">Adres URL</string>
     <string name="login_uri_label__0025lld">URL %d</string>
     <string name="login_username_most_used_empty">Nie znaleziono nazw użytkowników.</string>
-    <string name="login_username_most_used_header">Najczęściej używane nazwy użytkownika</string>
+    <string name="login_username_most_used_header">Najczęstsze nazwy użytkownika</string>
     <string name="login_view_action_uris_title">Adresy URL</string>
     <string name="master_password_min_length__0025lld">Użyj co najmniej %d znaków</string>
     <string name="master_password_not_match">Hasła nie są zgodne</string>
-    <string name="onboarding_create_master_password_guide_description">Ten prosty poradnik pomoże Ci przygotować i zapamiętać Twoje hasło główne.</string>
+    <string name="onboarding_create_master_password_guide_description">Ten prosty poradnik pomoże w przygotowaniu i zapamiętaniu hasła głównego.</string>
     <string name="onboarding_create_master_password_guide_title">Poradnik</string>
     <string name="password_generator_characters">Znaki</string>
     <string name="password_generator_copy_cta">Kopiuj</string>
@@ -441,15 +441,15 @@
     <string name="set_new_password_confirm_body_part1_ios">Zmiana hasła głównego spowoduje aktualizację szyfrowania sejfu. Konieczne będzie **pobranie nowego zestawu deszyfrującego oraz utworzenie nowej lokalnej kopii zapasowej.**</string>
     <string name="set_new_password_confirm_body_part2_ios">Jeśli używasz tego sejfu na innych urządzeniach, synchronizacja zostanie wyłączona i będziesz musiał ją ponownie włączyć, używając nowego hasła głównego.</string>
     <string name="set_new_password_success_title">Hasło główne zmienione pomyślnie</string>
-    <string name="settings_autofill_open_system_settings_description">Konfiguruj autouzupełnianie: Ustawienia -&gt; Ogólne -&gt; Wypełnianie i Hasła</string>
-    <string name="settings_cloud_sync_description">Bezpiecznie synchronizuj swój sejf 2FAS Pass z iCloud lub WebDAV, aby chronić dane na wypadek uszkodzenia lub utraty tego urządzenia.</string>
+    <string name="settings_autofill_open_system_settings_description">Konfiguruj autouzupełnianie: Ustawienia → Ogólne → Wypełnianie i Hasła</string>
+    <string name="settings_cloud_sync_description">Bezpiecznie synchronizuj swój sejf 2FAS Pass z iCloud lub WebDAV, aby chronić dane w przypadku uszkodzenia lub utraty tego urządzenia.</string>
     <string name="settings_cloud_sync_icloud_label">Synchronizacja iCloud</string>
     <string name="settings_cloud_sync_last_sync__0025_0040">Ostatnia udana synchronizacja: **%s**</string>
     <string name="settings_cloud_sync_status__0025_0040">Status: **%s**</string>
     <string name="settings_cloud_sync_title">Synchronizacja sejfu</string>
     <string name="settings_cloud_sync_webdav_label">WebDAV</string>
     <string name="settings_entry_app_lock_attempts_footer">Ustaw liczbę nieudanych prób wpisania hasła głównego, po której aplikacja zostanie zablokowana na określony czas.</string>
-    <string name="settings_entry_biometrics_not_available">Biometria niedostępna</string>
+    <string name="settings_entry_biometrics_not_available">Biometria niedostępna.</string>
     <string name="settings_entry_biometrics_toggle">Odblokowywanie biometryczne</string>
     <string name="settings_entry_decryption_kit_description">Jeśli straciłeś swój zestaw deszyfrujący, pobierz go ponownie.</string>
     <string name="settings_entry_subscription">Subskrypcja</string>
@@ -493,7 +493,7 @@
     <string name="request_modal_update_item_cta_positive">Kontynuuj</string>
     <string name="request_modal_update_item_cta_negative">Anuluj</string>
     <string name="request_modal_remove_item_title">Usuń</string>
-    <string name="request_modal_remove_item_subtitle">Rozszerzenie przeglądarki chce usunac poniższy element z twojego sejfu.</string>
+    <string name="request_modal_remove_item_subtitle">Rozszerzenie przeglądarki chce usunac poniższy element z twojego sejfu</string>
     <string name="request_modal_remove_item_cta_positive">Usuń</string>
     <string name="request_modal_remove_item_cta_negative">Anuluj</string>
     <string name="request_modal_error_generic_title">Wystąpił błąd</string>
@@ -521,7 +521,7 @@
     <string name="restore_qr_code_intro_cta">Zeskanuj kod QR</string>
     <string name="restore_qr_code_intro_description">Zeskanuj kod QR z wydrukowanego zestawu deszyfrującego</string>
     <string name="restore_qr_code_intro_title">Zeskanuj kod QR</string>
-    <string name="restore_unencrypted_file_cta_description_ios">Aby go zaimportować, stwórz nowy sejf i przejdź do **Ustawienia→ Import/Eksport**.</string>
+    <string name="restore_unencrypted_file_cta_description_ios">Aby go zaimportować, stwórz nowy sejf i przejdź do **Ustawienia → Import/Eksport**.</string>
     <string name="restore_unencrypted_file_description">Nie można odzyskać sejfu z niezaszyfrowanego pliku kopii zapasowej.</string>
     <string name="restore_unencrypted_file_title">Kopia zapasowa jest nieszyfrowana</string>
     <string name="restore_vault_source_option_icloud">iCloud</string>
@@ -529,7 +529,7 @@
     <string name="restore_qr_code_error_system_settings">Ustawienia systemowe</string>
     <string name="restore_cloud_files_id__0025_0040">ID: %s</string>
     <string name="restore_vault_verify_master_password_description">Wprowadź hasło główne do tego sejfu</string>
-    <string name="common_created">Stworzono:</string>
+    <string name="common_created">Dodano:</string>
     <string name="common_modified">Zmodyfikowano:</string>
     <string name="settings_autofill_toggle">Ustaw 2FAS Pass jako usługę autouzupełnienia</string>
     <string name="settings_autofill_toggle_description">Automatycznie wypełniaj swoje dane z poziomu klawiatury, gdy ich potrzebujesz.</string>
@@ -541,11 +541,11 @@
     <string name="transfer_instructions_dashlane_mobile">Otwórz Dashlane na urządzeniu mobilnym.\n\nPrzejdź do **Ustawień** i wybierz **Ogólne**.\n\nWybierz **Eksportuj dane do CSV**, a następnie potwierdź eksport do folderu.\n\nWybierz plik CSV oznaczony jako **credentials** w utworzonym folderze.\n\nSkopiuj wyeksportowany **folder Dashlane CSV lub pojedyńczy plik** na to urządzenie.\n\nKliknij **Wgraj folder/plik CSV** poniżej.</string>
     <string name="push_browser_request_generic_message">Nowa prośba z przeglądarki</string>
     <string name="backup_import_header">Importuj elementy 2FAS Pass</string>
-    <string name="backup_import_footer">Zaimportuj elementy 2FAS Pass aby zwiększyć (nie zastąpić) liczbę elementów przechowywanych w aplikacji</string>
+    <string name="backup_import_footer">Zaimportuj elementy 2FAS Pass, aby zwiększyć (nie zastąpić) liczbę elementów przechowywanych w aplikacji.</string>
     <string name="backup_import_cta">Import</string>
     <string name="backup_export_cta">Eksport</string>
     <string name="backup_export_header">Eksportuj elementy 2FAS Pass</string>
-    <string name="backup_export_footer">Użyj eksportu, aby zapisać swoje elementy lokalnie</string>
+    <string name="backup_export_footer">Użyj eksportu, aby zapisać swoje elementy lokalnie.</string>
     <string name="backup_export_failed_title">Eksport nieudany</string>
     <string name="backup_export_failed_description">2FAS Pass nie mógł wyeksportować elementów. Spróbuj ponownie.</string>
     <string name="backup_export_success_title">Eksport zakończony pomyślnie</string>
@@ -554,7 +554,7 @@
     <string name="backup_export_save_subtitle">Eksportuj twoje elementy z 2FAS Pass</string>
     <string name="backup_export_save_cta">Eksport</string>
     <string name="backup_export_save_encrypt_toggle_title">Zaszyfruj elementy</string>
-    <string name="backup_export_save_encrypt_toggle_description">Twoje elementy 2FAS Pass zostaną zaszyfrowane hasłem głównym i tajnymi słowami dla większego bezpieczeństwa</string>
+    <string name="backup_export_save_encrypt_toggle_description">Twoje elementy 2FAS Pass zostaną zaszyfrowane hasłem głównym i tajnymi słowami dla większego bezpieczeństwa.</string>
     <string name="request_modal_error_send_data_title">Element zapisany tylko na tym urządzeniu</string>
     <string name="request_modal_error_send_data_subtitle">Element został zapisany na tym urządzeniu ale nie wysłano go do przeglądarki. Aby go wysłać, połącz się ponownie z rozszerzeniem przeglądarki.</string>
     <string name="backup_importing_success_title">Import zakończony pomyślnie</string>
@@ -599,16 +599,16 @@
     <string name="security_tiers_help_local_first_section_subtitle">2FAS Pass przechowuje wszystkie Twoje elementy w zaszyfrowanym, lokalnym sejfie na urządzeniu mobilnym. Brak centralnego punktu ataku sprawia, że dane użytkowników pozostają bezpieczne, a każdy użytkownik ma nad nimi pełną kontrolę.</string>
     <string name="security_tiers_help_local_first_section_figure_title">Bezpieczeństwo danych</string>
     <string name="security_tiers_help_tiers_section_title">2. Poziomy bezpieczeństwa</string>
-    <string name="security_tiers_help_tiers_section_subtitle">Dzięki poziomom bezpieczeństwa ty decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
+    <string name="security_tiers_help_tiers_section_subtitle">Dzięki poziomom bezpieczeństwa decydujesz o dostępie autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
     <string name="security_tiers_help_tiers_secret_title">Poufny</string>
-    <string name="security_tiers_help_tiers_secret_subtitle">Poufne elementy są bezpiecznie przechowywane na Twoim urządzeniu mobilnym. Są dostępne w funkcji Autofill oraz w rozszerzeniu przeglądarki 2FAS Pass zawsze gdy są potrzebne.</string>
+    <string name="security_tiers_help_tiers_secret_subtitle">Poufne elementy są bezpiecznie przechowywane na urządzeniu mobilnym. Są dostępne w funkcji Autofill oraz w rozszerzeniu przeglądarki 2FAS Pass zawsze gdy są potrzebne.</string>
     <string name="security_tiers_help_tiers_highly_secret_subtitle">Tajne elementy zapewniają wyższy standard bezpieczeństwa i wymagają dodatkowego potwierdzenia. Dostęp przez rozszerzenie przeglądarki lub za pomocą Autofill musi zostać potwierdzony w 2FAS Pass.</string>
     <string name="security_tiers_help_tiers_highly_secret_title">Tajny</string>
     <string name="security_tiers_help_tiers_top_secret_subtitle">Ściśle tajne elementy są odizolowane i nie mogą być używane z autouzupełnianiem ani z rozszerzeniem przeglądarki 2FAS Pass. Muszą być wpisywane ręcznie.</string>
     <string name="security_tiers_help_tiers_top_secret_title">Ściśle tajny</string>
     <string name="security_tiers_help_layers_section_title">3. Szyfrowanie wielowarstwowe</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">Szyfrowanie end-to-end (E2EE)</string>
-    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z Twoim hasłem głównym.\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
+    <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z hasłem głównym.\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszcą twojego urządzenia.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Zaawansowana Ochrona Danych Apple</string>
@@ -627,7 +627,7 @@
     <string name="paywall_notice_items_limit_restore_msg">Przywrócenie tych elementów spowodowałoby przekroczenie limitu %d elementów. Ulepsz swój plan, aby uzyskać nielimitowaną liczbę elementów.</string>
     <string name="paywall_notice_multi_device_msg">Pasujący sejf istnieje w kopii zapasowej, ale jest powiązany z innym urządzeniem. Ulepsz swój plan, aby włączyć synchronizację między wieloma urządzeniami.</string>
     <string name="connect_modal_error_extensions_limit_title">Osiągnięto limit</string>
-    <string name="connect_modal_error_extensions_limit_subtitle">Osiągnięto limit połączonych przeglądarek. Rozłącz jedną aby kontynuować, lub rozważ ulepszenie swojego planu dla większej swobody.</string>
+    <string name="connect_modal_error_extensions_limit_subtitle">Osiągnięto limit połączonych przeglądarek. Rozłącz jedną, aby kontynuować, lub rozważ ulepszenie swojego planu dla większej swobody.</string>
     <string name="connect_modal_error_extensions_limit_cta">Ulepsz plan</string>
     <string name="request_modal_error_items_limit_title">Osiągnięto limit elementów</string>
     <string name="request_modal_error_items_limit_subtitle">Limit %d elementów osiągnięty. Ulepsz swój plan, aby uzyskać nielimitowaną liczbę elementów.</string>
@@ -638,7 +638,7 @@
     <string name="manage_subscription_title">2FAS Pass Unlimited</string>
     <string name="manage_subscription_items_title">Elementy</string>
     <string name="manage_subscription_browsers_title">Połączone rozszerzenia przeglądarki</string>
-    <string name="manage_subscription_price_prefix">Coroczna subskrypcja</string>
+    <string name="manage_subscription_price_prefix">Roczna subskrypcja</string>
     <string name="manage_subscription_renew_date_prefix">Twój plan zostanie automatycznie odnowiony\u0020</string>
     <string name="manage_subscription_apple_info">Zapłacono poprzez Apple</string>
     <string name="manage_subscription_end_date_prefix">Twój plan kończy się</string>
@@ -664,8 +664,8 @@
     <string name="webdav_disable_icloud_confirm_title">Jesteś pewien?</string>
     <string name="webdav_disable_icloud_confirm_body">Wyłącz synchronizację iCloud</string>
     <string name="sync_status_error_wrong_directory_url">Nieprawidłowy URL</string>
-    <string name="sync_status_error_not_authorized">Brak autoryzacji dostępu do tej ścieżki.</string>
-    <string name="sync_status_error_user_is_forbidden">Użytkownik nie ma uprawnień do tej ścieżki.</string>
+    <string name="sync_status_error_not_authorized">Brak autoryzacji dostępu do tej ścieżki</string>
+    <string name="sync_status_error_user_is_forbidden">Użytkownik nie ma uprawnień do tej ścieżki</string>
     <string name="sync_status_error_general_reason">Wystąpił błąd. Spróbuj ponownie. Błąd: %s</string>
     <string name="common_general_error_try_again">Wystąpił błąd. Spróbuj ponownie</string>
     <string name="sync_status_retrying_details">Ponowne łączenie: %s</string>
@@ -675,7 +675,7 @@
     <string name="general_server_error_details">Błąd serwera : %s</string>
     <string name="sync_status_error_incorrect_url">Nieprawidłowy URL. Sprawdź scieżkę i spróbuj ponownie</string>
     <string name="sync_status_error_tls_cert_failed">Weryfikacja certyfikatu TLS nie powiodła się</string>
-    <string name="sync_status_error_no_web_dav_server">Błąd serwera: Metoda niedozwolona. Upewnij się, że łączysz się z serwerem WebDAV.\n</string>
+    <string name="sync_status_error_no_web_dav_server">Błąd serwera: Metoda niedozwolona. Upewnij się, że łączysz się z serwerem WebDAV.</string>
     <string name="general_not_available">Niedostępny</string>
     <string name="webdav_disable_webdav_confirm_body">Wyłącz WebDAV</string>
     <string name="sync_syncing">Synchronizacja...</string>
@@ -688,13 +688,13 @@
     <string name="sync_error_icloud_error_details">Błąd iCloud: %s</string>
     <string name="sync_error_icloud_error">Błąd iCloud</string>
     <string name="sync_error_icloud_error_user_logged_in">Sprawdź czy jesteś poprawnie zalogowany do iClouda</string>
-    <string name="sync_error_icloud_error_reboot">Nastąpił problem z synchronizacją iClouda. Spróbuj zrestartować urządzenie.</string>
+    <string name="sync_error_icloud_error_reboot">Nastąpił problem z synchronizacją iClouda. Spróbuj zrestartować urządzenie</string>
     <string name="sync_error_icloud_error_newer_version">Sejf w iCloud został utworzony na nowszej wersji. Zaktualizuj aplikację</string>
     <string name="sync_error_icloud_error_diffrent_encryption">Sejf w iCloud został stworzony z wykorzystaniem innego szyfrowania. Zainstaluj ponownie aplikację, aby odzyskać swoje dane.</string>
     <string name="sync_error_icloud_error_no_account">Brak konta iCloud</string>
     <string name="sync_error_icloud_error_access_restricted">Dostęp do konta iCloud jest zastrzeżony</string>
-    <string name="general_error_no_local_vault">Nie znaleziono lokalnego sejfu. Zainstaluj ponownie aplikację.</string>
-    <string name="sync_error_icloud_vault_encryption_restore">Sejf w iCloud ma inne hasło lub szyfrowanie. Przywróć kopię zapasową z iCloud, aby z niego korzystać.</string>
+    <string name="general_error_no_local_vault">Nie znaleziono lokalnego sejfu. Zainstaluj ponownie aplikację</string>
+    <string name="sync_error_icloud_vault_encryption_restore">Sejf w iCloud ma inne hasło lub szyfrowanie. Przywróć kopię zapasową z iCloud, aby z niego korzystać</string>
     <string name="sync_error_icloud_merge_error">Podczas synchronizacji sejfu z iCloud wystąpił błąd scalania. Spróbuj wyłączyć i ponownie włączyć synchronizację albo przywrócić kopię zapasową z iCloud.</string>
     <string name="sync_error_icloud_sync_not_allowed_description">Aby zsynchronizować ten sejf na kilku urządzeniach, konieczne jest ulepszenie do planu Unlimited</string>
     <string name="sync_error_icloud_sync_not_allowed_title">Nie można włączyć synchronizacji sejfu</string>
@@ -760,7 +760,7 @@
     <string name="login_edit">Edytuj</string>
     <string name="common_done">Gotowe</string>
     <string name="cloud_vault_delete_confirm_title">Usunąć kopię zapasową?</string>
-    <string name="cloud_vault_delete_confirm_body">Na pewno chcesz skasować tą kopię zapasową? Nie można jej przywrócić później</string>
+    <string name="cloud_vault_delete_confirm_body">Na pewno chcesz skasować tą kopię zapasową? Nie można jej przywrócić później.</string>
     <string name="cloud_vault_removing_failure">Usunięcie sejfu nieudane</string>
     <string name="settings_manage_tokens_title">Zarządzaj tokenami 2FA</string>
     <string name="settings_2fas_open">Otwórz 2FAS Auth</string>
@@ -771,7 +771,7 @@
     <string name="quick_setup_autofill_title">Autouzupełnianie</string>
     <string name="quick_setup_autofill_description">Wybierz 2FAS Pass, aby automatycznie uzupełniać szczegóły elementów w innych aplikacjach.</string>
     <string name="quick_setup_icloud_sync_title">Synchronizacja sejfu</string>
-    <string name="quick_setup_icloud_sync_description">Bezpiecznie synchronizuj swoje dane za pomocą iCloud na wypadek uszkodzenia lub utraty tego urządzenia.</string>
+    <string name="quick_setup_icloud_sync_description">Bezpiecznie synchronizuj swoje dane za pomocą iCloud w przypadku uszkodzenia lub utraty tego urządzenia.</string>
     <string name="quick_setup_security_tier_title">Poziom bezpieczeństwa</string>
     <string name="quick_setup_security_tier_description">Zdecyduj o dostępie funkcji autouzupełniania i rozszerzenia przeglądarki do każdego elementu.</string>
     <string name="quick_setup_security_tier_default_label">Domyślny</string>
@@ -784,7 +784,7 @@
     <string name="vault_recovery_wrong_decryption_kit_another_backup_cta">Użyj innej kopii zapasowej</string>
     <string name="vault_recovery_wrong_decryption_kit_another_decryption_kit_cta">Użyj innego zestawu deszyfrującego</string>
     <string name="settings_entry_manage_tags">Zarządzaj Tagami</string>
-    <string name="settings_entry_manage_tags_description">Tagi umożliwiają ci przypisywanie i filtrowanie twoich elementów.</string>
+    <string name="settings_entry_manage_tags_description">Tagi umożliwiają przypisywanie i filtrowanie elementów.</string>
     <string name="tag_delete_cta">Skasuj</string>
     <string name="tag_description">Elementy przypisane: %s</string>
     <string name="tag_delete_confirm_title">Usuń Tag</string>
@@ -802,14 +802,14 @@
     <string name="login_tags_description">Przypisz Tagi, aby łatwiej odnajdywać swoje elementy</string>
     <string name="login_selected_tags">Wybrane Tagi</string>
     <string name="quick_setup_drive_sync_title">Synchronizacja sejfu</string>
-    <string name="quick_setup_drive_sync_description">Bezpiecznie synchronizuj swoje dane za pomocą Google Drive na wypadek uszkodzenia lub utraty tego urządzenia.</string>
+    <string name="quick_setup_drive_sync_description">Bezpiecznie synchronizuj swoje dane za pomocą Google Drive w przypadku uszkodzenia lub utraty tego urządzenia.</string>
     <string name="home_list_options_modal_title">Ustawienia listy</string>
     <string name="filter_tag_banner_ios">Wyświetlanie %1$d elementów z Tagiem: **%2$s**</string>
     <string name="login_filter_modal_tag">Filtruj</string>
     <string name="login_filter_modal_clear">Wyczyść filtry</string>
     <string name="login_filter_modal_tag_all">Wszystkie</string>
     <string name="connect_modal_error_app_update_required_title">Wymagana aktualizacja</string>
-    <string name="connect_modal_error_app_update_required_subtitle">Proszę zaktualizować aplikację aby połączyć się z rozszerzeniem przeglądarki</string>
+    <string name="connect_modal_error_app_update_required_subtitle">Proszę zaktualizować aplikację, aby połączyć się z rozszerzeniem przeglądarki</string>
     <string name="connect_modal_error_app_update_required_cta">Zaktualizuj</string>
     <string name="connect_modal_error_browser_extension_update_required_title">Wymagana aktualizacja rozszerzenia przeglądarki</string>
     <string name="connect_modal_error_browser_extension_update_required_subtitle">Zaktualizuj rozszerzenie przeglądarki</string>
@@ -825,7 +825,7 @@
     <string name="transfer_instructions_keepass">Otwórz KeePass na komputerze i zaloguj się do bazy danych.\n\nKliknij **Plik** na pasku menu i wybierz **Export**.\n\nWybierz **format pliku**, lokalizację eksportu i kliknij **OK**.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik** poniżej.</string>
     <string name="transfer_instructions_keepassxc">Otwórz KeePassXC na komputerze i zaloguj się do bazy danych.\n\nKliknij **Baza danych** na pasku menu i wybierz **Export**.\n\nWybierz **format pliku**, lokalizację eksportu i kliknij **OK**.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik** poniżej.</string>
     <string name="common_back">Cofnij</string>
-    <string name="transfer_instructions_microsoft_edge">Otwórz Microsoft Edge na komputerze.\n\nWybierz 3 kropki obok ikony profilu w prawym górnym rogu, a następnie wybierz **Hasła**.\n\nWybierz 3 kropki obok kluczy dostępu i kliknij **Eksportuj hasła**.\n\nPotwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
+    <string name="transfer_instructions_microsoft_edge">Otwórz Microsoft Edge na komputerze.\n\nWybierz 3 kropki obok ikony profilu w prawym górnym rogu, a następnie wybierz **Hasła**.\n\nWybierz 3 kropki obok kluczy dostępu, kliknij **Eksportuj hasła** i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
     <string name="transfer_instructions_enpass">Otwórz Enpass na komputerze.\n\nOtwórz menu w prawym górnym rogu.\n\nWybierz **Plik** a następnie **Eksportuj**.\n\nWybierz Sejf i **format json**.\n\nWybierz miejsce zapisu i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik JSON** poniżej.</string>
     <string name="restore_vault_title">Witaj z powrotem!</string>
     <string name="restore_vault_message">Pomyślnie przywrócono zaszyfrowany sejf 2FAS Pass. Odszyfruj go, aby odzyskać dostęp do swoich elementów.</string>
@@ -836,7 +836,7 @@
     <string name="request_modal_full_sync_subtitle">Wyślij dane twojego sejfu do rozszerzenia przeglądarki.</string>
     <string name="request_modal_full_sync_cta_positive">Wyślij</string>
     <string name="request_modal_full_sync_cta_negative">Anuluj</string>
-    <string name="transfer_instructions_keeper">Otwórz Keeper na komputerze.\n\nKliknij na twoje konto w prawym górnym rogu, wybierz **Ustawienia**, a następnie **Eksport**.\n\nW **Eksport pliku** wybierz **format json** a następnie kliknij **Eksportuj**.\n\nWpisz swoje hasło główne i potwierdź eksport*.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik JSON** poniżej.</string>
+    <string name="transfer_instructions_keeper">Otwórz Keeper na komputerze.\n\nKliknij na twoje konto w prawym górnym rogu, wybierz **Ustawienia**, a następnie **Eksport**.\n\nW **Eksport pliku** wybierz **format json** a następnie kliknij **Eksportuj**.\n\nWpisz swoje hasło główne i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik JSON** poniżej.</string>
     <string name="connect_modal_error_no_internet_title">Błąd połączenia</string>
     <string name="connect_modal_error_no_internet_subtitle">Brak połączenia z iternetem. Spróbuj ponownie.</string>
     <string name="home_delete_confirm_title">Usunąć elementy?</string>
@@ -855,8 +855,8 @@
     <string name="secure_note_edit_title">Edycja notatki</string>
     <string name="item_add_title">Dodaj element</string>
     <string name="item_edit_title">Edytuj</string>
-    <string name="secure_note_text_reveal_edit_action">Dotknij aby edytować</string>
-    <string name="secure_note_text_reveal_view_action">Dotknij aby zobaczyć</string>
+    <string name="secure_note_text_reveal_edit_action">Kliknij, aby edytować</string>
+    <string name="secure_note_text_reveal_view_action">Kliknij, aby zobaczyć</string>
     <string name="secure_note_text_more_action">więcej</string>
     <string name="request_modal_new_login_title">Nowy login</string>
     <string name="request_modal_new_secure_note_title">Nowa notatka</string>
@@ -868,7 +868,7 @@
     <string name="request_modal_secure_note_request_subtitle">Rozszerzenie przeglądaki prosi o dostęp do tej notatki</string>
     <string name="request_modal_toast_success_secure_note_request">Notatka wysłana pomyślnie</string>
     <string name="secure_note_view_action_copy">Kopiuj notatkę</string>
-    <string name="toast_secure_note_copied">Notatka skopiowana</string>
+    <string name="toast_secure_note_copied">Skopiowano notatkę</string>
     <string name="secure_note_error_copy">Błąd podczas kopiowania notatki</string>
     <string name="content_type_filter_secure_note_name">Notatki</string>
     <string name="content_type_filter_login_name">Loginy</string>
@@ -947,7 +947,7 @@
     <string name="note_item_length_error">Notatki nie mogą mieć więcej niż %d znaków</string>
     <string name="settings_push_notifications_description">Pozwól rozszerzeniu przeglądarki na wysyłanie powiadomień push, aby autouzupełnić dane.</string>
     <string name="settings_push_notifications_allow_title">Pozwól na powiadomienia</string>
-    <string name="settings_push_notifications_allow_subtitle">Pozwól na powiadomienia z rozszerzenia przeglądarki 2FAS Pass</string>
+    <string name="settings_push_notifications_allow_subtitle">Pozwól na powiadomienia z rozszerzenia przeglądarki 2FAS Pass.</string>
     <string name="settings_change_password_processing_title">Przetwarzanie…</string>
     <string name="settings_change_password_processing_description">Trwa zmiana hasła i ponowne szyfrowanie danych.\nProsimy nie zamykać aplikacji podczas tego procesu.</string>
     <string name="settings_change_password_processing_message_local">Ponowne szyfrowanie danych lokalnych…</string>
@@ -960,7 +960,7 @@
     <string name="settings_change_password_cta_success">Pobierz nowy zestaw deszyfrujący</string>
     <string name="settings_known_browser_placeholder_extension_name">Nazwa rozszerzenia</string>
     <string name="settings_known_browser_placeholder_browser_name">Chrome na Windows 11</string>
-    <string name="settings_cloud_sync_description_long">Bezpiecznie synchronizuj sejf 2FAS Pass z Google Drive lub WebDAV, aby chronić swoje dane na wypadek uszkodzenia lub utraty tego urządzenia.</string>
+    <string name="settings_cloud_sync_description_long">Bezpiecznie synchronizuj sejf 2FAS Pass z Google Drive lub WebDAV, aby chronić swoje dane w przypadku uszkodzenia lub utraty tego urządzenia.</string>
     <string name="settings_backup_seed_error_mismatch">Wprowadzone tajne słowa nie są zgodne z wybranym sejfem. Upewnij się, że wprowadziłeś poprawne słowa.</string>
     <string name="settings_backup_error_reading_kit">Błąd przy odczytywaniu zestawu deszyfrującego.</string>
     <string name="settings_backup_error_reading_kit_description">Błąd przy odczytywaniu zestawu deszyfrującego.</string>
@@ -998,14 +998,14 @@
     <string name="manage_subscription_trusted_extensions_subtitle">%1$s / ∞</string>
     <string name="manage_subscription_unlimited">Unlimited</string>
     <string name="settings_entry_subscription_free_plan_subtitle">Ulepsz swój plan, aby uzyskać dostęp do większej liczby funkcji.</string>
-    <string name="settings_entry_subscription_paid_plan_subtitle">Sprawdź swój obecny plan</string>
+    <string name="settings_entry_subscription_paid_plan_subtitle">Sprawdź swój obecny plan.</string>
     <string name="customization_device_name_error_empty">Nazwa nie może być pusta</string>
     <string name="customization_device_name_error_max_length">Maksymalnie 128 znaków</string>
     <string name="import_export_backup_saved_toast">Zapisano kopię zapasową!</string>
     <string name="import_export_backup_file_title">Kopia zapasowa 2FAS Pass</string>
     <string name="import_export_import_successful_toast">Import przebiegł pomyślnie!</string>
     <string name="import_export_subtitle">Bezpiecznie przechowuj dane sejfu na swoim urządzeniu. Zrób import kopii zapasowej, aby przywrócić dane, lub eksportuj bieżące dane w celu ich zabezpieczenia.</string>
-    <string name="import_export_auth_description">Autoryzacja jest wymagana aby wyeksportować kopię zapasową</string>
+    <string name="import_export_auth_description">Autoryzacja jest wymagana, aby wyeksportować kopię zapasową</string>
     <string name="home_list_menu_edit">Edytuj listę</string>
     <string name="home_list_menu_sort">Sortuj</string>
     <string name="home_list_menu_filter">Filtruj</string>
@@ -1030,16 +1030,17 @@
     <string name="home_multiselect_security_tier_title">Poziom bezpieczeństwa</string>
     <string name="home_multiselect_security_tier_subtitle">Edytuj zaznaczone elementy</string>
     <plurals name="common_items_count">
-        <item quantity="one">%lld element</item>
-        <item quantity="few">%lld elementy</item>
-        <item quantity="other">%lld elementów</item>
+        <item quantity="one">%d element</item>
+        <item quantity="few">%d elementy</item>
+        <item quantity="other">%d elementów</item>
     </plurals>
     <string name="home_multiselect_security_tier_change_body">Zmień poziom bezpieczeństwa wybranych elementów.</string>
     <plurals name="home_multiselect_security_tier_change_button">
-        <item quantity="one">Zmień %lld element</item>
-        <item quantity="few">Zmień %lld elementy</item>
-        <item quantity="other">Zmień %lld elementy</item>
+        <item quantity="one">Zmień %d element</item>
+        <item quantity="few">Zmień %d elementy</item>
+        <item quantity="other">Zmień %d elementy</item>
     </plurals>
     <string name="home_multiselect_tags_title">Tagi</string>
     <string name="home_multiselect_tags_subtitle">Edytuj zaznaczone elementy</string>
+    <string name="transfer_instructions_nordpass">Otwórz NordPass na komputerze.\n\nPrzejdź do **Ustawień** i przewiń w dół do sekcji **Import i Eksport**.\n\nWybierz **Eksportuj elementy**, wpisz swoje hasło główne i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
 </resources>

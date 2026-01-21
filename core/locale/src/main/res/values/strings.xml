@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 19 Jan 2026 14:14:38 -0800
+ Exported at: Wed, 21 Jan 2026 15:36:18 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -307,7 +307,7 @@
     <string name="lock_screen_biometrics_prompt_body">Would you like to enable biometrics and use them instead of your password?</string>
     <string name="lock_screen_biometrics_modal_title">Biometrics</string>
     <string name="lock_screen_biometrics_modal_subtitle">Enable biometrics</string>
-    <string name="lock_screen_biometrics_error_too_many_attempts">Too many failed attempts. You can enable biometrics later in Settings -&gt; Security.</string>
+    <string name="lock_screen_biometrics_error_too_many_attempts">Too many failed attempts. You can enable biometrics later in Settings → Security.</string>
     <string name="lock_screen_biometrics_error_title">Biometrics Error</string>
     <string name="lock_screen_unlock_title">Unlock App</string>
     <string name="lock_screen_unlock_description">Enter your Master Password to unlock the app</string>
@@ -330,7 +330,7 @@
     <string name="security_screen_capture_enable_description">Authentication is required to enable Screen Capture</string>
     <string name="security_screen_capture_enable_cta">Enable Screen Capture</string>
     <string name="security_decryption_kit_access_title">New Decryption Kit</string>
-    <string name="security_decryption_kit_access_description">Master Password is required to download a new Decryption Kit</string>
+    <string name="security_decryption_kit_access_description">Master Password is required to download a new Decryption Kit.</string>
     <string name="security_decryption_kit_access_cta">Authenticate</string>
     <string name="biometrics_modal_title">Biometrics</string>
     <string name="biometrics_modal_subtitle_enable">Enable biometrics login</string>
@@ -441,7 +441,7 @@
     <string name="set_new_password_confirm_body_part1_ios">Changing your Master Password will update the encryption of your Vault. You\'ll need to **download a new Decryption Kit and create a new Local Backup.**</string>
     <string name="set_new_password_confirm_body_part2_ios">If you use this Vault on other devices, Sync will be disabled, and you\'ll need to re-enable it using your new Master Password.</string>
     <string name="set_new_password_success_title">Master Password successfully changed</string>
-    <string name="settings_autofill_open_system_settings_description">Configure AutoFill: Settings -&gt; General -&gt; AutoFill &amp; Passwords</string>
+    <string name="settings_autofill_open_system_settings_description">Configure AutoFill: Settings → General → AutoFill &amp; Passwords</string>
     <string name="settings_cloud_sync_description">Securely sync your 2FAS Pass Vault with iCloud or WebDAV to protect your data in case this device gets lost or damaged.</string>
     <string name="settings_cloud_sync_icloud_label">iCloud Sync</string>
     <string name="settings_cloud_sync_last_sync__0025_0040">Last successful synchronization: **%s**</string>
@@ -456,7 +456,7 @@
     <string name="settings_header_mobile_app">Mobile App</string>
     <string name="settings_protection_level_help">How does 2FAS ensure data security?</string>
     <string name="settings_push_notifications_enable_cta">Enable</string>
-    <string name="settings_push_notifications_open_system_settings_description">Configure Push notifications: Settings -&gt; Notifications -&gt; 2FAS Pass</string>
+    <string name="settings_push_notifications_open_system_settings_description">Configure Push notifications: Settings → Notifications → 2FAS Pass</string>
     <string name="settings_push_notifications_status_label">Status</string>
     <string name="share_link_message">Check this out!</string>
     <string name="share_link_subject">Amazing app!</string>
@@ -757,7 +757,7 @@
     <string name="migration_error_title">Migration failed</string>
     <string name="migration_error_body">Please restart the app and try again</string>
     <string name="login_delete_cta">Remove Item</string>
-    <string name="login_edit">Edit Item</string>
+    <string name="login_edit">Edit</string>
     <string name="common_done">Done</string>
     <string name="cloud_vault_delete_confirm_title">Delete backup?</string>
     <string name="cloud_vault_delete_confirm_body">Are you sure you want to permanently delete this backup? You cannot restore it later.</string>
@@ -825,7 +825,7 @@
     <string name="transfer_instructions_keepass">Open KeePass on your PC and log in to your database.\n\nClick **File** in the menu bar, and select **Export**.\n\nChoose the **file format**, the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload file** below.</string>
     <string name="transfer_instructions_keepassxc">Open KeePassXC on your PC and log in to your database.\n\nClick **Database** in the menu bar, and select **Export**.\n\nChoose the **file format**, confirm and choose the export location and click **OK**.\n\nCopy the exported file to this device and tap **Upload file** below.</string>
     <string name="common_back">Back</string>
-    <string name="transfer_instructions_microsoft_edge">Open Microsoft Edge on your PC\n\nSelect the 3 dots next to your profile icon at the top right, then select **Passwords**.\n\nSelect the 3 dots next to Passkeys and click **Export passwords**.\n\nConfirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
+    <string name="transfer_instructions_microsoft_edge">Open Microsoft Edge on your PC\n\nSelect the 3 dots next to your profile icon at the top right, then select **Passwords**.\n\nSelect the 3 dots next to Passkey, click **Export passwords** and confirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.\u0020</string>
     <string name="transfer_instructions_enpass">Open Enpass on your PC.\n\nOpen the menu at the top right of the app.\n\nSelect **File** then **Export**.\n\nSelect the correct Vault and the **json** file format.\n\nChoose the location and confirm the export.\n\nCopy the exported file to this device and tap **Upload JSON file** below.\u0020</string>
     <string name="restore_vault_title">Welcome back!</string>
     <string name="restore_vault_message">You\'ve successfully restored your encrypted 2FAS Pass Vault. However, you must decrypt it to restore access to your Items.</string>
@@ -854,7 +854,7 @@
     <string name="secure_note_add_title">Add Secure Note</string>
     <string name="secure_note_edit_title">Edit Secure Note</string>
     <string name="item_add_title">Add Item</string>
-    <string name="item_edit_title">Edit Item</string>
+    <string name="item_edit_title">Edit</string>
     <string name="secure_note_text_reveal_edit_action">Tap to edit</string>
     <string name="secure_note_text_reveal_view_action">Tap to view</string>
     <string name="secure_note_text_more_action">more</string>
@@ -947,7 +947,7 @@
     <string name="note_item_length_error">Notes cannot be longer than %d characters</string>
     <string name="settings_push_notifications_description">Allow the browser extension to send you push notifications when you need to autofill your data.</string>
     <string name="settings_push_notifications_allow_title">Allow notifications</string>
-    <string name="settings_push_notifications_allow_subtitle">Allow 2FAS Pass Browser Extension notifications</string>
+    <string name="settings_push_notifications_allow_subtitle">Allow 2FAS Pass Browser Extension notifications.</string>
     <string name="settings_change_password_processing_title">Processing…</string>
     <string name="settings_change_password_processing_description">Changing your password and re-encrypting your data.\nPlease do not close the app during this process.</string>
     <string name="settings_change_password_processing_message_local">Re-encrypting local data…</string>
@@ -1028,14 +1028,15 @@
     <string name="home_multiselect_security_tier_title">Security Tier</string>
     <string name="home_multiselect_security_tier_subtitle">Edit selected Items</string>
     <plurals name="common_items_count">
-        <item quantity="one">%lld Item</item>
-        <item quantity="other">%lld Items</item>
+        <item quantity="one">%d Item</item>
+        <item quantity="other">%d Items</item>
     </plurals>
     <string name="home_multiselect_security_tier_change_body">Change the Security Tier of selected Items.</string>
     <plurals name="home_multiselect_security_tier_change_button">
-        <item quantity="one">Change %lld Item</item>
-        <item quantity="other">Change %lld Items</item>
+        <item quantity="one">Change %d Item</item>
+        <item quantity="other">Change %d Items</item>
     </plurals>
     <string name="home_multiselect_tags_title">Tags</string>
     <string name="home_multiselect_tags_subtitle">Edit selected Items</string>
+    <string name="transfer_instructions_nordpass">Open NordPass on your PC.\n\nGo to **Settings** and find the **Import and Export** section.\n\nSelect **Export items**, enter your master password and confirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
 </resources>

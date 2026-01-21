@@ -211,6 +211,7 @@ private fun Content(
             if (uiState.initialItemContent?.additionalInfo.isNullOrEmpty().not()) {
                 noteItem(
                     notes = uiState.itemContent.additionalInfo,
+                    label = strings.secureNoteAdditionalInfoLabel,
                     onNotesChange = onAdditionalInfoChange,
                 )
             }

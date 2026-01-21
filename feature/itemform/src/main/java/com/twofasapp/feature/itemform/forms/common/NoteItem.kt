@@ -20,13 +20,14 @@ import com.twofasapp.core.locale.MdtLocale
 
 internal fun LazyListScope.noteItem(
     notes: String?,
+    label: String? = null,
     onNotesChange: (String) -> Unit,
 ) {
     listItem(FormListItem.Field("Notes")) {
         TextField(
             value = notes.orEmpty(),
             onValueChange = { onNotesChange(it) },
-            labelText = MdtLocale.strings.loginNotes,
+            labelText = label ?: MdtLocale.strings.loginNotes,
             modifier = Modifier
                 .fillMaxWidth()
                 .animateItem(),

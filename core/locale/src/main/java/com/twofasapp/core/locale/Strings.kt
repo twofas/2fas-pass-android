@@ -408,8 +408,7 @@ class Strings(private val c: Context) {
     // Content Types
     val contentTypeLoginName = c.getString(R.string.content_type_login_name)
     val contentTypeSecureNoteName = c.getString(R.string.content_type_secure_note_name)
-    val contentTypeFilterSecureNoteName =
-        c.getString(R.string.content_type_filter_secure_note_name)
+    val contentTypeFilterSecureNoteName = c.getString(R.string.content_type_filter_secure_note_name)
     val contentTypeFilterLoginName = c.getString(R.string.content_type_filter_login_name)
     val contentTypeFilterAllName = c.getString(R.string.content_type_filter_all_name)
     val contentTypeCardName = c.getString(R.string.content_type_card_name)
@@ -446,12 +445,12 @@ class Strings(private val c: Context) {
     val cardDetailsHeader = c.getString(R.string.card_details_header)
     val cardViewActionCopyCardHolder = c.getString(R.string.card_view_action_copy_card_holder)
     val cardViewActionCopyCardNumber = c.getString(R.string.card_view_action_copy_card_number)
-    val cardViewActionCopyExpirationDate =
-        c.getString(R.string.card_view_action_copy_expiration_date)
-    val cardViewActionCopySecurityCode =
-        c.getString(R.string.card_view_action_copy_security_code)
+    val cardViewActionCopyExpirationDate = c.getString(R.string.card_view_action_copy_expiration_date)
+    val cardViewActionCopySecurityCode = c.getString(R.string.card_view_action_copy_security_code)
     val cardErrorCopyNumber = c.getString(R.string.card_error_copy_number)
     val cardErrorCopySecurityCode = c.getString(R.string.card_error_copy_security_code)
+    val paymentCardAddTitle = c.getString(R.string.card_add_title)
+    val paymentCardEditTitle = c.getString(R.string.card_edit_title)
 
     // Customize Icon
     val customizeIconHeader = c.getString(R.string.customize_icon_header)
