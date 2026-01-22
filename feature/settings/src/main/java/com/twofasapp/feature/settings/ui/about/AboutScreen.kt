@@ -180,7 +180,7 @@ private fun Content(
                     onClick = {
                         ShareCompat.IntentBuilder(activity)
                             .setType("text/plain")
-                            .setChooserTitle("Share 2FAS")
+                            .setChooserTitle(strings.aboutShareTitle)
                             .setText(shareText)
                             .startChooser()
                     },

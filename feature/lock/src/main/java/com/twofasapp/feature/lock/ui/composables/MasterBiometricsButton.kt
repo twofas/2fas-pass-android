@@ -21,6 +21,7 @@ import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.crypto.emptyEncryptedBytes
 import com.twofasapp.core.design.foundation.button.TextButton
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
+import com.twofasapp.core.locale.MdtLocale
 import kotlinx.coroutines.android.awaitFrame
 
 @Composable
@@ -29,12 +30,15 @@ fun MasterBiometricsButton(
     text: String,
     biometricsEnabled: Boolean,
     masterKey: EncryptedBytes?,
-    modalTitle: String = "Biometrics",
-    modalSubtitle: String = "Authenticate with Biometrics",
+    modalTitle: String? = null,
+    modalSubtitle: String? = null,
     showOnStart: Boolean = true,
     onMasterKeyDecrypted: (ByteArray) -> Unit = {},
     onBiometricsInvalidated: () -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
+    val resolvedModalTitle = modalTitle ?: strings.lockScreenBiometricsModalTitle
+    val resolvedModalSubtitle = modalSubtitle ?: strings.lockScreenBiometricsModalSubtitle
     var showBiometricsModal by remember { mutableStateOf(false) }
 
     if (biometricsEnabled && masterKey != null) {
@@ -60,9 +64,9 @@ fun MasterBiometricsButton(
 
     if (showBiometricsModal && masterKey != null) {
         BiometricsModal(
-            title = modalTitle,
-            subtitle = modalSubtitle,
-            negative = "Use password",
+            title = resolvedModalTitle,
+            subtitle = resolvedModalSubtitle,
+            negative = strings.lockUsePassword,
             encryptedBytes = masterKey,
             onSuccessDecrypt = { masterKeyDecrypted ->
                 showBiometricsModal = false
@@ -84,7 +88,7 @@ private fun Previews() {
     PreviewTheme {
         MasterBiometricsButton(
             modifier = Modifier,
-            text = "Unlock with Biometrics",
+            text = MdtLocale.strings.authUseBiometrics,
             biometricsEnabled = true,
             masterKey = emptyEncryptedBytes(),
         )

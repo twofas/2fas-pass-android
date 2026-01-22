@@ -105,7 +105,7 @@ private fun Content(
                             Space(16.dp)
 
                             Text(
-                                text = "2FAS Pass Unlimited",
+                                text = strings.manageSubscriptionTitle,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth(),
                                 style = MdtTheme.typo.headlineSmall,
@@ -114,7 +114,7 @@ private fun Content(
                             Space(8.dp)
 
                             Text(
-                                text = "You've now got the full package - enjoy using 2FAS Pass with zero boundaries.",
+                                text = strings.manageSubscriptionUnlimitedDescription,
                                 style = MdtTheme.typo.bodyMedium,
                                 color = MdtTheme.color.onSurfaceVariant,
                                 modifier = Modifier
@@ -127,13 +127,13 @@ private fun Content(
 
                     item {
                         OptionHeader(
-                            "Subscription",
+                            strings.manageSubscriptionTitle,
                         )
                     }
 
                     item {
                         Entry(
-                            title = "Identifier",
+                            title = strings.manageSubscriptionUserIdentifierTitle,
                             subtitle = uiState.subscriptionPlan?.userId,
                             isFirst = true,
                             actions = {
@@ -149,11 +149,11 @@ private fun Content(
 
                     item {
                         Entry(
-                            title = "Plan",
+                            title = strings.manageSubscriptionPlanTitle,
                             subtitle = buildString {
-                                appendLine("Name: " + uiState.subscriptionPlan?.entitlementId)
-                                appendLine("Price: " + uiState.subscriptionPlan?.priceFormatted)
-                                appendLine("${if (uiState.subscriptionPlan?.willRenew == true) "Renews" else "Ends"} at: ${uiState.subscriptionPlan?.expirationDate?.formatDate()}")
+                                appendLine(strings.manageSubscriptionPlanNamePrefix + " " + uiState.subscriptionPlan?.entitlementId)
+                                appendLine(strings.manageSubscriptionPlanPricePrefix + " " + uiState.subscriptionPlan?.priceFormatted)
+                                appendLine("${if (uiState.subscriptionPlan?.willRenew == true) strings.manageSubscriptionRenewsAt else strings.manageSubscriptionEndsAt} ${uiState.subscriptionPlan?.expirationDate?.formatDate()}")
                             },
                             isLast = true,
                         )
@@ -161,28 +161,28 @@ private fun Content(
 
                     item {
                         OptionHeader(
-                            "Benefits",
+                            strings.manageSubscriptionBenefitsHeader,
                         )
                     }
                     item {
                         Entry(
-                            title = "Items in Vault",
-                            subtitle = "${uiState.itemsCount} / ∞",
+                            title = strings.manageSubscriptionItemsInVaultTitle,
+                            subtitle = strings.manageSubscriptionItemsInVaultSubtitle.format(uiState.itemsCount),
                             isFirst = true,
                         )
                     }
 
                     item {
                         Entry(
-                            title = "Trusted Extensions",
-                            subtitle = "${uiState.browsersCount} / ∞",
+                            title = strings.manageSubscriptionTrustedExtensionsTitle,
+                            subtitle = strings.manageSubscriptionTrustedExtensionsSubtitle.format(uiState.browsersCount),
                         )
                     }
 
                     item {
                         Entry(
-                            title = "Multi-Device Sync",
-                            subtitle = "Unlimited",
+                            title = strings.manageSubscriptionMultiDeviceSyncTitle,
+                            subtitle = strings.manageSubscriptionUnlimited,
                             isLast = true,
                         )
                     }

@@ -29,6 +29,7 @@ import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.preview.PreviewAllThemesInRow
 import com.twofasapp.core.design.foundation.text.TextIcon
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun PasswordSuggestionsBar(
@@ -36,6 +37,7 @@ internal fun PasswordSuggestionsBar(
     onGenerateClick: () -> Unit = {},
     onOpenGeneratorClick: () -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     Row(
         modifier = modifier
             .height(48.dp)
@@ -44,7 +46,7 @@ internal fun PasswordSuggestionsBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextIcon(
-            text = "Generator",
+            text = strings.loginPasswordGeneratorCta,
             leadingIcon = MdtIcons.PasswordGenerator,
             leadingIconTint = MdtTheme.color.primary,
             leadingIconSpacer = 8.dp,
@@ -64,7 +66,7 @@ internal fun PasswordSuggestionsBar(
         )
 
         TextIcon(
-            text = "Auto-generate",
+            text = strings.loginPasswordAutogenerateCta,
             leadingIcon = MdtIcons.Refresh,
             leadingIconTint = MdtTheme.color.primary,
             leadingIconSpacer = 6.dp,

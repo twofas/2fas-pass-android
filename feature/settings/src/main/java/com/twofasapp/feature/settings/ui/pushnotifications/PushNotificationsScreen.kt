@@ -39,6 +39,7 @@ import com.twofasapp.core.design.feature.settings.OptionSwitch
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.permissions.PermissionStatus
 import com.twofasapp.feature.permissions.rememberPermissionStatus
 import org.koin.androidx.compose.koinViewModel
@@ -59,6 +60,7 @@ private fun Content(
     uiState: PushNotificationsUiState,
 ) {
     val context = LocalContext.current
+    val strings = MdtLocale.strings
     var askForPermission by remember { mutableStateOf(false) }
     var enabled by remember { mutableStateOf(NotificationManagerCompat.from(context).areNotificationsEnabled()) }
 
@@ -67,7 +69,7 @@ private fun Content(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = "Push Notifications") },
+        topBar = { TopAppBar(title = strings.settingsEntryPushNotifications) },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -78,7 +80,7 @@ private fun Content(
         ) {
             OptionEntry(
                 title = null,
-                subtitle = "Allow the browser extension to send you push notifications when you need to enter password data while browsing the web.",
+                subtitle = strings.settingsPushNotificationsDescription,
                 contentPadding = PaddingValues(horizontal = 16.dp),
             )
 
@@ -88,8 +90,8 @@ private fun Content(
                 val permissionState = rememberPermissionStatus(Manifest.permission.POST_NOTIFICATIONS)
 
                 OptionSwitch(
-                    title = "Allow notifications",
-                    subtitle = "Allow 2FAS Pass browser extension notifications",
+                    title = strings.settingsPushNotificationsAllowTitle,
+                    subtitle = strings.settingsPushNotificationsAllowSubtitle,
                     icon = MdtIcons.Notifications,
                     checked = when (permissionState.status) {
                         is PermissionStatus.Granted -> true
@@ -113,8 +115,8 @@ private fun Content(
                 )
             } else {
                 OptionSwitch(
-                    title = "Allow notifications",
-                    subtitle = "Allow 2FAS Pass browser extension notifications",
+                    title = strings.settingsPushNotificationsAllowTitle,
+                    subtitle = strings.settingsPushNotificationsAllowSubtitle,
                     icon = MdtIcons.Notifications,
                     checked = enabled,
                     onToggle = { context.openAppNotificationSettings() },

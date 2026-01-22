@@ -42,6 +42,7 @@ import com.twofasapp.core.design.feature.settings.OptionHeader
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.design.theme.RoundedShape12
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun ChangeIconLabel(
@@ -53,8 +54,9 @@ internal fun ChangeIconLabel(
 ) {
     val focusManager = LocalFocusManager.current
     var colorPickerInitialized = false
+    val strings = MdtLocale.strings
 
-    OptionHeader(text = "Text (1 or 2 characters)")
+    OptionHeader(text = strings.changeIconLabelHeader)
 
     TextField(
         value = labelText.orEmpty(),
@@ -63,7 +65,7 @@ internal fun ChangeIconLabel(
                 onTextChange(it)
             }
         },
-        placeholderText = "1 or 2 characters",
+        placeholderText = strings.changeIconLabelPlaceholder,
         singleLine = true,
         maxLines = 1,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, capitalization = KeyboardCapitalization.Characters),
@@ -73,7 +75,7 @@ internal fun ChangeIconLabel(
             .padding(horizontal = 16.dp),
     )
 
-    OptionHeader(text = "Background Color")
+    OptionHeader(text = strings.changeIconBackgroundHeader)
 
     HsvColorPicker(
         controller = colorController,

@@ -12,12 +12,14 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.data.settings.SettingsRepository
+import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class AutofillViewModel(
     appBuild: AppBuild,
     private val settingsRepository: SettingsRepository,
+    private val browserAutofillManager: BrowserAutofillManager,
 ) : ViewModel() {
     val uiState = MutableStateFlow(
         AutofillUiState(
@@ -31,11 +33,21 @@ internal class AutofillViewModel(
                 uiState.update { it.copy(autofillInline = settings.useInlinePresentation) }
             }
         }
+
+        checkBrowsersStatus()
     }
 
     fun updateAutofillInline() {
         launchScoped {
             settingsRepository.setAutofillSettings(useInline = uiState.value.autofillInline.not())
+        }
+    }
+
+    fun checkBrowsersStatus() {
+        launchScoped {
+            uiState.update { state ->
+                state.copy(browsers = browserAutofillManager.checkBrowsersStatus())
+            }
         }
     }
 }

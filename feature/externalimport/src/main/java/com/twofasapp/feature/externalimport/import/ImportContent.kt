@@ -8,9 +8,21 @@
 
 package com.twofasapp.feature.externalimport.import
 
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContentType
 
 internal data class ImportContent(
     val items: List<Item>,
-    val skipped: Int,
-)
+    val tags: List<Tag>,
+    val unknownItems: Int,
+) {
+    val countLogins: Int
+        get() = items.count { it.contentType is ItemContentType.Login }
+
+    val countSecureNotes: Int
+        get() = items.count { it.contentType is ItemContentType.SecureNote } - unknownItems
+
+    val countPaymentCards: Int
+        get() = items.count { it.contentType is ItemContentType.PaymentCard }
+}

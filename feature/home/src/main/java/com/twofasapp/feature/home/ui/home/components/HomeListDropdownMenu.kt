@@ -18,6 +18,7 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.menu.DropdownMenu
 import com.twofasapp.core.design.foundation.menu.DropdownMenuItem
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun HomeListDropdownMenu(
@@ -28,6 +29,7 @@ internal fun HomeListDropdownMenu(
     onClearFiltersClick: () -> Unit,
 ) {
     var showDropdown by remember { mutableStateOf(false) }
+    val strings = MdtLocale.strings
 
     DropdownMenu(
         visible = showDropdown,
@@ -54,7 +56,7 @@ internal fun HomeListDropdownMenu(
         },
         content = {
             DropdownMenuItem(
-                text = "Edit list",
+                text = strings.homeListMenuEdit,
                 icon = MdtIcons.Edit,
                 onClick = {
                     showDropdown = false
@@ -63,7 +65,7 @@ internal fun HomeListDropdownMenu(
             )
 
             DropdownMenuItem(
-                text = "Sort by",
+                text = strings.homeListMenuSort,
                 icon = MdtIcons.Sort,
                 onClick = {
                     showDropdown = false
@@ -72,7 +74,7 @@ internal fun HomeListDropdownMenu(
             )
 
             DropdownMenuItem(
-                text = "Filter",
+                text = strings.homeListMenuFilter,
                 icon = MdtIcons.FilterAlt,
                 onClick = {
                     showDropdown = false
@@ -82,7 +84,7 @@ internal fun HomeListDropdownMenu(
 
             if (selectedTag != null) {
                 DropdownMenuItem(
-                    text = "Clear filters",
+                    text = strings.homeListMenuClearFilters,
                     icon = MdtIcons.Close,
                     contentColor = MdtTheme.color.error,
                     onClick = {

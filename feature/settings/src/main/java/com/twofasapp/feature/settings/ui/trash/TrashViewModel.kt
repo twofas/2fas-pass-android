@@ -16,6 +16,7 @@ import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.loading
 import com.twofasapp.core.design.state.success
+import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -31,6 +32,7 @@ internal class TrashViewModel(
     private val itemsRepository: ItemsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemEncryptionMapper: ItemEncryptionMapper,
+    private val strings: Strings,
 ) : ViewModel() {
     val uiState = MutableStateFlow(TrashUiState())
     val screenState = MutableStateFlow(ScreenState.Loading)
@@ -72,7 +74,7 @@ internal class TrashViewModel(
                 uiState.update { it.copy(trashedItems = itemStates) }
 
                 if (items.isEmpty()) {
-                    screenState.empty("List is empty")
+                    screenState.empty(strings.trashEmpty)
                 } else {
                     screenState.success()
                 }

@@ -48,6 +48,7 @@ import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.search.SearchBar
 import com.twofasapp.core.design.foundation.text.TextIcon
+import com.twofasapp.core.locale.MdtLocale
 import kotlinx.coroutines.android.awaitFrame
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -64,6 +65,7 @@ internal fun HomeSearchBar(
     onSelectedItemTypeChange: (ItemContentType?) -> Unit = {},
     onClearFilter: () -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -111,7 +113,7 @@ internal fun HomeSearchBar(
         ) {
             item {
                 Tab(
-                    text = "All Items",
+                    text = strings.contentTypeFilterAllName,
                     icon = MdtIcons.AllItems,
                     selected = selectedItemType == null,
                     type = null,
@@ -124,7 +126,7 @@ internal fun HomeSearchBar(
 
             item {
                 Tab(
-                    text = "Logins",
+                    text = strings.contentTypeFilterLoginName,
                     icon = MdtIcons.Login,
                     type = ItemContentType.Login,
                     selected = selectedItemType is ItemContentType.Login,
@@ -138,7 +140,7 @@ internal fun HomeSearchBar(
 
             item {
                 Tab(
-                    text = "Secure Notes",
+                    text = strings.contentTypeFilterSecureNoteName,
                     icon = MdtIcons.SecureNote,
                     type = ItemContentType.SecureNote,
                     selected = selectedItemType is ItemContentType.SecureNote,
@@ -149,19 +151,18 @@ internal fun HomeSearchBar(
                 )
             }
 
-            // TODO: Uncomment when payment cards ready
-//            item {
-//                Tab(
-//                    text = "Cards",
-//                    icon = MdtIcons.PaymentCard,
-//                    type = ItemContentType.PaymentCard,
-//                    selected = selectedItemType is ItemContentType.PaymentCard,
-//                    onClick = {
-//                        focusManager.clearFocus()
-//                        onSelectedItemTypeChange(ItemContentType.PaymentCard)
-//                    },
-//                )
-//            }
+            item {
+                Tab(
+                    text = strings.contentTypeFilterCardName,
+                    icon = MdtIcons.PaymentCard,
+                    type = ItemContentType.PaymentCard,
+                    selected = selectedItemType is ItemContentType.PaymentCard,
+                    onClick = {
+                        focusManager.clearFocus()
+                        onSelectedItemTypeChange(ItemContentType.PaymentCard)
+                    },
+                )
+            }
         }
 
         if (selectedTag != null) {
@@ -178,8 +179,14 @@ internal fun HomeSearchBar(
                     text = buildAnnotatedString {
                         withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
                             append(selectedTag.name)
+                            append(" ")
                         }
-                        append(" (${if (filteredItemsCount == 1) "1 item" else "$filteredItemsCount items"})")
+                        val countText = if (filteredItemsCount == 1) {
+                            strings.homeFilterSelectedTagCountSingle.format(filteredItemsCount)
+                        } else {
+                            strings.homeFilterSelectedTagCountPlural.format(filteredItemsCount)
+                        }
+                        append(countText)
                     },
                     leadingIcon = MdtIcons.Tag,
                     leadingIconTint = MdtTheme.color.onSurface,

@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.R
 import com.twofasapp.core.design.foundation.image.AsyncImage
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.preview.PreviewRow
@@ -83,13 +85,38 @@ fun ItemImage(
             }
 
             is ItemContent.PaymentCard -> {
-                StaticIcon(
-                    modifier = modifier,
-                    icon = MdtIcons.PaymentCard,
-                    iconColor = MdtTheme.color.itemPaymentCardContent,
-                    backgroundColor = MdtTheme.color.itemPaymentCardContainer,
-                    size = size,
-                )
+                if (content.cardIssuer == null) {
+                    StaticIcon(
+                        modifier = modifier,
+                        icon = MdtIcons.PaymentCard,
+                        iconColor = MdtTheme.color.itemPaymentCardContent,
+                        backgroundColor = MdtTheme.color.itemPaymentCardContainer,
+                        size = size,
+                    )
+                } else {
+                    Box(
+                        modifier = modifier
+                            .size(size)
+                            .clip(RoundedShape12)
+                            .background(MdtTheme.color.surfaceContainerHigh),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            painter = when (content.cardIssuer) {
+                                ItemContent.PaymentCard.Issuer.Visa -> painterResource(R.drawable.paymentcard_visa)
+                                ItemContent.PaymentCard.Issuer.MasterCard -> painterResource(R.drawable.paymentcard_mastercard)
+                                ItemContent.PaymentCard.Issuer.AmericanExpress -> painterResource(R.drawable.paymentcard_amex)
+                                ItemContent.PaymentCard.Issuer.Discover -> painterResource(R.drawable.paymentcard_discover)
+                                ItemContent.PaymentCard.Issuer.DinersClub -> painterResource(R.drawable.paymentcard_dinersclub)
+                                ItemContent.PaymentCard.Issuer.Jcb -> painterResource(R.drawable.paymentcard_jcb)
+                                ItemContent.PaymentCard.Issuer.UnionPay -> painterResource(R.drawable.paymentcard_unionpay)
+                                null -> MdtIcons.PaymentCard
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = null,
+                        )
+                    }
+                }
             }
         }
     }

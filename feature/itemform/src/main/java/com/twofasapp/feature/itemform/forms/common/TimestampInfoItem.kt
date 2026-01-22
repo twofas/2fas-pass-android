@@ -16,21 +16,27 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.formatDateTime
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.lazy.listItem
+import com.twofasapp.core.locale.MdtLocale
 
 internal fun LazyListScope.timestampInfoItem(
     item: Item,
 ) {
     if (item.id.isNotEmpty()) {
         listItem(FormListItem.TimestampInfo) {
+            val strings = MdtLocale.strings
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .animateItem(),
                 text = buildString {
-                    append(" Created at: ")
+                    append(" ")
+                    append(strings.commonCreated)
+                    append(": ")
                     append(item.createdAt.formatDateTime())
                     appendLine()
-                    append(" Updated at: ")
+                    append(" ")
+                    append(strings.commonModified)
+                    append(": ")
                     append(item.updatedAt.formatDateTime())
                 },
                 style = MdtTheme.typo.bodySmall,

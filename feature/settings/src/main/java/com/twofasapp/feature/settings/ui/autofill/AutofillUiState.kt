@@ -8,7 +8,10 @@
 
 package com.twofasapp.feature.settings.ui.autofill
 
+import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillStatus
+
 internal data class AutofillUiState(
     val packageName: String = "",
     val autofillInline: Boolean = true,
+    val browsers: List<BrowserAutofillStatus> = emptyList(),
 )

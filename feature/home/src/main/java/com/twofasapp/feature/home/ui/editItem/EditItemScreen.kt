@@ -62,19 +62,19 @@ private fun Content(
                 title = when {
                     uiState.item.id.isBlank() -> {
                         when (uiState.item.contentType) {
-                            ItemContentType.Login -> strings.loginAddTitle
-                            ItemContentType.SecureNote -> strings.secureNoteAddTitle
-                            ItemContentType.PaymentCard -> strings.itemAddTitle
                             is ItemContentType.Unknown -> strings.itemAddTitle
+                            is ItemContentType.Login -> strings.loginAddTitle
+                            is ItemContentType.SecureNote -> strings.secureNoteAddTitle
+                            is ItemContentType.PaymentCard -> strings.paymentCardAddTitle
                         }
                     }
 
                     else -> {
                         when (uiState.item.contentType) {
-                            ItemContentType.Login -> strings.loginEditTitle
-                            ItemContentType.SecureNote -> strings.secureNoteEditTitle
-                            ItemContentType.PaymentCard -> strings.itemEditTitle
                             is ItemContentType.Unknown -> strings.itemEditTitle
+                            is ItemContentType.Login -> strings.loginEditTitle
+                            is ItemContentType.SecureNote -> strings.secureNoteEditTitle
+                            is ItemContentType.PaymentCard -> strings.paymentCardEditTitle
                         }
                     }
                 },

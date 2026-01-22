@@ -64,54 +64,85 @@ internal fun HomeItemDropdownMenu(
                 when (content) {
                     is ItemContent.Unknown -> Unit
                     is ItemContent.Login -> {
-                        DropdownMenuItem(
-                            text = MdtLocale.strings.homeItemCopyUsername,
-                            icon = MdtIcons.User,
-                            onClick = {
-                                showDropdown = false
-                                context.copyToClipboard(content.username.orEmpty())
-                            },
-                        )
+                        content.username.takeIf { it.isNullOrEmpty().not() }?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.homeItemCopyUsername,
+                                icon = MdtIcons.User,
+                                onClick = {
+                                    showDropdown = false
+                                    context.copyToClipboard(content.username.orEmpty())
+                                },
+                            )
+                        }
+                        content.password?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.homeItemCopyPassword,
+                                icon = MdtIcons.Key,
+                                onClick = {
+                                    showDropdown = false
+                                    onCopySecretFieldToClipboard(content.password)
+                                },
+                            )
+                        }
 
-                        DropdownMenuItem(
-                            text = MdtLocale.strings.homeItemCopyPassword,
-                            icon = MdtIcons.Key,
-                            onClick = {
-                                showDropdown = false
-                                onCopySecretFieldToClipboard(content.password)
-                            },
-                        )
-
-                        DropdownMenuItem(
-                            text = MdtLocale.strings.homeItemOpenUri,
-                            icon = MdtIcons.Open,
-                            onClick = {
-                                showDropdown = false
-                                uriHandler.openSafely(content.uris.firstOrNull()?.text, context)
-                            },
-                        )
+                        content.uris.firstOrNull()?.text.takeIf { it.isNullOrEmpty().not() }?.let { uri ->
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.homeItemOpenUri,
+                                icon = MdtIcons.Open,
+                                onClick = {
+                                    showDropdown = false
+                                    uriHandler.openSafely(uri, context)
+                                },
+                            )
+                        }
                     }
 
                     is ItemContent.SecureNote -> {
-                        DropdownMenuItem(
-                            text = "Copy note",
-                            icon = MdtIcons.Document,
-                            onClick = {
-                                showDropdown = false
-                                onCopySecretFieldToClipboard(content.text)
-                            },
-                        )
+                        content.text?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.secureNoteViewActionCopy,
+                                icon = MdtIcons.Document,
+                                onClick = {
+                                    showDropdown = false
+                                    onCopySecretFieldToClipboard(content.text)
+                                },
+                            )
+                        }
                     }
 
                     is ItemContent.PaymentCard -> {
-                        DropdownMenuItem(
-                            text = "Copy card number",
-                            icon = MdtIcons.PaymentCard,
-                            onClick = {
-                                showDropdown = false
-                                onCopySecretFieldToClipboard(content.cardNumber)
-                            },
-                        )
+                        content.cardNumber?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.cardViewActionCopyCardNumber,
+                                icon = MdtIcons.PaymentCard,
+                                onClick = {
+                                    showDropdown = false
+                                    onCopySecretFieldToClipboard(content.cardNumber)
+                                },
+                            )
+                        }
+
+                        content.expirationDate?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.cardViewActionCopyExpirationDate,
+                                icon = MdtIcons.PaymentCardDate,
+                                onClick = {
+                                    showDropdown = false
+                                    onCopySecretFieldToClipboard(content.expirationDate)
+                                },
+                            )
+                        }
+
+                        content.securityCode?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.cardViewActionCopySecurityCode,
+                                icon = MdtIcons.PaymentCardCode,
+                                onClick = {
+                                    showDropdown = false
+                                    onCopySecretFieldToClipboard(content.securityCode)
+                                },
+                            )
+                        }
                     }
                 }
             }

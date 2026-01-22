@@ -20,6 +20,7 @@ import com.twofasapp.core.common.crypto.decrypt
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.services.CrashlyticsInstance
+import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
@@ -44,6 +45,7 @@ internal class ProcessingNewPasswordViewModel(
     private val vaultCryptoScope: VaultCryptoScope,
     private val cloudRepository: CloudRepository,
     private val itemEncryptionMapper: ItemEncryptionMapper,
+    private val strings: Strings,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ProcessingNewPasswordUiState())
 
@@ -53,7 +55,7 @@ internal class ProcessingNewPasswordViewModel(
                 uiState.update {
                     it.copy(
                         step = ProcessingNewPasswordUiState.Step.Processing,
-                        processingMessage = "Re-encrypting local data...",
+                        processingMessage = strings.settingsChangePasswordProcessingMessageLocal,
                     )
                 }
 
@@ -92,7 +94,7 @@ internal class ProcessingNewPasswordViewModel(
                 uiState.update {
                     it.copy(
                         step = ProcessingNewPasswordUiState.Step.Processing,
-                        processingMessage = "Syncing cloud...",
+                        processingMessage = strings.settingsChangePasswordProcessingMessageCloud,
                     )
                 }
                 cloudRepository.sync(forceReplace = true)

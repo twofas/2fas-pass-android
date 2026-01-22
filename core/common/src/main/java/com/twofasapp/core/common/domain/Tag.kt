@@ -19,5 +19,21 @@ data class Tag(
             updatedAt = 0,
             assignedItemsCount = 0,
         )
+
+        fun create(
+            vaultId: String,
+            id: String,
+            name: String? = null,
+        ): Tag {
+            return Tag(
+                vaultId = vaultId,
+                id = id,
+                name = name.orEmpty(),
+                color = null,
+                position = 0,
+                updatedAt = 0,
+                assignedItemsCount = 0,
+            )
+        }
     }
 }

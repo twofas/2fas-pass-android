@@ -9,8 +9,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,6 +60,7 @@ internal fun HomeAppBar(
     var showDeleteConfirmationPrompt by remember { mutableStateOf(false) }
     var showSecurityTypePicker by remember { mutableStateOf(false) }
     var showTagsPicker by remember { mutableStateOf(false) }
+    val strings = MdtLocale.strings
     val focusManager = LocalFocusManager.current
 
     BackHandler(uiState.editMode) {
@@ -65,6 +68,7 @@ internal fun HomeAppBar(
     }
 
     AnimatedContent(
+        modifier = Modifier.height(IntrinsicSize.Min),
         targetState = uiState.editMode,
         transitionSpec = {
             (
@@ -107,11 +111,7 @@ internal fun HomeAppBar(
                         )
 
                         Text(
-                            text = when (val count = uiState.selectedItemIds.size) {
-                                0 -> ""
-                                1 -> "1 Item"
-                                else -> "$count Items"
-                            },
+                            text = strings.homeSelectionCount(uiState.selectedItemIds.size),
                             style = MdtTheme.typo.medium.lg,
                         )
                     }
@@ -231,7 +231,13 @@ internal fun HomeAppBar(
 
         SecurityTypeModal(
             onDismissRequest = { showSecurityTypePicker = false },
-            onSelect = { onChangeSecurityType(it) },
+            onSelect = {
+                if (selectedSecurityType != it) {
+                    onChangeSecurityType(it)
+                } else {
+                    onChangeEditMode(false)
+                }
+            },
             selected = selectedSecurityType,
         )
     }

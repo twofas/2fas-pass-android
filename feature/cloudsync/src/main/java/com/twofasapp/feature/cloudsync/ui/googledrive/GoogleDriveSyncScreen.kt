@@ -95,7 +95,7 @@ private fun Content(
                 actions = {
                     if (uiState.enabled) {
                         TextButton(
-                            text = "Sync Now",
+                            text = strings.cloudSyncActionSyncNow,
                             enabled = uiState.syncing.not(),
                             onClick = onSyncClick,
                         )

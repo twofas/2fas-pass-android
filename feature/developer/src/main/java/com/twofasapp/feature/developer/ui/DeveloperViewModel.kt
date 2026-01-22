@@ -258,6 +258,7 @@ internal class DeveloperViewModel(
                         content = ItemContent.SecureNote(
                             name = "$nameSeed note",
                             text = SecretField.ClearText(body),
+                            additionalInfo = null,
                         ),
                     ).copy(id = Uuid.generate()),
                 ),
@@ -270,10 +271,34 @@ internal class DeveloperViewModel(
             val vault = vaultsRepository.getVault()
             val securityType = SecurityType.entries.random()
             val cardholderName = "${WordList.words.random().replaceFirstChar { it.uppercase() }} ${WordList.words.random().replaceFirstChar { it.uppercase() }}"
-            val cardNumber = generateRandomCardNumber()
+
+            // Generate one of 4 card types with valid numbers
+            val cardType = listOf("Visa", "Mastercard", "American Express", "UnionPay").random()
+            val (cardNumber, cardIssuer, cvv) = when (cardType) {
+                "Visa" -> Triple(
+                    generateValidCardNumber("4", 16),
+                    ItemContent.PaymentCard.Issuer.Visa,
+                    generateRandomCvv(3),
+                )
+                "Mastercard" -> Triple(
+                    generateValidCardNumber(listOf("51", "52", "53", "54", "55").random(), 16),
+                    ItemContent.PaymentCard.Issuer.MasterCard,
+                    generateRandomCvv(3),
+                )
+                "American Express" -> Triple(
+                    generateValidCardNumber(listOf("34", "37").random(), 15),
+                    ItemContent.PaymentCard.Issuer.AmericanExpress,
+                    generateRandomCvv(4),
+                )
+                "UnionPay" -> Triple(
+                    generateValidCardNumber("62", 19),
+                    ItemContent.PaymentCard.Issuer.UnionPay,
+                    generateRandomCvv(3),
+                )
+                else -> error("Unknown card type")
+            }
+
             val expiration = generateRandomExpiration()
-            val cvv = generateRandomCvv()
-            val cardBrand = listOf("Visa", "Mastercard", "American Express", "Discover").random()
 
             itemsRepository.importItems(
                 listOf(
@@ -282,14 +307,14 @@ internal class DeveloperViewModel(
                         contentType = ItemContentType.PaymentCard,
                         vaultId = vault.id,
                         content = ItemContent.PaymentCard(
-                            name = "$cardBrand - $cardholderName",
+                            name = "$cardType - $cardholderName",
                             cardHolder = cardholderName,
                             cardNumber = SecretField.ClearText(cardNumber),
                             expirationDate = SecretField.ClearText(expiration),
                             securityCode = SecretField.ClearText(cvv),
                             notes = "Generated test credit card",
                             cardNumberMask = cardNumber.takeLast(4),
-                            cardIssuer = ItemContent.PaymentCard.Issuer.entries.random(),
+                            cardIssuer = cardIssuer,
                         ),
                     ).copy(id = Uuid.generate()),
                 ),
@@ -323,11 +348,49 @@ internal class DeveloperViewModel(
             "Sed vehicula magna a nunc viverra, in tincidunt ipsum volutpat.",
         )
 
-        fun generateRandomCardNumber(): String {
-            // Generate a realistic looking card number (16 digits for Visa/Mastercard)
-            val bin = Random.nextInt(400000, 600000) // Valid BIN range
-            val accountNumber = (0..9).joinToString("") { Random.nextInt(10).toString() }
-            return "$bin$accountNumber"
+        /**
+         * Generates a valid card number with Luhn checksum
+         * @param prefix The card prefix (e.g., "4" for Visa, "62" for UnionPay)
+         * @param length Total length of the card number
+         */
+        fun generateValidCardNumber(prefix: String, length: Int): String {
+            // Generate random digits for all positions except the last (check digit)
+            val randomDigits = (prefix.length until length - 1).map {
+                Random.nextInt(10)
+            }.joinToString("")
+
+            val cardWithoutCheckDigit = prefix + randomDigits
+
+            // Calculate Luhn check digit
+            val checkDigit = calculateLuhnCheckDigit(cardWithoutCheckDigit)
+
+            return cardWithoutCheckDigit + checkDigit
+        }
+
+        /**
+         * Calculates the Luhn check digit for a card number
+         * The check digit will be appended at the end, so when the validator reverses the full number,
+         * the check digit will be at index 0 and should not be doubled.
+         */
+        private fun calculateLuhnCheckDigit(cardNumber: String): Int {
+            val digits = cardNumber.map { it.digitToInt() }
+            var sum = 0
+
+            // Process from right to left
+            // These digits will be at indices 1, 2, 3... after we append the check digit
+            digits.reversed().forEachIndexed { index, digit ->
+                // After check digit is added, this will be at index (index + 1)
+                // The validator doubles digits at odd indices
+                if ((index + 1) % 2 == 1) {
+                    val doubled = digit * 2
+                    sum += if (doubled > 9) doubled - 9 else doubled
+                } else {
+                    sum += digit
+                }
+            }
+
+            // Calculate check digit to make sum divisible by 10
+            return (10 - (sum % 10)) % 10
         }
 
         fun generateRandomExpiration(): String {
@@ -336,8 +399,8 @@ internal class DeveloperViewModel(
             return String.format("%02d/%02d", currentMonth, currentYear)
         }
 
-        fun generateRandomCvv(): String {
-            return (0..2).joinToString("") { Random.nextInt(10).toString() }
+        fun generateRandomCvv(digits: Int): String {
+            return (0 until digits).joinToString("") { Random.nextInt(10).toString() }
         }
     }
 }

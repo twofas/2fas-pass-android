@@ -56,6 +56,7 @@ import com.twofasapp.feature.itemform.ItemFormProperties
 import com.twofasapp.feature.itemform.ItemFormUiState
 import com.twofasapp.feature.itemform.forms.common.FormListItem
 import com.twofasapp.feature.itemform.forms.common.ItemContentFormContainer
+import com.twofasapp.feature.itemform.forms.common.noteItem
 import com.twofasapp.feature.itemform.forms.common.securityTypePickerItem
 import com.twofasapp.feature.itemform.forms.common.tagsPickerItem
 import com.twofasapp.feature.itemform.forms.common.timestampInfoItem
@@ -84,6 +85,7 @@ internal fun SecureNoteForm(
             onTextChange = { viewModel.updateText(it) },
             onSecurityTypeChange = { viewModel.updateSecurityType(it) },
             onTagsChange = { viewModel.updateTags(it) },
+            onAdditionalInfoChange = { viewModel.updateAdditionalInfo(it) },
         )
     }
 }
@@ -97,6 +99,7 @@ private fun Content(
     onTextChange: (String) -> Unit = {},
     onSecurityTypeChange: (SecurityType) -> Unit = {},
     onTagsChange: (List<String>) -> Unit = {},
+    onAdditionalInfoChange: (String) -> Unit = {},
 ) {
     if (uiState.itemContent == null) return
 
@@ -159,7 +162,11 @@ private fun Content(
                         labelText = strings.secureNoteText,
                         minLines = 10,
                         maxLines = 10,
-                        supportingText = if (textFieldValue.text.length > ItemContent.SecureNote.Limit) "Notes can not be longer than ${ItemContent.SecureNote.Limit} characters" else null,
+                        supportingText = if (textFieldValue.text.length > ItemContent.SecureNote.Limit) {
+                            strings.noteItemLengthError.format(ItemContent.SecureNote.Limit)
+                        } else {
+                            null
+                        },
                         isError = textFieldValue.text.length > ItemContent.SecureNote.Limit,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default),
                         enabled = showText,
@@ -200,6 +207,14 @@ private fun Content(
                 tags = uiState.tags,
                 onTagsChange = onTagsChange,
             )
+
+            if (uiState.initialItemContent?.additionalInfo.isNullOrEmpty().not()) {
+                noteItem(
+                    notes = uiState.itemContent.additionalInfo,
+                    label = strings.secureNoteAdditionalInfoLabel,
+                    onNotesChange = onAdditionalInfoChange,
+                )
+            }
 
             timestampInfoItem(item = uiState.item)
         }

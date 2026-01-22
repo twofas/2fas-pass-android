@@ -157,7 +157,7 @@ private fun IntroContent(
             text = MdtLocale.strings.setupConnectLearnMore,
             size = ButtonHeight.Small,
             style = ButtonStyle.Text,
-            onClick = { uriHandler.openSafely("https://2fas.com/pass/browser-extension/") },
+            onClick = { uriHandler.openSafely(MdtLocale.links.browserExtension) },
         )
 
         Space(1f)
@@ -224,7 +224,7 @@ private fun PermissionsContent(
         Button(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "Enable Permissions",
+            text = MdtLocale.strings.connectPermissionsEnable,
             onClick = onDismissRequest,
         )
     }

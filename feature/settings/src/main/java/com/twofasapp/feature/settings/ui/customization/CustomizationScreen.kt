@@ -131,7 +131,7 @@ private fun Content(
             )
 
             OptionHeader(
-                text = "Tags",
+                text = strings.loginTags,
             )
 
             OptionEntry(
@@ -179,16 +179,16 @@ private fun Content(
             title = MdtLocale.strings.settingsEntryDeviceNickname,
             body = MdtLocale.strings.settingsEntryDeviceNicknameDesc,
             icon = MdtIcons.Smartphone,
-            neutral = "Use Default",
+            neutral = strings.commonUseDefault,
             onPositive = onDeviceNameChange,
             onNeutral = onRestoreDefaultDeviceName,
             prefill = uiState.deviceName,
-            label = "Name",
+            label = strings.loginName,
             validate = { text ->
                 if (text.isBlank()) {
-                    InputValidation.Invalid("Name can not be empty")
+                    InputValidation.Invalid(strings.customizationDeviceNameErrorEmpty)
                 } else if (text.length > 128) {
-                    InputValidation.Invalid("Max length is 128 characters")
+                    InputValidation.Invalid(strings.customizationDeviceNameErrorMaxLength)
                 } else {
                     InputValidation.Valid
                 }

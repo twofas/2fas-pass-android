@@ -51,6 +51,8 @@ sealed interface ItemContentJson {
         val name: String?,
         @SerialName("s_text")
         val text: String?,
+        @SerialName("additionalInfo")
+        val additionalInfo: String?,
     ) : ItemContentJson
 
     @Serializable

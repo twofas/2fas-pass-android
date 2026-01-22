@@ -19,6 +19,7 @@ import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun AddItemModal(
@@ -27,7 +28,7 @@ internal fun AddItemModal(
 ) {
     Modal(
         onDismissRequest = onDismissRequest,
-        headerText = "Add New Item",
+        headerText = MdtLocale.strings.itemAddTitle,
     ) { dismissAction ->
         Content(
             onSelect = { dismissAction { onSelect(it) } },
@@ -39,21 +40,28 @@ internal fun AddItemModal(
 private fun Content(
     onSelect: (ItemContentType) -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize(),
     ) {
         OptionEntry(
-            title = "Login",
+            title = strings.contentTypeLoginName,
             icon = MdtIcons.Login,
             onClick = { onSelect(ItemContentType.Login) },
         )
 
         OptionEntry(
-            title = "Secure Note",
+            title = strings.contentTypeSecureNoteName,
             icon = MdtIcons.SecureNote,
             onClick = { onSelect(ItemContentType.SecureNote) },
+        )
+
+        OptionEntry(
+            title = strings.contentTypeCardName,
+            icon = MdtIcons.PaymentCard,
+            onClick = { onSelect(ItemContentType.PaymentCard) },
         )
     }
 }

@@ -36,6 +36,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.twofasapp.core.design.LocalAuthStatus
+import com.twofasapp.core.locale.MdtLocale
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
@@ -55,6 +56,7 @@ fun QrScan(
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val authStatus = LocalAuthStatus.current
+    val errorMessage = MdtLocale.strings.qrScanCameraLaunchError
 
     // Workaround for https://issuetracker.google.com/issues/285336815
     var showScanner by remember { mutableStateOf(false) }
@@ -130,7 +132,7 @@ fun QrScan(
                             imageAnalysisUseCase,
                         )
                     } catch (e: Exception) {
-                        Toast.makeText(context, "Camera could not be launched. Try again.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                     }
                 }
 

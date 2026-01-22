@@ -3,6 +3,8 @@ package com.twofasapp.core.common.domain.items
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.clearTextOrNull
 
 sealed interface ItemContent {
     val name: String
@@ -43,6 +45,34 @@ sealed interface ItemContent {
                 labelColor = null,
                 notes = null,
             )
+
+            fun create(
+                name: String? = null,
+                username: String? = null,
+                password: String? = null,
+                url: String? = null,
+                notes: String? = null,
+            ): Login {
+                val itemUri = url?.let { url ->
+                    ItemUri(
+                        text = url,
+                        matcher = UriMatcher.Domain,
+                    )
+                }
+
+                return Login(
+                    name = name.orEmpty(),
+                    username = username,
+                    password = password?.let { SecretField.ClearText(it) },
+                    iconType = IconType.Icon,
+                    iconUriIndex = if (itemUri == null) null else 0,
+                    uris = listOfNotNull(itemUri),
+                    customImageUrl = null,
+                    labelText = null,
+                    labelColor = null,
+                    notes = notes,
+                )
+            }
         }
 
         val iconUrl: String?
@@ -52,12 +82,25 @@ sealed interface ItemContent {
     data class SecureNote(
         override val name: String,
         val text: SecretField?,
+        val additionalInfo: String?,
     ) : ItemContent {
         companion object {
             val Empty = SecureNote(
                 name = "",
                 text = null,
+                additionalInfo = null,
             )
+
+            fun create(
+                name: String? = null,
+                text: String? = null,
+            ): SecureNote {
+                return SecureNote(
+                    name = name.orEmpty(),
+                    text = text?.let { SecretField.ClearText(it) },
+                    additionalInfo = null,
+                )
+            }
 
             val Limit: Int = 16_384
         }
@@ -74,14 +117,33 @@ sealed interface ItemContent {
         val notes: String?,
     ) : ItemContent {
 
-        enum class Issuer(val code: String) {
-            Visa("Visa"),
-            MasterCard("MC"),
-            AmericanExpress("AMEX"),
-            Discover("Discover"),
-            DinersClub("DinersClub"),
-            Jcb("JCB"),
-            UnionPay("UnionPay"),
+        val cardNumberMaskDisplay: String
+            get() {
+                if (cardNumberMask == null) return ""
+
+                val expectedLength = cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
+                val dotsCount = maxOf(0, expectedLength - 4)
+                val dots = "•".repeat(dotsCount)
+                val fullMasked = dots + cardNumberMask
+
+                return fullMasked.formatWithGrouping(cardIssuer.cardNumberGrouping())
+            }
+
+        val cardNumberMaskDisplayShort: String
+            get() {
+                if (cardNumberMask == null) return ""
+                val dots = "•".repeat(4)
+                return "$dots $cardNumberMask".trim()
+            }
+
+        enum class Issuer(val code: String, val cardLength: Int) {
+            Visa("Visa", 16),
+            MasterCard("MC", 16),
+            AmericanExpress("AMEX", 15),
+            Discover("Discover", 19),
+            DinersClub("DinersClub", 14),
+            Jcb("JCB", 16),
+            UnionPay("UnionPay", 19),
             ;
 
             companion object {

@@ -33,6 +33,7 @@ import com.twofasapp.core.design.foundation.checked.CheckIcon
 import com.twofasapp.core.design.foundation.image.AsyncImage
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun ChangeIconUrl(
@@ -40,11 +41,12 @@ internal fun ChangeIconUrl(
     iconUriIndex: Int?,
     onIndexChange: (Int) -> Unit = {},
 ) {
-    OptionHeader(text = "Select Icon")
+    val strings = MdtLocale.strings
+    OptionHeader(text = strings.changeIconSelectIconHeader)
 
     if (uris.all { it.text.isBlank() }) {
         Text(
-            text = "No URIs have been defined. Add one to fetch the icon automatically.",
+            text = strings.changeIconNoUris,
             style = MdtTheme.typo.bodyMedium,
             color = MdtTheme.color.onSurfaceVariant,
             modifier = Modifier

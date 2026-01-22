@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.feature.settings.OptionHeader
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.textfield.TextField
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun ChangeIconCustomImageUrl(
@@ -35,8 +36,9 @@ internal fun ChangeIconCustomImageUrl(
 ) {
     val focusManager = LocalFocusManager.current
     var customUrl by remember { mutableStateOf(imageUrl) }
+    val strings = MdtLocale.strings
 
-    OptionHeader(text = "Custom Image URL")
+    OptionHeader(text = strings.changeIconCustomImageHeader)
 
     TextField(
         value = customUrl.orEmpty(),
@@ -44,7 +46,7 @@ internal fun ChangeIconCustomImageUrl(
             customUrl = it
             onUrlChange(it)
         },
-        placeholderText = "URL",
+        placeholderText = strings.changeIconCustomImagePlaceholder,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Uri),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         modifier = Modifier

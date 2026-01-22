@@ -44,6 +44,7 @@ import com.twofasapp.core.design.foundation.progress.CircularProgressSize
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.theme.RoundedShape16
 import com.twofasapp.core.design.theme.ScreenPadding
+import com.twofasapp.core.locale.MdtLocale
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -67,6 +68,7 @@ private fun Content(
     onOpenDecryptionKit: () -> Unit = {},
     onClose: () -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
     BackHandler(
         enabled = uiState.step is ProcessingNewPasswordUiState.Step.Processing,
         onBack = {},
@@ -92,8 +94,8 @@ private fun Content(
                     is ProcessingNewPasswordUiState.Step.Processing -> {
                         Column {
                             ScreenHeader(
-                                title = "Processing...",
-                                description = "Changing your password and re-encrypting your data.\nPlease do not close the app during this process.",
+                                title = strings.settingsChangePasswordProcessingTitle,
+                                description = strings.settingsChangePasswordProcessingDescription,
                                 iconContent = {
                                     CircularProgress(
                                         size = CircularProgressSize.Large,
@@ -117,7 +119,7 @@ private fun Content(
 
                     is ProcessingNewPasswordUiState.Step.Error -> {
                         ScreenHeader(
-                            title = "Error",
+                            title = strings.commonError,
                             description = state.message,
                             icon = MdtIcons.Error,
                         )
@@ -128,8 +130,8 @@ private fun Content(
                             modifier = Modifier.fillMaxSize(),
                         ) {
                             ScreenHeader(
-                                title = "Master Password successfully changed!",
-                                description = "Your encryption key has been updated. Download a new Decryption Kit and re-enable Cloud Sync on other devices.",
+                                title = strings.settingsChangePasswordSuccessTitle,
+                                description = strings.settingsChangePasswordSuccessDescription,
                                 iconContent = {
                                     Image(
                                         painter = painterResource(com.twofasapp.core.design.R.drawable.img_success),
@@ -158,11 +160,11 @@ private fun Content(
                                     verticalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     Text(
-                                        text = "Download Decryption Kit ",
+                                        text = strings.settingsChangePasswordSuccessCardTitle,
                                         style = MdtTheme.typo.titleMedium,
                                     )
                                     Text(
-                                        text = "You need to download a new kit because you have changed your Master Password.",
+                                        text = strings.settingsChangePasswordSuccessCardDescription,
                                         style = MdtTheme.typo.bodyMedium,
                                         color = MdtTheme.color.onSurfaceVariant,
                                     )
@@ -191,9 +193,9 @@ private fun Content(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     text = when (state) {
-                        is ProcessingNewPasswordUiState.Step.Processing -> "Please wait..."
-                        is ProcessingNewPasswordUiState.Step.Error -> "Try again"
-                        is ProcessingNewPasswordUiState.Step.Success -> "Download new Decryption Kit"
+                        is ProcessingNewPasswordUiState.Step.Processing -> strings.settingsChangePasswordCtaProcessing
+                        is ProcessingNewPasswordUiState.Step.Error -> strings.commonTryAgain
+                        is ProcessingNewPasswordUiState.Step.Success -> strings.settingsChangePasswordCtaSuccess
                         null -> ""
                     },
                     enabled = when (state) {

@@ -49,6 +49,9 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.cardNumberGrouping
+import com.twofasapp.core.common.domain.items.formatWithGrouping
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
@@ -277,7 +280,7 @@ private fun Content(
                                 }
 
                                 Entry(
-                                    title = "Note",
+                                    title = MdtLocale.strings.secureNoteText,
                                     subtitle = textDecrypted ?: secretString(),
                                     actions = {
                                         SecretFieldTrailingIcon(
@@ -306,12 +309,26 @@ private fun Content(
                                     },
                                 )
                             }
+
+                            if (content.additionalInfo.isNullOrEmpty().not()) {
+                                Entry(
+                                    title = MdtLocale.strings.loginNotes,
+                                    subtitle = content.additionalInfo.orEmpty(),
+                                    isCompact = true,
+                                    actions = {
+                                        IconButton(
+                                            icon = MdtIcons.Copy,
+                                            onClick = { context.copyToClipboard(content.additionalInfo.orEmpty()) },
+                                        )
+                                    },
+                                )
+                            }
                         }
 
                         is ItemContent.PaymentCard -> {
                             if (content.cardHolder.isNullOrEmpty().not()) {
                                 Entry(
-                                    title = "Card Holder",
+                                    title = MdtLocale.strings.cardHolderLabel,
                                     subtitle = content.cardHolder,
                                     actions = {
                                         IconButton(
@@ -326,8 +343,8 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 Entry(
-                                    title = "Number",
-                                    subtitle = textDecrypted ?: secretString(count = 16),
+                                    title = MdtLocale.strings.cardNumberLabel,
+                                    subtitle = textDecrypted ?: content.cardNumberMaskDisplayShort,
                                     actions = {
                                         SecretFieldTrailingIcon(
                                             visible = textDecrypted != null,
@@ -341,7 +358,9 @@ private fun Content(
                                                                 secretField = content.cardNumber,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it }
+                                                            )?.let {
+                                                                textDecrypted = it.removeWhitespace().formatWithGrouping(content.cardIssuer.cardNumberGrouping())
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -360,7 +379,7 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 Entry(
-                                    title = "Expiration",
+                                    title = MdtLocale.strings.cardExpirationDateLabel,
                                     subtitle = textDecrypted ?: secretString(count = 5),
                                     actions = {
                                         SecretFieldTrailingIcon(
@@ -375,7 +394,7 @@ private fun Content(
                                                                 secretField = content.expirationDate,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it }
+                                                            )?.let { textDecrypted = it.removeWhitespace() }
                                                         }
                                                     }
                                                 }
@@ -394,7 +413,7 @@ private fun Content(
                                 var textDecrypted: String? by remember { mutableStateOf(null) }
 
                                 Entry(
-                                    title = "Security Code",
+                                    title = MdtLocale.strings.cardSecurityCodeLabel,
                                     subtitle = textDecrypted ?: secretString(count = 3),
                                     actions = {
                                         SecretFieldTrailingIcon(
@@ -409,7 +428,7 @@ private fun Content(
                                                                 secretField = content.securityCode,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it }
+                                                            )?.let { textDecrypted = it.removeWhitespace() }
                                                         }
                                                     }
                                                 }

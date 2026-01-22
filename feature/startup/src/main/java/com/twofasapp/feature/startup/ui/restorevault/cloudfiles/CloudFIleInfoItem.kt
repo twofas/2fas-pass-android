@@ -58,7 +58,7 @@ fun CloudFilInfoItem(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = "ID: ${item.vaultId}",
+                text = MdtLocale.strings.restoreCloudFilesId.format(item.vaultId),
                 style = MdtTheme.typo.labelSmall,
                 color = MdtTheme.color.onSurfaceVariant.copy(alpha = 0.5f),
             )

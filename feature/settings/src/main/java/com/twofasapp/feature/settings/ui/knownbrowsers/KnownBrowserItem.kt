@@ -113,8 +113,8 @@ private fun Preview() {
             browser = ConnectedBrowser(
                 id = 1,
                 publicKey = byteArrayOf(),
-                extensionName = "Extension Name",
-                browserName = "Chrome on Windows 11",
+                extensionName = MdtLocale.strings.settingsKnownBrowserPlaceholderExtensionName,
+                browserName = MdtLocale.strings.settingsKnownBrowserPlaceholderBrowserName,
                 browserVersion = "123",
                 identicon = Identicon.Empty,
                 createdAt = Instant.now().toEpochMilli(),

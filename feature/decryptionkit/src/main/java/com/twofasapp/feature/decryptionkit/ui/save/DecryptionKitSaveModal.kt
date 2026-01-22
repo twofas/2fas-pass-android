@@ -140,7 +140,7 @@ private fun Content(
 
                 context.showShareFilePicker(
                     filename = DecryptionKitGenerator.generateFilename(),
-                    title = "2FAS Pass Decryption Kit",
+                    title = strings.decryptionKeyShareSheetTitle,
                     save = { outputStream ->
                         runBlocking {
                             outputStream.use {

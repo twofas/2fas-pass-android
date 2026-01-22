@@ -70,7 +70,7 @@ private fun Content(
         ) {
             OptionEntry(
                 title = null,
-                subtitle = "Securely sync your 2FAS Pass Vault with Google Drive or WebDav to protect your data if this device gets lost or damaged.",
+                subtitle = strings.settingsCloudSyncDescriptionLong,
                 contentPadding = PaddingValues(horizontal = 16.dp),
             )
 

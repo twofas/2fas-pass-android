@@ -19,6 +19,7 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
@@ -75,5 +76,14 @@
 
         <receiver android:name=".notifications.browserrequest.BrowserRequestNotificationDismissReceiver" />
     </application>
+
+    <!-- Detect autofill in browsers -->
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+
+    <queries>
+        <package android:name="com.android.chrome" />
+        <package android:name="com.chrome.beta" />
+        <package android:name="com.brave.browser" />
+    </queries>
 
 </manifest>

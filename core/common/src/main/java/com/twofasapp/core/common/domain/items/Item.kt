@@ -33,12 +33,14 @@ data class Item(
             content: ItemContent,
             vaultId: String = "",
             securityType: SecurityType = SecurityType.Tier3,
+            tagIds: List<String> = emptyList(),
         ): Item {
             return Empty.copy(
                 contentType = contentType,
                 content = content,
                 vaultId = vaultId,
                 securityType = securityType,
+                tagIds = tagIds,
             )
         }
     }

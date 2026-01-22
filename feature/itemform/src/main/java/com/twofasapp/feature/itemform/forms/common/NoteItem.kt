@@ -20,19 +20,24 @@ import com.twofasapp.core.locale.MdtLocale
 
 internal fun LazyListScope.noteItem(
     notes: String?,
+    label: String? = null,
     onNotesChange: (String) -> Unit,
 ) {
     listItem(FormListItem.Field("Notes")) {
         TextField(
             value = notes.orEmpty(),
             onValueChange = { onNotesChange(it) },
-            labelText = MdtLocale.strings.loginNotes,
+            labelText = label ?: MdtLocale.strings.loginNotes,
             modifier = Modifier
                 .fillMaxWidth()
                 .animateItem(),
             minLines = 3,
             maxLines = 3,
-            supportingText = if (notes.orEmpty().length > 2048) "Notes can not be longer than 2048 characters" else null,
+            supportingText = if (notes.orEmpty().length > 2048) {
+                MdtLocale.strings.noteItemLengthError.format(2048)
+            } else {
+                null
+            },
             isError = notes.orEmpty().length > 2048,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
         )

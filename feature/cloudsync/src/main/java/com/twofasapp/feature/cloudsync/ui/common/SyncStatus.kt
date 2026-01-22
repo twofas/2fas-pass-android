@@ -95,7 +95,7 @@ private fun Content(
         }
 
         OptionEntry(
-            title = "Status",
+            title = strings.commonStatus,
             subtitle = uiState.status,
             subtitleColor = if (uiState.error) MdtTheme.color.error else MdtTheme.color.onSurfaceVariant,
         )
@@ -121,8 +121,8 @@ private fun Content(
         InfoDialog(
             onDismissRequest = { showErrorDetailsDialog = false },
             title = uiState.status,
-            positive = "Ok",
-            negative = "Copy",
+            positive = strings.commonOk,
+            negative = strings.commonCopy,
             onNegative = { context.copyToClipboard(uiState.errorDetails.orEmpty()) },
             body = uiState.errorDetails,
         )
@@ -149,6 +149,7 @@ private fun ErrorStatus(
     }
     var showPaywall by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
+    val strings = MdtLocale.strings
 
     Column(
         modifier = modifier,
@@ -177,7 +178,7 @@ private fun ErrorStatus(
             -> {
                 if (errorDetails != null) {
                     TextButton(
-                        text = "Show error details",
+                        text = strings.cloudSyncShowErrorDetails,
                         modifier = Modifier.padding(top = 8.dp),
                         onClick = onShowErrorDetailsClick,
                     )
@@ -202,7 +203,7 @@ private fun ErrorStatus(
                     )
 
                     TextButton(
-                        text = "Show error details",
+                        text = strings.cloudSyncShowErrorDetails,
                         modifier = Modifier.padding(top = 4.dp),
                         onClick = onShowErrorDetailsClick,
                     )
@@ -217,14 +218,14 @@ private fun ErrorStatus(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Button(
-                        text = "Replace Backup",
+                        text = strings.cloudSyncActionReplaceBackup,
                         modifier = Modifier.weight(1f),
                         height = 40.dp,
                         onClick = onReplaceBackupClick,
                     )
 
                     Button(
-                        text = "Change Password",
+                        text = strings.cloudSyncActionChangePassword,
                         modifier = Modifier.weight(1f),
                         height = 40.dp,
                         onClick = onChangePasswordClick,

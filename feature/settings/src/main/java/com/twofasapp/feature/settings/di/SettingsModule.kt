@@ -11,6 +11,8 @@ package com.twofasapp.feature.settings.di
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.feature.settings.ui.about.AboutViewModel
 import com.twofasapp.feature.settings.ui.autofill.AutofillViewModel
+import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManager
+import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManagerImpl
 import com.twofasapp.feature.settings.ui.backupdecryption.BackupDecryptionViewModel
 import com.twofasapp.feature.settings.ui.changepassword.current.EnterCurrentPasswordViewModel
 import com.twofasapp.feature.settings.ui.changepassword.processing.ProcessingNewPasswordViewModel
@@ -29,11 +31,15 @@ import com.twofasapp.feature.settings.ui.subscription.ManageSubscriptionViewMode
 import com.twofasapp.feature.settings.ui.tags.ManageTagsViewModel
 import com.twofasapp.feature.settings.ui.transfer.TransferViewModel
 import com.twofasapp.feature.settings.ui.trash.TrashViewModel
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 class SettingsModule : KoinModule {
     override fun provide() = module {
+        singleOf(::BrowserAutofillManagerImpl) { bind<BrowserAutofillManager>() }
+
         viewModelOf(::SettingsViewModel)
         viewModelOf(::CustomizationViewModel)
         viewModelOf(::AutofillViewModel)

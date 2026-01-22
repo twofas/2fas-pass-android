@@ -50,6 +50,7 @@ import com.twofasapp.data.main.domain.RequestWebSocketResult
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
+import com.twofasapp.data.main.mapper.PaymentCardValidator
 import com.twofasapp.data.main.mapper.TagMapper
 import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
@@ -461,6 +462,7 @@ internal class RequestWebSocketImpl(
                 val contentType = when (data.contentType) {
                     "login" -> ItemContentType.Login
                     "secureNote" -> ItemContentType.SecureNote
+                    "paymentCard" -> ItemContentType.PaymentCard
                     else -> throw IllegalArgumentException("Unsupported item type")
                 }
 
@@ -525,7 +527,52 @@ internal class RequestWebSocketImpl(
                         )
                     }
 
-                    is ItemContentType.PaymentCard -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.PaymentCard -> {
+                        val cardNumber = data.content.s_cardNumber?.let { encryptedCardNumber ->
+                            if (encryptedCardNumber.isEmpty()) {
+                                SecretField.ClearText("")
+                            } else {
+                                val cardNumber = decrypt(
+                                    key = newItemKey,
+                                    data = EncryptedBytes(encryptedCardNumber.decodeBase64()),
+                                )
+
+                                SecretField.ClearText(cardNumber.decodeString().replace(" ", ""))
+                            }
+                        }
+
+                        ItemContent.PaymentCard.Empty.copy(
+                            name = data.content.name.orEmpty(),
+                            cardHolder = data.content.cardHolder,
+                            cardNumber = cardNumber,
+                            cardNumberMask = cardNumber?.value?.replace(" ", "")?.takeLast(4),
+                            cardIssuer = PaymentCardValidator.detectCardIssuer(cardNumber?.value),
+                            expirationDate = data.content.s_expirationDate?.let { encryptedExpirationDate ->
+                                if (encryptedExpirationDate.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val expirationDate = decrypt(
+                                        key = newItemKey,
+                                        data = EncryptedBytes(encryptedExpirationDate.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(expirationDate.decodeString())
+                                }
+                            },
+                            securityCode = data.content.s_securityCode?.let { encryptedSecurityCode ->
+                                if (encryptedSecurityCode.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val securityCode = decrypt(
+                                        key = newItemKey,
+                                        data = EncryptedBytes(encryptedSecurityCode.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(securityCode.decodeString())
+                                }
+                            },
+                        )
+                    }
                 }
 
                 BrowserRequestAction.AddItem(
@@ -544,6 +591,7 @@ internal class RequestWebSocketImpl(
                 val contentType = when (data.contentType) {
                     "login" -> ItemContentType.Login
                     "secureNote" -> ItemContentType.SecureNote
+                    "paymentCard" -> ItemContentType.PaymentCard
                     else -> throw IllegalArgumentException("Unsupported item type")
                 }
 
@@ -623,7 +671,54 @@ internal class RequestWebSocketImpl(
                         )
                     }
 
-                    is ItemContentType.PaymentCard -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.PaymentCard -> {
+                        val existingContent = item.content as ItemContent.PaymentCard
+                        val cardNumber = data.content.s_cardNumber?.let { encryptedCardNumber ->
+                            if (encryptedCardNumber.isEmpty()) {
+                                SecretField.ClearText("")
+                            } else {
+                                val cardNumber = decrypt(
+                                    key = updateItemKey,
+                                    data = EncryptedBytes(encryptedCardNumber.decodeBase64()),
+                                )
+
+                                SecretField.ClearText(cardNumber.decodeString().replace(" ", ""))
+                            }
+                        } ?: existingContent.cardNumber
+
+                        existingContent.copy(
+                            name = data.content.name ?: existingContent.name,
+                            cardHolder = data.content.cardHolder ?: existingContent.cardHolder,
+                            cardNumber = cardNumber,
+                            cardNumberMask = cardNumber?.clearTextOrNull?.replace(" ", "")?.takeLast(4),
+                            expirationDate = data.content.s_expirationDate?.let { encryptedExpirationDate ->
+                                if (encryptedExpirationDate.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val expirationDate = decrypt(
+                                        key = updateItemKey,
+                                        data = EncryptedBytes(encryptedExpirationDate.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(expirationDate.decodeString())
+                                }
+                            } ?: existingContent.expirationDate,
+                            cardIssuer = cardNumber?.clearTextOrNull?.let { PaymentCardValidator.detectCardIssuer(it) } ?: existingContent.cardIssuer,
+                            securityCode = data.content.s_securityCode?.let { encryptedSecurityCode ->
+                                if (encryptedSecurityCode.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val securityCode = decrypt(
+                                        key = updateItemKey,
+                                        data = EncryptedBytes(encryptedSecurityCode.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(securityCode.decodeString())
+                                }
+                            } ?: existingContent.securityCode,
+                            notes = data.content.notes ?: existingContent.notes,
+                        )
+                    }
                 }
 
                 BrowserRequestAction.UpdateItem(
@@ -948,6 +1043,13 @@ internal class RequestWebSocketImpl(
                     contentWithEncryptedFields.copy(
                         cardNumber = if (includeSecretFields) {
                             (contentWithEncryptedFields.cardNumber as? SecretField.Encrypted)?.let { encryptedField ->
+                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            }
+                        } else {
+                            null
+                        },
+                        expirationDate = if (includeSecretFields) {
+                            (contentWithEncryptedFields.expirationDate as? SecretField.Encrypted)?.let { encryptedField ->
                                 SecretField.ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {

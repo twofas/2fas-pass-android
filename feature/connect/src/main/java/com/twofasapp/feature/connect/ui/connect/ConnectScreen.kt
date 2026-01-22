@@ -249,7 +249,7 @@ private fun Content(
     if (showBrowserQrInputDialog) {
         InputDialog(
             onDismissRequest = { showBrowserQrInputDialog = false },
-            title = "Enter Browser QR",
+            title = MdtLocale.strings.connectEnterBrowserQrTitle,
             onPositive = { onScanned(it) },
         )
     }

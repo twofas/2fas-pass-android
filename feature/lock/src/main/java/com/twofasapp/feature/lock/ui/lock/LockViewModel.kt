@@ -142,7 +142,7 @@ internal class LockViewModel(
                 }
                 .onFailure {
                     incrementFailedAttempt()
-                    uiState.update { it.copy(loading = false, passwordError = "Invalid password") }
+                    uiState.update { it.copy(loading = false, passwordError = strings.lockScreenUnlockInvalidPassword) }
                 }
         }
     }
@@ -172,7 +172,7 @@ internal class LockViewModel(
                 }
                 .onFailure {
                     incrementFailedAttempt()
-                    uiState.update { it.copy(loading = false, passwordError = "Invalid biometrics") }
+                    uiState.update { it.copy(loading = false, passwordError = strings.lockScreenUnlockBiometricsError) }
                 }
         }
     }

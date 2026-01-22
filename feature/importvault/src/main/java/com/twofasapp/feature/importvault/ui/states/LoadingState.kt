@@ -25,6 +25,7 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.progress.CircularProgress
+import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 fun LoadingState(
@@ -54,7 +55,7 @@ fun LoadingState(
 private fun Preview() {
     PreviewTheme {
         LoadingState(
-            text = "Loading",
+            text = MdtLocale.strings.commonLoading,
         )
     }
 }

@@ -160,6 +160,14 @@ internal sealed interface BrowserRequestActionJson {
             val name: String?,
             @SerialName("s_text")
             val s_text: String?,
+            @SerialName("cardHolder")
+            val cardHolder: String?,
+            @SerialName("s_cardNumber")
+            val s_cardNumber: String?,
+            @SerialName("s_expirationDate")
+            val s_expirationDate: String?,
+            @SerialName("s_securityCode")
+            val s_securityCode: String?,
         )
     }
 
@@ -204,6 +212,14 @@ internal sealed interface BrowserRequestActionJson {
             val uris: List<Uri>?,
             @SerialName("s_text")
             val s_text: String?,
+            @SerialName("cardHolder")
+            val cardHolder: String?,
+            @SerialName("s_cardNumber")
+            val s_cardNumber: String?,
+            @SerialName("s_expirationDate")
+            val s_expirationDate: String?,
+            @SerialName("s_securityCode")
+            val s_securityCode: String?,
         ) {
             @Serializable
             data class Uri(

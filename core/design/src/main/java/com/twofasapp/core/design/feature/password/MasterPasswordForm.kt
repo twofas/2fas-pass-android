@@ -122,7 +122,7 @@ fun MasterPasswordForm(
         Spacer(modifier = Modifier.height(12.dp))
 
         TextIcon(
-            text = "At least 9 characters",
+            text = MdtLocale.strings.passwordLengthRequirement,
             style = MdtTheme.typo.regular.xs,
             color = if (lengthValid) MdtTheme.color.primary else MdtTheme.color.onSurfaceVariant,
             leadingIcon = if (lengthValid) MdtIcons.Check else MdtIcons.Close,
@@ -131,7 +131,7 @@ fun MasterPasswordForm(
         )
 
         TextIcon(
-            text = "Passwords match",
+            text = MdtLocale.strings.passwordsMatchText,
             style = MdtTheme.typo.regular.xs,
             color = if (passwordsMatch) MdtTheme.color.primary else MdtTheme.color.onSurfaceVariant,
             leadingIcon = if (passwordsMatch) MdtIcons.Check else MdtIcons.Close,

@@ -93,7 +93,7 @@ private val ItemContent.subtitle: String?
         is ItemContent.Unknown -> null
         is ItemContent.Login -> username
         is ItemContent.SecureNote -> null
-        is ItemContent.PaymentCard -> "•••• $cardNumberMask"
+        is ItemContent.PaymentCard -> cardNumberMaskDisplayShort
     }
 
 @Preview
