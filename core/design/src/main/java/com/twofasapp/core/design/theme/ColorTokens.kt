@@ -67,4 +67,7 @@ data class ColorTokens(
     val itemSecureNoteContainer: Color = Color.Unspecified,
     val itemPaymentCardContent: Color = Color.Unspecified,
     val itemPaymentCardContainer: Color = Color.Unspecified,
+
+    val securityItemFilterModalTint: Color = Color.Unspecified,
+    val securityItemFilterTint: Color = Color.Unspecified,
 )

@@ -14,6 +14,7 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityItem
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
@@ -25,6 +26,7 @@ import com.twofasapp.core.design.state.loading
 import com.twofasapp.core.design.state.success
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ItemsRepository
+import com.twofasapp.data.main.SecurityItemRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.TrashRepository
 import com.twofasapp.data.main.VaultCryptoScope
@@ -35,6 +37,7 @@ import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.data.settings.SessionRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.data.settings.domain.SortingMethod
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -55,6 +58,7 @@ internal class HomeViewModel(
     private val cloudRepository: CloudRepository,
     private val purchasesRepository: PurchasesRepository,
     private val itemEncryptionMapper: ItemEncryptionMapper,
+    private val securityItemRepository: SecurityItemRepository
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(HomeUiState())
@@ -84,15 +88,30 @@ internal class HomeViewModel(
         }
 
         launchScoped {
-            tagsRepository.observeSelectedTag(vaultId = vaultsRepository.getVault().id).collect { selectedTag ->
-                uiState.update { it.copy(selectedTag = selectedTag) }
-            }
+            tagsRepository.observeSelectedTag(vaultId = vaultsRepository.getVault().id)
+                .collect { selectedTag ->
+                    uiState.update { it.copy(selectedTag = selectedTag) }
+                }
         }
 
         launchScoped {
             tagsRepository.observeTags(vaultId = vaultsRepository.getVault().id).collect { tags ->
                 uiState.update { it.copy(tags = tags) }
             }
+        }
+
+        launchScoped {
+            securityItemRepository.observeSelectedSecurityItem(vaultId = vaultsRepository.getVault().id)
+                .collect { selectedSecurityItem ->
+                    uiState.update { it.copy(selectedSecurityItem = selectedSecurityItem) }
+                }
+        }
+
+        launchScoped {
+            securityItemRepository.observeSecurityItem(vaultId = vaultsRepository.getVault().id)
+                .collect { securityItems ->
+                    uiState.update { it.copy(securityItems = securityItems.toPersistentList()) }
+                }
         }
 
         launchScoped {
@@ -121,7 +140,8 @@ internal class HomeViewModel(
                     vaultCryptoScope.withVaultCipher(vault) {
                         items
                             .mapNotNull { item ->
-                                val matchingItemUiState = uiState.value.items.find { it.id == item.id }
+                                val matchingItemUiState =
+                                    uiState.value.items.find { it.id == item.id }
 
                                 if (matchingItemUiState?.updatedAt == item.updatedAt) {
                                     matchingItemUiState
@@ -183,9 +203,31 @@ internal class HomeViewModel(
         launchScoped { tagsRepository.toggleSelectedTag(uiState.value.vault.id, tag) }
     }
 
+    fun toggleSecurityType(securityItem: SecurityItem) {
+        launchScoped {
+            securityItemRepository.toggleSelectedSecurityItem(
+                uiState.value.vault.id,
+                securityItem
+            )
+        }
+    }
+
     fun clearFilters() {
         launchScoped {
             tagsRepository.clearSelectedTag(uiState.value.vault.id)
+            securityItemRepository.clearSelectedSecurityItem(uiState.value.vault.id)
+        }
+    }
+
+    fun clearTagFilter() {
+        launchScoped {
+            tagsRepository.clearSelectedTag(uiState.value.vault.id)
+        }
+    }
+
+    fun clearSecurityItemFilter() {
+        launchScoped {
+            securityItemRepository.clearSelectedSecurityItem(uiState.value.vault.id)
         }
     }
 
@@ -239,7 +281,8 @@ internal class HomeViewModel(
     fun selectAllItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = state.selectedItemIds.plus(state.itemsFiltered.map { it.id }.toSet()),
+                selectedItemIds = state.selectedItemIds.plus(state.itemsFiltered.map { it.id }
+                    .toSet()),
             )
         }
     }
@@ -247,7 +290,8 @@ internal class HomeViewModel(
     fun deselectItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = state.selectedItemIds.minus(state.itemsFiltered.map { it.id }.toSet()),
+                selectedItemIds = state.selectedItemIds.minus(state.itemsFiltered.map { it.id }
+                    .toSet()),
             )
         }
     }
@@ -273,19 +317,24 @@ internal class HomeViewModel(
             clearEditModeSelections()
             screenState.loading()
 
-            val updatedEncryptedItems = vaultCryptoScope.withVaultCipher(vaultId = vaultsRepository.getVault().id) {
-                val updatedItems = itemsToEdit.map { item ->
-                    item.copy(
-                        securityType = securityType,
-                        content = itemEncryptionMapper.decryptSecretFields(this, item.securityType, item.content),
+            val updatedEncryptedItems =
+                vaultCryptoScope.withVaultCipher(vaultId = vaultsRepository.getVault().id) {
+                    val updatedItems = itemsToEdit.map { item ->
+                        item.copy(
+                            securityType = securityType,
+                            content = itemEncryptionMapper.decryptSecretFields(
+                                this,
+                                item.securityType,
+                                item.content
+                            ),
+                        )
+                    }
+
+                    itemEncryptionMapper.encryptItems(
+                        vaultCipher = this,
+                        items = updatedItems,
                     )
                 }
-
-                itemEncryptionMapper.encryptItems(
-                    vaultCipher = this,
-                    items = updatedItems,
-                )
-            }
 
             itemsRepository.saveItems(updatedEncryptedItems)
 

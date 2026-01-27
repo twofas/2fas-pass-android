@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,12 +34,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.twofasapp.core.common.domain.SecurityItem
+import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtIcons
@@ -49,6 +48,8 @@ import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.search.SearchBar
 import com.twofasapp.core.design.foundation.text.TextIcon
 import com.twofasapp.core.locale.MdtLocale
+import com.twofasapp.feature.itemform.modals.securitytype.asIcon
+import com.twofasapp.feature.itemform.modals.securitytype.asTitle
 import kotlinx.coroutines.android.awaitFrame
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -58,12 +59,14 @@ internal fun HomeSearchBar(
     searchQuery: String = "",
     searchFocused: Boolean = false,
     selectedTag: Tag? = null,
+    selectedSecurityItem: SecurityItem? = null,
     selectedItemType: ItemContentType? = null,
     filteredItemsCount: Int = 0,
     onSearchQueryChange: (String) -> Unit = {},
     onSearchFocusChange: (Boolean) -> Unit = {},
     onSelectedItemTypeChange: (ItemContentType?) -> Unit = {},
-    onClearFilter: () -> Unit = {},
+    onClearTagFilter: () -> Unit = {},
+    onClearSecurityItemFilter: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
     val focusRequester = remember { FocusRequester() }
@@ -134,7 +137,6 @@ internal fun HomeSearchBar(
                         focusManager.clearFocus()
                         onSelectedItemTypeChange(ItemContentType.Login)
                     },
-
                 )
             }
 
@@ -165,46 +167,94 @@ internal fun HomeSearchBar(
             }
         }
 
-        if (selectedTag != null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-                    .clip(CircleShape)
-                    .background(MdtTheme.color.surfaceContainer)
-                    .padding(start = 18.dp, end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextIcon(
-                    text = buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                            append(selectedTag.name)
-                            append(" ")
-                        }
-                        val countText = if (filteredItemsCount == 1) {
-                            strings.homeFilterSelectedTagCountSingle.format(filteredItemsCount)
-                        } else {
-                            strings.homeFilterSelectedTagCountPlural.format(filteredItemsCount)
-                        }
-                        append(countText)
-                    },
-                    leadingIcon = MdtIcons.Tag,
-                    leadingIconTint = MdtTheme.color.onSurface,
-                    leadingIconSize = 16.dp,
-                    leadingIconSpacer = 8.dp,
-                    style = MdtTheme.typo.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 12.dp)
+        ) {
+            securityItemFilter(
+                securityItem = selectedSecurityItem,
+                count = filteredItemsCount,
+                onClearClick = onClearSecurityItemFilter
+            )
+            tagItemFilter(
+                tag = selectedTag,
+                count = filteredItemsCount,
+                onClearClick = onClearTagFilter
+            )
+        }
 
-                IconButton(
-                    icon = MdtIcons.Close,
-                    iconSize = 20.dp,
-                    onClick = onClearFilter,
-                )
-            }
-
+        if (selectedSecurityItem != null || selectedTag != null) {
             Space(8.dp)
         }
+    }
+}
+
+private fun LazyListScope.securityItemFilter(
+    securityItem: SecurityItem?,
+    count: Int,
+    onClearClick: () -> Unit
+) {
+    securityItem?.let { securityItem ->
+        item {
+            FilterItem(
+                iconTint = MdtTheme.color.securityItemFilterTint,
+                icon = securityItem.type.asIcon(),
+                name = securityItem.type.asTitle(),
+                count = count,
+                onClearClick = onClearClick
+            )
+        }
+    }
+}
+
+private fun LazyListScope.tagItemFilter(
+    tag: Tag?,
+    count: Int,
+    onClearClick: () -> Unit
+) {
+    tag?.let { tag ->
+        item {
+            FilterItem(
+                icon = MdtIcons.Tag,
+                iconTint = MdtTheme.color.onSurface,
+                name = tag.name,
+                count = count,
+                onClearClick = onClearClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterItem(
+    iconTint: Color,
+    icon: Painter,
+    name: String,
+    count: Int,
+    onClearClick: () -> Unit
+) {
+    val strings = MdtLocale.strings
+    Row(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(MdtTheme.color.surfaceContainer)
+            .padding(start = 18.dp, end = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextIcon(
+            text = strings.homeFilterTagWithCount.format(name, count),
+            leadingIcon = icon,
+            leadingIconTint = iconTint,
+            leadingIconSize = 16.dp,
+            leadingIconSpacer = 8.dp,
+            style = MdtTheme.typo.labelLarge,
+        )
+
+        IconButton(
+            icon = MdtIcons.Close,
+            iconSize = 20.dp,
+            onClick = onClearClick,
+        )
     }
 }
 
@@ -284,6 +334,7 @@ private fun Previews() {
         HomeSearchBar(
             searchFocused = false,
             selectedTag = Tag.Empty.copy(name = "Work"),
+            selectedSecurityItem = SecurityItem(SecurityType.Tier1, 1)
         )
     }
 }

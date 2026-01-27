@@ -88,6 +88,10 @@ internal val surfaceContainerHighDark = Color(0xFF282933)
 internal val surfaceContainerHighestDark = Color(0xFF33343E)
 internal val successDark = Color(0xFF00C457)
 
+internal val info500 = Color(0xFF0048DE)
+internal val brand500 = Color(0xFF214CE8)
+internal val securityItemFilterTint = Color(0xFF0077FF)
+
 internal val LightColors = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,

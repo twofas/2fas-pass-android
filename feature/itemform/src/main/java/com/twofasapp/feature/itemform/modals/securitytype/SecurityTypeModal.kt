@@ -114,7 +114,7 @@ private fun Content(
 }
 
 @Composable
-internal fun SecurityType.asIcon(): Painter {
+fun SecurityType.asIcon(): Painter {
     return when (this) {
         SecurityType.Tier1 -> MdtIcons.Tier1
         SecurityType.Tier2 -> MdtIcons.Tier2

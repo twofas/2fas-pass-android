@@ -23,6 +23,7 @@ kotest = "6.0.7"
 espresso = "3.7.0"
 uiAndroid = "1.10.0"
 aboutLibraries = "12.2.4"
+kotlinxCollections = "0.4.0"
 
 [libraries]
 appcompat = "androidx.appcompat:appcompat:1.7.1"
@@ -125,6 +126,7 @@ uiAndroid = { group = "androidx.compose.ui", name = "ui-android", version.ref = 
 aboutLibrariesCore = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutLibrariesCompose = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 palette = "androidx.palette:palette:1.0.0"
+kotlinxCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollections" }
 
 [bundles]
 aboutLibraries = [
@@ -154,7 +156,8 @@ compose = [
     "composeNavigation",
     "composeUi",
     "composeUiTooling",
-    "material"
+    "material",
+    "kotlinxCollections"
 ]
 elmyr = [
     "elmyrCore",

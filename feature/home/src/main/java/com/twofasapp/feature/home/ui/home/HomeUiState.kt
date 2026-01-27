@@ -8,6 +8,7 @@
 
 package com.twofasapp.feature.home.ui.home
 
+import com.twofasapp.core.common.domain.SecurityItem
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.Vault
 import com.twofasapp.core.common.domain.items.Item
@@ -16,13 +17,17 @@ import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.filterBySearchQuery
 import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 internal data class HomeUiState(
     val developerModeEnabled: Boolean = false,
     val vault: Vault = Vault.Empty,
     val items: List<Item> = emptyList(),
     val tags: List<Tag> = emptyList(),
+    val securityItems: ImmutableList<SecurityItem> = persistentListOf(),
     val selectedTag: Tag? = null,
+    val selectedSecurityItem: SecurityItem? = null,
     val selectedItemType: ItemContentType? = null,
     val searchQuery: String = "",
     val searchFocused: Boolean = false,
@@ -49,6 +54,13 @@ internal data class HomeUiState(
                     true
                 } else {
                     item.tagIds.contains(selectedTag.id)
+                }
+            }
+            .filter { item ->
+                if (selectedSecurityItem == null) {
+                    true
+                } else {
+                    item.securityType == selectedSecurityItem.type
                 }
             }
             .filterBySearchQuery(searchQuery)

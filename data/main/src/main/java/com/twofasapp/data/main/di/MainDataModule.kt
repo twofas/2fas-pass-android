@@ -21,6 +21,8 @@ import com.twofasapp.data.main.DeletedItemsRepository
 import com.twofasapp.data.main.DeletedItemsRepositoryImpl
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.ItemsRepositoryImpl
+import com.twofasapp.data.main.SecurityItemRepository
+import com.twofasapp.data.main.SecurityItemRepositoryImpl
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.SecurityRepositoryImpl
 import com.twofasapp.data.main.TagsRepository
@@ -51,6 +53,7 @@ import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
 import com.twofasapp.data.main.mapper.ItemUriMapper
+import com.twofasapp.data.main.mapper.SecurityItemMapper
 import com.twofasapp.data.main.mapper.TagMapper
 import com.twofasapp.data.main.mapper.UnknownItemEncryptionMapper
 import com.twofasapp.data.main.mapper.UriMatcherMapper
@@ -84,6 +87,7 @@ class MainDataModule : KoinModule {
         singleOf(::TagMapper)
         singleOf(::VaultBackupMapper)
         singleOf(::VaultDataForBrowserMapper)
+        singleOf(::SecurityItemMapper)
 
         singleOf(::ItemsLocalSource)
         singleOf(::ItemsRepositoryImpl) { bind<ItemsRepository>() }
@@ -119,5 +123,7 @@ class MainDataModule : KoinModule {
 
         singleOf(::TagsLocalSource)
         singleOf(::TagsRepositoryImpl) { bind<TagsRepository>() }
+
+        singleOf(::SecurityItemRepositoryImpl) { bind<SecurityItemRepository>() }
     }
 }
