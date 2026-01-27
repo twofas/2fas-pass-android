@@ -23,9 +23,6 @@ import com.twofasapp.core.common.domain.AuthStatus
 import com.twofasapp.core.design.theme.ColorTokens
 import com.twofasapp.core.design.theme.DarkColors
 import com.twofasapp.core.design.theme.LightColors
-import com.twofasapp.core.design.theme.brand500
-import com.twofasapp.core.design.theme.info500
-import com.twofasapp.core.design.theme.securityItemFilterTint
 import com.twofasapp.core.design.theme.seed
 import com.twofasapp.core.design.theme.successDark
 import com.twofasapp.core.design.theme.successLight
@@ -108,9 +105,8 @@ fun AppTheme(
         itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
         itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
         itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
-        securityItemFilterModalTint = if (isInDarkTheme) info500 else brand500,
-        securityItemFilterTint = securityItemFilterTint
-    )
+
+        )
 
     CompositionLocalProvider(
         LocalColorTokens provides colorTokens,

@@ -197,7 +197,7 @@ private fun LazyListScope.securityItemFilter(
     securityItem?.let { securityItem ->
         item {
             FilterItem(
-                iconTint = MdtTheme.color.securityItemFilterTint,
+                iconTint = Color(0xFF0077FF),
                 icon = securityItem.type.asIcon(),
                 name = securityItem.type.asTitle(),
                 count = count,

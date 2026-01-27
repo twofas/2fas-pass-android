@@ -23,11 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityItem
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.design.LocalDarkMode
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -145,7 +147,7 @@ private fun LazyListScope.securityItems(
         contentType = { "SecurityType" }
     ) { securityType ->
         OptionEntry(
-            iconTint = MdtTheme.color.securityItemFilterModalTint,
+            iconTint = if (LocalDarkMode.current) Color(0xFF0048DE) else Color(0xFF214CE8),
             title = securityType.type.asTitle(),
             titleColor = MdtTheme.color.onSurface,
             icon = securityType.type.asIcon(),
