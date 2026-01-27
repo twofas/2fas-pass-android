@@ -111,6 +111,7 @@ object MdtIcons {
     val MinusCircle @Composable get() = painterResource(R.drawable.ic_minus_circle)
     val RotateLeft @Composable get() = painterResource(R.drawable.ic_rotate_left)
     val Tag @Composable get() = painterResource(R.drawable.ic_tag)
+    val TagFilled @Composable get() = painterResource(R.drawable.ic_tag_filled)
     val AddTag @Composable get() = painterResource(R.drawable.ic_add_tag)
     val Hashtag @Composable get() = painterResource(R.drawable.ic_hashtag)
     val Rocket @Composable get() = painterResource(R.drawable.ic_rocket)

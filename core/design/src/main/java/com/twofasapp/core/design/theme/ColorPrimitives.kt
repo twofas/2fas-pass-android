@@ -88,6 +88,23 @@ internal val surfaceContainerHighDark = Color(0xFF282933)
 internal val surfaceContainerHighestDark = Color(0xFF33343E)
 internal val successDark = Color(0xFF00C457)
 
+internal val tagGrayLight = Color(0xFFAEAEB2)
+internal val tagGrayDark = Color(0xFF636366)
+internal val tagRedLight = Color(0xFFFF383C)
+internal val tagRedDark = Color(0xFFFF4245)
+internal val tagOrangeLight = Color(0xFFFF8D28)
+internal val tagOrangeDark = Color(0xFFFF9230)
+internal val tagYellowLight = Color(0xFFFFCC00)
+internal val tagYellowDark = Color(0xFFFFD600)
+internal val tagGreenLight = Color(0xFF34C759)
+internal val tagGreenDark = Color(0xFF30D158)
+internal val tagCyanLight = Color(0xFF00C0E8)
+internal val tagCyanDark = Color(0xFF3CD3FE)
+internal val tagIndigoLight = Color(0xFF6155F5)
+internal val tagIndigoDark = Color(0xFF6D7CFF)
+internal val tagPurpleLight = Color(0xFFCB30E0)
+internal val tagPurpleDark = Color(0xFFDB34F2)
+
 internal val LightColors = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,

@@ -33,6 +33,8 @@ import com.twofasapp.core.design.LocalDarkMode
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
+import com.twofasapp.core.design.feature.tags.iconFilled
+import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.checked.CheckIcon
@@ -127,7 +129,8 @@ private fun Content(
                 OptionEntry(
                     title = strings.homeFilterTagWithCount.format(tag.name, tag.assignedItemsCount),
                     titleColor = MdtTheme.color.onSurface,
-                    icon = MdtIcons.Tag,
+                    icon = tag.iconFilled(),
+                    iconTint = tag.iconTint(),
                     onClick = { onToggleTag(tag) },
                     content = { CheckIcon(checked = selectedTag?.id == tag.id) },
                 )

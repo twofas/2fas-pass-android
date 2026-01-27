@@ -10,6 +10,7 @@ package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.DeletedItem
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.TagColor
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.local.model.TagEntity
 import com.twofasapp.data.main.remote.model.TagJson
@@ -26,7 +27,7 @@ internal class TagMapper {
                 id = id,
                 updatedAt = updatedAt,
                 name = name,
-                color = color,
+                color = color?.value,
                 position = position,
             )
         }
@@ -42,7 +43,7 @@ internal class TagMapper {
                 vaultId = vaultId,
                 updatedAt = updatedAt,
                 name = vaultCipher.encryptWithTrustedKey(domain.name),
-                color = color,
+                color = color?.value,
                 position = position,
             )
         }
@@ -57,7 +58,7 @@ internal class TagMapper {
                 id = id,
                 vaultId = vaultId,
                 name = vaultCipher.decryptWithTrustedKey(entity.name),
-                color = color,
+                color = TagColor.fromValue(color),
                 position = position,
                 updatedAt = updatedAt,
                 assignedItemsCount = 0,
@@ -74,7 +75,7 @@ internal class TagMapper {
                 id = id,
                 vaultId = vaultId,
                 name = name,
-                color = color,
+                color = TagColor.fromValue(color),
                 position = position,
                 updatedAt = updatedAt,
                 assignedItemsCount = 0,

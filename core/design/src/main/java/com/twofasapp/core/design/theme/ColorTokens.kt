@@ -67,4 +67,13 @@ data class ColorTokens(
     val itemSecureNoteContainer: Color = Color.Unspecified,
     val itemPaymentCardContent: Color = Color.Unspecified,
     val itemPaymentCardContainer: Color = Color.Unspecified,
+
+    val tagGray: Color = Color.Unspecified,
+    val tagRed: Color = Color.Unspecified,
+    val tagOrange: Color = Color.Unspecified,
+    val tagYellow: Color = Color.Unspecified,
+    val tagGreen: Color = Color.Unspecified,
+    val tagCyan: Color = Color.Unspecified,
+    val tagIndigo: Color = Color.Unspecified,
+    val tagPurple: Color = Color.Unspecified,
 )

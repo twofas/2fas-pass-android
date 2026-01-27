@@ -23,6 +23,8 @@ import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.feature.tags.TagDialog
+import com.twofasapp.core.design.feature.tags.iconFilled
+import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.lazy.isScrollingUp
@@ -91,7 +93,8 @@ private fun Content(
                                 modifier = Modifier.animateItem(),
                                 title = tag.name,
                                 subtitle = strings.tagDescription.format(tag.assignedItemsCount),
-                                icon = MdtIcons.Tag,
+                                icon = tag.iconFilled(),
+                                iconTint = tag.iconTint(),
                                 contentPadding = PaddingValues(
                                     top = 16.dp,
                                     bottom = 16.dp,

@@ -55,6 +55,8 @@ import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
+import com.twofasapp.core.design.feature.tags.iconFilled
+import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.layout.ActionsRow
@@ -144,7 +146,10 @@ private fun Content(
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
                     itemVerticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        Alignment.CenterHorizontally
+                    ),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
@@ -191,7 +196,11 @@ private fun Content(
 
                                 Entry(
                                     title = MdtLocale.strings.loginPassword,
-                                    subtitleAnnotated = passwordDecrypted?.let { passwordColorized(password = it) } ?: secretAnnotatedString(),
+                                    subtitleAnnotated = passwordDecrypted?.let {
+                                        passwordColorized(
+                                            password = it
+                                        )
+                                    } ?: secretAnnotatedString(),
                                     actions = {
                                         SecretFieldTrailingIcon(
                                             visible = passwordDecrypted != null,
@@ -230,7 +239,12 @@ private fun Content(
                                         actions = {
                                             IconButton(
                                                 icon = MdtIcons.Open,
-                                                onClick = { uriHandler.openSafely(uri.text, context) },
+                                                onClick = {
+                                                    uriHandler.openSafely(
+                                                        uri.text,
+                                                        context
+                                                    )
+                                                },
                                             )
 
                                             IconButton(
@@ -359,7 +373,9 @@ private fun Content(
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
                                                             )?.let {
-                                                                textDecrypted = it.removeWhitespace().formatWithGrouping(content.cardIssuer.cardNumberGrouping())
+                                                                textDecrypted =
+                                                                    it.removeWhitespace()
+                                                                        .formatWithGrouping(content.cardIssuer.cardNumberGrouping())
                                                             }
                                                         }
                                                     }
@@ -394,7 +410,10 @@ private fun Content(
                                                                 secretField = content.expirationDate,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it.removeWhitespace() }
+                                                            )?.let {
+                                                                textDecrypted =
+                                                                    it.removeWhitespace()
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -428,7 +447,10 @@ private fun Content(
                                                                 secretField = content.securityCode,
                                                                 securityType = item.securityType,
                                                                 vaultCipher = this,
-                                                            )?.let { textDecrypted = it.removeWhitespace() }
+                                                            )?.let {
+                                                                textDecrypted =
+                                                                    it.removeWhitespace()
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -540,9 +562,9 @@ private fun TagPill(
 ) {
     TextIcon(
         text = tag.name,
-        leadingIcon = MdtIcons.Tag,
+        leadingIcon = tag.iconFilled(),
         leadingIconSize = 14.dp,
-        leadingIconTint = MdtTheme.color.onSecondaryContainer,
+        leadingIconTint = tag.iconTint(),
         color = MdtTheme.color.onSecondaryContainer,
         style = MdtTheme.typo.labelSmall,
         modifier = modifier

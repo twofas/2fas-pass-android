@@ -38,6 +38,8 @@ import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.feature.tags.TagDialog
+import com.twofasapp.core.design.feature.tags.iconFilled
+import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.lazy.forEachIndexed
@@ -175,6 +177,8 @@ private fun ModalContent(
                     val isSelectedInAllItems = uiState.selection.values.all { it.contains(tag.id) }
 
                     OptionEntry(
+                        icon = tag.iconFilled(),
+                        iconTint = tag.iconTint(),
                         title = tag.name,
                         onClick = {
                             if (isSelected) {

@@ -26,6 +26,22 @@ import com.twofasapp.core.design.theme.LightColors
 import com.twofasapp.core.design.theme.seed
 import com.twofasapp.core.design.theme.successDark
 import com.twofasapp.core.design.theme.successLight
+import com.twofasapp.core.design.theme.tagCyanDark
+import com.twofasapp.core.design.theme.tagCyanLight
+import com.twofasapp.core.design.theme.tagGrayDark
+import com.twofasapp.core.design.theme.tagGrayLight
+import com.twofasapp.core.design.theme.tagGreenDark
+import com.twofasapp.core.design.theme.tagGreenLight
+import com.twofasapp.core.design.theme.tagIndigoDark
+import com.twofasapp.core.design.theme.tagIndigoLight
+import com.twofasapp.core.design.theme.tagOrangeDark
+import com.twofasapp.core.design.theme.tagOrangeLight
+import com.twofasapp.core.design.theme.tagPurpleDark
+import com.twofasapp.core.design.theme.tagPurpleLight
+import com.twofasapp.core.design.theme.tagRedDark
+import com.twofasapp.core.design.theme.tagRedLight
+import com.twofasapp.core.design.theme.tagYellowDark
+import com.twofasapp.core.design.theme.tagYellowLight
 import com.twofasapp.core.design.window.ScreenOrientation
 
 val LocalAppTheme = staticCompositionLocalOf { AppTheme.Auto }
@@ -106,7 +122,15 @@ fun AppTheme(
         itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
         itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
 
-        )
+        tagGray = if (isInDarkTheme) tagGrayDark else tagGrayLight,
+        tagRed = if (isInDarkTheme) tagRedDark else tagRedLight,
+        tagOrange = if (isInDarkTheme) tagOrangeDark else tagOrangeLight,
+        tagYellow = if (isInDarkTheme) tagYellowDark else tagYellowLight,
+        tagGreen = if (isInDarkTheme) tagGreenDark else tagGreenLight,
+        tagCyan = if (isInDarkTheme) tagCyanDark else tagCyanLight,
+        tagIndigo = if (isInDarkTheme) tagIndigoDark else tagIndigoLight,
+        tagPurple = if (isInDarkTheme) tagPurpleDark else tagPurpleLight,
+    )
 
     CompositionLocalProvider(
         LocalColorTokens provides colorTokens,
