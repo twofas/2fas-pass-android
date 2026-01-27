@@ -41,7 +41,7 @@ import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.ItemClickAction
-import com.twofasapp.feature.home.ui.home.modal.ItemDetailsModal
+import com.twofasapp.feature.home.ui.home.modal.itemdetails.ItemDetailsModal
 
 @Composable
 internal fun HomeItem(
