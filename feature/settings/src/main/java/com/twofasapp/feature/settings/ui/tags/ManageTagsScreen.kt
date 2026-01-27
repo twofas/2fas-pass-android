@@ -22,8 +22,7 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
-import com.twofasapp.core.design.feature.tags.TagDialog
-import com.twofasapp.core.design.feature.tags.iconFilled
+import com.twofasapp.core.design.feature.tags.ManageTagModal
 import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
@@ -93,7 +92,7 @@ private fun Content(
                                 modifier = Modifier.animateItem(),
                                 title = tag.name,
                                 subtitle = strings.tagDescription.format(tag.assignedItemsCount),
-                                icon = tag.iconFilled(),
+                                icon = MdtIcons.TagFilled,
                                 iconTint = tag.iconTint(),
                                 contentPadding = PaddingValues(
                                     top = 16.dp,
@@ -163,18 +162,18 @@ private fun Content(
     }
 
     if (showAddTagModal) {
-        TagDialog(
+        ManageTagModal(
             onDismissRequest = { showAddTagModal = false },
             tag = Tag.Empty.copy(vaultId = uiState.vaultId),
-            onSaveClick = onAddTag,
+            onSave = onAddTag,
         )
     }
 
     if (showEditTagModal) {
-        TagDialog(
+        ManageTagModal(
             onDismissRequest = { showEditTagModal = false },
             tag = clickedTag,
-            onSaveClick = onEditTag,
+            onSave = onEditTag,
         )
     }
 }

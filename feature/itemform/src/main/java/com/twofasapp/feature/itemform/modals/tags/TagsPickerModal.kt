@@ -37,8 +37,7 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
-import com.twofasapp.core.design.feature.tags.TagDialog
-import com.twofasapp.core.design.feature.tags.iconFilled
+import com.twofasapp.core.design.feature.tags.ManageTagModal
 import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
@@ -89,7 +88,7 @@ private fun TagsPickerContent(
     onConfirm: (Map<Item, Set<String>>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showAddTagDialog by remember { mutableStateOf(false) }
+    var showAddTagModal by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.init(items)
@@ -104,18 +103,18 @@ private fun TagsPickerContent(
     ) { dismissAction ->
         ModalContent(
             uiState = uiState,
-            onAddNewTag = { showAddTagDialog = true },
+            onAddNewTag = { showAddTagModal = true },
             onSelect = { viewModel.selectTag(it) },
             onDeselect = { viewModel.deselectTag(it) },
             onConfirm = { dismissAction { onConfirm(uiState.changedSelection) } },
         )
     }
 
-    if (showAddTagDialog) {
-        TagDialog(
-            onDismissRequest = { showAddTagDialog = false },
+    if (showAddTagModal) {
+        ManageTagModal(
+            onDismissRequest = { showAddTagModal = false },
             tag = Tag.Empty.copy(vaultId = uiState.vaultId),
-            onSaveClick = { viewModel.addTag(it) },
+            onSave = { viewModel.addTag(it) },
         )
     }
 }
@@ -177,7 +176,7 @@ private fun ModalContent(
                     val isSelectedInAllItems = uiState.selection.values.all { it.contains(tag.id) }
 
                     OptionEntry(
-                        icon = tag.iconFilled(),
+                        icon = MdtIcons.TagFilled,
                         iconTint = tag.iconTint(),
                         title = tag.name,
                         onClick = {

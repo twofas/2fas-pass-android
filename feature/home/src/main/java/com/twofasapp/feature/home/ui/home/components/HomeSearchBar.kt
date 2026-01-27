@@ -42,7 +42,6 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
-import com.twofasapp.core.design.feature.tags.iconFilled
 import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.other.Space
@@ -217,7 +216,7 @@ private fun LazyListScope.tagItemFilter(
     tag?.let { tag ->
         item {
             FilterItem(
-                icon = tag.iconFilled(),
+                icon = MdtIcons.TagFilled,
                 iconTint = tag.iconTint(),
                 name = tag.name,
                 count = count,

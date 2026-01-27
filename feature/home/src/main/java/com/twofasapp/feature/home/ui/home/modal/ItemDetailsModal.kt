@@ -55,7 +55,6 @@ import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
-import com.twofasapp.core.design.feature.tags.iconFilled
 import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.IconButton
@@ -562,7 +561,7 @@ private fun TagPill(
 ) {
     TextIcon(
         text = tag.name,
-        leadingIcon = tag.iconFilled(),
+        leadingIcon = MdtIcons.TagFilled,
         leadingIconSize = 14.dp,
         leadingIconTint = tag.iconTint(),
         color = MdtTheme.color.onSecondaryContainer,

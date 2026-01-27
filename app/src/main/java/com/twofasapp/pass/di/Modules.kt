@@ -9,6 +9,7 @@
 package com.twofasapp.pass.di
 
 import com.twofasapp.core.crypto.di.CryptoModule
+import com.twofasapp.core.design.feature.tags.ManageTagModule
 import com.twofasapp.core.network.di.NetworkModule
 import com.twofasapp.data.cloud.di.CloudDataModule
 import com.twofasapp.data.main.di.MainDataModule
@@ -64,6 +65,7 @@ object Modules {
         ItemFormModule(),
         PurchasesModule(),
         QuickSetupModule(),
+        ManageTagModule()
     )
 
     fun provide(): List<Module> =
