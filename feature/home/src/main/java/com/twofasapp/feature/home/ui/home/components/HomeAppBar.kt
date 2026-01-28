@@ -41,6 +41,7 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.home.HomeUiState
 import com.twofasapp.feature.itemform.modals.securitytype.SecurityTypeModal
 import com.twofasapp.feature.itemform.modals.tags.TagsPickerMultiModal
+import kotlinx.collections.immutable.persistentSetOf
 
 @Composable
 internal fun HomeAppBar(
@@ -269,7 +270,7 @@ private fun Preview() {
 private fun PreviewEditMode() {
     PreviewAllThemesInColumn {
         HomeAppBar(
-            uiState = HomeUiState(editMode = true, selectedItemIds = setOf("", "", "")),
+            uiState = HomeUiState(editMode = true, selectedItemIds = persistentSetOf("", "", "")),
             screenState = ScreenState.Success,
         )
     }

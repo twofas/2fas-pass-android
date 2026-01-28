@@ -33,6 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
@@ -49,6 +51,7 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.items.cardNumberGrouping
 import com.twofasapp.core.common.domain.items.formatWithGrouping
 import com.twofasapp.core.common.ktx.removeWhitespace
@@ -72,7 +75,11 @@ import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
+import com.twofasapp.feature.home.ui.home.components.securityItemPillColor
+import com.twofasapp.feature.itemform.modals.securitytype.asIcon
 import com.twofasapp.feature.itemform.modals.securitytype.asTitle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -82,7 +89,7 @@ internal fun ItemDetailsModal(
     vaultCryptoScope: VaultCryptoScope = koinInject(),
     itemEncryptionMapper: ItemEncryptionMapper = koinInject(),
     item: Item,
-    tags: List<Tag>,
+    tags: ImmutableList<Tag>,
     onDismissRequest: () -> Unit,
     onEditClick: () -> Unit = {},
     onCopySecretFieldToClipboard: (SecretField?) -> Unit = {},
@@ -106,7 +113,7 @@ private fun Content(
     vaultCryptoScope: VaultCryptoScope,
     itemEncryptionMapper: ItemEncryptionMapper,
     item: Item,
-    tags: List<Tag>,
+    tags: ImmutableList<Tag>,
     onEditClick: () -> Unit = {},
     onCopySecretFieldToClipboard: (SecretField?) -> Unit = {},
 ) {
@@ -139,25 +146,8 @@ private fun Content(
                 textAlign = TextAlign.Center,
             )
 
-            if (tags.isNotEmpty()) {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    itemVerticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        Alignment.CenterHorizontally
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
-                        TagPill(tag = tag)
-                    }
-                }
-
-                Space(12.dp)
-            }
+            PillsRow(item = item, tags = tags)
+            Space(12.dp)
 
             Column(
                 modifier = Modifier
@@ -479,11 +469,6 @@ private fun Content(
                             }
                         }
                     }
-
-                    Entry(
-                        title = MdtLocale.strings.loginSecurityLevel,
-                        subtitle = item.securityType.asTitle(),
-                    )
                 }
             }
         }
@@ -555,7 +540,7 @@ private fun Entry(
 }
 
 @Composable
-private fun TagPill(
+private fun SecurityPill(
     modifier: Modifier = Modifier,
     tag: Tag,
 ) {
@@ -573,16 +558,78 @@ private fun TagPill(
     )
 }
 
+@Composable
+private fun PillsRow(item: Item, tags: ImmutableList<Tag>) {
+    if (tags.isNotEmpty()) {
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(
+                8.dp,
+                Alignment.CenterHorizontally
+            ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Pill(
+                text = item.securityType.asTitle(),
+                icon = item.securityType.asIcon(),
+                color = securityItemPillColor
+            )
+            tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
+                Pill(text = tag.name, icon = MdtIcons.TagFilled, color = tag.iconTint())
+            }
+        }
+    }
+}
+
+@Composable
+private fun Pill(
+    text: String,
+    icon: Painter,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    TextIcon(
+        text = text,
+        leadingIcon = icon,
+        leadingIconSize = 14.dp,
+        leadingIconTint = color,
+        color = MdtTheme.color.inverseSurface,
+        style = MdtTheme.typo.labelSmall,
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MdtTheme.color.surfaceContainerHighest)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
+}
+
 @Preview
 @Composable
-private fun PreviewTagPill() {
+private fun PreviewPillsRow() {
     PreviewRow {
-        TagPill(
-            tag = Tag.Empty.copy(name = "Personal"),
-        )
-
-        TagPill(
-            tag = Tag.Empty.copy(name = "Work"),
+        PillsRow(
+            item = Item(
+                vaultId = "",
+                securityType = SecurityType.Tier1,
+                tagIds = listOf("1", "2"),
+                contentType = ItemContentType.PaymentCard,
+                content = ItemContent.PaymentCard(
+                    name = "",
+                    cardHolder = null,
+                    cardNumber = null,
+                    cardNumberMask = null,
+                    expirationDate = null,
+                    securityCode = null,
+                    cardIssuer = null,
+                    notes = null,
+                )
+            ),
+            tags = persistentListOf(
+                Tag.Empty.copy(name = "Personal", id = "1"),
+                Tag.Empty.copy(name = "Work", id = "2"),
+            )
         )
     }
 }

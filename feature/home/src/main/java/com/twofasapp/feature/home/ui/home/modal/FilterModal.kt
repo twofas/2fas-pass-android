@@ -50,7 +50,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 internal fun FilterModal(
     onDismissRequest: () -> Unit,
-    tags: List<Tag> = emptyList(),
+    tags: ImmutableList<Tag> = persistentListOf(),
     securityItems: ImmutableList<SecurityItem> = persistentListOf(),
     selectedTag: Tag? = null,
     selectedSecurityItem: SecurityItem?,
@@ -76,7 +76,7 @@ internal fun FilterModal(
 
 @Composable
 private fun Content(
-    tags: List<Tag> = emptyList(),
+    tags: ImmutableList<Tag> = persistentListOf(),
     securityItems: ImmutableList<SecurityItem> = persistentListOf(),
     selectedTag: Tag? = null,
     selectedSecurityItem: SecurityItem? = null,
@@ -182,7 +182,7 @@ private fun Preview() {
                     0
                 )
             }.toPersistentList(),
-            tags = List(3) { Tag.Empty.copy(id = "Tag $it", name = "Tag $it") },
+            tags = List(3) { Tag.Empty.copy(id = "Tag $it", name = "Tag $it") }.toPersistentList(),
             selectedTag = Tag.Empty.copy(id = "Tag 2", name = "Tag 2"),
         )
     }
@@ -199,7 +199,7 @@ private fun PreviewEmpty() {
                     0
                 )
             }.toPersistentList(),
-            tags = emptyList(),
+            tags = persistentListOf(),
             selectedTag = Tag.Empty.copy(name = "Tag 2"),
         )
     }

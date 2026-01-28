@@ -18,13 +18,15 @@ import com.twofasapp.core.common.ktx.filterBySearchQuery
 import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.data.settings.domain.SortingMethod
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 
 internal data class HomeUiState(
     val developerModeEnabled: Boolean = false,
     val vault: Vault = Vault.Empty,
-    val items: List<Item> = emptyList(),
-    val tags: List<Tag> = emptyList(),
+    val items: ImmutableList<Item> = persistentListOf(),
+    val tags: ImmutableList<Tag> = persistentListOf(),
     val securityItems: ImmutableList<SecurityItem> = persistentListOf(),
     val selectedTag: Tag? = null,
     val selectedSecurityItem: SecurityItem? = null,
@@ -33,7 +35,7 @@ internal data class HomeUiState(
     val searchFocused: Boolean = false,
     val editMode: Boolean = false,
     val scrollingUp: Boolean = false,
-    val selectedItemIds: Set<String> = emptySet(),
+    val selectedItemIds: ImmutableSet<String> = persistentSetOf(),
     val itemClickAction: ItemClickAction = ItemClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,
     val maxItems: Int = 0,

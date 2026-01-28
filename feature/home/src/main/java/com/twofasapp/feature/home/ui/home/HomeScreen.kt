@@ -73,6 +73,7 @@ import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
+import kotlinx.collections.immutable.toPersistentList
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -468,7 +469,7 @@ private fun PreviewSuccess() {
                     repeat(3) {
                         add(LoginItemPreview.copy(id = it.toString()))
                     }
-                },
+                }.toPersistentList(),
             ),
             screenState = ScreenState.Success,
         )

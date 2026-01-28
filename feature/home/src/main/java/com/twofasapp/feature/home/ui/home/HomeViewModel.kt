@@ -37,7 +37,9 @@ import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.data.settings.SessionRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.data.settings.domain.SortingMethod
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -96,7 +98,7 @@ internal class HomeViewModel(
 
         launchScoped {
             tagsRepository.observeTags(vaultId = vaultsRepository.getVault().id).collect { tags ->
-                uiState.update { it.copy(tags = tags) }
+                uiState.update { it.copy(tags = tags.toPersistentList()) }
             }
         }
 
@@ -167,7 +169,7 @@ internal class HomeViewModel(
                         screenState.success()
                     }
 
-                    uiState.update { it.copy(items = items) }
+                    uiState.update { it.copy(items = items.toPersistentList()) }
                 }
         }
 
@@ -263,13 +265,13 @@ internal class HomeViewModel(
         uiState.update { it.copy(editMode = enabled) }
 
         if (enabled.not()) {
-            uiState.update { it.copy(selectedItemIds = emptySet()) }
+            uiState.update { it.copy(selectedItemIds = persistentSetOf()) }
         }
     }
 
     fun toggleItemSelection(itemId: String) {
         uiState.update { state ->
-            val selectedItemIds = state.selectedItemIds.toggle(itemId)
+            val selectedItemIds = state.selectedItemIds.toggle(itemId).toPersistentSet()
 
             state.copy(
                 selectedItemIds = selectedItemIds,
@@ -282,7 +284,7 @@ internal class HomeViewModel(
         uiState.update { state ->
             state.copy(
                 selectedItemIds = state.selectedItemIds.plus(state.itemsFiltered.map { it.id }
-                    .toSet()),
+                    .toSet()).toPersistentSet(),
             )
         }
     }
@@ -291,13 +293,13 @@ internal class HomeViewModel(
         uiState.update { state ->
             state.copy(
                 selectedItemIds = state.selectedItemIds.minus(state.itemsFiltered.map { it.id }
-                    .toSet()),
+                    .toSet()).toPersistentSet(),
             )
         }
     }
 
     private fun clearEditModeSelections() {
-        uiState.update { it.copy(selectedItemIds = emptySet(), editMode = false) }
+        uiState.update { it.copy(selectedItemIds = persistentSetOf(), editMode = false) }
     }
 
     fun trashSelectedItems() {

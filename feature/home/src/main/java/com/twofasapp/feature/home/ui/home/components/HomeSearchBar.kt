@@ -198,7 +198,7 @@ private fun LazyListScope.securityItemFilter(
     securityItem?.let { securityItem ->
         item {
             FilterItem(
-                iconTint = Color(0xFF0077FF),
+                iconTint = securityItemPillColor,
                 icon = securityItem.type.asIcon(),
                 name = securityItem.type.asTitle(),
                 count = count,
@@ -309,6 +309,8 @@ private fun ItemContentType?.contentColor(): Color {
         null -> MdtTheme.color.primaryContainer
     }
 }
+
+val securityItemPillColor = Color(0xFF0077FF)
 
 @Preview
 @Composable

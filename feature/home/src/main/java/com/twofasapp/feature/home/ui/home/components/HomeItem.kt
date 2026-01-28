@@ -42,12 +42,14 @@ import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.ItemClickAction
 import com.twofasapp.feature.home.ui.home.modal.ItemDetailsModal
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun HomeItem(
     modifier: Modifier = Modifier,
     item: Item,
-    tags: List<Tag>,
+    tags: ImmutableList<Tag>,
     itemClickAction: ItemClickAction,
     query: String = "",
     editMode: Boolean = false,
@@ -86,9 +88,26 @@ internal fun HomeItem(
                             ItemClickAction.Copy -> {
                                 when (val content = item.content) {
                                     is ItemContent.Unknown -> Unit
-                                    is ItemContent.Login -> content.password?.let { onCopySecretFieldToClipboard(item, it) }
-                                    is ItemContent.SecureNote -> content.text?.let { onCopySecretFieldToClipboard(item, it) }
-                                    is ItemContent.PaymentCard -> content.cardNumber?.let { onCopySecretFieldToClipboard(item, it) }
+                                    is ItemContent.Login -> content.password?.let {
+                                        onCopySecretFieldToClipboard(
+                                            item,
+                                            it
+                                        )
+                                    }
+
+                                    is ItemContent.SecureNote -> content.text?.let {
+                                        onCopySecretFieldToClipboard(
+                                            item,
+                                            it
+                                        )
+                                    }
+
+                                    is ItemContent.PaymentCard -> content.cardNumber?.let {
+                                        onCopySecretFieldToClipboard(
+                                            item,
+                                            it
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -126,7 +145,12 @@ internal fun HomeItem(
                 item = item,
                 onDetailsClick = { showDetailsModal = true },
                 onEditClick = { onEditClick(item.id, item.vaultId) },
-                onCopySecretFieldToClipboard = { secretField -> onCopySecretFieldToClipboard(item, secretField) },
+                onCopySecretFieldToClipboard = { secretField ->
+                    onCopySecretFieldToClipboard(
+                        item,
+                        secretField
+                    )
+                },
                 onTrashClick = { showTrashDialog = true },
             )
         }
@@ -174,7 +198,7 @@ private fun PreviewDark() {
             HomeItem(
                 modifier = Modifier.fillMaxWidth(),
                 item = item,
-                tags = emptyList(),
+                tags = persistentListOf(),
                 itemClickAction = ItemClickAction.View,
                 editMode = index == 1,
                 selected = index == 1,
@@ -195,7 +219,7 @@ private fun PreviewLight() {
             HomeItem(
                 modifier = Modifier.fillMaxWidth(),
                 item = item,
-                tags = emptyList(),
+                tags = persistentListOf(),
                 itemClickAction = ItemClickAction.View,
                 editMode = index == 1,
                 selected = index == 1,
