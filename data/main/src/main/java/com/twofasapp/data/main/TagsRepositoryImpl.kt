@@ -80,20 +80,21 @@ internal class TagsRepositoryImpl(
             }
         }
 
-        val tagsWithoutColor = tags.filter { tag -> tag.color == null }
+        val tagsWithoutColor = tags.filter { tag -> tag.hasMissingColor() }
 
         if (tagsWithoutColor.isEmpty()) {
             return tags
         }
 
         //temporary solution, assign colors to tags without color and update existing tags in db
-        var tagColorIterator = TagColor.sortedValues().iterator()
+        val colors = getColorsSortedByUsage(tags)
+        var tagColorIterator = colors.iterator()
         val tagsWithColor =
             tagsWithoutColor.map { tag ->
                 val color = if (tagColorIterator.hasNext()) {
                     tagColorIterator.next()
                 } else {
-                    tagColorIterator = TagColor.sortedValues().iterator()
+                    tagColorIterator = colors.iterator()
                     if (tagColorIterator.hasNext()) {
                         tagColorIterator.next()
                     } else {
@@ -284,13 +285,26 @@ internal class TagsRepositoryImpl(
     override suspend fun observeSuggestedTagColor(vaultId: String): Flow<TagColor> {
         return observeTags(vaultId)
             .map { tags ->
-                val colorHistogram = TagColor.values().associateWith { 0 } +
-                        tags.map { tag -> tag.color ?: TagColor.default }
-                            .groupingBy { it }
-                            .eachCount()
-                colorHistogram.entries.sortedBy { entry -> entry.value }.map { entry -> entry.key }
-                    .firstOrNull() ?: TagColor.default
+                getColorsSortedByUsage(tags).firstOrNull() ?: TagColor.default
             }
     }
 
+    private fun Tag.hasMissingColor(): Boolean {
+        val currentColor = color ?: return true
+
+        if (currentColor.value.isBlank()) {
+            return true
+        }
+
+        if (currentColor.value.startsWith("#")) {
+            return true
+        }
+
+        return false
+    }
+
+    private fun getColorsSortedByUsage(tags: List<Tag>): List<TagColor> {
+        return TagColor.values()
+            .sortedBy { tagColor -> tags.count { tag -> tag.color == tagColor } }
+    }
 }
