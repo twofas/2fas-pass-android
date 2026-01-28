@@ -18,6 +18,8 @@ import com.twofasapp.data.main.domain.VaultKeys
 import com.twofasapp.data.main.local.ItemsLocalSource
 import com.twofasapp.data.main.local.TagsLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
+import com.twofasapp.data.main.local.model.ItemEntity
+import com.twofasapp.data.main.local.model.TagEntity
 import com.twofasapp.data.main.mapper.TagMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,17 +50,8 @@ internal class TagsRepositoryImpl(
             itemsLocalSource.observe(vaultId).distinctUntilChanged(),
             { a, b -> Pair(a, b) },
         )
-            .map { (tags, items) ->
-                vaultCryptoScope.withVaultCipher(vaultId) {
-                    tags.map { tag ->
-                        tagMapper
-                            .mapToDomain(entity = tag, vaultCipher = this)
-                            .copy(assignedItemsCount = items.count {
-                                it.tagIds.orEmpty().contains(tag.id)
-                            })
-                    }
-                }
-            }.catch {
+            .map { (tags, items) -> fetchTags(vaultId, tags, items) }
+            .catch {
                 // Temporarily emit empty list when tags are being reencrypted
                 emit(emptyList())
             }
@@ -67,19 +60,52 @@ internal class TagsRepositoryImpl(
     override suspend fun getTags(vaultId: String): List<Tag> {
         return withContext(dispatchers.io) {
             val items = itemsLocalSource.getItems()
+            val tagEntities = tagsLocalSource.getTags(vaultId)
+            fetchTags(vaultId, tagEntities, items)
+        }
+    }
 
-            tagsLocalSource.getTags(vaultId).let { tags ->
-                vaultCryptoScope.withVaultCipher(vaultId) {
-                    tags.map { tag ->
-                        tagMapper
-                            .mapToDomain(entity = tag, vaultCipher = this)
-                            .copy(assignedItemsCount = items.count {
-                                it.tagIds.orEmpty().contains(tag.id)
-                            })
-                    }
-                }
+    private suspend fun fetchTags(
+        vaultId: String,
+        tagEntities: List<TagEntity>,
+        items: List<ItemEntity>
+    ): List<Tag> {
+        val tags = vaultCryptoScope.withVaultCipher(vaultId) {
+            tagEntities.map { tagEntity ->
+                tagMapper
+                    .mapToDomain(entity = tagEntity, vaultCipher = this)
+                    .copy(assignedItemsCount = items.count {
+                        it.tagIds.orEmpty().contains(tagEntity.id)
+                    })
             }
         }
+
+        val tagsWithoutColor = tags.filter { tag -> tag.color == null }
+
+        if (tagsWithoutColor.isEmpty()) {
+            return tags
+        }
+
+        //temporary solution, assign colors to tags without color and update existing tags in db
+        var tagColorIterator = TagColor.sortedValues().iterator()
+        val tagsWithColor =
+            tagsWithoutColor.map { tag ->
+                val color = if (tagColorIterator.hasNext()) {
+                    tagColorIterator.next()
+                } else {
+                    tagColorIterator = TagColor.sortedValues().iterator()
+                    if (tagColorIterator.hasNext()) {
+                        tagColorIterator.next()
+                    } else {
+                        TagColor.default
+                    }
+                }
+                tag.copy(color = color)
+            }
+        saveTags(*tagsWithColor.toTypedArray())
+
+        val newTagEntities = tagsLocalSource.getTags(vaultId)
+        return fetchTags(vaultId, newTagEntities, items)
     }
 
     override suspend fun saveTags(vararg tags: Tag) {
