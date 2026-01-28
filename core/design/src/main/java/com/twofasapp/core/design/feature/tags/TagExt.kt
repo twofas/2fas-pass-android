@@ -16,7 +16,7 @@ import com.twofasapp.core.design.MdtTheme
 
 @Composable
 fun Tag.iconTint(): Color {
-    return color?.iconTint() ?: MdtTheme.color.tagGray
+    return color?.iconTint() ?: TagColor.default.iconTint()
 }
 
 @Composable

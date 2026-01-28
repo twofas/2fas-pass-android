@@ -9,6 +9,7 @@
 package com.twofasapp.feature.itemform.modals.tags
 
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.TagColor
 import com.twofasapp.core.common.domain.items.Item
 
 data class TagsPickerUiState(
@@ -16,6 +17,7 @@ data class TagsPickerUiState(
     val tags: List<Tag> = emptyList(),
     val initialSelection: Map<Item, Set<String>> = emptyMap(),
     val selection: Map<Item, Set<String>> = emptyMap(),
+    val suggestedTagColor: TagColor = TagColor.default
 ) {
     val selectedTagIds: List<String>
         get() = selection.values.flatten().distinct()

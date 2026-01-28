@@ -11,6 +11,7 @@ package com.twofasapp.data.main
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.TagColor
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.domain.VaultKeys
@@ -52,7 +53,9 @@ internal class TagsRepositoryImpl(
                     tags.map { tag ->
                         tagMapper
                             .mapToDomain(entity = tag, vaultCipher = this)
-                            .copy(assignedItemsCount = items.count { it.tagIds.orEmpty().contains(tag.id) })
+                            .copy(assignedItemsCount = items.count {
+                                it.tagIds.orEmpty().contains(tag.id)
+                            })
                     }
                 }
             }.catch {
@@ -70,7 +73,9 @@ internal class TagsRepositoryImpl(
                     tags.map { tag ->
                         tagMapper
                             .mapToDomain(entity = tag, vaultCipher = this)
-                            .copy(assignedItemsCount = items.count { it.tagIds.orEmpty().contains(tag.id) })
+                            .copy(assignedItemsCount = items.count {
+                                it.tagIds.orEmpty().contains(tag.id)
+                            })
                     }
                 }
             }
@@ -249,4 +254,17 @@ internal class TagsRepositoryImpl(
             vaultsLocalSource.updateLastModificationTime(vault.id, mostRecentModificationTime)
         }
     }
+
+    override suspend fun observeSuggestedTagColor(vaultId: String): Flow<TagColor> {
+        return observeTags(vaultId)
+            .map { tags ->
+                val colorHistogram = TagColor.values().associateWith { 0 } +
+                        tags.map { tag -> tag.color ?: TagColor.default }
+                            .groupingBy { it }
+                            .eachCount()
+                colorHistogram.entries.sortedBy { entry -> entry.value }.map { entry -> entry.key }
+                    .firstOrNull() ?: TagColor.default
+            }
+    }
+
 }

@@ -35,6 +35,13 @@ internal class TagsPickerViewModel(
                 uiState.update { it.copy(tags = tags) }
             }
         }
+
+        launchScoped {
+            tagsRepository.observeSuggestedTagColor(vaultsRepository.getVault().id)
+                .collect { suggestedTagColor ->
+                    uiState.update { state -> state.copy(suggestedTagColor = suggestedTagColor) }
+                }
+        }
     }
 
     fun init(items: List<Item>) {
@@ -70,7 +77,7 @@ internal class TagsPickerViewModel(
     }
 
     fun addTag(tag: Tag) {
-        Log.d("DUPA"," fun addTag(tag: Tag) {")
+        Log.d("DUPA", " fun addTag(tag: Tag) {")
         launchScoped {
             tagsRepository.saveTags(tag)
 

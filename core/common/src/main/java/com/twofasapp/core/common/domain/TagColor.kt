@@ -46,16 +46,25 @@ sealed interface TagColor {
     data class Unknown(override val value: String) : TagColor
 
     companion object {
-        fun values() = listOf(
-            Gray,
-            Red,
-            Orange,
-            Yellow,
-            Green,
-            Cyan,
-            Indigo,
-            Purple,
-        )
+
+        val default = Gray
+
+        fun values(): List<TagColor> {
+            return listOf(
+                Gray,
+                Red,
+                Orange,
+                Yellow,
+                Green,
+                Cyan,
+                Indigo,
+                Purple,
+            )
+        }
+
+        fun sortedValues(): List<TagColor> {
+            return values().sortedBy { it.value }
+        }
 
         fun fromValue(value: String?): TagColor? {
             return values().firstOrNull { color -> color.value.equals(value, true) }

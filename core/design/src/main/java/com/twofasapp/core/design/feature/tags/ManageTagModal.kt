@@ -43,7 +43,6 @@ import com.twofasapp.core.common.domain.TagColor
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.Button
-import com.twofasapp.core.design.foundation.dialog.InputValidation
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.modal.ModalHeaderProperties
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
@@ -58,12 +57,14 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ManageTagModal(
     tag: Tag,
+    suggestedTagColor: TagColor,
     onSave: (Tag) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     ProvidesViewModelStoreOwner {
         ManageTagModalInternal(
             tag = tag,
+            suggestedTagColor = suggestedTagColor,
             onSave = onSave,
             onDismissRequest = onDismissRequest
         )
@@ -73,7 +74,8 @@ fun ManageTagModal(
 @Composable
 private fun ManageTagModalInternal(
     tag: Tag,
-    viewModel: ManageTagViewModel = koinViewModel { parametersOf(tag) },
+    suggestedTagColor: TagColor,
+    viewModel: ManageTagViewModel = koinViewModel { parametersOf(tag, suggestedTagColor) },
     onSave: (Tag) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
@@ -134,8 +136,6 @@ private fun ManageTagModal(
                 .focusRequester(focusRequester),
             singleLine = true,
             maxLines = 1,
-            supportingText = (uiState.nameValidation as? InputValidation.Invalid)?.error.orEmpty(),
-            isError = uiState.nameValidation is InputValidation.Invalid,
             trailingIcon = {
                 Icon(
                     painter = MdtIcons.Tag,
@@ -166,7 +166,7 @@ private fun ManageTagModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            enabled = uiState.nameValidation == InputValidation.Valid && uiState.colorValidation == InputValidation.Valid,
+            enabled = uiState.buttonEnabled,
             text = MdtLocale.strings.commonContinue,
             onClick = { dismissAction { onSaveClick() } }
         )
@@ -205,8 +205,7 @@ private fun Preview() {
             uiState = ManageTagUiState(
                 tag = Tag.Empty.copy(name = "Tag name"),
                 colors = TagColor.values().toPersistentList(),
-                nameValidation = null,
-                colorValidation = null,
+                buttonEnabled = true,
                 mode = ManageTagModalMode.Add,
             ),
             onNameChane = {},

@@ -10,14 +10,12 @@ package com.twofasapp.core.design.feature.tags
 
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.TagColor
-import com.twofasapp.core.design.foundation.dialog.InputValidation
 import kotlinx.collections.immutable.ImmutableList
 
 internal data class ManageTagUiState(
     val tag: Tag,
     val colors: ImmutableList<TagColor>,
-    val nameValidation: InputValidation?,
-    val colorValidation: InputValidation?,
+    val buttonEnabled: Boolean,
     val mode: ManageTagModalMode,
 )
 

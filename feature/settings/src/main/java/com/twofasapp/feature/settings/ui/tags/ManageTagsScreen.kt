@@ -164,6 +164,7 @@ private fun Content(
     if (showAddTagModal) {
         ManageTagModal(
             onDismissRequest = { showAddTagModal = false },
+            suggestedTagColor = uiState.suggestedTagColor,
             tag = Tag.Empty.copy(vaultId = uiState.vaultId),
             onSave = onAddTag,
         )
@@ -172,6 +173,7 @@ private fun Content(
     if (showEditTagModal) {
         ManageTagModal(
             onDismissRequest = { showEditTagModal = false },
+            suggestedTagColor = uiState.suggestedTagColor,
             tag = clickedTag,
             onSave = onEditTag,
         )

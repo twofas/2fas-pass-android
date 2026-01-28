@@ -9,6 +9,7 @@
 package com.twofasapp.data.main
 
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.TagColor
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.domain.VaultKeys
 import kotlinx.coroutines.flow.Flow
@@ -24,4 +25,5 @@ interface TagsRepository {
     suspend fun clearSelectedTag(vaultId: String)
     suspend fun reencryptTags(vaultKeys: VaultKeys)
     suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Tag>)
+    suspend fun observeSuggestedTagColor(vaultId: String): Flow<TagColor>
 }

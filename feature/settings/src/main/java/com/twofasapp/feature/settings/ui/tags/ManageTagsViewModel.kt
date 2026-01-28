@@ -26,6 +26,13 @@ internal class ManageTagsViewModel(
                 uiState.update { state -> state.copy(tags = tags) }
             }
         }
+
+        launchScoped {
+            tagsRepository.observeSuggestedTagColor(vaultsRepository.getVault().id)
+                .collect { suggestedTagColor ->
+                    uiState.update { state -> state.copy(suggestedTagColor = suggestedTagColor) }
+                }
+        }
     }
 
     fun addTag(tag: Tag) {

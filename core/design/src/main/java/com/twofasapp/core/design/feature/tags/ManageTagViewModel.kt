@@ -11,13 +11,13 @@ package com.twofasapp.core.design.feature.tags
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.TagColor
-import com.twofasapp.core.design.foundation.dialog.InputValidation
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class ManageTagViewModel(
-    private val tag: Tag
+    private val tag: Tag,
+    suggestedTagColor: TagColor,
 ) : ViewModel() {
 
     companion object {
@@ -26,16 +26,12 @@ internal class ManageTagViewModel(
 
     val uiState = MutableStateFlow(
         ManageTagUiState(
-            tag = tag,
-            colors = TagColor.values().toPersistentList(),
-            nameValidation = validateName(
+            tag = tag.copy(color = suggestedTagColor.takeIf { tag.color == null }),
+            colors = TagColor.sortedValues().toPersistentList(),
+            buttonEnabled = validateName(
                 name = tag.name,
-                silent = true
-            ),
-            colorValidation = validateColor(
-                color = tag.color,
-                silent = true
-            ),
+
+                ),
             mode = if (tag.id.isEmpty()) {
                 ManageTagModalMode.Add
             } else {
@@ -49,7 +45,7 @@ internal class ManageTagViewModel(
         uiState.update { oldState ->
             oldState.copy(
                 tag = oldState.tag.copy(name = trimmedName),
-                nameValidation = validateName(name = trimmedName, silent = false)
+                buttonEnabled = validateName(name = trimmedName)
             )
         }
     }
@@ -58,34 +54,11 @@ internal class ManageTagViewModel(
         uiState.update { oldState ->
             oldState.copy(
                 tag = oldState.tag.copy(color = color),
-                colorValidation = validateColor(color = color, silent = false)
             )
         }
     }
 
-    private fun validateName(name: String, silent: Boolean): InputValidation? {
-        if (name.isBlank()) {
-            if (silent) {
-                return null
-            }
-            return InputValidation.Invalid("Name can not be empty")
-        }
-        if (name.length > MAX_NAME_LENGTH) {
-            if (silent) {
-                return null
-            }
-            return InputValidation.Invalid("Max length is 64 characters")
-        }
-        return InputValidation.Valid
-    }
-
-    private fun validateColor(color: TagColor?, silent: Boolean): InputValidation? {
-        if (color == null) {
-            if (silent) {
-                return null
-            }
-            return InputValidation.Invalid(null)
-        }
-        return InputValidation.Valid
+    private fun validateName(name: String): Boolean {
+        return name.isNotBlank()
     }
 }

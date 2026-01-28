@@ -113,6 +113,7 @@ private fun TagsPickerContent(
     if (showAddTagModal) {
         ManageTagModal(
             onDismissRequest = { showAddTagModal = false },
+            suggestedTagColor = uiState.suggestedTagColor,
             tag = Tag.Empty.copy(vaultId = uiState.vaultId),
             onSave = { viewModel.addTag(it) },
         )
