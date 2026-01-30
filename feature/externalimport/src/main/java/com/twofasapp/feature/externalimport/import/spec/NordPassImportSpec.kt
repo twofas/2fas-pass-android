@@ -94,13 +94,7 @@ internal class NordPassImportSpec(
                     cardNumberMask = row.getColumn(Column.CardNumber)
                         ?.let { detectCardNumberMask(it) },
                     expirationDate = row.getColumn(Column.ExpiryDate)
-                        ?.let {
-                            detectCardExpiryDate(it)?.let { expiryDate ->
-                                SecretField.ClearText(
-                                    expiryDate
-                                )
-                            }
-                        },
+                        ?.let { SecretField.ClearText(it) },
                     securityCode = row.getColumn(Column.Cvc)?.let { SecretField.ClearText(it) },
                     cardIssuer = row.getColumn(Column.CardNumber)?.let { detectCardIssuer(it) },
                     notes = createNote(
@@ -117,35 +111,6 @@ internal class NordPassImportSpec(
             ),
             tagName = row.getTagName()
         )
-    }
-
-    private fun detectCardExpiryDate(expiryDateRow: String): String? {
-        val expirationCardRegex = Regex("""(\d+)/(\d+)/(\d+)""")
-
-        val match = expirationCardRegex.find(expiryDateRow)
-        val month = match?.groupValues?.getOrNull(1)?.trim()
-        val year = match?.groupValues?.getOrNull(2)?.trim()
-
-        if (month == null || year == null) {
-            return null
-        }
-
-        val validMonth = when {
-            month.length == 2 -> month
-            month.length == 1 -> "0$month"
-            else -> null
-        }
-
-        if (validMonth == null) {
-            return null
-        }
-
-        val validYear = when {
-            year.length == 2 -> year
-            year.length == 4 -> year.subSequence(2, 4)
-            else -> null
-        }
-        return "$validMonth/$validYear"
     }
 
     private fun parseLogin(row: CsvRow, vaultId: String): ParsedItem {
