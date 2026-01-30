@@ -22,6 +22,7 @@ import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeeperImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.MicrosoftEdgeImportSpec
+import com.twofasapp.feature.externalimport.import.spec.NordPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ProtonPassImportSpec
 import com.twofasapp.feature.externalimport.ui.externalimport.ExternalImportViewModel
@@ -47,5 +48,6 @@ class ExternalImportModule : KoinModule {
         singleOf(::KeepassImportSpec)
         singleOf(::KeepassXcImportSpec)
         singleOf(::KeeperImportSpec)
+        singleOf(::NordPassImportSpec)
     }
 }

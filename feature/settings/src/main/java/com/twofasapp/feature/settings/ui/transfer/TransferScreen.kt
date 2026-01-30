@@ -104,6 +104,7 @@ private fun Content(
                             ImportType.KeePass -> R.drawable.external_logo_keepass
                             ImportType.KeePassXC -> R.drawable.external_logo_keepassxc
                             ImportType.Keeper -> R.drawable.external_logo_keeper
+                            ImportType.NordPass -> R.drawable.external_logo_nordpass
                         },
                     ),
                     onClick = {

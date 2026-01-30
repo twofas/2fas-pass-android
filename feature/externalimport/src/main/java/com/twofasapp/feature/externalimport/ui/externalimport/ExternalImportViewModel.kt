@@ -33,6 +33,7 @@ import com.twofasapp.feature.externalimport.import.spec.KeepassXcImportSpec
 import com.twofasapp.feature.externalimport.import.spec.KeeperImportSpec
 import com.twofasapp.feature.externalimport.import.spec.LastPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.MicrosoftEdgeImportSpec
+import com.twofasapp.feature.externalimport.import.spec.NordPassImportSpec
 import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ProtonPassImportSpec
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +60,7 @@ internal class ExternalImportViewModel(
     private val keepassImportSpec: KeepassImportSpec,
     private val keepassXcImportSpec: KeepassXcImportSpec,
     private val keeperImportSpec: KeeperImportSpec,
+    private val nordPassImportSpec: NordPassImportSpec
 ) : ViewModel() {
     val uiState = MutableStateFlow(ExternalImportUiState())
     private val importType = savedStateHandle.toRoute<Screen.ExternalImport>().importType
@@ -82,6 +84,7 @@ internal class ExternalImportViewModel(
                     ImportType.KeePass -> keepassImportSpec
                     ImportType.KeePassXC -> keepassXcImportSpec
                     ImportType.Keeper -> keeperImportSpec
+                    ImportType.NordPass -> nordPassImportSpec
                 },
             )
         }

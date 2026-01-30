@@ -576,27 +576,6 @@ internal class BitwardenImportSpec(
             .replaceFirstChar { it.uppercase() }
     }
 
-    private fun detectCardNumberMask(cardNumber: String): String? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.length < 4) return null
-        return digitsOnly.takeLast(4)
-    }
-
-    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.isEmpty()) return null
-
-        return when {
-            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
-            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
-            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
-            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
-            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
-            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
-            else -> null
-        }
-    }
-
     private fun detectCardIssuerFromBrand(brand: String): ItemContent.PaymentCard.Issuer? {
         return when (brand.lowercase()) {
             "visa" -> ItemContent.PaymentCard.Issuer.Visa

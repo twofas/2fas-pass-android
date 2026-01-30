@@ -24,4 +24,5 @@ enum class ImportType(val displayName: String) {
     KeePass("KeePass"),
     KeePassXC("KeePassXC"),
     Keeper("Keeper"),
+    NordPass("NordPass")
 }
