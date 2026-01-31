@@ -114,6 +114,10 @@ internal class NordPassImportSpec(
     }
 
     private fun parseLogin(row: CsvRow, vaultId: String): ParsedItem {
+        val uris = detectUris(
+            row.getColumn(Column.Url),
+            row.getColumn(Column.AdditionalUrls)
+        )
         return ParsedItem(
             item = Item.create(
                 vaultId = vaultId,
@@ -123,12 +127,9 @@ internal class NordPassImportSpec(
                     username = row.getColumn(Column.Username),
                     password = row.getColumn(Column.Password)
                         ?.let { SecretField.ClearText(it) },
-                    uris = detectUris(
-                        row.getColumn(Column.Url),
-                        row.getColumn(Column.AdditionalUrls)
-                    ),
+                    uris = uris,
                     iconType = IconType.Icon,
-                    iconUriIndex = null,
+                    iconUriIndex = 0.takeIf { uris.isNotEmpty() },
                     customImageUrl = null,
                     labelText = null,
                     labelColor = null,
