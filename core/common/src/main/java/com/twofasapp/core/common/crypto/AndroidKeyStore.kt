@@ -18,4 +18,6 @@ interface AndroidKeyStore {
 
     fun generateConnectEphemeralEcKey(): KeyPair
     fun deleteBiometricsKey()
+    fun generateKeyPair(alias: String): KeyPair
+    fun getKey(alias: String): Key
 }

@@ -100,6 +100,14 @@ internal class AndroidKeyStoreImpl : AndroidKeyStore {
         keyStore.deleteEntry(biometricsKeyAlias)
     }
 
+    override fun generateKeyPair(alias: String): KeyPair {
+        return generateEcKey(alias)
+    }
+
+    override fun getKey(alias: String): Key {
+       return keyStore.getKey(alias,null)
+    }
+
     private fun generateEcKey(alias: String): KeyPair {
         return KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, keyStoreProvider)
             .run {

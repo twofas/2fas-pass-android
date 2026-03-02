@@ -17,6 +17,10 @@ import java.nio.charset.StandardCharsets
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
+fun ByteArray.encodeBase64UrlSafeNoPadding(): String {
+    return Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(this)
+}
+
 fun ByteArray.encodeBase64(): String {
     return Base64.encode(this)
 }

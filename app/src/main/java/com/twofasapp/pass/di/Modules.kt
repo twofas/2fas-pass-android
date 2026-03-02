@@ -20,6 +20,7 @@ import com.twofasapp.data.settings.di.SettingsDataModule
 import com.twofasapp.feature.autofill.di.AutofillModule
 import com.twofasapp.feature.cloudsync.di.CloudSyncModule
 import com.twofasapp.feature.connect.di.ConnectModule
+import com.twofasapp.feature.credentialprovider.di.CredentialProviderModule
 import com.twofasapp.feature.developer.di.DeveloperModule
 import com.twofasapp.feature.di.QrScanModule
 import com.twofasapp.feature.externalimport.di.ExternalImportModule
@@ -56,6 +57,7 @@ object Modules {
         MainModule(),
         LockModule(),
         AutofillModule(),
+        CredentialProviderModule(),
         HomeModule(),
         ConnectModule(),
         SettingsModule(),
