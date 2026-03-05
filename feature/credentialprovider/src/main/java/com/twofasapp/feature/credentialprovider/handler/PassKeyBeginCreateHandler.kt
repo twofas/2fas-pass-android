@@ -49,16 +49,16 @@ class PassKeyBeginCreateHandler(private val vaultsRepository: VaultsRepository) 
                                 (PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT),
                             )
                         )
-                            .apply {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                                    setBiometricPromptData(
-                                        BiometricPromptData(
-                                            cryptoObject = null,
-                                            allowedAuthenticators = BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
-                                        ),
-                                    )
-                                }
-                            }
+//                            .apply {
+//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+//                                    setBiometricPromptData(
+//                                        BiometricPromptData(
+//                                            cryptoObject = null,
+//                                            allowedAuthenticators = BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL,
+//                                        ),
+//                                    )
+//                                }
+//                            }
                             .build()
                     )
                     .build()

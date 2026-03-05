@@ -12,6 +12,7 @@ import com.twofasapp.core.di.KoinModule
 import com.twofasapp.feature.credentialprovider.handler.PassKeyBeginCreateHandler
 import com.twofasapp.feature.credentialprovider.handler.PassKeyBeginGetHandler
 import com.twofasapp.feature.credentialprovider.handler.PassKeyCreateHandler
+import com.twofasapp.feature.credentialprovider.handler.PassKeyGetHandler
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -20,5 +21,6 @@ class CredentialProviderModule : KoinModule {
         singleOf(::PassKeyCreateHandler)
         singleOf(::PassKeyBeginCreateHandler)
         singleOf(::PassKeyBeginGetHandler)
+        singleOf(::PassKeyGetHandler)
     }
 }

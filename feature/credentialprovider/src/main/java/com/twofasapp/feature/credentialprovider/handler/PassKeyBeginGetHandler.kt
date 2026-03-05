@@ -1,12 +1,18 @@
 package com.twofasapp.feature.credentialprovider.handler
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.OutcomeReceiver
+import android.util.Log
+import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.provider.BeginGetCredentialRequest
 import androidx.credentials.provider.BeginGetCredentialResponse
 import androidx.credentials.provider.BeginGetPublicKeyCredentialOption
+import androidx.credentials.provider.PublicKeyCredentialEntry
+import com.twofasapp.feature.credentialprovider.ui.PassCredentialProviderActivity
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -30,6 +36,32 @@ class PassKeyBeginGetHandler {
 
         callback.onResult(
             BeginGetCredentialResponse.Builder()
+                .apply {
+                    options.forEach { option ->
+                        addCredentialEntry(
+                            PublicKeyCredentialEntry.Builder(
+                                context,
+                                "Test",
+                                PendingIntent.getActivity(
+                                    context,
+                                    requestCode.fetchAndAdd(1),
+                                    Intent(
+                                        context,
+                                        PassCredentialProviderActivity::class.java
+                                    ),
+                                    (PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT),
+                                ),
+                                BeginGetPublicKeyCredentialOption(
+                                    option.candidateQueryData,
+                                    option.id,
+                                    option.requestJson,
+                                    option.clientDataHash
+                                )
+                            )
+                                .build()
+                        )
+                    }
+                }
 //                .addAction(
 //                    Action.Builder(
 //                        "Test",

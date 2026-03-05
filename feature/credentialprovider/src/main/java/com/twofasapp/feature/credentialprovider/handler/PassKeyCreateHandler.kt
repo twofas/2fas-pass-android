@@ -10,7 +10,7 @@ import androidx.biometric.BiometricPrompt.PromptInfo.Builder
 import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.PublicKeyCredential
-import androidx.credentials.exceptions.GetCredentialUnknownException
+import androidx.credentials.exceptions.CreateCredentialUnknownException
 import androidx.credentials.provider.BiometricPromptResult
 import androidx.credentials.provider.CallingAppInfo
 import androidx.credentials.provider.PendingIntentHandler
@@ -18,12 +18,10 @@ import androidx.credentials.webauthn.AuthenticatorAttestationResponse
 import androidx.credentials.webauthn.Cbor
 import androidx.credentials.webauthn.FidoPublicKeyCredential
 import androidx.credentials.webauthn.PublicKeyCredentialCreationOptions
-import com.twofasapp.core.common.ktx.encodeBase64UrlSafeNoPadding
 import kotlinx.coroutines.asExecutor
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.KeyPairGenerator
-import java.security.MessageDigest
 import java.security.SecureRandom
 import java.security.interfaces.ECPublicKey
 import java.security.spec.ECGenParameterSpec
@@ -59,9 +57,9 @@ class PassKeyCreateHandler {
     private fun error(resultCallback: (Intent) -> Unit) {
         resultCallback(
             Intent().apply {
-                PendingIntentHandler.setGetCredentialException(
+                PendingIntentHandler.setCreateCredentialException(
                     this,
-                    GetCredentialUnknownException(),
+                    CreateCredentialUnknownException(),
                 )
             }
         )
@@ -74,17 +72,18 @@ class PassKeyCreateHandler {
         activity: AppCompatActivity,
         resultCallback: (Intent) -> Unit
     ) {
-        if (biometricPromptResult == null) {
-            checkBiometric(request, callingAppInfo, activity, resultCallback)
-            return
-        }
-
-        if (biometricPromptResult.isSuccessful) {
-            createResponse(request, callingAppInfo, resultCallback)
-            return
-        }
-
-        this@PassKeyCreateHandler.error(resultCallback)
+//        if (biometricPromptResult == null) {
+//            checkBiometric(request, callingAppInfo, activity, resultCallback)
+//            return
+//        }
+//
+//        if (biometricPromptResult.isSuccessful) {
+//            createResponse(request, callingAppInfo, resultCallback)
+//            return
+//        }
+//
+//        this@PassKeyCreateHandler.error(resultCallback)
+        createResponse(request, callingAppInfo, resultCallback)
     }
 
     private fun checkBiometric(
@@ -143,6 +142,10 @@ class PassKeyCreateHandler {
         val spki = coseKeyToSPKI(coseKey)
         val credentialId = ByteArray(32)
         SecureRandom().nextBytes(credentialId)
+
+        KeySingleton.key = keyPair.private
+        KeySingleton.userHandle = requestOptions.user.id
+        KeySingleton.credentialId = credentialId
 
         val response = PassAuthenticatorAttestationResponse(
             response = AuthenticatorAttestationResponse(
@@ -222,13 +225,6 @@ class PassKeyCreateHandler {
         val output = ByteArray(32)
         System.arraycopy(bytes, offset, output, 32 - bytesLen, bytesLen)
         return output
-    }
-
-    fun appInfoToOrigin(info: CallingAppInfo): String {
-        val cert = info.signingInfo.apkContentsSigners[0].toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val certHash = md.digest(cert)
-        return "android:apk-key-hash:${certHash.encodeBase64UrlSafeNoPadding()}"
     }
 
     private fun coseKeyToSPKI(coseKey: MutableMap<Int, Any>): ByteArray {
