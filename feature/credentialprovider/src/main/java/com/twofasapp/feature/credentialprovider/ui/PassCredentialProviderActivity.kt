@@ -2,8 +2,10 @@ package com.twofasapp.feature.credentialprovider.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.twofasapp.feature.credentialprovider.handler.PassKeyCreateHandler
 import com.twofasapp.feature.credentialprovider.handler.PassKeyGetHandler
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class PassCredentialProviderActivity : AppCompatActivity() {
@@ -13,17 +15,19 @@ class PassCredentialProviderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        passKeyCreateHandler.handle(intent, this) { createResultIntent ->
-            if (createResultIntent == null) {
-                passKeyGetHandler.handle(intent, this) { getResultIntent ->
-                    getResultIntent?.let {
-                        setResult(RESULT_OK, getResultIntent)
+        lifecycleScope.launch {
+            passKeyCreateHandler.handle(intent) { createResultIntent ->
+                if (createResultIntent == null) {
+                    passKeyGetHandler.handle(intent) { getResultIntent ->
+                        getResultIntent?.let {
+                            setResult(RESULT_OK, getResultIntent)
+                        }
                     }
+                } else {
+                    setResult(RESULT_OK, createResultIntent)
                 }
-            } else {
-                setResult(RESULT_OK, createResultIntent)
+                finish()
             }
-            finish()
         }
     }
 

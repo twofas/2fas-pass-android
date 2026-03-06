@@ -111,13 +111,13 @@ sealed interface ItemContentJson {
     data class Passkey(
         @SerialName("name")
         val name: String?,
-        @SerialName("s_privateKey")
+        @SerialName("s_passkeyPrivateKey")
         val privateKey: String?,
-        @SerialName("userHandle")
+        @SerialName("passkeyUserHandle")
         val userHandle: String?,
-        @SerialName("credentialId")
+        @SerialName("passkeyCredentialId")
         val credentialId: String?,
-        @SerialName("rpId")
+        @SerialName("passkeyRpId")
         val rpId: String?,
         @SerialName("notes")
         val notes: String?,

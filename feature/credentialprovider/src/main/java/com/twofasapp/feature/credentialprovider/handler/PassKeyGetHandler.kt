@@ -2,31 +2,29 @@ package com.twofasapp.feature.credentialprovider.handler
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager.Authenticators
-import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricPrompt.PromptInfo.Builder
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.GetPublicKeyCredentialOption
 import androidx.credentials.PublicKeyCredential
 import androidx.credentials.exceptions.GetCredentialUnknownException
-import androidx.credentials.provider.BiometricPromptResult
 import androidx.credentials.provider.CallingAppInfo
 import androidx.credentials.provider.PendingIntentHandler
 import androidx.credentials.webauthn.AuthenticatorAssertionResponse
 import androidx.credentials.webauthn.FidoPublicKeyCredential
 import androidx.credentials.webauthn.PublicKeyCredentialRequestOptions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
+import com.twofasapp.core.common.domain.clearText
+import com.twofasapp.core.common.domain.encryptedText
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.data.main.ItemsRepository
 import java.security.Signature
 
 @SuppressLint("RestrictedApi")
-class PassKeyGetHandler {
+class PassKeyGetHandler(private val itemsRepository: ItemsRepository) {
 
-    fun handle(
+    suspend fun handle(
         intent: Intent,
-        activity: AppCompatActivity,
-        resultCallback: (Intent?) -> Unit
+        resultCallback: suspend (Intent?) -> Unit
     ) {
         val request =
             PendingIntentHandler.retrieveProviderGetCredentialRequest(intent)
@@ -43,8 +41,6 @@ class PassKeyGetHandler {
                 handle(
                     option,
                     request.callingAppInfo,
-                    request.biometricPromptResult,
-                    activity,
                     resultCallback
                 )
 
@@ -52,7 +48,7 @@ class PassKeyGetHandler {
         }
     }
 
-    private fun error(resultCallback: (Intent) -> Unit) {
+    private suspend fun error(resultCallback: suspend (Intent) -> Unit) {
         resultCallback(
             Intent().apply {
                 PendingIntentHandler.setGetCredentialException(
@@ -63,74 +59,36 @@ class PassKeyGetHandler {
         )
     }
 
-    private fun handle(
+    suspend fun handle(
         option: GetPublicKeyCredentialOption,
         callingAppInfo: CallingAppInfo,
-        biometricPromptResult: BiometricPromptResult?,
-        activity: AppCompatActivity,
-        resultCallback: (Intent) -> Unit
+        resultCallback: suspend (Intent) -> Unit
     ) {
-//        if (biometricPromptResult == null) {
-//            checkBiometric(request, callingAppInfo, activity, resultCallback)
-//            return
-//        }
-//
-//        if (biometricPromptResult.isSuccessful) {
-//            createResponse(request, callingAppInfo, resultCallback)
-//            return
-//        }
-//
-//        this@PassKeyCreateHandler.error(resultCallback)
         createResponse(option, callingAppInfo, resultCallback)
     }
 
-    private fun checkBiometric(
+    suspend fun createResponse(
         option: GetPublicKeyCredentialOption,
         callingAppInfo: CallingAppInfo,
-        activity: AppCompatActivity,
-        resultCallback: (Intent) -> Unit
+        resultCallback: suspend (Intent) -> Unit
     ) {
-        val biometricPrompt = BiometricPrompt(
-            activity,
-            Dispatchers.IO.asExecutor(),
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(
-                    errorCode: Int,
-                    errString: CharSequence,
-                ) {
-                    error(resultCallback)
-                }
+        val item = itemsRepository.getItemsDecrypted()
+            .firstOrNull { item -> item.contentType is ItemContentType.Passkey }
+        val content = item?.content as? ItemContent.Passkey
 
-                override fun onAuthenticationFailed() {
-                    error(resultCallback)
-                }
+        if (item == null || content == null) {
+            error(resultCallback)
+            return
+        }
 
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult,
-                ) {
-                    createResponse(option, callingAppInfo, resultCallback)
-                }
-            },
-        )
-        val promptInfo = Builder()
-            .setTitle("Bio")
-            .setSubtitle("Bio")
-            .setAllowedAuthenticators(Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL)
-            .build()
-        biometricPrompt.authenticate(promptInfo)
-    }
+        val privateKey = stringToPrivateKey(content.privateKey.clearText)
+        val credentialId = content.credentialId?.decodeBase64() ?: ByteArray(0)
+        val userHandle = content.userHandle?.decodeBase64() ?: ByteArray(0)
 
-    fun createResponse(
-        option: GetPublicKeyCredentialOption,
-        callingAppInfo: CallingAppInfo,
-        resultCallback: (Intent) -> Unit
-    ) {
-        val credentialId = KeySingleton.credentialId ?: ByteArray(0)
         val publicKeyRequestOptions = PublicKeyCredentialRequestOptions(option.requestJson)
         val origin = appInfoToOrigin(callingAppInfo)
         val packageName = callingAppInfo.packageName
         val clientDataHash = option.clientDataHash
-        val userHandle = KeySingleton.userHandle ?: ByteArray(0)
 
         val response = AuthenticatorAssertionResponse(
             requestOptions = publicKeyRequestOptions,
@@ -146,7 +104,7 @@ class PassKeyGetHandler {
         )
 
         val signature = Signature.getInstance("SHA256withECDSA")
-        signature.initSign(KeySingleton.key)
+        signature.initSign(privateKey)
         signature.update(response.dataToSign())
         response.signature = signature.sign()
 

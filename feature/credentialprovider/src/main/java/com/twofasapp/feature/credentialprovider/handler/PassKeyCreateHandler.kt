@@ -3,22 +3,25 @@ package com.twofasapp.feature.credentialprovider.handler
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Base64
-import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager.Authenticators
-import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricPrompt.PromptInfo.Builder
 import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.CreatePublicKeyCredentialResponse
 import androidx.credentials.PublicKeyCredential
 import androidx.credentials.exceptions.CreateCredentialUnknownException
-import androidx.credentials.provider.BiometricPromptResult
 import androidx.credentials.provider.CallingAppInfo
 import androidx.credentials.provider.PendingIntentHandler
 import androidx.credentials.webauthn.AuthenticatorAttestationResponse
 import androidx.credentials.webauthn.Cbor
 import androidx.credentials.webauthn.FidoPublicKeyCredential
 import androidx.credentials.webauthn.PublicKeyCredentialCreationOptions
-import kotlinx.coroutines.asExecutor
+import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.common.ktx.encodeBase64
+import com.twofasapp.data.main.ItemsRepository
+import com.twofasapp.data.main.VaultCryptoScope
+import com.twofasapp.data.main.VaultsRepository
+import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.KeyPairGenerator
@@ -27,12 +30,16 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.ECGenParameterSpec
 
 @SuppressLint("RestrictedApi")
-class PassKeyCreateHandler {
+class PassKeyCreateHandler(
+    private val itemsRepository: ItemsRepository,
+    private val itemEncryptionMapper: ItemEncryptionMapper,
+    private val vaultCryptoScope: VaultCryptoScope,
+    private val vaultsRepository: VaultsRepository
+) {
 
-    fun handle(
+    suspend fun handle(
         intent: Intent,
-        activity: AppCompatActivity,
-        resultCallback: (Intent?) -> Unit
+        resultCallback: suspend (Intent?) -> Unit
     ) {
         val request =
             PendingIntentHandler.retrieveProviderCreateCredentialRequest(intent)
@@ -45,8 +52,6 @@ class PassKeyCreateHandler {
                 handle(
                     callingRequest,
                     request.callingAppInfo,
-                    request.biometricPromptResult,
-                    activity,
                     resultCallback
                 )
 
@@ -54,7 +59,7 @@ class PassKeyCreateHandler {
         }
     }
 
-    private fun error(resultCallback: (Intent) -> Unit) {
+    private suspend fun error(resultCallback: suspend (Intent) -> Unit) {
         resultCallback(
             Intent().apply {
                 PendingIntentHandler.setCreateCredentialException(
@@ -65,67 +70,18 @@ class PassKeyCreateHandler {
         )
     }
 
-    private fun handle(
+    private suspend fun handle(
         request: CreatePublicKeyCredentialRequest,
         callingAppInfo: CallingAppInfo,
-        biometricPromptResult: BiometricPromptResult?,
-        activity: AppCompatActivity,
-        resultCallback: (Intent) -> Unit
+        resultCallback: suspend (Intent) -> Unit
     ) {
-//        if (biometricPromptResult == null) {
-//            checkBiometric(request, callingAppInfo, activity, resultCallback)
-//            return
-//        }
-//
-//        if (biometricPromptResult.isSuccessful) {
-//            createResponse(request, callingAppInfo, resultCallback)
-//            return
-//        }
-//
-//        this@PassKeyCreateHandler.error(resultCallback)
         createResponse(request, callingAppInfo, resultCallback)
     }
 
-    private fun checkBiometric(
+    suspend fun createResponse(
         request: CreatePublicKeyCredentialRequest,
         callingAppInfo: CallingAppInfo,
-        activity: AppCompatActivity,
-        resultCallback: (Intent) -> Unit
-    ) {
-        val biometricPrompt = BiometricPrompt(
-            activity,
-            kotlinx.coroutines.Dispatchers.IO.asExecutor(),
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(
-                    errorCode: Int,
-                    errString: CharSequence,
-                ) {
-                    error(resultCallback)
-                }
-
-                override fun onAuthenticationFailed() {
-                    error(resultCallback)
-                }
-
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult,
-                ) {
-                    createResponse(request, callingAppInfo, resultCallback)
-                }
-            },
-        )
-        val promptInfo = Builder()
-            .setTitle("Bio")
-            .setSubtitle("Bio")
-            .setAllowedAuthenticators(Authenticators.BIOMETRIC_STRONG or Authenticators.DEVICE_CREDENTIAL)
-            .build()
-        biometricPrompt.authenticate(promptInfo)
-    }
-
-    fun createResponse(
-        request: CreatePublicKeyCredentialRequest,
-        callingAppInfo: CallingAppInfo,
-        resultCallback: (Intent) -> Unit
+        resultCallback: suspend (Intent) -> Unit
     ) {
         val keyPair = generateKeyPair()
         val coseKey = publicKeyToCose(keyPair.public as ECPublicKey)
@@ -143,10 +99,24 @@ class PassKeyCreateHandler {
         val credentialId = ByteArray(32)
         SecureRandom().nextBytes(credentialId)
 
-        KeySingleton.key = keyPair.private
-        KeySingleton.userHandle = requestOptions.user.id
-        KeySingleton.credentialId = credentialId
-        KeySingleton.rpId = requestOptions.rp.id
+        val item = Item.create(
+            vaultId = vaultsRepository.getVault().id,
+            contentType = ItemContentType.Passkey,
+            content = ItemContent.Passkey.Empty.copy(
+                name = "Test Passkey",
+                privateKey = SecretField.ClearText(privateKeyToString(keyPair.private)),
+                userHandle = requestOptions.user.id.encodeBase64(),
+                credentialId = credentialId.encodeBase64(),
+                rpId = requestOptions.rp.id,
+            )
+        )
+
+        val encryptedItem = itemEncryptionMapper.encryptItem(
+            item = item,
+            vaultCipher = vaultCryptoScope.getVaultCipher(vaultsRepository.getVault().id),
+        )
+
+        itemsRepository.saveItem(encryptedItem)
 
         val response = PassAuthenticatorAttestationResponse(
             response = AuthenticatorAttestationResponse(
