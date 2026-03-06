@@ -22,11 +22,7 @@ import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.data.main.local.model.ItemEntity
-import com.twofasapp.data.main.remote.model.ItemContentJson.BrowserWifi
-import com.twofasapp.data.main.remote.model.ItemContentJson.Login
-import com.twofasapp.data.main.remote.model.ItemContentJson.PaymentCard
-import com.twofasapp.data.main.remote.model.ItemContentJson.SecureNote
-import com.twofasapp.data.main.remote.model.ItemContentJson.Wifi
+import com.twofasapp.data.main.remote.model.ItemContentJson
 import com.twofasapp.data.main.remote.model.ItemJson
 import com.twofasapp.data.main.remote.model.vaultbackup.LoginJson
 import kotlinx.serialization.json.Json
@@ -154,7 +150,10 @@ internal class ItemMapper(
     ): ItemContent {
         return when (contentType) {
             ItemContentType.Login -> {
-                val content = jsonSerializer.decodeFromJsonElement(Login.serializer(), contentJson)
+                val content = jsonSerializer.decodeFromJsonElement(
+                    ItemContentJson.Login.serializer(),
+                    contentJson
+                )
 
                 ItemContent.Login(
                     name = content.name.orEmpty(),
@@ -178,7 +177,10 @@ internal class ItemMapper(
 
             ItemContentType.SecureNote -> {
                 val content =
-                    jsonSerializer.decodeFromJsonElement(SecureNote.serializer(), contentJson)
+                    jsonSerializer.decodeFromJsonElement(
+                        ItemContentJson.SecureNote.serializer(),
+                        contentJson
+                    )
 
                 ItemContent.SecureNote(
                     name = content.name.orEmpty(),
@@ -195,7 +197,10 @@ internal class ItemMapper(
 
             ItemContentType.PaymentCard -> {
                 val content =
-                    jsonSerializer.decodeFromJsonElement(PaymentCard.serializer(), contentJson)
+                    jsonSerializer.decodeFromJsonElement(
+                        ItemContentJson.PaymentCard.serializer(),
+                        contentJson
+                    )
 
                 ItemContent.PaymentCard(
                     name = content.name.orEmpty(),
@@ -235,7 +240,10 @@ internal class ItemMapper(
 
             ItemContentType.Wifi -> {
                 val content =
-                    jsonSerializer.decodeFromJsonElement(Wifi.serializer(), contentJson)
+                    jsonSerializer.decodeFromJsonElement(
+                        ItemContentJson.Wifi.serializer(),
+                        contentJson
+                    )
 
                 ItemContent.Wifi(
                     name = content.name.orEmpty(),
@@ -252,6 +260,28 @@ internal class ItemMapper(
                     notes = content.notes,
                 )
             }
+
+            ItemContentType.Passkey -> {
+                val content = jsonSerializer.decodeFromJsonElement(
+                    ItemContentJson.Passkey.serializer(),
+                    contentJson
+                )
+
+                ItemContent.Passkey(
+                    name = content.name.orEmpty(),
+                    privateKey = content.privateKey?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            ClearText(it)
+                        }
+                    },
+                    userHandle = content.userHandle,
+                    credentialId = content.credentialId,
+                    rpId = content.rpId,
+                    notes = content.notes
+                )
+            }
         }
     }
 
@@ -262,7 +292,7 @@ internal class ItemMapper(
         return when (content) {
             is ItemContent.Login -> {
                 jsonSerializer.encodeToJsonElement(
-                    Login(
+                    ItemContentJson.Login(
                         name = content.name,
                         username = content.username,
                         password = when (content.password) {
@@ -283,7 +313,7 @@ internal class ItemMapper(
 
             is ItemContent.SecureNote -> {
                 jsonSerializer.encodeToJsonElement(
-                    SecureNote(
+                    ItemContentJson.SecureNote(
                         name = content.name,
                         text = when (content.text) {
                             is ClearText -> content.text.clearText
@@ -297,7 +327,7 @@ internal class ItemMapper(
 
             is ItemContent.PaymentCard -> {
                 jsonSerializer.encodeToJsonElement(
-                    PaymentCard(
+                    ItemContentJson.PaymentCard(
                         name = content.name,
                         cardHolder = content.cardHolder,
                         cardNumber = when (content.cardNumber) {
@@ -327,12 +357,28 @@ internal class ItemMapper(
             }
 
             is ItemContent.Wifi -> wifiContentMapper(content)
+            is ItemContent.Passkey -> {
+                jsonSerializer.encodeToJsonElement(
+                    ItemContentJson.Passkey(
+                        name = content.name,
+                        privateKey = when (content.privateKey) {
+                            is ClearText -> content.privateKey.clearText
+                            is Encrypted -> content.privateKey.encryptedText
+                            null -> null
+                        },
+                        userHandle = content.userHandle,
+                        credentialId = content.credentialId,
+                        rpId = content.rpId,
+                        notes = content.notes,
+                    ),
+                )
+            }
         }
     }
 
     private fun mapToWifiJsonElement(content: ItemContent.Wifi): JsonElement {
         return jsonSerializer.encodeToJsonElement(
-            Wifi(
+            ItemContentJson.Wifi(
                 name = content.name,
                 ssid = content.ssid,
                 password = when (content.password) {
@@ -349,7 +395,7 @@ internal class ItemMapper(
 
     private fun mapToBrowserWifiJsonElement(content: ItemContent.Wifi): JsonElement {
         return jsonSerializer.encodeToJsonElement(
-            BrowserWifi(
+            ItemContentJson.BrowserWifi(
                 name = content.name,
                 ssid = content.ssid,
                 password = when (content.password) {

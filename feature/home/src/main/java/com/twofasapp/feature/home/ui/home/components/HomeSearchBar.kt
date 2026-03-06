@@ -182,6 +182,20 @@ internal fun HomeSearchBar(
                             },
                         )
                     }
+
+                    //TODO passkey
+                    ItemContentType.Passkey -> item {
+                        Tab(
+                            text = "//TODO passkey",
+                            icon = MdtIcons.Key,
+                            type = ItemContentType.Passkey,
+                            selected = selectedItemType is ItemContentType.Passkey,
+                            onClick = {
+                                focusManager.clearFocus()
+                                onSelectedItemTypeChange(ItemContentType.Passkey)
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -326,6 +340,7 @@ private fun ItemContentType?.contentColor(): Color {
         is ItemContentType.Unknown -> MdtTheme.color.primaryContainer
         null -> MdtTheme.color.primaryContainer
         ItemContentType.Wifi -> MdtTheme.color.itemWifiContent
+        ItemContentType.Passkey -> MdtTheme.color.itemWifiContent//TODO passkey
     }
 }
 

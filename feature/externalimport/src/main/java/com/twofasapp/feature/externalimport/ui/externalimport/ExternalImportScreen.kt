@@ -154,6 +154,13 @@ private fun Content(
                                             count = state.importContent.countWifi,
                                             subtitle = strings.transferFileSummaryWifiCounterDescription,
                                         )
+
+                                        //TODO passkey
+                                        ItemContentType.Passkey ->ItemResultCount(
+                                            icon = MdtIcons.Key,
+                                            count = state.importContent.countPasskey,
+                                            subtitle = "//TODO passkey",
+                                        )
                                     }
                                 }
 

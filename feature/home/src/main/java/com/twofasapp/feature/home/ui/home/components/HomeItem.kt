@@ -115,6 +115,8 @@ internal fun HomeItem(
                                             it,
                                         )
                                     }
+
+                                    is ItemContent.Passkey -> Unit//TODO passkey
                                 }
                             }
                         }

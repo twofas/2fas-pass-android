@@ -114,6 +114,15 @@ fun ItemImage(
                 backgroundColor = MdtTheme.color.itemWifiContainer,
                 size = size,
             )
+
+            //TODO passkey
+            is ItemContent.Passkey -> StaticIcon(
+                modifier = modifier,
+                icon = MdtIcons.Key,
+                iconColor = MdtTheme.color.itemWifiContent,
+                backgroundColor = MdtTheme.color.itemWifiContainer,
+                size = size,
+            )
         }
     }
 }

@@ -146,6 +146,7 @@ class PassKeyCreateHandler {
         KeySingleton.key = keyPair.private
         KeySingleton.userHandle = requestOptions.user.id
         KeySingleton.credentialId = credentialId
+        KeySingleton.rpId = requestOptions.rp.id
 
         val response = PassAuthenticatorAttestationResponse(
             response = AuthenticatorAttestationResponse(

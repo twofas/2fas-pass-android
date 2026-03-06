@@ -23,12 +23,14 @@ import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.PasswordGenerator
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecretField.*
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContent.*
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeString
@@ -503,7 +505,7 @@ internal class RequestWebSocketImpl(
                 )
 
                 val content = when (contentType) {
-                    is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
+                    is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")//TODO passkey
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
                             name = (
@@ -519,7 +521,7 @@ internal class RequestWebSocketImpl(
                             },
                             password = when (data.content.s_password?.action) {
                                 "generate" -> {
-                                    SecretField.ClearText(
+                                    ClearText(
                                         PasswordGenerator.generatePassword(
                                             settingsRepository.observePasswordGeneratorSettings()
                                                 .first(),
@@ -530,14 +532,14 @@ internal class RequestWebSocketImpl(
                                 else -> {
                                     data.content.s_password?.let { encryptedPassword ->
                                         if (encryptedPassword.value.isEmpty()) {
-                                            SecretField.ClearText("")
+                                            ClearText("")
                                         } else {
                                             val password = decrypt(
                                                 key = newItemKey,
                                                 data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
                                             )
 
-                                            SecretField.ClearText(password.decodeString())
+                                            ClearText(password.decodeString())
                                         }
                                     }
                                 }
@@ -550,14 +552,14 @@ internal class RequestWebSocketImpl(
                             name = data.content.name.orEmpty(),
                             text = data.content.s_text?.let { encryptedText ->
                                 if (encryptedText.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val text = decrypt(
                                         key = newItemKey,
                                         data = EncryptedBytes(encryptedText.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(text.decodeString())
+                                    ClearText(text.decodeString())
                                 }
                             },
                             additionalInfo = data.content.additionalInfo
@@ -567,14 +569,14 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.PaymentCard -> {
                         val cardNumber = data.content.s_cardNumber?.let { encryptedCardNumber ->
                             if (encryptedCardNumber.isEmpty()) {
-                                SecretField.ClearText("")
+                                ClearText("")
                             } else {
                                 val cardNumber = decrypt(
                                     key = newItemKey,
                                     data = EncryptedBytes(encryptedCardNumber.decodeBase64()),
                                 )
 
-                                SecretField.ClearText(cardNumber.decodeString().replace(" ", ""))
+                                ClearText(cardNumber.decodeString().replace(" ", ""))
                             }
                         }
 
@@ -586,50 +588,52 @@ internal class RequestWebSocketImpl(
                             cardIssuer = PaymentCardValidator.detectCardIssuer(cardNumber?.value),
                             expirationDate = data.content.s_expirationDate?.let { encryptedExpirationDate ->
                                 if (encryptedExpirationDate.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val expirationDate = decrypt(
                                         key = newItemKey,
                                         data = EncryptedBytes(encryptedExpirationDate.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(expirationDate.decodeString())
+                                    ClearText(expirationDate.decodeString())
                                 }
                             },
                             securityCode = data.content.s_securityCode?.let { encryptedSecurityCode ->
                                 if (encryptedSecurityCode.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val securityCode = decrypt(
                                         key = newItemKey,
                                         data = EncryptedBytes(encryptedSecurityCode.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(securityCode.decodeString())
+                                    ClearText(securityCode.decodeString())
                                 }
                             },
                         )
                     }
 
-                    ItemContentType.Wifi -> ItemContent.Wifi(
+                    ItemContentType.Wifi -> Wifi(
                         name = data.content.name.orEmpty(),
                         ssid = data.content.ssid,
                         password = data.content.s_wifi_password?.let { encryptedPassword ->
                             if (encryptedPassword.isEmpty()) {
-                                SecretField.ClearText("")
+                                ClearText("")
                             } else {
                                 val password = decrypt(
                                     key = newItemKey,
                                     data = EncryptedBytes(encryptedPassword.decodeBase64()),
                                 )
 
-                                SecretField.ClearText(password.decodeString())
+                                ClearText(password.decodeString())
                             }
                         },
                         securityType = WifiSecurityType.fromValue(data.content.securityType),
                         hidden = data.content.hidden ?: false,
                         notes = null,
                     )
+
+                    ItemContentType.Passkey -> throw IllegalArgumentException("Unsupported item type")//TODO passkey
                 }
 
                 BrowserRequestAction.AddItem(
@@ -666,7 +670,7 @@ internal class RequestWebSocketImpl(
                 val updatedContent = when (contentType) {
                     is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
                     is ItemContentType.Login -> {
-                        val existingContent = item.content as ItemContent.Login
+                        val existingContent = item.content as Login
                         existingContent.copy(
                             name = data.content.name ?: existingContent.name,
                             username = when (data.content.username?.action) {
@@ -677,7 +681,7 @@ internal class RequestWebSocketImpl(
                             },
                             password = when (data.content.s_password?.action) {
                                 "generate" -> {
-                                    SecretField.ClearText(
+                                    ClearText(
                                         PasswordGenerator.generatePassword(
                                             settingsRepository.observePasswordGeneratorSettings()
                                                 .first(),
@@ -688,14 +692,14 @@ internal class RequestWebSocketImpl(
                                 else -> {
                                     data.content.s_password?.let { encryptedPassword ->
                                         if (encryptedPassword.value.isEmpty()) {
-                                            SecretField.ClearText("")
+                                            ClearText("")
                                         } else {
                                             val password = decrypt(
                                                 key = updateItemKey,
                                                 data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
                                             )
 
-                                            SecretField.ClearText(password.decodeString())
+                                            ClearText(password.decodeString())
                                         }
                                     } ?: existingContent.password
                                 }
@@ -711,19 +715,19 @@ internal class RequestWebSocketImpl(
                     }
 
                     is ItemContentType.SecureNote -> {
-                        val existingContent = item.content as ItemContent.SecureNote
+                        val existingContent = item.content as SecureNote
                         existingContent.copy(
                             name = data.content.name ?: existingContent.name,
                             text = data.content.s_text?.let { encryptedText ->
                                 if (encryptedText.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val text = decrypt(
                                         key = updateItemKey,
                                         data = EncryptedBytes(encryptedText.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(text.decodeString())
+                                    ClearText(text.decodeString())
                                 }
                             } ?: existingContent.text,
                             additionalInfo = data.content.additionalInfo
@@ -732,17 +736,17 @@ internal class RequestWebSocketImpl(
                     }
 
                     is ItemContentType.PaymentCard -> {
-                        val existingContent = item.content as ItemContent.PaymentCard
+                        val existingContent = item.content as PaymentCard
                         val cardNumber = data.content.s_cardNumber?.let { encryptedCardNumber ->
                             if (encryptedCardNumber.isEmpty()) {
-                                SecretField.ClearText("")
+                                ClearText("")
                             } else {
                                 val cardNumber = decrypt(
                                     key = updateItemKey,
                                     data = EncryptedBytes(encryptedCardNumber.decodeBase64()),
                                 )
 
-                                SecretField.ClearText(cardNumber.decodeString().replace(" ", ""))
+                                ClearText(cardNumber.decodeString().replace(" ", ""))
                             }
                         } ?: existingContent.cardNumber
 
@@ -754,14 +758,14 @@ internal class RequestWebSocketImpl(
                                 ?.takeLast(4),
                             expirationDate = data.content.s_expirationDate?.let { encryptedExpirationDate ->
                                 if (encryptedExpirationDate.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val expirationDate = decrypt(
                                         key = updateItemKey,
                                         data = EncryptedBytes(encryptedExpirationDate.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(expirationDate.decodeString())
+                                    ClearText(expirationDate.decodeString())
                                 }
                             } ?: existingContent.expirationDate,
                             cardIssuer = cardNumber?.clearTextOrNull?.let {
@@ -771,14 +775,14 @@ internal class RequestWebSocketImpl(
                             } ?: existingContent.cardIssuer,
                             securityCode = data.content.s_securityCode?.let { encryptedSecurityCode ->
                                 if (encryptedSecurityCode.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val securityCode = decrypt(
                                         key = updateItemKey,
                                         data = EncryptedBytes(encryptedSecurityCode.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(securityCode.decodeString())
+                                    ClearText(securityCode.decodeString())
                                 }
                             } ?: existingContent.securityCode,
                             notes = data.content.notes ?: existingContent.notes,
@@ -786,20 +790,20 @@ internal class RequestWebSocketImpl(
                     }
 
                     ItemContentType.Wifi -> {
-                        val existingContent = item.content as ItemContent.Wifi
+                        val existingContent = item.content as Wifi
                         existingContent.copy(
                             name = data.content.name ?: existingContent.name,
                             ssid = data.content.ssid ?: existingContent.ssid,
                             password = data.content.s_wifi_password?.let { encryptedPassword ->
                                 if (encryptedPassword.isEmpty()) {
-                                    SecretField.ClearText("")
+                                    ClearText("")
                                 } else {
                                     val password = decrypt(
                                         key = updateItemKey,
                                         data = EncryptedBytes(encryptedPassword.decodeBase64()),
                                     )
 
-                                    SecretField.ClearText(password.decodeString())
+                                    ClearText(password.decodeString())
                                 }
                             } ?: existingContent.password,
                             securityType = if (data.content.securityType != null) {
@@ -811,6 +815,8 @@ internal class RequestWebSocketImpl(
                             notes = data.content.notes ?: existingContent.notes,
                         )
                     }
+
+                    ItemContentType.Passkey -> throw IllegalArgumentException("Unsupported item type")//TODO passkey
                 }
 
                 BrowserRequestAction.UpdateItem(
@@ -1121,11 +1127,11 @@ internal class RequestWebSocketImpl(
         val updatedItem = item.copy(
             vaultId = item.vaultId,
             content = when (contentWithEncryptedFields) {
-                is ItemContent.Login -> {
+                is Login -> {
                     contentWithEncryptedFields.copy(
                         password = if (includeSecretFields) {
-                            (contentWithEncryptedFields.password as? SecretField.Encrypted)?.let { encryptedField ->
-                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            (contentWithEncryptedFields.password as? Encrypted)?.let { encryptedField ->
+                                ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {
                             null
@@ -1133,11 +1139,11 @@ internal class RequestWebSocketImpl(
                     )
                 }
 
-                is ItemContent.SecureNote -> {
+                is SecureNote -> {
                     contentWithEncryptedFields.copy(
                         text = if (includeSecretFields) {
-                            (contentWithEncryptedFields.text as? SecretField.Encrypted)?.let { encryptedField ->
-                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            (contentWithEncryptedFields.text as? Encrypted)?.let { encryptedField ->
+                                ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {
                             null
@@ -1145,25 +1151,25 @@ internal class RequestWebSocketImpl(
                     )
                 }
 
-                is ItemContent.PaymentCard -> {
+                is PaymentCard -> {
                     contentWithEncryptedFields.copy(
                         cardNumber = if (includeSecretFields) {
-                            (contentWithEncryptedFields.cardNumber as? SecretField.Encrypted)?.let { encryptedField ->
-                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            (contentWithEncryptedFields.cardNumber as? Encrypted)?.let { encryptedField ->
+                                ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {
                             null
                         },
                         expirationDate = if (includeSecretFields) {
-                            (contentWithEncryptedFields.expirationDate as? SecretField.Encrypted)?.let { encryptedField ->
-                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            (contentWithEncryptedFields.expirationDate as? Encrypted)?.let { encryptedField ->
+                                ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {
                             null
                         },
                         securityCode = if (includeSecretFields) {
-                            (contentWithEncryptedFields.securityCode as? SecretField.Encrypted)?.let { encryptedField ->
-                                SecretField.ClearText(encryptedField.value.encodeBase64())
+                            (contentWithEncryptedFields.securityCode as? Encrypted)?.let { encryptedField ->
+                                ClearText(encryptedField.value.encodeBase64())
                             }
                         } else {
                             null
@@ -1171,16 +1177,18 @@ internal class RequestWebSocketImpl(
                     )
                 }
 
-                is ItemContent.Unknown -> contentWithEncryptedFields
-                is ItemContent.Wifi -> contentWithEncryptedFields.copy(
+                is Unknown -> contentWithEncryptedFields
+                is Wifi -> contentWithEncryptedFields.copy(
                     password = if (includeSecretFields) {
-                        (contentWithEncryptedFields.password as? SecretField.Encrypted)?.let { encryptedField ->
-                            SecretField.ClearText(encryptedField.value.encodeBase64())
+                        (contentWithEncryptedFields.password as? Encrypted)?.let { encryptedField ->
+                            ClearText(encryptedField.value.encodeBase64())
                         }
                     } else {
                         null
                     },
                 )
+
+                is Passkey -> throw IllegalArgumentException("Unsupported item type")//TODO passkey
             },
         )
 

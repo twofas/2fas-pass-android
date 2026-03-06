@@ -55,6 +55,7 @@ import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
 import com.twofasapp.data.main.mapper.ItemUriMapper
 import com.twofasapp.data.main.mapper.LoginEncryptionMapperStrategy
+import com.twofasapp.data.main.mapper.PasskeyEncryptionMapperStrategy
 import com.twofasapp.data.main.mapper.PaymentCardEncryptionMapperStrategy
 import com.twofasapp.data.main.mapper.SecureNoteEncryptionMapperStrategy
 import com.twofasapp.data.main.mapper.SecurityItemMapper
@@ -87,6 +88,7 @@ class MainDataModule : KoinModule {
         singleOf(::SecureNoteEncryptionMapperStrategy)
         singleOf(::WifiEncryptionMapperStrategy)
         singleOf(::UnknownEncryptionMapperStrategy)
+        singleOf(::PasskeyEncryptionMapperStrategy)
         singleOf(::CloudMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)

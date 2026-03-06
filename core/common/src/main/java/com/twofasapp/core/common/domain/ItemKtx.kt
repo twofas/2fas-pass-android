@@ -10,6 +10,7 @@ fun Item.normalizeBeforeSaving(): Item {
         is ItemContent.SecureNote -> content
         is ItemContent.PaymentCard -> content
         is ItemContent.Wifi -> content
+        is ItemContent.Passkey -> content
     }
 
     return copy(content = normalizedContent)

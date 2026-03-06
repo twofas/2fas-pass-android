@@ -41,6 +41,7 @@ internal data class ItemFormUiState<T : ItemContent>(
             is ItemContent.PaymentCard -> validatePaymentCard(itemContent)
             is ItemContent.Unknown -> false
             is ItemContent.Wifi -> validateWifi(itemContent)
+            is ItemContent.Passkey -> false//TODO passkey
         }
 
     private fun validatePaymentCard(content: ItemContent.PaymentCard): Boolean {

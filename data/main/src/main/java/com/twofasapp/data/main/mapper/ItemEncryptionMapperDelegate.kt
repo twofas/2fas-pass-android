@@ -13,6 +13,7 @@ class ItemEncryptionMapperDelegate(
     private val secureNoteEncryptionMapperStrategy: SecureNoteEncryptionMapperStrategy,
     private val unknownEncryptionMapperStrategy: UnknownEncryptionMapperStrategy,
     private val wifiEncryptionMapperStrategy: WifiEncryptionMapperStrategy,
+    private val passkeyEncryptionMapperStrategy: PasskeyEncryptionMapperStrategy
 ) : ItemEncryptionMapperStrategy<ItemContent> {
 
     override fun decryptItem(
@@ -56,6 +57,13 @@ class ItemEncryptionMapperDelegate(
                 decryptSecretFields,
                 contentEntityJson,
             )
+
+            ItemContentType.Passkey -> passkeyEncryptionMapperStrategy.decryptItem(
+                itemEncrypted,
+                vaultCipher,
+                decryptSecretFields,
+                contentEntityJson,
+            )
         }
     }
 
@@ -90,6 +98,12 @@ class ItemEncryptionMapperDelegate(
             )
 
             is ItemContent.Wifi -> wifiEncryptionMapperStrategy.encryptItem(
+                item,
+                content,
+                vaultCipher,
+            )
+
+            is ItemContent.Passkey -> passkeyEncryptionMapperStrategy.encryptItem(
                 item,
                 content,
                 vaultCipher,
@@ -132,6 +146,12 @@ class ItemEncryptionMapperDelegate(
                 securityType,
                 content,
             )
+
+            is ItemContent.Passkey -> passkeyEncryptionMapperStrategy.decryptSecretFields(
+                vaultCipher,
+                securityType,
+                content,
+            )
         }
     }
 
@@ -161,6 +181,11 @@ class ItemEncryptionMapperDelegate(
             )
 
             is ItemContent.Wifi -> wifiEncryptionMapperStrategy.encryptSecretFields(
+                content,
+                encryptionKey,
+            )
+
+            is ItemContent.Passkey -> passkeyEncryptionMapperStrategy.encryptSecretFields(
                 content,
                 encryptionKey,
             )

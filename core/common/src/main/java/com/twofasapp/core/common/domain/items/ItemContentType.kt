@@ -1,19 +1,14 @@
 package com.twofasapp.core.common.domain.items
 
 sealed interface ItemContentType {
+
     val key: String
     val version: Int
     val fillable: Boolean
 
     companion object {
         fun fromKey(key: String): ItemContentType {
-            return when (key) {
-                Login.key -> Login
-                SecureNote.key -> SecureNote
-                PaymentCard.key -> PaymentCard
-                Wifi.key -> Wifi
-                else -> Unknown(key = key)
-            }
+            return values().firstOrNull { it.key == key } ?: Unknown(key)
         }
 
         fun values(): List<ItemContentType> {
@@ -22,6 +17,7 @@ sealed interface ItemContentType {
                 PaymentCard,
                 SecureNote,
                 Wifi,
+                Passkey
             )
         }
     }
@@ -46,6 +42,12 @@ sealed interface ItemContentType {
 
     object Wifi : ItemContentType {
         override val key: String = "wifi"
+        override val version: Int = 1
+        override val fillable: Boolean = false
+    }
+
+    object Passkey : ItemContentType {
+        override val key: String = "passkey"
         override val version: Int = 1
         override val fillable: Boolean = false
     }

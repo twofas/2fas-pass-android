@@ -168,6 +168,8 @@ internal fun HomeItemDropdownMenu(
                             )
                         }
                     }
+
+                    is ItemContent.Passkey -> Unit//TODO passkey
                 }
             }
 

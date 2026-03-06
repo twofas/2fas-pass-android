@@ -95,6 +95,7 @@ private val ItemContent.subtitle: String?
         is ItemContent.SecureNote -> null
         is ItemContent.PaymentCard -> cardNumberMaskDisplayShort
         is ItemContent.Wifi -> ssid
+        is ItemContent.Passkey -> null//TODO passkey
     }
 
 @Preview

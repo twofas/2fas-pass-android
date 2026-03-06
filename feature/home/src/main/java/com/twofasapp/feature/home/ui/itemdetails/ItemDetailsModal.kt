@@ -143,6 +143,8 @@ private fun Content(
                     onCopySecretField = viewModel::copySecretFieldToClipboard,
                     onScrollToBottom = { scope.launch { scrollState.animateScrollTo(scrollState.maxValue) } },
                 )
+
+                is ItemContent.Passkey -> Unit//TODO passkey
             }
         }
 

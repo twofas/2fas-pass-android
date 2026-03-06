@@ -273,6 +273,7 @@ private fun Content(
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalCardRequestTitle
                                     is ItemContentType.Wifi -> strings.requestModalWifiRequestTitle
+                                    ItemContentType.Passkey -> "//TODO passkey"//TODO passkey
                                 },
                                 subtitle = when (secretFieldRequestState.item.contentType) {
                                     is ItemContentType.Unknown -> ""
@@ -280,6 +281,7 @@ private fun Content(
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestSubtitle
                                     is ItemContentType.PaymentCard -> strings.requestModalCardRequestSubtitle
                                     is ItemContentType.Wifi -> strings.requestModalWifiRequestSubtitle
+                                    ItemContentType.Passkey -> "//TODO passkey"//TODO passkey
                                 },
                                 icon = MdtIcons.Downloading,
                                 iconTint = MdtTheme.color.primary,
@@ -324,6 +326,14 @@ private fun Content(
                                                     content.password.clearTextOrNull.orEmpty(),
                                                 )
                                             }
+
+                                           //TODO passkey
+                                            is ItemContent.Passkey -> {
+                                                put(
+                                                    "s_privateKey",
+                                                    content.privateKey.clearTextOrNull.orEmpty(),
+                                                )
+                                            }
                                         }
                                     }
 
@@ -358,6 +368,7 @@ private fun Content(
                                     is ItemContentType.SecureNote -> strings.requestModalNewSecureNoteTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalNewCardTitle
                                     is ItemContentType.Wifi -> strings.requestModalNewWifiTitle
+                                    ItemContentType.Passkey -> "//TODO passkey"//TODO passkey
                                 },
                                 subtitle = strings.requestModalNewItemSubtitle,
                                 icon = MdtIcons.AddCircle,
@@ -378,6 +389,7 @@ private fun Content(
                                     is ItemContentType.SecureNote -> strings.requestModalUpdateSecureNoteTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalUpdateCardTitle
                                     is ItemContentType.Wifi -> strings.requestModalUpdateWifiTitle
+                                    ItemContentType.Passkey -> "//TODO passkey"//TODO passkey
                                 },
                                 subtitle = strings.requestModalUpdateItemSubtitle,
                                 icon = MdtIcons.RotateLeft,

@@ -106,4 +106,20 @@ sealed interface ItemContentJson {
         @SerialName("notes")
         val notes: String?,
     ) : ItemContentJson
+
+    @Serializable
+    data class Passkey(
+        @SerialName("name")
+        val name: String?,
+        @SerialName("s_privateKey")
+        val privateKey: String?,
+        @SerialName("userHandle")
+        val userHandle: String?,
+        @SerialName("credentialId")
+        val credentialId: String?,
+        @SerialName("rpId")
+        val rpId: String?,
+        @SerialName("notes")
+        val notes: String?,
+        ) : ItemContentJson
 }

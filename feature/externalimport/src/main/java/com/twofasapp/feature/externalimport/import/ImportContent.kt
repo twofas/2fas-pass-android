@@ -26,6 +26,9 @@ internal data class ImportContent(
     val countWifi: Int
         get() = items.count { it.contentType is ItemContentType.Wifi }
 
+    val countPasskey: Int
+        get() = items.count { it.contentType is ItemContentType.Passkey }
+
     val countPaymentCards: Int
         get() = items.count { it.contentType is ItemContentType.PaymentCard }
 }

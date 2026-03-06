@@ -189,4 +189,25 @@ sealed interface ItemContent {
             )
         }
     }
+
+    data class Passkey(
+        override val name: String,
+        val privateKey: SecretField?,
+        val userHandle: String?,
+        val credentialId: String?,
+        val rpId: String?,
+        val notes: String?,
+    ) : ItemContent {
+        companion object {
+
+            val Empty = Passkey(
+                name = "",
+                privateKey = null,
+                userHandle = null,
+                credentialId = null,
+                rpId = null,
+                notes = null
+            )
+        }
+    }
 }

@@ -73,6 +73,8 @@ private fun Content(
                     icon = MdtIcons.Wifi4Bar,
                     onClick = { onSelect(ItemContentType.Wifi) },
                 )
+
+                ItemContentType.Passkey -> Unit//TODO passkey
             }
         }
     }

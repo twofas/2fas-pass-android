@@ -51,6 +51,7 @@ internal fun ItemFormState(
                         is ItemContentType.PaymentCard -> strings.itemAddTitle
                         is ItemContentType.Unknown -> strings.itemAddTitle
                         is ItemContentType.Wifi -> strings.wifiAddTitle
+                        ItemContentType.Passkey -> "//TODO passkey"//TODO passkey
                     }
                 }
 
@@ -61,6 +62,7 @@ internal fun ItemFormState(
                         is ItemContentType.PaymentCard -> strings.itemEditTitle
                         is ItemContentType.Unknown -> strings.itemEditTitle
                         is ItemContentType.Wifi -> strings.wifiEditTitle
+                        ItemContentType.Passkey -> "//TODO passkey"//TODO passkey
                     }
                 }
             },

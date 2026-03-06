@@ -90,6 +90,7 @@ internal object AutofillItemMatcher {
                         is ItemContent.SecureNote -> null
                         is ItemContent.PaymentCard -> null
                         is ItemContent.Wifi -> null
+                        is ItemContent.Passkey -> null//TODO passkey
                     }
                 }
                 .toSortedMap(compareBy(nullsLast()) { it })

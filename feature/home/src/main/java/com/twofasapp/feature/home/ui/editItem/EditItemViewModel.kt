@@ -52,6 +52,7 @@ internal class EditItemViewModel(
                         is ItemContentType.PaymentCard -> ItemContent.PaymentCard.Empty
                         is ItemContentType.Unknown -> ItemContent.Unknown("")
                         is ItemContentType.Wifi -> ItemContent.Wifi.Empty
+                        is ItemContentType.Passkey -> ItemContent.Passkey.Empty
                     },
                 )
 

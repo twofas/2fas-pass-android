@@ -6,4 +6,5 @@ object KeySingleton {
     var key: PrivateKey? = null
     var userHandle: ByteArray? = null
     var credentialId: ByteArray? = null
+    var rpId: String? = null
 }

@@ -149,6 +149,7 @@ internal class AutofillPickerViewModel(
                 is ItemContent.SecureNote -> Unit
                 is ItemContent.PaymentCard -> Unit
                 is ItemContent.Wifi -> Unit
+                is ItemContent.Passkey -> Unit//TODO passkey
             }
 
             item.asAutofillLogin()?.let { onSuccess(it) }
