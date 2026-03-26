@@ -42,6 +42,7 @@ class PasskeyEncryptionMapperStrategy(
             credentialId = contentEntity.credentialId,
             rpId = contentEntity.rpId,
             notes = contentEntity.notes,
+            username = contentEntity.username
         )
     }
 
@@ -73,6 +74,7 @@ class PasskeyEncryptionMapperStrategy(
                 credentialId = content.credentialId,
                 rpId = content.rpId,
                 notes = content.notes,
+                username = content.username
             ),
         )
     }

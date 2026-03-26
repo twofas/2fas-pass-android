@@ -197,6 +197,7 @@ sealed interface ItemContent {
         val credentialId: String?,
         val rpId: String?,
         val notes: String?,
+        val username: String?
     ) : ItemContent {
         companion object {
 
@@ -206,7 +207,8 @@ sealed interface ItemContent {
                 userHandle = null,
                 credentialId = null,
                 rpId = null,
-                notes = null
+                notes = null,
+                username = null
             )
         }
     }

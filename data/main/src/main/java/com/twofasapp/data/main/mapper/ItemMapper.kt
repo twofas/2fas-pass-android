@@ -279,7 +279,8 @@ internal class ItemMapper(
                     userHandle = content.userHandle,
                     credentialId = content.credentialId,
                     rpId = content.rpId,
-                    notes = content.notes
+                    notes = content.notes,
+                    username = content.username
                 )
             }
         }
@@ -370,6 +371,7 @@ internal class ItemMapper(
                         credentialId = content.credentialId,
                         rpId = content.rpId,
                         notes = content.notes,
+                        username = content.username
                     ),
                 )
             }

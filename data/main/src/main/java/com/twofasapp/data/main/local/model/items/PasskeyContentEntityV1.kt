@@ -20,4 +20,6 @@ data class PasskeyContentEntityV1(
     val rpId: String?,
     @SerialName("notes")
     val notes: String?,
+    @SerialName("username")
+    val username: String?,
 )

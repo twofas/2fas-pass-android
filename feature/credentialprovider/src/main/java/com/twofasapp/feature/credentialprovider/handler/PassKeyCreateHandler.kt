@@ -103,11 +103,12 @@ class PassKeyCreateHandler(
             vaultId = vaultsRepository.getVault().id,
             contentType = ItemContentType.Passkey,
             content = ItemContent.Passkey.Empty.copy(
-                name = "Test Passkey",
+                name =  requestOptions.user.displayName,
                 privateKey = SecretField.ClearText(privateKeyToString(keyPair.private)),
                 userHandle = requestOptions.user.id.encodeBase64(),
                 credentialId = credentialId.encodeBase64(),
                 rpId = requestOptions.rp.id,
+                username = requestOptions.user.name
             )
         )
 
