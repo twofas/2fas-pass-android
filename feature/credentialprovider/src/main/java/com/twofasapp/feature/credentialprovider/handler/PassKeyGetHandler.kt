@@ -12,9 +12,7 @@ import androidx.credentials.webauthn.AuthenticatorAssertionResponse
 import androidx.credentials.webauthn.FidoPublicKeyCredential
 import androidx.credentials.webauthn.PublicKeyCredentialRequestOptions
 import com.twofasapp.core.common.domain.clearText
-import com.twofasapp.core.common.domain.encryptedText
 import com.twofasapp.core.common.domain.items.ItemContent
-import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.data.main.ItemsRepository
 import java.security.Signature
@@ -72,11 +70,13 @@ class PassKeyGetHandler(private val itemsRepository: ItemsRepository) {
         callingAppInfo: CallingAppInfo,
         resultCallback: suspend (Intent) -> Unit
     ) {
-        val item = itemsRepository.getItemsDecrypted()
-            .firstOrNull { item -> item.contentType is ItemContentType.Passkey }
-        val content = item?.content as? ItemContent.Passkey
+        val ids = option.getIds()
+        val content = itemsRepository.getItemsDecrypted()
+            .map { it.content }
+            .filterIsInstance<ItemContent.Passkey>()
+            .firstOrNull { ids.contains(it.credentialId?.trimBase64()) }
 
-        if (item == null || content == null) {
+        if (content == null) {
             error(resultCallback)
             return
         }

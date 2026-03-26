@@ -1,9 +1,11 @@
 package com.twofasapp.feature.credentialprovider.handler
 
+import androidx.credentials.GetPublicKeyCredentialOption
 import androidx.credentials.provider.CallingAppInfo
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64UrlSafeNoPadding
+import org.json.JSONObject
 import java.security.KeyFactory
 import java.security.MessageDigest
 import java.security.PrivateKey
@@ -26,4 +28,21 @@ fun stringToPrivateKey(key: String): PrivateKey {
     val keySpec = PKCS8EncodedKeySpec(decoded)
     val keyFactory = KeyFactory.getInstance("EC")
     return keyFactory.generatePrivate(keySpec)
+}
+
+fun GetPublicKeyCredentialOption.getIds(): List<String> {
+    val json = JSONObject(requestJson)
+    val allowCredentials = json.getJSONArray("allowCredentials")
+    return buildList {
+        for (i in 0 until allowCredentials.length()) {
+            val allowCredential = allowCredentials.getJSONObject(i)
+            add(allowCredential.getString("id").trimBase64())
+        }
+    }
+}
+
+fun String.trimBase64(): String {
+    return replace("/", "_")
+        .replace("+", "-")
+        .replace("=", "")
 }
