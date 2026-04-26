@@ -36,15 +36,18 @@ internal class SaveRequestHandler(
         Flog.tag(AutofillTag).d("\uD83D\uDCBE $saveRequestSpec")
 
         if (saveRequestSpec == null) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: No payload")
             saveCallback.onFailure("Save request has no payload")
             return
         }
         if (saveRequestSpec.inputs.isEmpty()) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: No inputs found")
             saveCallback.onFailure("No inputs found")
             return
         }
 
         if (saveRequestSpec.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Skipped own package")
             saveCallback.onFailure("Package name is the same as autofill service package name!")
             return
         }
@@ -52,11 +55,13 @@ internal class SaveRequestHandler(
         val sessionContext = saveRequest.fillContexts.firstOrNull { it.requestId == saveRequestSpec.autofillSessionId }
 
         if (sessionContext == null) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Session context not found")
             saveCallback.onFailure("Session fill context not found")
             return
         }
 
         if (itemsRepository.getItemsCount() >= purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Logins limit reached")
             saveCallback.onFailure("Logins limit reached")
             return
         }
@@ -76,6 +81,7 @@ internal class SaveRequestHandler(
                 ?.let { windowNodes.findNodeTextValueById(it.id) }
 
             if (username == null && password == null) {
+                Flog.persist(tag = "Autofill", message = "SaveRequest: Username and password not found")
                 saveCallback.onFailure("Username and password not found")
                 return
             }
@@ -95,8 +101,10 @@ internal class SaveRequestHandler(
                 ),
             )
 
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Success uri=${saveLoginData.uri}")
             saveCallback.onSuccess()
         } catch (e: Exception) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Error ${e.message}")
             saveCallback.onFailure(e.message)
         }
     }

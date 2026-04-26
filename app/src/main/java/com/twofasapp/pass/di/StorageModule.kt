@@ -70,6 +70,11 @@ class StorageModule : KoinModule {
                                         sqlQuery.contains("connected_browsers")
                                     ) {
                                         Flog.tag("RoomDatabase").d(sqlQuery)
+
+                                        if (sqlQuery.startsWith("INSERT")) {
+                                            val truncated = sqlQuery.substringBefore("VALUES").trim()
+                                            Flog.persist("Database", truncated)
+                                        }
                                     }
                                 }
                             },

@@ -2,7 +2,7 @@ package com.twofasapp.feature.settings.ui.autofill.browsers
 
 import androidx.compose.ui.graphics.painter.Painter
 
-internal data class BrowserAutofillStatus(
+data class BrowserAutofillStatus(
     val name: String,
     val packageName: String,
     val icon: Painter? = null,

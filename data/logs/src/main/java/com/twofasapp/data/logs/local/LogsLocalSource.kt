@@ -14,7 +14,7 @@ import com.twofasapp.data.logs.local.model.LogEntryEntity
 internal class LogsLocalSource(
     private val dao: LogsDao,
 ) {
-    suspend fun insert(entity: LogEntryEntity) = dao.insert(entity)
+    suspend fun insert(entities: List<LogEntryEntity>) = dao.insert(entities)
 
     suspend fun getAll(): List<LogEntryEntity> = dao.getAll()
 

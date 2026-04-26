@@ -262,13 +262,13 @@ private fun Content(
                 )
             }
 
-//            item {
-//                OptionEntry(
-//                    title = strings.aboutSendLogsCta,
-//                    icon = MdtIcons.Document,
-//                    onClick = { deeplinks.openScreen(Screen.Logs) },
-//                )
-//            }
+            item {
+                OptionEntry(
+                    title = strings.aboutSendLogsCta,
+                    icon = MdtIcons.Document,
+                    onClick = { deeplinks.openScreen(Screen.Logs) },
+                )
+            }
 
             item {
                 OptionSwitch(

@@ -51,6 +51,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
         fillCallback: FillCallback,
     ) {
         Flog.tag(AutofillTag).d("\uD83D\uDD20 onFillRequest: ${fillRequest.id}")
+        Flog.persist(tag = "Autofill", message = "FillRequest")
 
         val fillRequestJob = scope.launch {
             fillRequestHandler.handleRequest(
@@ -71,6 +72,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
         saveCallback: SaveCallback,
     ) {
         Flog.tag(AutofillTag).d("\uD83D\uDCBE onSaveRequest")
+        Flog.persist(tag = "Autofill", message = "SaveRequest")
 
         scope.launch {
             saveRequestHandler.handleRequest(

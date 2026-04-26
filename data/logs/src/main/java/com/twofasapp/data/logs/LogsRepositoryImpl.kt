@@ -14,27 +14,43 @@ import com.twofasapp.data.logs.local.model.LogEntryEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class LogsRepositoryImpl(
     private val localSource: LogsLocalSource,
 ) : LogsRepository {
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val buffer = MutableStateFlow(emptyList<LogEntryEntity>())
+
+    init {
+        scope.launch {
+            buffer
+                .filter { it.isNotEmpty() }
+                .sample(FlushInterval)
+                .collect { flushPending() }
+        }
+    }
 
     override fun save(tag: String, message: String) {
-        scope.launch {
-            localSource.insert(
-                LogEntryEntity(
-                    tag = tag,
-                    timestamp = System.currentTimeMillis(),
-                    message = message,
-                ),
+        buffer.update {
+            it + LogEntryEntity(
+                tag = tag,
+                timestamp = System.currentTimeMillis(),
+                message = message,
             )
         }
     }
 
     override suspend fun getAll(): List<LogEntry> {
+        flushPending()
+
         return localSource.getAll().map { entity ->
             LogEntry(
                 id = entity.id,
@@ -46,6 +62,18 @@ internal class LogsRepositoryImpl(
     }
 
     override suspend fun deleteAll() {
+        buffer.update { emptyList() }
         localSource.deleteAll()
+    }
+
+    private suspend fun flushPending() {
+        withContext(Dispatchers.IO) {
+            val pending = buffer.getAndUpdate { emptyList() }
+            if (pending.isNotEmpty()) localSource.insert(pending)
+        }
+    }
+
+    companion object {
+        private const val FlushInterval = 5_000L
     }
 }

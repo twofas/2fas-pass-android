@@ -46,7 +46,10 @@ internal class AuthStatusTrackerImpl(
 
     override fun observeAuthStatus(): Flow<AuthStatus> {
         return authStatusFlow
-            .onEach { Flog.tag("AuthStatusTracker").i(it.toString()) }
+            .onEach {
+                Flog.tag("AuthStatusTracker").i(it.toString())
+                Flog.persist(tag = "AuthStatus", message = it.toString())
+            }
     }
 
     override fun observeIsAuthenticated(): Flow<Boolean> {

@@ -29,6 +29,7 @@ internal class AppLifecycleObserver(
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
         Flog.tag("AppLifecycleObserver").i("onAppForeground")
+        Flog.persist(tag = "Lifecycle", message = "Foreground")
 
         owner.lifecycleScope.launch {
             authTracker.onAppForeground()
@@ -41,6 +42,7 @@ internal class AppLifecycleObserver(
     override fun onStop(owner: LifecycleOwner) {
         super.onStop(owner)
         Flog.tag("AppLifecycleObserver").i("onAppBackground")
+        Flog.persist(tag = "Lifecycle", message = "Background")
 
         owner.lifecycleScope.launch {
             authTracker.onAppBackground()

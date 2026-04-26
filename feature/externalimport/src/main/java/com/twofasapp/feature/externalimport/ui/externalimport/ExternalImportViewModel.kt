@@ -66,6 +66,8 @@ internal class ExternalImportViewModel(
     private val importType = savedStateHandle.toRoute<Screen.ExternalImport>().importType
 
     init {
+        Flog.persist("Transfer", "Import started: $importType")
+
         uiState.update { state ->
             state.copy(
                 importSpec = when (importType) {
@@ -95,8 +97,13 @@ internal class ExternalImportViewModel(
 
         launchScoped(dispatchers.io) {
             runSafely { uiState.value.importSpec.readContent(uri) }
-                .onSuccess { updateState(ImportState.ReadSuccess(it)) }
+                .onSuccess {
+                    Flog.persist("Transfer", "Read success: ${it.items.size} items, ${it.tags.size} tags")
+                    updateState(ImportState.ReadSuccess(it))
+                }
                 .onFailure {
+                    Flog.persist("Transfer", "Read failed: ${it.message}")
+                    Flog.persist("Transfer", it)
                     Flog.e(it)
                     updateState(ImportState.Error(it.message))
                 }
@@ -111,8 +118,15 @@ internal class ExternalImportViewModel(
                 itemsRepository.importItems(importContent.items)
                 tagsRepository.importTags(importContent.tags)
             }
-                .onSuccess { onSuccess() }
-                .onFailure { updateState(ImportState.Error(it.message)) }
+                .onSuccess {
+                    Flog.persist("Transfer", "Import success: ${importContent.items.size} items, ${importContent.tags.size} tags")
+                    onSuccess()
+                }
+                .onFailure {
+                    Flog.persist("Transfer", "Import failed: ${it.message}")
+                    Flog.persist("Transfer", it)
+                    updateState(ImportState.Error(it.message))
+                }
         }
     }
 

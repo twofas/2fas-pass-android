@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.foundation.modal.Modal
@@ -31,7 +32,10 @@ internal fun AddItemModal(
         headerText = MdtLocale.strings.itemAddTitle,
     ) { dismissAction ->
         Content(
-            onSelect = { dismissAction { onSelect(it) } },
+            onSelect = {
+                Flog.persist("Items", "Add: ${it.key}")
+                dismissAction { onSelect(it) }
+            },
         )
     }
 }

@@ -16,9 +16,9 @@ import com.twofasapp.data.logs.local.model.LogEntryEntity
 @Dao
 interface LogsDao {
     @Insert
-    suspend fun insert(log: LogEntryEntity)
+    suspend fun insert(logs: List<LogEntryEntity>)
 
-    @Query("SELECT * FROM logs ORDER BY timestamp DESC")
+    @Query("SELECT * FROM logs ORDER BY timestamp DESC LIMIT 5000")
     suspend fun getAll(): List<LogEntryEntity>
 
     @Query("DELETE FROM logs")

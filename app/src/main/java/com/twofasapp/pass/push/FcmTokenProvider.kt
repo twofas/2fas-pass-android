@@ -12,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import com.twofasapp.core.android.ktx.resumeIfActive
 import com.twofasapp.core.android.ktx.resumeWithExceptionIfActive
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.push.PushTokenProvider
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -19,9 +20,13 @@ internal class FcmTokenProvider : PushTokenProvider {
     override suspend fun provide(): String = suspendCancellableCoroutine { continuation ->
         Firebase.messaging.token.addOnCompleteListener {
             if (it.isSuccessful) {
+                Flog.persist("Push", "FCM token fetched")
                 continuation.resumeIfActive(it.result)
             } else {
-                continuation.resumeWithExceptionIfActive(it.exception ?: RuntimeException("Error when fetching FCM token."))
+                val exception = it.exception ?: RuntimeException("Error when fetching FCM token.")
+                Flog.persist("Push", "FCM token fetch failed: ${exception.message}")
+                Flog.persist("Push", exception)
+                continuation.resumeWithExceptionIfActive(exception)
             }
         }
     }

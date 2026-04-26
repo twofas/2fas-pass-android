@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.core.graphics.drawable.toBitmap
 
-internal class BrowserAutofillManagerImpl(
+class BrowserAutofillManagerImpl(
     private val context: Context,
 ) : BrowserAutofillManager {
 

@@ -38,6 +38,7 @@ import com.twofasapp.core.android.ktx.toastLong
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.common.domain.SelectedTheme
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.LocalAppTheme
 import com.twofasapp.core.design.LocalDynamicColors
@@ -72,6 +73,7 @@ internal fun LockScreen(
     val context = LocalContext.current
 
     BackHandler {
+        Flog.persist("Lock", "Action: back press")
         activity.finish()
     }
 
@@ -109,8 +111,14 @@ internal fun LockScreen(
                             }
                         }
                     },
-                    onForgotPasswordClick = { showForgotPasswordModal = true },
-                    onCloseClick = { activity.finish() },
+                    onForgotPasswordClick = {
+                        Flog.persist("Lock", "Action: forgot password")
+                        showForgotPasswordModal = true
+                    },
+                    onCloseClick = {
+                        Flog.persist("Lock", "Action: close")
+                        activity.finish()
+                    },
                 )
 
                 if (showBiometricsPromptDialog) {
@@ -121,11 +129,13 @@ internal fun LockScreen(
                         icon = MdtIcons.Fingerprint,
                         shouldAutoHideOnLock = false,
                         onPositive = {
+                            Flog.persist("Lock", "Biometrics prompt: accepted")
                             showBiometricsPromptDialog = false
                             showBiometricsModal = true
                             biometricsError = ""
                         },
                         onNegative = {
+                            Flog.persist("Lock", "Biometrics prompt: declined")
                             showBiometricsPromptDialog = false
                             viewModel.finishWithSuccess()
                         },
@@ -138,21 +148,25 @@ internal fun LockScreen(
                         subtitle = strings.lockScreenBiometricsModalSubtitle,
                         decryptedBytes = masterKey,
                         onSuccessEncrypt = { encryptedData ->
+                            Flog.persist("Lock", "Biometrics modal: success")
                             showBiometricsModal = false
                             masterKey = byteArrayOf()
                             viewModel.finishWithBiometricsEnabled(encryptedData)
                         },
                         onDismissRequest = {
+                            Flog.persist("Lock", "Biometrics modal: dismissed")
                             showBiometricsModal = false
                             masterKey = byteArrayOf()
                             viewModel.finishWithSuccess()
                         },
                         onNegativedClick = {
+                            Flog.persist("Lock", "Biometrics modal: negative click")
                             showBiometricsModal = false
                             masterKey = byteArrayOf()
                             viewModel.finishWithSuccess()
                         },
                         onError = { code, message ->
+                            Flog.persist("Lock", "Biometrics modal: error code=$code")
                             biometricsError = if (code == 7) {
                                 strings.lockScreenBiometricsErrorTooManyAttempts
                             } else {
@@ -185,8 +199,14 @@ internal fun LockScreen(
                         icon = MdtIcons.Error,
                         positive = strings.lockScreenResetApp,
                         neutral = strings.lockCopyError,
-                        onPositive = { activity.restartApp() },
-                        onNeutral = { activity.copyToClipboard(uiState.appUpdateError!!.stackTraceToString()) },
+                        onPositive = {
+                            Flog.persist("Lock", "App update error: restart app")
+                            activity.restartApp()
+                        },
+                        onNeutral = {
+                            Flog.persist("Lock", "App update error: copy stacktrace")
+                            activity.copyToClipboard(uiState.appUpdateError!!.stackTraceToString())
+                        },
                         properties = DialogProperties(
                             dismissOnBackPress = false,
                             dismissOnClickOutside = false,
@@ -199,13 +219,18 @@ internal fun LockScreen(
         if (showForgotPasswordModal) {
             ProvidesViewModelStoreOwner {
                 ForgotPasswordModal(
-                    onDismissRequest = { showForgotPasswordModal = false },
+                    onDismissRequest = {
+                        Flog.persist("Lock", "Forgot password: dismissed")
+                        showForgotPasswordModal = false
+                    },
                     onSuccess = { masterKey ->
+                        Flog.persist("Lock", "Forgot password: verified")
                         viewModel.unlockWithMasterKey(masterKey)
                         showForgotPasswordModal = false
                         context.toastShort(strings.forgotPasswordVerificationSuccessTitle)
                     },
                     onFailedAttempt = {
+                        Flog.persist("Lock", "Forgot password: failed attempt")
                         viewModel.incrementFailedAttempt(
                             onLocked = {
                                 showForgotPasswordModal = false

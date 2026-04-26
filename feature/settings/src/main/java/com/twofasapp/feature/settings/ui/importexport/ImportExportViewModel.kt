@@ -14,6 +14,7 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ItemsRepository
@@ -84,10 +85,13 @@ internal class ImportExportViewModel(
         launchScoped {
             runSafely { backupRepository.readVaultBackup(fileUri) }
                 .onSuccess { backup ->
+                    Flog.persist("Transfer", "Read success: ${backup.items?.size ?: 0} items, ${backup.tags?.size ?: 0} tags")
                     uiState.update { it.copy(vaultBackupToImport = backup) }
                     tryToImport()
                 }
                 .onFailure {
+                    Flog.persist("Transfer", "Read failed: ${it.message}")
+                    Flog.persist("Transfer", it)
                     showImportLoading(false)
 
                     if (it is InvalidSchemaVersionException) {
@@ -139,10 +143,13 @@ internal class ImportExportViewModel(
                 )
             }
                 .onSuccess {
+                    Flog.persist("Transfer", "Import success: ${items.size} items, ${tags.size} tags")
                     showImportLoading(false)
                     publishEvent(ImportExportUiEvent.ImportSuccess)
                 }
                 .onFailure {
+                    Flog.persist("Transfer", "Import failed: ${it.message}")
+                    Flog.persist("Transfer", it)
                     showImportLoading(false)
                     publishEvent(ImportExportUiEvent.ShowErrorDialog)
                 }
