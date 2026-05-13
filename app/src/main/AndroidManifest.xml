@@ -95,6 +95,8 @@
         <package android:name="com.android.chrome" />
         <package android:name="com.chrome.beta" />
         <package android:name="com.brave.browser" />
+        <package android:name="org.mozilla.firefox" />
+        <package android:name="org.mozilla.firefox_beta" />
     </queries>
 
 </manifest>

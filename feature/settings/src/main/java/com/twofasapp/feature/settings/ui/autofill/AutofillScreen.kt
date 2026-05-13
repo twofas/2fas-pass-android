@@ -133,7 +133,12 @@ private fun Content(
                         title = browser.name,
                         image = browser.icon ?: MdtIcons.Autofill,
                         checked = browser.autofillEnabled,
-                        onToggle = { context.openBrowserAutofillSettings(browser.packageName) },
+                        enabled = browser.alwaysEnabled.not(),
+                        onToggle = {
+                            if (browser.alwaysEnabled.not()) {
+                                context.openBrowserAutofillSettings(browser.packageName)
+                            }
+                        },
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             top = 8.dp,

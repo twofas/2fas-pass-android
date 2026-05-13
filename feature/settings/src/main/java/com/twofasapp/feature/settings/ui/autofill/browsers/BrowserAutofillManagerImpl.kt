@@ -19,7 +19,7 @@ class BrowserAutofillManagerImpl(
 
             browser.copy(
                 icon = installedBrowser.icon,
-                autofillEnabled = installedBrowser.autofillEnabled,
+                autofillEnabled = if (browser.alwaysEnabled) true else installedBrowser.autofillEnabled,
             )
         }
     }

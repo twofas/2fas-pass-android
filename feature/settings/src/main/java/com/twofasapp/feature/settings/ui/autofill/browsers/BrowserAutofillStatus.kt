@@ -7,6 +7,7 @@ data class BrowserAutofillStatus(
     val packageName: String,
     val icon: Painter? = null,
     val autofillEnabled: Boolean = false,
+    val alwaysEnabled: Boolean = false,
 ) {
     companion object {
         val SupportedBrowsers = listOf(
@@ -21,6 +22,16 @@ data class BrowserAutofillStatus(
             BrowserAutofillStatus(
                 name = "Brave",
                 packageName = "com.brave.browser",
+            ),
+            BrowserAutofillStatus(
+                name = "Firefox",
+                packageName = "org.mozilla.firefox",
+                alwaysEnabled = true,
+            ),
+            BrowserAutofillStatus(
+                name = "Firefox Beta",
+                packageName = "org.mozilla.firefox_beta",
+                alwaysEnabled = true,
             ),
         )
     }
