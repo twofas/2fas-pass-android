@@ -17,9 +17,8 @@ repositories {
     gradlePluginPortal()
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+kotlin {
+    jvmToolchain(21)
 }
 
 dependencies {
@@ -29,7 +28,6 @@ dependencies {
 }
 
 gradlePlugin {
-    @Suppress("DSL_SCOPE_VIOLATION")
     plugins {
         register("TwoFasComposePlugin") {
             id = "twofas.compose"
@@ -49,6 +47,11 @@ gradlePlugin {
         register("TwoFasLintPlugin") {
             id = "twofas.lint"
             implementationClass = "com.twofasapp.buildlogic.TwoFasLintPlugin"
+        }
+
+        register("TwoFasArtifactsCopyPlugin") {
+            id = "twofas.artifactsCopy"
+            implementationClass = "com.twofasapp.buildlogic.TwoFasArtifactsCopyPlugin"
         }
     }
 }
