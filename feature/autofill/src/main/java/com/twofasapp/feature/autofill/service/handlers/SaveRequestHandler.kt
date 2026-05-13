@@ -19,6 +19,7 @@ import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
 import com.twofasapp.feature.autofill.service.builders.IntentBuilders
+import com.twofasapp.feature.autofill.service.builders.SkippedPackages
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import com.twofasapp.feature.autofill.service.domain.SaveRequestSpec
 import com.twofasapp.feature.autofill.service.parser.AutofillInput
@@ -49,6 +50,12 @@ internal class SaveRequestHandler(
         if (saveRequestSpec.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
             Flog.persist(tag = "Autofill", message = "SaveRequest: Skipped own package")
             saveCallback.onFailure("Package name is the same as autofill service package name!")
+            return
+        }
+
+        if (SkippedPackages.isSkipped(saveRequestSpec.packageName)) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Skipped package ${saveRequestSpec.packageName}")
+            saveCallback.onFailure("Package name is in the skipped packages list!")
             return
         }
 

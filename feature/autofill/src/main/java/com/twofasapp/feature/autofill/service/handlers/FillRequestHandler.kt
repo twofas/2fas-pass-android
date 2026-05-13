@@ -18,6 +18,7 @@ import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
 import com.twofasapp.feature.autofill.service.builders.FillResponseBuilder
+import com.twofasapp.feature.autofill.service.builders.SkippedPackages
 import com.twofasapp.feature.autofill.service.domain.AutofillItemMatcher
 import com.twofasapp.feature.autofill.service.domain.FillRequestSpec
 import com.twofasapp.feature.autofill.service.parser.NodeParser
@@ -47,6 +48,13 @@ internal class FillRequestHandler(
             if (nodeStructure.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
                 Flog.tag(AutofillTag).d("❌ Package name is the same as autofill service package name!")
                 Flog.persist(tag = "Autofill", message = "FillRequest: Skipped own package")
+                fillCallback.onSuccess(null)
+                return
+            }
+
+            if (SkippedPackages.isSkipped(nodeStructure.packageName)) {
+                Flog.tag(AutofillTag).d("❌ Package name is in the skipped packages list!")
+                Flog.persist(tag = "Autofill", message = "FillRequest: Skipped package ${nodeStructure.packageName}")
                 fillCallback.onSuccess(null)
                 return
             }
