@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.twofasAndroidLibrary)
     alias(libs.plugins.twofasCompose)
     alias(libs.plugins.twofasLint)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -42,4 +43,5 @@ dependencies {
     implementation(libs.bundles.viewModel)
     implementation(libs.lottie)
     implementation(libs.uiAndroid)
+    implementation(libs.kotlinSerialization)
 }

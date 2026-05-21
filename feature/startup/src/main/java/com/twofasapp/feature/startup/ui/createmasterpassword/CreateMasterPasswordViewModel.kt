@@ -12,13 +12,13 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.domain.crypto.KdfSpec
 import com.twofasapp.data.main.SecurityRepository
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class CreateMasterPasswordViewModel(
     private val securityRepository: SecurityRepository,
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(CreateMasterPasswordUiState())
@@ -37,11 +37,11 @@ internal class CreateMasterPasswordViewModel(
         launchScoped {
             val masterKey = securityRepository.generateMasterKeyOnFirstLaunch(
                 password = uiState.value.password,
-                seed = startupConfig.seed!!,
+                seed = startupProcessor.getSeed(),
                 kdfSpec = KdfSpec.Argon2id(),
             )
 
-            startupConfig.masterKey = masterKey
+            startupProcessor.setMasterKey(masterKey)
             updateLoading(false)
             publishEvent(CreateMasterPasswordUiEvent.Complete)
         }

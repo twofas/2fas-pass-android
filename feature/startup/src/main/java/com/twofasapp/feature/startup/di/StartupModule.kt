@@ -9,12 +9,11 @@
 package com.twofasapp.feature.startup.di
 
 import com.twofasapp.core.di.KoinModule
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import com.twofasapp.feature.startup.ui.StartupViewModel
 import com.twofasapp.feature.startup.ui.createdecryptionkit.CreateDecryptionKitViewModel
 import com.twofasapp.feature.startup.ui.createmasterpassword.CreateMasterPasswordViewModel
 import com.twofasapp.feature.startup.ui.createsecretkey.create.CreateSecretKeyViewModel
-import com.twofasapp.feature.startup.ui.createsecretkey.success.CreateSecretKeySuccessViewModel
 import com.twofasapp.feature.startup.ui.restorevault.RestoreState
 import com.twofasapp.feature.startup.ui.restorevault.RestoreVaultViewModel
 import com.twofasapp.feature.startup.ui.restorevault.cloudfiles.CloudFilesViewModel
@@ -34,7 +33,6 @@ class StartupModule : KoinModule {
         viewModelOf(::VaultSetupStartViewModel)
         viewModelOf(::VaultSetupCompletedViewModel)
         viewModelOf(::CreateSecretKeyViewModel)
-        viewModelOf(::CreateSecretKeySuccessViewModel)
         viewModelOf(::RestoreVaultViewModel)
         viewModelOf(::CreateMasterPasswordViewModel)
         viewModelOf(::CreateDecryptionKitViewModel)
@@ -42,7 +40,7 @@ class StartupModule : KoinModule {
         viewModelOf(::CloudFilesViewModel)
         viewModelOf(::DecryptVaultViewModel)
 
-        singleOf(::StartupConfig)
+        singleOf(::StartupProcessor)
         singleOf(::RestoreState)
     }
 }

@@ -33,7 +33,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.RenderMode
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -50,24 +49,18 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.startup.R
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun CreateSecretKeySuccessScreen(
-    viewModel: CreateSecretKeySuccessViewModel = koinViewModel(),
     openCreateMasterPassword: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     Content(
-        uiState = uiState,
         onCtaClick = openCreateMasterPassword,
     )
 }
 
 @Composable
 internal fun Content(
-    uiState: CreateSecretKeySuccessUiState,
     onCtaClick: () -> Unit = {},
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.secret_key_tick))
@@ -145,8 +138,6 @@ internal fun Content(
 @Composable
 private fun Preview() {
     PreviewTheme {
-        Content(
-            uiState = CreateSecretKeySuccessUiState(),
-        )
+        Content()
     }
 }

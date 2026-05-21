@@ -16,14 +16,14 @@ import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.domain.crypto.KdfSpec
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.settings.SessionRepository
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 
 internal class WelcomeViewModel(
     appBuild: AppBuild,
     private val sessionRepository: SessionRepository,
     private val securityRepository: SecurityRepository,
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
     private val authStatusTracker: AuthStatusTracker,
 ) : ViewModel() {
     val uiState = MutableStateFlow(
@@ -38,17 +38,17 @@ internal class WelcomeViewModel(
 
     fun devSkip() {
         launchScoped {
-            startupConfig.seed = securityRepository.generateSeed()
-
+            val seed = securityRepository.generateSeed()
             val masterKey = securityRepository.generateMasterKeyOnFirstLaunch(
                 password = "pass12345",
-                seed = startupConfig.seed!!,
+                seed = seed,
                 kdfSpec = KdfSpec.Argon2id(),
             )
 
-            startupConfig.masterKey = masterKey
+            startupProcessor.setSeed(seed)
+            startupProcessor.setMasterKey(masterKey)
+            startupProcessor.finish()
 
-            startupConfig.finishStartup()
             authStatusTracker.authenticate()
             sessionRepository.setQuickSetupPrompted(true)
             sessionRepository.setStartupCompleted(true)

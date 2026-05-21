@@ -39,7 +39,7 @@ import com.twofasapp.data.settings.SessionRepository
 import com.twofasapp.feature.decryptionkit.generator.DecryptionKit
 import com.twofasapp.feature.importvault.ui.ImportVaultState
 import com.twofasapp.feature.qrscan.ReadQrFromImage
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import com.twofasapp.feature.startup.ui.restorevault.RestoreFile
 import com.twofasapp.feature.startup.ui.restorevault.RestoreSource
 import com.twofasapp.feature.startup.ui.restorevault.RestoreState
@@ -51,7 +51,7 @@ import java.time.Instant
 import javax.crypto.AEADBadTagException
 
 internal class DecryptVaultViewModel(
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
     private val vaultKeysRepository: VaultKeysRepository,
     private val securityRepository: SecurityRepository,
     private val itemsRepository: ItemsRepository,
@@ -221,7 +221,7 @@ internal class DecryptVaultViewModel(
                 openState(ImportVaultState.ImportingFile)
 
                 runSafely {
-                    startupConfig.clearStorage()
+                    startupProcessor.clearVaultsData()
 
                     val seed = uiState.value.seed!!
                     val masterKey = MasterKey(hashHex = uiState.value.masterKeyHex!!)
@@ -237,9 +237,9 @@ internal class DecryptVaultViewModel(
                     val tags = decryptedBackup.tags.orEmpty()
                     val deletedItems = decryptedBackup.deletedItems.orEmpty()
 
-                    startupConfig.seed = seed
-                    startupConfig.masterKey = masterKey
-                    startupConfig.finishStartup(
+                    startupProcessor.setSeed(seed)
+                    startupProcessor.setMasterKey(masterKey)
+                    startupProcessor.finish(
                         vaultId = backup.vaultId,
                         vaultName = backup.vaultName,
                         vaultCreatedAt = backup.vaultCreatedAt,
