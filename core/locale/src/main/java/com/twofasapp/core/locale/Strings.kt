@@ -109,17 +109,6 @@ class Strings(private val c: Context) {
     val setupCreateMasterPasswordDescription =
         c.getString(R.string.onboarding_create_master_password_description)
 
-    val onboardingProgressStep2Description =
-        c.getString(R.string.onboarding_progress_step2_description)
-    val onboardingCreateMasterPasswordGuideTitle =
-        c.getString(R.string.onboarding_create_master_password_guide_title)
-    val onboardingCreateMasterPasswordGuideDescription =
-        c.getString(R.string.onboarding_create_master_password_guide_description)
-    val onboardingGuide1 = c.getString(R.string.onboarding_guide_1)
-    val onboardingGuide2 = c.getString(R.string.onboarding_guide_2)
-    val onboardingGuide3 = c.getString(R.string.onboarding_guide_3)
-    val onboardingGuide4 = c.getString(R.string.onboarding_guide_4)
-
     val generateSecretKeyTitle = c.getString(R.string.onboarding_generate_secret_key_title)
     val generateSecretKeyDescription =
         c.getString(R.string.onboarding_generate_secret_key_description)
