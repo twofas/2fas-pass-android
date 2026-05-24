@@ -28,6 +28,7 @@ import com.twofasapp.core.design.LocalAuthStatus
 import com.twofasapp.core.design.LocalDynamicColors
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
+import com.twofasapp.feature.home.navigation.EditItemRoute
 import com.twofasapp.feature.home.ui.autofill.auth.AutofillAuthScreen
 import com.twofasapp.feature.home.ui.autofill.picker.AutofillPickerScreen
 import com.twofasapp.feature.home.ui.autofill.save.AutofillSaveLoginScreen
@@ -54,7 +55,7 @@ internal fun AutofillContainer(
         AppTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MdtTheme.color.transparent,
+                color = MdtTheme.color.background,
             ) {
                 when (startScreen) {
                     AutofillActivity.StartScreen.Authenticate -> {
@@ -77,7 +78,28 @@ internal fun AutofillContainer(
                                     exitTransition = NavAnimation.Exit,
                                 ) {
                                     composable<Screen.AutofillPicker> {
-                                        AutofillPickerScreen()
+                                        AutofillPickerScreen(
+                                            openAddLogin = { navController.navigate(Screen.AutofillSaveLogin) },
+                                            openEditLogin = { item ->
+                                                navController.navigate(
+                                                    Screen.EditItem(
+                                                        itemId = item.id,
+                                                        vaultId = item.vaultId,
+                                                        itemContentTypeKey = item.contentType.key,
+                                                    ),
+                                                )
+                                            },
+                                        )
+                                    }
+
+                                    composable<Screen.AutofillSaveLogin> {
+                                        AutofillSaveLoginScreen()
+                                    }
+
+                                    composable<Screen.EditItem> {
+                                        EditItemRoute(
+                                            close = { navController.popBackStack() },
+                                        )
                                     }
                                 }
                             }

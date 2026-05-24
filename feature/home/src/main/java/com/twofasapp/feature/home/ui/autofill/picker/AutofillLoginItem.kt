@@ -9,6 +9,7 @@
 package com.twofasapp.feature.home.ui.autofill.picker
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,11 +27,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.feature.items.ItemEntry
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.foundation.dialog.ActionsAlignment
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
+import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.locale.MdtLocale
 
@@ -41,10 +45,13 @@ internal fun AutofillLoginItem(
     suggested: Boolean,
     onFillAndRememberClick: (Item) -> Unit = {},
     onFillClick: (Item) -> Unit = {},
+    onEditClick: (Item) -> Unit = {},
+    onCopyUsernameClick: (Item) -> Unit = {},
+    onCopyPasswordClick: (Item) -> Unit = {},
 ) {
     var showAutofillDialog by remember { mutableStateOf(false) }
 
-    ItemEntry(
+    Row(
         modifier = modifier
             .clickable {
                 if (suggested) {
@@ -53,11 +60,28 @@ internal fun AutofillLoginItem(
                     showAutofillDialog = true
                 }
             }
-            .height(72.dp)
-            .padding(horizontal = 16.dp),
-        item = item,
-        query = query,
-    )
+            .height(72.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Space(16.dp)
+
+        ItemEntry(
+            modifier = Modifier.weight(1f),
+            item = item,
+            query = query,
+        )
+
+        if (item.content is ItemContent.Login) {
+            AutofillLoginItemDropdownMenu(
+                item = item,
+                onEditClick = { onEditClick(item) },
+                onCopyUsernameClick = { onCopyUsernameClick(item) },
+                onCopyPasswordClick = { onCopyPasswordClick(item) },
+            )
+        }
+
+        Space(4.dp)
+    }
 
     if (showAutofillDialog) {
         InfoDialog(

@@ -181,13 +181,15 @@ internal fun ItemsSection(
 
         OptionEntry(
             title = "Open Autofill Picker",
-            icon = MdtIcons.AutofillInput,
+            icon = MdtIcons.Autofill,
             onClick = {
+                val random = Random.nextInt().toString().take(3)
+
                 autofillActivityIntents.createPickerPendingIntent(
                     context = context,
                     nodeStructure = NodeStructure(
                         packageName = "com.app",
-                        webDomain = "autofill.com",
+                        webDomain = "id$random.autofill.com",
                         inputs = emptyList(),
                     ),
                     inlinePresentationSpec = null,

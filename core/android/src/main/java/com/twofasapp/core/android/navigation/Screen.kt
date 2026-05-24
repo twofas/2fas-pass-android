@@ -65,6 +65,9 @@ sealed class Screen(
     data object AutofillPicker : Screen()
 
     @Serializable
+    data object AutofillSaveLogin : Screen()
+
+    @Serializable
     class Home : Screen(screenType = ScreenType.TopLevel)
 
     @Serializable

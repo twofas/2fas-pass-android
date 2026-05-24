@@ -11,9 +11,12 @@ package com.twofasapp.feature.home.ui.autofill.picker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
@@ -23,15 +26,19 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.android.ktx.getSafelyParcelable
+import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
@@ -51,15 +58,19 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.autofill.service.parser.NodeStructure
 import com.twofasapp.feature.home.ui.autofill.AutofillActivity.Companion.EXTRA_NODE_STRUCTURE
 import com.twofasapp.feature.home.ui.autofill.replyWithAutofillSuccess
+import com.twofasapp.feature.home.ui.home.components.HomeFab
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun AutofillPickerScreen(
     viewModel: AutofillPickerViewModel = koinViewModel(),
+    openAddLogin: () -> Unit = {},
+    openEditLogin: (Item) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
     val activity = LocalContext.currentActivity
+    val context = LocalContext.current
 
     val nodeStructure = activity.intent.extras.getSafelyParcelable<NodeStructure>(EXTRA_NODE_STRUCTURE)
 
@@ -87,6 +98,18 @@ internal fun AutofillPickerScreen(
                 activity.replyWithAutofillSuccess(autofillLogin)
             }
         },
+        onAddClick = openAddLogin,
+        onEditClick = openEditLogin,
+        onCopyUsernameClick = { item ->
+            (item.content as? ItemContent.Login)?.username?.let { username ->
+                context.copyToClipboard(text = username)
+            }
+        },
+        onCopyPasswordClick = { item ->
+            (item.content as? ItemContent.Login)?.password?.clearTextOrNull?.let { password ->
+                context.copyToClipboard(text = password, isSensitive = true)
+            }
+        },
     )
 }
 
@@ -98,6 +121,10 @@ private fun Content(
     onSearchFocusChange: (Boolean) -> Unit = {},
     onFillAndRememberClick: (Item) -> Unit = {},
     onFillClick: (Item) -> Unit = {},
+    onAddClick: () -> Unit = {},
+    onEditClick: (Item) -> Unit = {},
+    onCopyUsernameClick: (Item) -> Unit = {},
+    onCopyPasswordClick: (Item) -> Unit = {},
 ) {
     val strings = MdtLocale.strings
     val listState = rememberLazyListState()
@@ -181,6 +208,9 @@ private fun Content(
                                 modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                                 onFillAndRememberClick = onFillAndRememberClick,
                                 onFillClick = onFillClick,
+                                onEditClick = onEditClick,
+                                onCopyUsernameClick = onCopyUsernameClick,
+                                onCopyPasswordClick = onCopyPasswordClick,
                             )
                         }
                     }
@@ -203,11 +233,23 @@ private fun Content(
                                 modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                                 onFillAndRememberClick = onFillAndRememberClick,
                                 onFillClick = onFillClick,
+                                onEditClick = onEditClick,
+                                onCopyUsernameClick = onCopyUsernameClick,
+                                onCopyPasswordClick = onCopyPasswordClick,
                             )
                         }
                     }
                 }
             }
+
+            HomeFab(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(ScreenPadding),
+                visible = screenState.loading.not(),
+                onClick = onAddClick,
+            )
         }
     }
 }

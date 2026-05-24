@@ -25,7 +25,11 @@ import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
+import com.twofasapp.feature.autofill.service.domain.asAutofillLogin
+import com.twofasapp.feature.autofill.service.parser.NodeStructure
+import com.twofasapp.feature.home.ui.autofill.AutofillActivity.Companion.EXTRA_NODE_STRUCTURE
 import com.twofasapp.feature.home.ui.autofill.AutofillActivity.Companion.EXTRA_SAVE_LOGIN_DATA
+import com.twofasapp.feature.home.ui.autofill.replyWithAutofillSuccess
 import com.twofasapp.feature.itemform.ItemForm
 import com.twofasapp.feature.itemform.ItemFormListener
 import org.koin.androidx.compose.koinViewModel
@@ -38,14 +42,19 @@ internal fun AutofillSaveLoginScreen(
     val activity = LocalContext.currentActivity
     val strings = MdtLocale.strings
     val saveLoginData = activity.intent.extras.getSafelyParcelable<SaveLoginData>(EXTRA_SAVE_LOGIN_DATA)
+    val nodeStructure = activity.intent.extras.getSafelyParcelable<NodeStructure>(EXTRA_NODE_STRUCTURE)
 
-    if (saveLoginData == null) {
+    if (saveLoginData == null && nodeStructure == null) {
         activity.finishAffinity()
         return
     }
 
     LaunchedEffect(Unit) {
-        viewModel.initLogin(saveLoginData)
+        if (saveLoginData != null) {
+            viewModel.initLogin(saveLoginData)
+        } else if (nodeStructure != null) {
+            viewModel.initLogin(nodeStructure)
+        }
     }
 
     uiState.initialItem?.let {
@@ -55,9 +64,15 @@ internal fun AutofillSaveLoginScreen(
             onIsValidUpdated = viewModel::updateIsValid,
             onSaveClick = {
                 viewModel.save(
-                    onComplete = {
-                        activity.finishAndRemoveTask()
-                        activity.toastShort(strings.autofillSaveLoginToastSuccess)
+                    onComplete = { savedItem ->
+                        if (saveLoginData != null) {
+                            activity.finishAndRemoveTask()
+                            activity.toastShort(strings.autofillSaveLoginToastSuccess)
+                        } else {
+                            savedItem.asAutofillLogin()?.let { autofillLogin ->
+                                activity.replyWithAutofillSuccess(autofillLogin)
+                            }
+                        }
                     },
                 )
             },

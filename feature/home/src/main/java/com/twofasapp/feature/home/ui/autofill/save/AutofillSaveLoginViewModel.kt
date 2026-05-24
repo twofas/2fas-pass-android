@@ -10,6 +10,8 @@ package com.twofasapp.feature.home.ui.autofill.save
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
+import com.twofasapp.core.android.ktx.uriPrefixAndroidApp
+import com.twofasapp.core.android.ktx.uriPrefixWebsite
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
@@ -23,6 +25,7 @@ import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
+import com.twofasapp.feature.autofill.service.parser.NodeStructure
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -66,6 +69,32 @@ internal class AutofillSaveLoginViewModel(
         }
     }
 
+    fun initLogin(nodeStructure: NodeStructure) {
+        launchScoped {
+            val uri = when {
+                nodeStructure.webDomain.isNullOrBlank().not() -> "$uriPrefixWebsite${nodeStructure.webDomain}"
+                nodeStructure.packageName.isNullOrBlank().not() -> "$uriPrefixAndroidApp${nodeStructure.packageName}"
+                else -> null
+            }
+
+            val initialItem = Item.create(
+                securityType = settingsRepository.observeDefaultSecurityType().first(),
+                contentType = ItemContentType.Login,
+                content = ItemContent.Login.Empty.copy(
+                    name = nodeStructure.webDomain ?: nodeStructure.packageName.orEmpty(),
+                    uris = listOfNotNull(uri?.let { ItemUri(text = it) }),
+                ),
+            )
+
+            uiState.update {
+                it.copy(
+                    initialItem = initialItem,
+                    item = initialItem,
+                )
+            }
+        }
+    }
+
     fun updateItem(item: Item) {
         uiState.update { it.copy(item = item) }
     }
@@ -74,19 +103,21 @@ internal class AutofillSaveLoginViewModel(
         uiState.update { it.copy(isValid = isValid) }
     }
 
-    fun save(onComplete: () -> Unit) {
+    fun save(onComplete: (Item) -> Unit) {
         launchScoped {
             val vaultId = vaultsRepository.getVault().id
-            val item = withContext(dispatchers.io) {
+            val normalized = uiState.value.item
+                .copy(vaultId = vaultId)
+                .normalizeBeforeSaving()
+            val encrypted = withContext(dispatchers.io) {
                 itemEncryptionMapper.encryptItem(
-                    item = uiState.value.item
-                        .copy(vaultId = vaultId)
-                        .normalizeBeforeSaving(),
+                    item = normalized,
                     vaultCipher = vaultCryptoScope.getVaultCipher(vaultId),
                 )
             }
 
-            itemsRepository.saveItem(item)
-        }.invokeOnCompletion { onComplete() }
+            val savedId = itemsRepository.saveItem(encrypted)
+            onComplete(normalized.copy(id = savedId))
+        }
     }
 }
