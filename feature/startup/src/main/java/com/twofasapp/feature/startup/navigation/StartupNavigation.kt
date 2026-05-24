@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -17,6 +17,7 @@ import com.twofasapp.feature.startup.ui.createsecretkey.success.CreateSecretKeyS
 import com.twofasapp.feature.startup.ui.restorevault.RestoreVaultScreen
 import com.twofasapp.feature.startup.ui.restorevault.cloudfiles.CloudFilesScreen
 import com.twofasapp.feature.startup.ui.restorevault.decyptvault.DecryptVaultScreen
+import com.twofasapp.feature.startup.ui.restorevault.s3.S3RestoreScreen
 import com.twofasapp.feature.startup.ui.restorevault.webdav.WebDavRestoreScreen
 import com.twofasapp.feature.startup.ui.vaultsetup.completed.VaultSetupCompletedScreen
 import com.twofasapp.feature.startup.ui.vaultsetup.halfway.VaultSetupHalfWayScreen
@@ -102,11 +103,13 @@ internal fun CreateDecryptionKitRoute(
 internal fun RestoreVaultRoute(
     openRestoreCloudFiles: () -> Unit,
     openRestoreWebDavConfig: () -> Unit,
+    openRestoreS3Config: () -> Unit,
     openDecryptVault: () -> Unit,
 ) {
     RestoreVaultScreen(
         openRestoreCloudFiles = openRestoreCloudFiles,
         openRestoreWebDavConfig = openRestoreWebDavConfig,
+        openRestoreS3Config = openRestoreS3Config,
         openDecryptVault = openDecryptVault,
     )
 }
@@ -116,6 +119,15 @@ internal fun RestoreWebDavRoute(
     openRestoreCloudFiles: () -> Unit,
 ) {
     WebDavRestoreScreen(
+        openRestoreCloudFiles = openRestoreCloudFiles,
+    )
+}
+
+@Composable
+internal fun RestoreS3Route(
+    openRestoreCloudFiles: () -> Unit,
+) {
+    S3RestoreScreen(
         openRestoreCloudFiles = openRestoreCloudFiles,
     )
 }

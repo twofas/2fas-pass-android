@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -23,6 +23,16 @@ sealed interface CloudConfigEntity {
         val username: String,
         val password: String,
         val url: String,
+        val allowUntrustedCertificate: Boolean,
+    ) : CloudConfigEntity
+
+    @Serializable
+    data class S3(
+        val endpoint: String,
+        val region: String,
+        val bucket: String,
+        val accessKeyId: String,
+        val secretAccessKey: String,
         val allowUntrustedCertificate: Boolean,
     ) : CloudConfigEntity
 }

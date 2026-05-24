@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -51,6 +51,17 @@ internal class CloudMapper {
                     allowUntrustedCertificate = allowUntrustedCertificate,
                 )
             }
+
+            is CloudConfig.S3 -> with(domain) {
+                CloudConfigEntity.S3(
+                    endpoint = endpoint,
+                    region = region,
+                    bucket = bucket,
+                    accessKeyId = accessKeyId,
+                    secretAccessKey = secretAccessKey,
+                    allowUntrustedCertificate = allowUntrustedCertificate,
+                )
+            }
         }
     }
 
@@ -68,6 +79,17 @@ internal class CloudMapper {
                     url = url,
                     username = username,
                     password = password,
+                    allowUntrustedCertificate = allowUntrustedCertificate,
+                )
+            }
+
+            is CloudConfigEntity.S3 -> with(entity) {
+                CloudConfig.S3(
+                    endpoint = endpoint,
+                    region = region,
+                    bucket = bucket,
+                    accessKeyId = accessKeyId,
+                    secretAccessKey = secretAccessKey,
                     allowUntrustedCertificate = allowUntrustedCertificate,
                 )
             }

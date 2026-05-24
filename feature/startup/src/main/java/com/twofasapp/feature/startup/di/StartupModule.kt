@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -18,6 +18,7 @@ import com.twofasapp.feature.startup.ui.restorevault.RestoreState
 import com.twofasapp.feature.startup.ui.restorevault.RestoreVaultViewModel
 import com.twofasapp.feature.startup.ui.restorevault.cloudfiles.CloudFilesViewModel
 import com.twofasapp.feature.startup.ui.restorevault.decyptvault.DecryptVaultViewModel
+import com.twofasapp.feature.startup.ui.restorevault.s3.S3RestoreViewModel
 import com.twofasapp.feature.startup.ui.restorevault.webdav.WebDavRestoreViewModel
 import com.twofasapp.feature.startup.ui.vaultsetup.completed.VaultSetupCompletedViewModel
 import com.twofasapp.feature.startup.ui.vaultsetup.start.VaultSetupStartViewModel
@@ -37,6 +38,7 @@ class StartupModule : KoinModule {
         viewModelOf(::CreateMasterPasswordViewModel)
         viewModelOf(::CreateDecryptionKitViewModel)
         viewModelOf(::WebDavRestoreViewModel)
+        viewModelOf(::S3RestoreViewModel)
         viewModelOf(::CloudFilesViewModel)
         viewModelOf(::DecryptVaultViewModel)
 

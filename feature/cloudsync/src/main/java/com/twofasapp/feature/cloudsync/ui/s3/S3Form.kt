@@ -1,12 +1,12 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.cloudsync.ui.webdav
+package com.twofasapp.feature.cloudsync.ui.s3
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,19 +40,23 @@ import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.locale.MdtLocale
 
 @Composable
-fun WebDavForm(
+fun S3Form(
     modifier: Modifier = Modifier,
-    url: String,
-    username: String,
-    password: String,
+    endpoint: String,
+    region: String,
+    bucket: String,
+    accessKeyId: String,
+    secretAccessKey: String,
     allowUntrustedCertificate: Boolean,
     enabled: Boolean,
-    onUrlChange: (String) -> Unit,
-    onUsernameChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
+    onEndpointChange: (String) -> Unit,
+    onRegionChange: (String) -> Unit,
+    onBucketChange: (String) -> Unit,
+    onAccessKeyIdChange: (String) -> Unit,
+    onSecretAccessKeyChange: (String) -> Unit,
     onAllowUntrustedCertificateToggle: () -> Unit = {},
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
+    var secretVisible by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -60,15 +64,43 @@ fun WebDavForm(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         TextField(
-            value = url,
-            onValueChange = onUrlChange,
-            labelText = MdtLocale.strings.webdavServerUrl,
+            value = endpoint,
+            onValueChange = onEndpointChange,
+            labelText = MdtLocale.strings.s3Endpoint,
             enabled = enabled,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Uri,
+                imeAction = ImeAction.Next,
+            ),
+        )
+
+        TextField(
+            value = region,
+            onValueChange = onRegionChange,
+            labelText = MdtLocale.strings.s3Region,
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        )
+
+        TextField(
+            value = bucket,
+            onValueChange = onBucketChange,
+            labelText = MdtLocale.strings.s3Bucket,
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
             ),
         )
@@ -80,7 +112,7 @@ fun WebDavForm(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = MdtLocale.strings.webdavAllowUntrustedCertificates,
+                text = MdtLocale.strings.s3AllowUntrustedCertificates,
                 style = MdtTheme.typo.labelLarge,
                 modifier = Modifier
                     .weight(1f)
@@ -96,20 +128,22 @@ fun WebDavForm(
             )
         }
 
+        Space(8.dp)
+
         Text(
-            text = MdtLocale.strings.webdavCredentials,
+            text = MdtLocale.strings.s3Credentials,
             style = MdtTheme.typo.labelLarge,
             color = MdtTheme.color.onSurfaceVariant,
             modifier = Modifier
                 .fillMaxWidth()
                 .alpha(if (enabled) 1f else 0.5f)
-                .padding(vertical = 8.dp),
+                .padding(bottom = 8.dp),
         )
 
         TextField(
-            value = username,
-            onValueChange = onUsernameChange,
-            labelText = MdtLocale.strings.webdavUsername,
+            value = accessKeyId,
+            onValueChange = onAccessKeyIdChange,
+            labelText = MdtLocale.strings.s3AccessKeyId,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             enabled = enabled,
@@ -121,9 +155,9 @@ fun WebDavForm(
         )
 
         TextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            labelText = MdtLocale.strings.webdavPassword,
+            value = secretAccessKey,
+            onValueChange = onSecretAccessKeyChange,
+            labelText = MdtLocale.strings.s3SecretAccessKey,
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
@@ -137,12 +171,12 @@ fun WebDavForm(
                     focusManager.clearFocus()
                 },
             ),
-            visualTransformation = VisualTransformation.SecretField(passwordVisible),
+            visualTransformation = VisualTransformation.SecretField(secretVisible),
             trailingIcon = {
                 if (enabled) {
                     SecretFieldTrailingIcon(
-                        visible = passwordVisible,
-                        onToggle = { passwordVisible = passwordVisible.not() },
+                        visible = secretVisible,
+                        onToggle = { secretVisible = secretVisible.not() },
                     )
                 }
             },
@@ -154,15 +188,19 @@ fun WebDavForm(
 @Composable
 private fun Preview() {
     PreviewTheme {
-        WebDavForm(
-            url = "https://example.com/webdav",
-            username = "user",
-            password = "password",
-            enabled = true,
+        S3Form(
+            endpoint = "https://s3.example.com",
+            region = "us-east-1",
+            bucket = "my-bucket",
+            accessKeyId = "AKIA...",
+            secretAccessKey = "secret",
             allowUntrustedCertificate = false,
-            onUrlChange = {},
-            onUsernameChange = {},
-            onPasswordChange = {},
+            enabled = true,
+            onEndpointChange = {},
+            onRegionChange = {},
+            onBucketChange = {},
+            onAccessKeyIdChange = {},
+            onSecretAccessKeyChange = {},
         )
     }
 }

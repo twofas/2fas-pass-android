@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -170,6 +170,7 @@ private fun Content(
                         when (uiState.cloudConfig) {
                             is CloudConfig.GoogleDrive -> deeplinks.openScreen(Screen.GoogleDriveSync(openedFromQuickSetup = false, startAuth = false))
                             is CloudConfig.WebDav -> deeplinks.openScreen(Screen.WebDavSync)
+                            is CloudConfig.S3 -> deeplinks.openScreen(Screen.S3Sync)
                             null -> deeplinks.openScreen(Screen.CloudSync)
                         }
                     },

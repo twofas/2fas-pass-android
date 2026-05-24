@@ -127,4 +127,5 @@ object MdtIcons {
     val Deselect @Composable get() = painterResource(R.drawable.ic_deselect)
     val AllItems @Composable get() = painterResource(R.drawable.ic_all_items)
     val Lightbulb @Composable get() = painterResource(R.drawable.ic_lightbulb)
+    val Bucket @Composable get() = painterResource(R.drawable.ic_bucket)
 }

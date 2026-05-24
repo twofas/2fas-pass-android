@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -54,6 +54,9 @@ sealed class Screen(
 
     @Serializable
     data object RestoreWebDav : Screen()
+
+    @Serializable
+    data object RestoreS3 : Screen()
 
     @Serializable
     data object RestoreCloudFiles : Screen()
@@ -148,6 +151,9 @@ sealed class Screen(
 
     @Serializable
     data object WebDavSync : Screen()
+
+    @Serializable
+    data object S3Sync : Screen()
 
     @Serializable
     data object ImportExport : Screen()

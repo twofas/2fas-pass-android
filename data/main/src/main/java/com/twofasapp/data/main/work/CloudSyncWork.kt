@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -89,6 +89,7 @@ internal class CloudSyncWork(
             val cloudType = when (cloudConfig) {
                 is CloudConfig.GoogleDrive -> "GoogleDrive"
                 is CloudConfig.WebDav -> "WebDav"
+                is CloudConfig.S3 -> "S3"
                 null -> "None"
             }
             Flog.persist(tag = "CloudSync", message = "Started, type=$cloudType, forceReplace=$forceReplace")
