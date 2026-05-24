@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.auth
+package com.twofasapp.feature.home.ui.autofill.auth
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped

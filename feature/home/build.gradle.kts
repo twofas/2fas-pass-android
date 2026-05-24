@@ -28,6 +28,8 @@ dependencies {
     implementation(project(":data:cloud"))
     implementation(project(":data:purchases"))
     implementation(project(":data:share"))
+    implementation(project(":feature:autofill"))
+    implementation(project(":feature:lock"))
     implementation(project(":feature:itemform"))
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))

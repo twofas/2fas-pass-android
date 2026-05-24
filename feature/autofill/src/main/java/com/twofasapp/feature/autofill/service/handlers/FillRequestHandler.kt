@@ -17,6 +17,7 @@ import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
+import com.twofasapp.feature.autofill.service.builders.AutofillActivityIntents
 import com.twofasapp.feature.autofill.service.builders.FillResponseBuilder
 import com.twofasapp.feature.autofill.service.builders.SkippedPackages
 import com.twofasapp.feature.autofill.service.domain.AutofillItemMatcher
@@ -29,6 +30,7 @@ internal class FillRequestHandler(
     private val vaultsRepository: VaultsRepository,
     private val settingsRepository: SettingsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
+    private val autofillActivityIntents: AutofillActivityIntents,
 ) {
     suspend fun handleRequest(
         context: Context,
@@ -71,6 +73,7 @@ internal class FillRequestHandler(
 
             val response = FillResponseBuilder.create(
                 context = context,
+                autofillActivityIntents = autofillActivityIntents,
                 fillRequestSpec = fillRequestSpec,
                 nodeStructure = nodeStructure,
                 items = when (fillRequestSpec.authenticated) {

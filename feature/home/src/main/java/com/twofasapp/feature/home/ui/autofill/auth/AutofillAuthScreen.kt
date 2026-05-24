@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.auth
+package com.twofasapp.feature.home.ui.autofill.auth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,9 +19,9 @@ import com.twofasapp.core.android.ktx.getSafelyParcelable
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_LOGIN
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders.replyWithSuccess
 import com.twofasapp.feature.autofill.service.domain.AutofillLogin
+import com.twofasapp.feature.home.ui.autofill.AutofillActivity.Companion.EXTRA_LOGIN
+import com.twofasapp.feature.home.ui.autofill.replyWithAutofillSuccess
 import com.twofasapp.feature.lock.ui.authentication.AuthenticationPrompt
 import org.koin.androidx.compose.koinViewModel
 
@@ -45,7 +45,7 @@ internal fun AutofillAuthScreen(
     Content(
         onMasterKeyDecrypted = {
             viewModel.authenticate(it) { autofillLogin ->
-                activity.replyWithSuccess(autofillLogin)
+                activity.replyWithAutofillSuccess(autofillLogin)
             }
         },
         onCloseClick = { activity.finishAndRemoveTask() },

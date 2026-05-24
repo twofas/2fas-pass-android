@@ -18,7 +18,7 @@ import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders
+import com.twofasapp.feature.autofill.service.builders.AutofillActivityIntents
 import com.twofasapp.feature.autofill.service.builders.SkippedPackages
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import com.twofasapp.feature.autofill.service.domain.SaveRequestSpec
@@ -27,6 +27,7 @@ import com.twofasapp.feature.autofill.service.parser.AutofillInput
 internal class SaveRequestHandler(
     private val itemsRepository: ItemsRepository,
     private val purchasesRepository: PurchasesRepository,
+    private val autofillActivityIntents: AutofillActivityIntents,
 ) {
     suspend fun handleRequest(
         context: Context,
@@ -102,7 +103,7 @@ internal class SaveRequestHandler(
             Flog.tag(AutofillTag).d("\uD83D\uDCBE $saveLoginData")
 
             context.startActivity(
-                IntentBuilders.createSaveLoginIntent(
+                autofillActivityIntents.createSaveLoginIntent(
                     context = context,
                     saveLoginData = saveLoginData,
                 ),

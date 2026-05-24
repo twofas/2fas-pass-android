@@ -24,17 +24,18 @@ import com.twofasapp.feature.autofill.service.domain.AutofillLogin
 import com.twofasapp.feature.autofill.service.parser.AutofillInput
 import com.twofasapp.feature.autofill.service.parser.NodeStructure
 
-internal object DatasetBuilder {
+object DatasetBuilder {
 
     fun createLoginItem(
         context: Context,
+        autofillActivityIntents: AutofillActivityIntents,
         nodeStructure: NodeStructure?,
         inlinePresentationSpec: InlinePresentationSpec?,
         login: AutofillLogin,
     ): Dataset {
         val datasetBuilder = Dataset.Builder()
 
-        val pendingIntent = IntentBuilders.createAutofillAuthIntent(
+        val pendingIntent = autofillActivityIntents.createAuthPendingIntent(
             context = context,
             nodeStructure = nodeStructure,
             inlinePresentationSpec = inlinePresentationSpec,
@@ -86,12 +87,13 @@ internal object DatasetBuilder {
 
     fun createAppItem(
         context: Context,
+        autofillActivityIntents: AutofillActivityIntents,
         nodeStructure: NodeStructure,
         inlinePresentationSpec: InlinePresentationSpec?,
     ): Dataset {
         val datasetBuilder = Dataset.Builder()
 
-        val pendingIntent = IntentBuilders.createAutofillPickerIntent(
+        val pendingIntent = autofillActivityIntents.createPickerPendingIntent(
             context = context,
             nodeStructure = nodeStructure,
             inlinePresentationSpec = inlinePresentationSpec,
@@ -135,12 +137,13 @@ internal object DatasetBuilder {
 
     fun createPinnedItem(
         context: Context,
+        autofillActivityIntents: AutofillActivityIntents,
         nodeStructure: NodeStructure,
         inlinePresentationSpec: InlinePresentationSpec?,
     ): Dataset {
         val datasetBuilder = Dataset.Builder()
 
-        val pendingIntent = IntentBuilders.createAutofillPickerIntent(
+        val pendingIntent = autofillActivityIntents.createPickerPendingIntent(
             context = context,
             nodeStructure = nodeStructure,
             inlinePresentationSpec = inlinePresentationSpec,

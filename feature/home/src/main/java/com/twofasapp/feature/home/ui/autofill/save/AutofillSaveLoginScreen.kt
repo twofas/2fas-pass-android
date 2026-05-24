@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.save
+package com.twofasapp.feature.home.ui.autofill.save
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,8 +24,8 @@ import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_SAVE_LOGIN_DATA
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
+import com.twofasapp.feature.home.ui.autofill.AutofillActivity.Companion.EXTRA_SAVE_LOGIN_DATA
 import com.twofasapp.feature.itemform.ItemForm
 import com.twofasapp.feature.itemform.ItemFormListener
 import org.koin.androidx.compose.koinViewModel

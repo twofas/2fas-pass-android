@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui
+package com.twofasapp.feature.home.ui.autofill
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -28,17 +28,16 @@ import com.twofasapp.core.design.LocalAuthStatus
 import com.twofasapp.core.design.LocalDynamicColors
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders
-import com.twofasapp.feature.autofill.ui.auth.AutofillAuthScreen
-import com.twofasapp.feature.autofill.ui.picker.AutofillPickerScreen
-import com.twofasapp.feature.autofill.ui.save.AutofillSaveLoginScreen
+import com.twofasapp.feature.home.ui.autofill.auth.AutofillAuthScreen
+import com.twofasapp.feature.home.ui.autofill.picker.AutofillPickerScreen
+import com.twofasapp.feature.home.ui.autofill.save.AutofillSaveLoginScreen
 import com.twofasapp.feature.lock.navigation.LockRoute
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun AutofillContainer(
     viewModel: AutofillViewModel = koinViewModel(),
-    startScreen: IntentBuilders.StartScreen,
+    startScreen: AutofillActivity.StartScreen,
 ) {
     val navController = rememberNavController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,11 +57,11 @@ internal fun AutofillContainer(
                 color = MdtTheme.color.transparent,
             ) {
                 when (startScreen) {
-                    IntentBuilders.StartScreen.Authenticate -> {
+                    AutofillActivity.StartScreen.Authenticate -> {
                         AutofillAuthScreen()
                     }
 
-                    IntentBuilders.StartScreen.PickLogin -> {
+                    AutofillActivity.StartScreen.PickLogin -> {
                         uiState.showLock?.let { showLock ->
                             if (showLock) {
                                 AnimatedFadeVisibility(showLock) {
@@ -85,7 +84,7 @@ internal fun AutofillContainer(
                         }
                     }
 
-                    IntentBuilders.StartScreen.SaveLogin -> {
+                    AutofillActivity.StartScreen.SaveLogin -> {
                         uiState.showLock?.let { showLock ->
                             if (showLock) {
                                 AnimatedFadeVisibility(showLock) {

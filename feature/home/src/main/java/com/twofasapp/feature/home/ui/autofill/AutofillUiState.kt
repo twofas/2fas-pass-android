@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui
+package com.twofasapp.feature.home.ui.autofill
 
 import com.twofasapp.core.common.domain.AuthStatus
 import com.twofasapp.core.common.domain.SelectedTheme

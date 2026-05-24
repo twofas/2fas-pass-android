@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.save
+package com.twofasapp.feature.home.ui.autofill.save
 
 import com.twofasapp.core.common.domain.items.Item
 

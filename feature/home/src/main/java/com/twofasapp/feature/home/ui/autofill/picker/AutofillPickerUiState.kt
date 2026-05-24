@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.picker
+package com.twofasapp.feature.home.ui.autofill.picker
 
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.filterBySearchQuery

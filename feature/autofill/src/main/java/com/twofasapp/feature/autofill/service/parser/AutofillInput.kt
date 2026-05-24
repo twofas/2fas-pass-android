@@ -14,7 +14,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-internal sealed interface AutofillInput : Parcelable {
+sealed interface AutofillInput : Parcelable {
     val id: AutofillId
     val matchConfidence: MatchConfidence
 

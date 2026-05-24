@@ -12,7 +12,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-internal data class SaveLoginData(
+data class SaveLoginData(
     val uri: String?,
     val username: String?,
     val password: String?,

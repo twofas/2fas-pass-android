@@ -12,7 +12,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-internal data class NodeStructure(
+data class NodeStructure(
     val packageName: String?,
     val webDomain: String?,
     val inputs: List<AutofillInput>,

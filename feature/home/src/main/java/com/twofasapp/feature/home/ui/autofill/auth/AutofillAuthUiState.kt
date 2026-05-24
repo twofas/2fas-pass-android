@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.auth
+package com.twofasapp.feature.home.ui.autofill.auth
 
 import com.twofasapp.feature.autofill.service.domain.AutofillLogin
 

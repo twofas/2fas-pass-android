@@ -6,7 +6,7 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.feature.autofill.ui.picker
+package com.twofasapp.feature.home.ui.autofill.picker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,9 +48,9 @@ import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders.EXTRA_NODE_STRUCTURE
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders.replyWithSuccess
 import com.twofasapp.feature.autofill.service.parser.NodeStructure
+import com.twofasapp.feature.home.ui.autofill.AutofillActivity.Companion.EXTRA_NODE_STRUCTURE
+import com.twofasapp.feature.home.ui.autofill.replyWithAutofillSuccess
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -79,12 +79,12 @@ internal fun AutofillPickerScreen(
         onSearchFocusChange = { viewModel.focusSearch(it) },
         onFillAndRememberClick = {
             viewModel.fillAndRemember(it) { autofillLogin ->
-                activity.replyWithSuccess(autofillLogin)
+                activity.replyWithAutofillSuccess(autofillLogin)
             }
         },
         onFillClick = {
             viewModel.fill(it) { autofillLogin ->
-                activity.replyWithSuccess(autofillLogin)
+                activity.replyWithAutofillSuccess(autofillLogin)
             }
         },
     )
