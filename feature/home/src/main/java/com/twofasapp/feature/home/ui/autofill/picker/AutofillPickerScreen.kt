@@ -11,12 +11,9 @@ package com.twofasapp.feature.home.ui.autofill.picker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
@@ -45,6 +42,7 @@ import com.twofasapp.core.design.anim.AnimatedFadeVisibility
 import com.twofasapp.core.design.feature.items.LoginItemPreview
 import com.twofasapp.core.design.feature.settings.OptionHeader
 import com.twofasapp.core.design.feature.settings.OptionHeaderContentPaddingFirst
+import com.twofasapp.core.design.foundation.lazy.isScrollingUp
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.lazy.stickyListItem
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
@@ -144,7 +142,7 @@ private fun Content(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MdtTheme.color.background)
-                .padding(top = padding.calculateTopPadding()),
+                .padding(padding)
         ) {
             AnimatedFadeVisibility(visible = screenState.loading) {
                 ScreenLoading(
@@ -174,7 +172,7 @@ private fun Content(
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 4.dp),
+                    contentPadding = PaddingValues(top = 4.dp, bottom = 72.dp),
                 ) {
                     stickyListItem(AutofillPickerListItem.SearchBar) {
                         AutofillSearchbar(
@@ -245,9 +243,8 @@ private fun Content(
             HomeFab(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .windowInsetsPadding(WindowInsets.navigationBars)
                     .padding(ScreenPadding),
-                visible = screenState.loading.not(),
+                visible = screenState.loading.not() && listState.isScrollingUp(),
                 onClick = onAddClick,
             )
         }
