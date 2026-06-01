@@ -22,9 +22,9 @@ internal sealed interface ShareItemContent {
 
         @Serializable
         data class Uri(
-            @SerialName("uri")
+            @SerialName("text")
             val uri: String,
-            @SerialName("match")
+            @SerialName("matcher")
             val match: String?,
         )
     }
