@@ -52,7 +52,11 @@ internal fun EnvironmentSection(
         ) {
             OptionEntry(
                 title = "Production",
-                subtitle = ApiConfig.ProductionApiUrl,
+                subtitle = buildString {
+                    appendLine(ApiConfig.ProductionApiUrl)
+                    appendLine(ApiConfig.ProductionShareApiUrl)
+                    appendLine(ApiConfig.ProductionWssUrl)
+                },
                 onClick = { onSelectEnvironment(ApiEnvironment.Production) },
                 content = {
                     RadioButton(
@@ -63,8 +67,12 @@ internal fun EnvironmentSection(
             )
 
             OptionEntry(
-                title = "Dev",
-                subtitle = ApiConfig.DevApiUrl,
+                title = "Development",
+                subtitle = buildString {
+                    appendLine(ApiConfig.DevApiUrl)
+                    appendLine(ApiConfig.DevShareApiUrl)
+                    appendLine(ApiConfig.DevWssUrl)
+                },
                 onClick = { onSelectEnvironment(ApiEnvironment.Dev) },
                 content = {
                     RadioButton(

@@ -43,6 +43,10 @@ internal class ApiConfigImpl(
         }
     }
 
-    override val shareApiUrl: String
-        get() = ApiConfig.ShareApiUrl
+    override val shareApiUrl: String by lazy {
+        when (environment) {
+            ApiEnvironment.Production -> ApiConfig.ProductionShareApiUrl
+            ApiEnvironment.Dev -> ApiConfig.DevShareApiUrl
+        }
+    }
 }
