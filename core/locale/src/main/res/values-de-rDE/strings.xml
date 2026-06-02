@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: de-DE, German (Germany)
  Exported by: rafakob
- Exported at: Mon, 01 Jun 2026 11:13:47 -0700
+ Exported at: Tue, 02 Jun 2026 13:48:03 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -224,7 +224,7 @@
     <string name="webdav_connect">Verbindet</string>
     <string name="push_browser_request_title">2FAS Pass Anfrage</string>
     <string name="push_browser_request_message">Neue Anfrage von %s</string>
-    <string name="home_title">EInträge</string>
+    <string name="home_title">Einträge</string>
     <string name="home_empty_title">Keine Einträge vorhanden</string>
     <string name="home_empty_import_cta">Starte mit dem Einrichten</string>
     <string name="about_tagline">Über 2FAS Pass</string>
@@ -637,7 +637,7 @@
     <string name="manage_subscription_items_title">Einträge</string>
     <string name="manage_subscription_browsers_title">Verbundene Browser</string>
     <string name="manage_subscription_price_prefix">Jahresabonnement:</string>
-    <string name="manage_subscription_renew_date_prefix">Dein Abonnent wird automatisch verlängert an dem</string>
+    <string name="manage_subscription_renew_date_prefix">Dein Abonnent wird automatisch verlängert an dem\u0020</string>
     <string name="manage_subscription_apple_info">Bezahlt über Apple.</string>
     <string name="manage_subscription_end_date_prefix">Dein Abonnent endet an dem</string>
     <string name="manage_subscription_user_identifier_title">Identifikator</string>
@@ -1142,41 +1142,41 @@
     <string name="logs_share_title">Logs teilen</string>
     <string name="settings_entry_default_uri_match_rule">Standardregel für die URI</string>
     <string name="settings_entry_default_uri_match_rule_description">Vorausgewählte Zuordnungsregel beim Hinzufügen einer neuen URI zu einem Login</string>
-    <string name="backup_configs_add_cta">Add backup method</string>
-    <string name="backup_configs_allow_untrusted_certificates">Allow Untrusted Certificates</string>
-    <string name="backup_configs_cancel_sync_cta">Cancel sync</string>
-    <string name="backup_configs_empty_description">Add a backup method to start syncing your vault.</string>
-    <string name="backup_configs_last_synced">Synced %s</string>
-    <string name="backup_configs_never_synced">Not synced yet</string>
-    <string name="backup_configs_provider_icloud_description">Sync with your iCloud account.</string>
+    <string name="backup_configs_add_cta">Sicherungsmethode hinzufügen</string>
+    <string name="backup_configs_allow_untrusted_certificates">Nicht vertrauenswürdige Zertifikate zulassen</string>
+    <string name="backup_configs_cancel_sync_cta">Synchronisierung abbrechen</string>
+    <string name="backup_configs_empty_description">Füge eine Sicherungsmethode hinzu, um die Synchronisierung deines Tresors zu starten.</string>
+    <string name="backup_configs_last_synced">%s synchronisiert</string>
+    <string name="backup_configs_never_synced">Noch nicht synchronisiert</string>
+    <string name="backup_configs_provider_icloud_description">Mit deinem iCloud-Konto synchronisieren.</string>
     <string name="backup_configs_provider_icloud_title">iCloud</string>
-    <string name="backup_configs_provider_picker_subtitle">Choose where 2FAS Pass will back up your encrypted vault.</string>
-    <string name="backup_configs_provider_picker_title">Select backup method</string>
-    <string name="backup_configs_provider_s3_description">Use any S3-compatible storage.</string>
+    <string name="backup_configs_provider_picker_subtitle">Wähle aus, wo 2FAS Pass deinen verschlüsselten Tresor sichern soll.</string>
+    <string name="backup_configs_provider_picker_title">Sicherungsmethode auswählen</string>
+    <string name="backup_configs_provider_s3_description">Verwende einen beliebigen S3-kompatiblen Speicher.</string>
     <string name="backup_configs_provider_s3_title">S3</string>
-    <string name="backup_configs_provider_webdav_description">Connect with your WebDAV server.</string>
+    <string name="backup_configs_provider_webdav_description">Stelle eine Verbindung zu deinem WebDAV-Server her.</string>
     <string name="backup_configs_provider_webdav_title">WebDAV</string>
-    <string name="backup_configs_remove_confirm_body">This will disable automatic sync of your Vault. Do you wish to continue?</string>
-    <string name="backup_configs_remove_confirm_title">Delete %s sync?</string>
-    <string name="backup_configs_security_header">Security</string>
-    <string name="backup_configs_sync_all_now_cta">Sync all now</string>
-    <string name="backup_configs_sync_now_cta">Sync now</string>
-    <string name="backup_configs_unsaved_changes_dialog_description">Do you want to discard your changes?</string>
-    <string name="backup_configs_unsaved_changes_dialog_title">Unsaved changes</string>
+    <string name="backup_configs_remove_confirm_body">Dadurch wird die automatische Synchronisierung deines Tresors deaktiviert. Möchtest du fortfahren?</string>
+    <string name="backup_configs_remove_confirm_title">%s Synchronisierungen löschen?</string>
+    <string name="backup_configs_security_header">Sicherheit</string>
+    <string name="backup_configs_sync_all_now_cta">Alles synchronisieren</string>
+    <string name="backup_configs_sync_now_cta">Synchronisieren</string>
+    <string name="backup_configs_unsaved_changes_dialog_description">Möchtest du deine Änderungen verwerfen?</string>
+    <string name="backup_configs_unsaved_changes_dialog_title">Nicht gespeicherte Änderungen</string>
     <string name="restore_vault_source_option_s3">S3</string>
-    <string name="restore_vault_source_option_s3_description">Recover your Vault from an S3 or S3-compatible storage.</string>
-    <string name="s3_access_key_id">Access Key ID</string>
+    <string name="restore_vault_source_option_s3_description">Stelle deinen Tresor aus einem S3- oder S3-kompatiblen Speicher wieder her.</string>
+    <string name="s3_access_key_id">Zugriffsschlüssel-ID</string>
     <string name="s3_bucket">Bucket</string>
-    <string name="s3_connect">Connect</string>
-    <string name="s3_credentials">Credentials</string>
-    <string name="s3_csv_load_failed">Could not read access keys from this file.</string>
-    <string name="s3_load_from_csv_cta">Load from CSV</string>
+    <string name="s3_connect">Verbinden</string>
+    <string name="s3_credentials">Anmeldedaten</string>
+    <string name="s3_csv_load_failed">Die Zugriffsschlüssel konnten aus dieser Datei nicht gelesen werden.</string>
+    <string name="s3_load_from_csv_cta">Aus CSV laden</string>
     <string name="s3_region">Region</string>
-    <string name="s3_secret_access_key">Secret Access Key</string>
-    <string name="sync_error_server">The server returned an error. Please try again later.</string>
-    <string name="sync_error_invalid_response">The server returned an unexpected response.</string>
-    <string name="sync_error_network">Couldn\'t reach the server. Check your network connection.</string>
-    <string name="sync_error_not_found">This location wasn\'t found.</string>
-    <string name="common_discard_changes">Discard changes</string>
-    <string name="s3_endpoint">Endpoint</string>
+    <string name="s3_secret_access_key">Geheimer Zugangsschlüssel</string>
+    <string name="sync_error_server">Der Server hat einen Fehler zurückgegeben. Bitte versuche es später erneut.</string>
+    <string name="sync_error_invalid_response">Der Server hat eine unerwartete Antwort zurückgegeben.</string>
+    <string name="sync_error_network">Der Server konnte nicht erreicht werden. Überprüfe deine Netzwerkverbindung.</string>
+    <string name="sync_error_not_found">Dieser Speicherort wurde nicht gefunden.</string>
+    <string name="common_discard_changes">Änderungen verwerfen</string>
+    <string name="s3_endpoint">Endpunkt</string>
 </resources>

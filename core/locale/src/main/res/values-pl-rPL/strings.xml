@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Mon, 01 Jun 2026 11:13:47 -0700
+ Exported at: Tue, 02 Jun 2026 13:48:03 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1182,5 +1182,5 @@
     <string name="sync_error_network">Nie można połączyć się z serwerem. Sprawdź połączenie z Internetem.</string>
     <string name="sync_error_not_found">Nie znaleziono lokalizacji.</string>
     <string name="common_discard_changes">Odrzuć zmiany</string>
-    <string name="s3_endpoint">Endpoint</string>
+    <string name="s3_endpoint">Urządzenie końcowe</string>
 </resources>
