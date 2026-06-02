@@ -142,7 +142,7 @@ private fun Content(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MdtTheme.color.background)
-                .padding(padding)
+                .padding(padding),
         ) {
             AnimatedFadeVisibility(visible = screenState.loading) {
                 ScreenLoading(
