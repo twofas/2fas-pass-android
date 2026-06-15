@@ -30,6 +30,8 @@ dependencies {
     implementation(project(":data:purchases"))
     implementation(project(":data:settings"))
 
+    implementation(project(":feature:autofill"))
+
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.viewModel)

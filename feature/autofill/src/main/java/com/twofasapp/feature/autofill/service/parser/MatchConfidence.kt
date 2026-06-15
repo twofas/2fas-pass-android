@@ -12,7 +12,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-internal sealed class MatchConfidence(
+sealed class MatchConfidence(
     val rankValue: Int,
 ) : Parcelable {
     data class Exact(private val rank: Int) : MatchConfidence(rank)

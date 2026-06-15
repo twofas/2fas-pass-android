@@ -12,23 +12,26 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.feature.decryptionkit.generator.DecryptionKit
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class CreateDecryptionKitViewModel(
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
 ) : ViewModel() {
     val uiState = MutableStateFlow(CreateDecryptionKitUiState())
 
     init {
         launchScoped {
+            val seed = startupProcessor.getSeed()
+            val masterKey = startupProcessor.getMasterKey()
+
             uiState.update {
                 it.copy(
                     decryptionKit = DecryptionKit(
-                        words = startupConfig.seed!!.words,
-                        entropy = startupConfig.seed!!.entropyHex.decodeHex(),
-                        masterKey = startupConfig.masterKey!!.hashHex.decodeHex(),
+                        words = seed.words,
+                        entropy = seed.entropyHex.decodeHex(),
+                        masterKey = masterKey.hashHex.decodeHex(),
                     ),
                 )
             }

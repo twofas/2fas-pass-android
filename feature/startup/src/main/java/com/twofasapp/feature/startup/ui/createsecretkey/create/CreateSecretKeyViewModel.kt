@@ -11,13 +11,13 @@ package com.twofasapp.feature.startup.ui.createsecretkey.create
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.data.main.SecurityRepository
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class CreateSecretKeyViewModel(
     private val securityRepository: SecurityRepository,
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(CreateSecretKeyUiState())
@@ -26,7 +26,7 @@ internal class CreateSecretKeyViewModel(
         uiState.update { it.copy(loading = true) }
 
         launchScoped {
-            startupConfig.seed = securityRepository.generateSeed()
+            startupProcessor.setSeed(securityRepository.generateSeed())
         }.invokeOnCompletion {
             uiState.update { it.copy(loading = false) }
             onComplete()

@@ -18,7 +18,8 @@ import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
-import com.twofasapp.feature.autofill.service.builders.IntentBuilders
+import com.twofasapp.feature.autofill.service.builders.AutofillActivityIntents
+import com.twofasapp.feature.autofill.service.builders.SkippedPackages
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import com.twofasapp.feature.autofill.service.domain.SaveRequestSpec
 import com.twofasapp.feature.autofill.service.parser.AutofillInput
@@ -26,6 +27,7 @@ import com.twofasapp.feature.autofill.service.parser.AutofillInput
 internal class SaveRequestHandler(
     private val itemsRepository: ItemsRepository,
     private val purchasesRepository: PurchasesRepository,
+    private val autofillActivityIntents: AutofillActivityIntents,
 ) {
     suspend fun handleRequest(
         context: Context,
@@ -36,27 +38,38 @@ internal class SaveRequestHandler(
         Flog.tag(AutofillTag).d("\uD83D\uDCBE $saveRequestSpec")
 
         if (saveRequestSpec == null) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: No payload")
             saveCallback.onFailure("Save request has no payload")
             return
         }
         if (saveRequestSpec.inputs.isEmpty()) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: No inputs found")
             saveCallback.onFailure("No inputs found")
             return
         }
 
         if (saveRequestSpec.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Skipped own package")
             saveCallback.onFailure("Package name is the same as autofill service package name!")
+            return
+        }
+
+        if (SkippedPackages.isSkipped(saveRequestSpec.packageName)) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Skipped package ${saveRequestSpec.packageName}")
+            saveCallback.onFailure("Package name is in the skipped packages list!")
             return
         }
 
         val sessionContext = saveRequest.fillContexts.firstOrNull { it.requestId == saveRequestSpec.autofillSessionId }
 
         if (sessionContext == null) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Session context not found")
             saveCallback.onFailure("Session fill context not found")
             return
         }
 
         if (itemsRepository.getItemsCount() >= purchasesRepository.getSubscriptionPlan().entitlements.itemsLimit) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Logins limit reached")
             saveCallback.onFailure("Logins limit reached")
             return
         }
@@ -76,6 +89,7 @@ internal class SaveRequestHandler(
                 ?.let { windowNodes.findNodeTextValueById(it.id) }
 
             if (username == null && password == null) {
+                Flog.persist(tag = "Autofill", message = "SaveRequest: Username and password not found")
                 saveCallback.onFailure("Username and password not found")
                 return
             }
@@ -89,14 +103,16 @@ internal class SaveRequestHandler(
             Flog.tag(AutofillTag).d("\uD83D\uDCBE $saveLoginData")
 
             context.startActivity(
-                IntentBuilders.createSaveLoginIntent(
+                autofillActivityIntents.createSaveLoginIntent(
                     context = context,
                     saveLoginData = saveLoginData,
                 ),
             )
 
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Success uri=${saveLoginData.uri}")
             saveCallback.onSuccess()
         } catch (e: Exception) {
+            Flog.persist(tag = "Autofill", message = "SaveRequest: Error ${e.message}")
             saveCallback.onFailure(e.message)
         }
     }

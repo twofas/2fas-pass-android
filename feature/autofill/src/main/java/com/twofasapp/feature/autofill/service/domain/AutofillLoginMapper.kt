@@ -61,7 +61,7 @@ internal fun Item.asSecretAutofillLogin(): AutofillLogin? {
     }
 }
 
-internal fun Item.asAutofillLogin(): AutofillLogin? {
+fun Item.asAutofillLogin(): AutofillLogin? {
     return content.let { content ->
         when (content) {
             is ItemContent.Unknown -> null

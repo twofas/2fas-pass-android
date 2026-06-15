@@ -12,13 +12,13 @@ import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.auth.AuthStatusTracker
 import com.twofasapp.data.settings.SessionRepository
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class VaultSetupCompletedViewModel(
     private val sessionRepository: SessionRepository,
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
     private val authStatusTracker: AuthStatusTracker,
 ) : ViewModel() {
 
@@ -30,7 +30,7 @@ internal class VaultSetupCompletedViewModel(
         launchScoped {
             uiState.update { it.copy(loading = false) }
 
-            startupConfig.finishStartup()
+            startupProcessor.finish()
             authStatusTracker.authenticate()
             sessionRepository.setQuickSetupPrompted(false)
             sessionRepository.setStartupCompleted(true)

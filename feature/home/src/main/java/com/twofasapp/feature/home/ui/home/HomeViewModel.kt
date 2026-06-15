@@ -20,6 +20,7 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.toggle
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.design.state.ScreenState
 import com.twofasapp.core.design.state.empty
 import com.twofasapp.core.design.state.loading
@@ -43,6 +44,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -180,6 +182,13 @@ internal class HomeViewModel(
                     publishEvent(HomeUiEvent.OpenQuickSetup)
                 }
             }
+        }
+
+        launchScoped {
+            val vault = vaultsRepository.getVault()
+            val itemsCount = itemsRepository.observeItems(vaultId = vault.id).first().size
+            val trashCount = trashRepository.observeDeleted().first().size
+            Flog.persist("Items", "Load: items: $itemsCount, trash: $trashCount")
         }
     }
 

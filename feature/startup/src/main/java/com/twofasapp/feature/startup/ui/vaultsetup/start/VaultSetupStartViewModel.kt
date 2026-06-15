@@ -10,16 +10,16 @@ package com.twofasapp.feature.startup.ui.vaultsetup.start
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.feature.startup.ui.StartupConfig
+import com.twofasapp.feature.startup.ui.StartupProcessor
 
 internal class VaultSetupStartViewModel(
-    private val startupConfig: StartupConfig,
+    private val startupProcessor: StartupProcessor,
 ) : ViewModel() {
 
     fun clearStartupData() {
         launchScoped {
-            startupConfig.clear()
-            startupConfig.clearStorage()
+            startupProcessor.clearStartupData()
+            startupProcessor.clearVaultsData()
         }
     }
 }

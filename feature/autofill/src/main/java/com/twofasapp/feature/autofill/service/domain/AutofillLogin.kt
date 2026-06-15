@@ -12,7 +12,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-internal data class AutofillLogin(
+data class AutofillLogin(
     val encrypted: Boolean,
     val matchRank: Int?,
     val id: String,

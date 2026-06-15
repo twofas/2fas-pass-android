@@ -10,10 +10,7 @@ package com.twofasapp.feature.itemform.forms.common
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.locale.MdtLocale
@@ -39,7 +36,6 @@ internal fun LazyListScope.noteItem(
                 null
             },
             isError = notes.orEmpty().length > 2048,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
         )
     }
 }

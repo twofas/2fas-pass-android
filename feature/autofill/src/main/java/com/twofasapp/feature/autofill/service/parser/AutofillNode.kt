@@ -14,7 +14,7 @@ import android.view.View
 import android.view.autofill.AutofillId
 import android.widget.EditText
 
-internal data class AutofillNode(
+data class AutofillNode(
     val id: AutofillId,
     val autofillHints: Set<String>,
     val keywords: Set<String>,

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -53,6 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 internal fun RestoreVaultScreen(
     viewModel: RestoreVaultViewModel = koinViewModel(),
     openRestoreWebDavConfig: () -> Unit = {},
+    openRestoreS3Config: () -> Unit = {},
     openRestoreCloudFiles: () -> Unit = {},
     openDecryptVault: () -> Unit = {},
 ) {
@@ -74,6 +75,10 @@ internal fun RestoreVaultScreen(
         onWebDavClick = {
             viewModel.updateRestoreSource(RestoreSource.WebDav)
             openRestoreWebDavConfig()
+        },
+        onS3Click = {
+            viewModel.updateRestoreSource(RestoreSource.S3)
+            openRestoreS3Config()
         },
         onLocalFileClick = {
             viewModel.updateRestoreSource(RestoreSource.LocalFile)
@@ -99,6 +104,7 @@ internal fun Content(
     uiState: RestoreVaultUiState,
     onGoogleDriveClick: () -> Unit = {},
     onWebDavClick: () -> Unit = {},
+    onS3Click: () -> Unit = {},
     onLocalFileClick: () -> Unit = {},
 ) {
     Scaffold(
@@ -132,6 +138,7 @@ internal fun Content(
                             when (item) {
                                 RestoreSource.GoogleDrive -> onGoogleDriveClick()
                                 RestoreSource.WebDav -> onWebDavClick()
+                                RestoreSource.S3 -> onS3Click()
                                 RestoreSource.LocalFile -> onLocalFileClick()
                             }
                         }
@@ -156,7 +163,16 @@ internal fun Content(
 
                             RestoreSource.WebDav -> {
                                 Icon(
-                                    painter = MdtIcons.Cloud,
+                                    painter = MdtIcons.Lan,
+                                    contentDescription = null,
+                                    tint = MdtTheme.color.primary,
+                                    modifier = Modifier.size(28.dp),
+                                )
+                            }
+
+                            RestoreSource.S3 -> {
+                                Icon(
+                                    painter = MdtIcons.Bucket,
                                     contentDescription = null,
                                     tint = MdtTheme.color.primary,
                                     modifier = Modifier.size(28.dp),
@@ -181,6 +197,7 @@ internal fun Content(
                             text = when (item) {
                                 RestoreSource.GoogleDrive -> MdtLocale.strings.restoreVaultSourceOptionGoogleDrive
                                 RestoreSource.WebDav -> MdtLocale.strings.restoreVaultSourceOptionWebdav
+                                RestoreSource.S3 -> MdtLocale.strings.restoreVaultSourceOptionS3
                                 RestoreSource.LocalFile -> MdtLocale.strings.restoreVaultSourceOptionFile
                             },
                             style = MdtTheme.typo.titleMedium,
@@ -190,6 +207,7 @@ internal fun Content(
                             text = when (item) {
                                 RestoreSource.GoogleDrive -> MdtLocale.strings.restoreVaultSourceOptionGoogleDriveDescription
                                 RestoreSource.WebDav -> MdtLocale.strings.restoreVaultSourceOptionWebdavDescription
+                                RestoreSource.S3 -> MdtLocale.strings.restoreVaultSourceOptionS3Description
                                 RestoreSource.LocalFile -> MdtLocale.strings.restoreVaultSourceOptionFileDescription
                             },
                             style = MdtTheme.typo.bodyMedium,

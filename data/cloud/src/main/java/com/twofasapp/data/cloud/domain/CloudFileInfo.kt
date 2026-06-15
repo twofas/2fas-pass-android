@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -31,6 +31,16 @@ sealed interface CloudFileInfo {
     ) : CloudFileInfo
 
     data class WebDav(
+        override val schemaVersion: Int,
+        override val deviceId: String,
+        override val deviceName: String,
+        override val seedHashHex: String,
+        override val vaultId: String,
+        override val vaultCreatedAt: Instant,
+        override val vaultUpdatedAt: Instant,
+    ) : CloudFileInfo
+
+    data class S3(
         override val schemaVersion: Int,
         override val deviceId: String,
         override val deviceName: String,

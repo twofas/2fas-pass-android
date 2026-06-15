@@ -8,21 +8,24 @@
 
 package com.twofasapp.buildlogic.extension
 
-import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.twofasapp.buildlogic.version.SdkConfig
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.assign
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.applyKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    applicationExtension: ApplicationExtension,
 ) {
-    commonExtension.apply {
+    applicationExtension.apply {
         compileSdk = SdkConfig.compileSdk
 
         defaultConfig {
@@ -37,9 +40,6 @@ internal fun Project.applyKotlinAndroid(
 
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
-
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
         }
 
         buildFeatures {
@@ -47,20 +47,20 @@ internal fun Project.applyKotlinAndroid(
         }
 
         packaging {
-            resources {
-                excludes += "META-INF/DEPENDENCIES"
-                excludes += "META-INF/LICENSE"
-                excludes += "META-INF/LICENSE.md"
-                excludes += "META-INF/LICENSE-notice.md"
-                excludes += "META-INF/LICENSE.txt"
-                excludes += "META-INF/license.txt"
-                excludes += "META-INF/NOTICE"
-                excludes += "META-INF/NOTICE.txt"
-                excludes += "META-INF/notice.txt"
-                excludes += "META-INF/ASL2.0"
-                excludes += "META-INF/INDEX.LIST"
-                excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            }
+            resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            resources.excludes.add("/META-INF/LICENSE.md")
+            resources.excludes.add("/META-INF/LICENSE-notice.md")
+            resources.excludes.add("META-INF/DEPENDENCIES")
+            resources.excludes.add("META-INF/LICENSE")
+            resources.excludes.add("META-INF/LICENSE.md")
+            resources.excludes.add("META-INF/LICENSE-notice.md")
+            resources.excludes.add("META-INF/LICENSE.txt")
+            resources.excludes.add("META-INF/license.txt")
+            resources.excludes.add("META-INF/NOTICE")
+            resources.excludes.add("META-INF/NOTICE.txt")
+            resources.excludes.add("META-INF/notice.txt")
+            resources.excludes.add("META-INF/ASL2.0")
+            resources.excludes.add("META-INF/INDEX.LIST")
         }
 
         testOptions {
@@ -68,24 +68,83 @@ internal fun Project.applyKotlinAndroid(
                 isIncludeAndroidResources = true
             }
         }
+    }
 
-        tasks.withType<Test>().configureEach {
-            failOnNoDiscoveredTests = false
-        }
+    configureKotlin()
+    configureJavaToolchain()
 
-        configureKotlin()
+    tasks.withType<Test>().configureEach {
+        failOnNoDiscoveredTests = false
     }
 
     dependencies {
         add("coreLibraryDesugaring", libs.findLibrary("desugar").get())
+        add("implementation", libs.findLibrary("timber").get())
     }
 }
 
+internal fun Project.applyKotlinAndroid(
+    libraryExtension: LibraryExtension,
+) {
+    libraryExtension.apply {
+        compileSdk = SdkConfig.compileSdk
+
+        defaultConfig {
+            minSdk = SdkConfig.minSdk
+
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            testInstrumentationRunnerArguments += mapOf(
+                "clearPackageData" to "true",
+                "disableAnalytics" to "true"
+            )
+        }
+
+        compileOptions {
+            isCoreLibraryDesugaringEnabled = true
+        }
+
+        buildFeatures {
+            buildConfig = true
+        }
+
+        packaging {
+            resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            resources.excludes.add("/META-INF/LICENSE.md")
+            resources.excludes.add("/META-INF/LICENSE-notice.md")
+        }
+
+        testOptions {
+            unitTests {
+                isIncludeAndroidResources = true
+            }
+        }
+    }
+
+    configureKotlin()
+    configureJavaToolchain()
+
+    tasks.withType<Test>().configureEach {
+        failOnNoDiscoveredTests = false
+    }
+
+    dependencies {
+        add("coreLibraryDesugaring", libs.findLibrary("desugar").get())
+        add("implementation", libs.findLibrary("timber").get())
+    }
+}
+
+private fun Project.configureJavaToolchain() {
+    configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
+    }
+}
 
 private fun Project.configureKotlin() {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_17
+            jvmTarget = JvmTarget.JVM_21
 
             freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",

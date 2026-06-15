@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -22,6 +22,7 @@ import com.twofasapp.core.android.ktx.navigateTopLevel
 import com.twofasapp.core.android.navigation.NavAnimation
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.feature.cloudsync.navigation.GoogleDriveSyncRoute
+import com.twofasapp.feature.cloudsync.navigation.S3SyncRoute
 import com.twofasapp.feature.cloudsync.navigation.WebDavSyncRoute
 import com.twofasapp.feature.connect.navigation.ConnectRoute
 import com.twofasapp.feature.developer.navigation.DeveloperRoute
@@ -248,6 +249,18 @@ internal fun MainNavHost(
 
         composable<Screen.WebDavSync> {
             WebDavSyncRoute(
+                goBackToSync = {
+                    if (navController.popBackStack<Screen.CloudSync>(false).not()) {
+                        navController.popBackStack()
+                        navController.navigate(Screen.CloudSync)
+                    }
+                },
+                goBackToSettings = { navController.popBackStack<Screen.Settings>(false) },
+            )
+        }
+
+        composable<Screen.S3Sync> {
+            S3SyncRoute(
                 goBackToSync = {
                     if (navController.popBackStack<Screen.CloudSync>(false).not()) {
                         navController.popBackStack()

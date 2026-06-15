@@ -11,6 +11,7 @@ package com.twofasapp.feature.main.ui.main
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.logger.Flog
 
 internal class MainNavListener : NavController.OnDestinationChangedListener {
@@ -33,5 +34,13 @@ internal class MainNavListener : NavController.OnDestinationChangedListener {
         }
 
         Flog.tag("NavController").d("route=${destination.route} $argumentsLog")
+
+        Flog.persist(
+            tag = "Navigate",
+            message = destination.route
+                ?.removePrefix("${Screen::class.java.name}.")
+                ?.replace("\\?.*".toRegex(), "")
+                .orEmpty(),
+        )
     }
 }

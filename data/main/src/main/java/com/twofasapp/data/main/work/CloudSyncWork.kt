@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -20,6 +20,7 @@ import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.common.time.TimeProvider
+import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.domain.VaultMergeResult
 import com.twofasapp.data.cloud.domain.VaultSyncRequest
@@ -85,9 +86,17 @@ internal class CloudSyncWork(
         try {
             val forceReplace = inputData.getBoolean(ArgForceReplace, false)
             val cloudConfig = cloudRepository.getSyncInfo().config
+            val cloudType = when (cloudConfig) {
+                is CloudConfig.GoogleDrive -> "GoogleDrive"
+                is CloudConfig.WebDav -> "WebDav"
+                is CloudConfig.S3 -> "S3"
+                null -> "None"
+            }
+            Flog.persist(tag = "CloudSync", message = "Started, type=$cloudType, forceReplace=$forceReplace")
 
             // Check if local cloud config is saved
             if (cloudConfig == null) {
+                Flog.persist(tag = "CloudSync", message = "No local cloud config")
                 publishError(CloudError.LocalAccountDoesNotExist())
                 return Result.failure()
             }
@@ -115,6 +124,7 @@ internal class CloudSyncWork(
                 ),
                 mergeVaultContent = { cloudBackupContent ->
                     if (cloudBackupContent == null || forceReplace) {
+                        Flog.persist(tag = "CloudSync", message = "Pushing local backup (cloudEmpty=${cloudBackupContent == null}, forceReplace=$forceReplace)")
                         // Push local backup
                         val localBackup = backupRepository.createVaultBackup(vaultId = vault.id, includeDeleted = true, decryptSecretFields = false)
                         val localBackupEncrypted = backupRepository.encryptVaultBackup(localBackup)
@@ -125,6 +135,7 @@ internal class CloudSyncWork(
                             schemaVersion = localBackupEncrypted.schemaVersion,
                         )
                     } else {
+                        Flog.persist(tag = "CloudSync", message = "Merging local with cloud backup")
                         // Merge local backup with cloud backup
                         val cloudBackupEncrypted = runSafely { backupRepository.readVaultBackup(cloudBackupContent) }.getOrElse {
                             if (it is InvalidSchemaVersionException) {
@@ -141,6 +152,7 @@ internal class CloudSyncWork(
                         }
 
                         if (isEligible(cloudDeviceId = cloudBackupEncrypted.originDeviceId).not()) {
+                            Flog.persist(tag = "CloudSync", message = "Multi-device sync not available")
                             publishError(CloudError.MultiDeviceSyncNotAvailable())
                             return@sync VaultMergeResult.Failure(CloudError.MultiDeviceSyncNotAvailable())
                         }
@@ -152,6 +164,7 @@ internal class CloudSyncWork(
                             }
                         }.onFailure {
                             // When cloud backup is encrypted with different key -> throw an error
+                            Flog.persist(tag = "CloudSync", message = "Wrong backup password")
                             publishError(CloudError.WrongBackupPassword(it))
                             return@sync VaultMergeResult.Failure(CloudError.WrongBackupPassword(it))
                         }
@@ -171,6 +184,7 @@ internal class CloudSyncWork(
                             cloud = cloudBackup,
                         )
 
+                        Flog.persist(tag = "CloudSync", message = "Merge complete, applying changes")
                         itemsRepository.executeCloudMerge(cloudMerge.items)
                         tagsRepository.executeCloudMerge(cloudMerge.tags)
 
@@ -206,6 +220,7 @@ internal class CloudSyncWork(
     }
 
     private suspend fun publishSuccess() {
+        Flog.persist(tag = "CloudSync", message = "Success")
         cloudRepository.setSyncLastTime(timeProvider.currentTimeUtc())
         cloudRepository.setSyncStatus(CloudSyncStatus.Synced)
     }
@@ -213,6 +228,8 @@ internal class CloudSyncWork(
     private suspend fun publishError(
         type: CloudError,
     ) {
+        Flog.persist(tag = "CloudSync", message = "Error: ${type::class.simpleName}")
+        Flog.persist(tag = "CloudSync", throwable = type.cause)
         Flog.e(type.cause)
 
         CrashlyticsInstance.logException(type.cause)

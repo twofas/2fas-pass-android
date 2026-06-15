@@ -20,6 +20,7 @@ import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.ktx.encodeHex
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.SecurityRepository
@@ -119,6 +120,7 @@ internal class LockViewModel(
     }
 
     fun unlockWithPassword(password: String, onSuccess: (ByteArray) -> Unit) {
+        Flog.persist("Lock", "Unlock with password: started")
         uiState.update { it.copy(loading = true, passwordError = null) }
 
         launchScoped {
@@ -128,6 +130,7 @@ internal class LockViewModel(
                 masterKey
             }
                 .onSuccess { masterKey ->
+                    Flog.persist("Lock", "Unlock with password: success")
                     resetFailedAttempts()
 
                     val appUpdateResult = appUpdateExecutor.execute()
@@ -139,11 +142,14 @@ internal class LockViewModel(
                         }
 
                         is AppUpdateResult.Failed -> {
+                            Flog.persist("Lock", "App update failed: ${appUpdateResult.error.message}")
+                            Flog.persist("Lock", appUpdateResult.error)
                             uiState.update { it.copy(loading = false, appUpdateError = appUpdateResult.error) }
                         }
                     }
                 }
                 .onFailure {
+                    Flog.persist("Lock", "Unlock with password: invalid password")
                     incrementFailedAttempt()
                     uiState.update { it.copy(loading = false, passwordError = strings.lockScreenUnlockInvalidPassword) }
                 }
@@ -151,6 +157,7 @@ internal class LockViewModel(
     }
 
     fun unlockWithMasterKey(masterKey: ByteArray) {
+        Flog.persist("Lock", "Unlock with master key: started")
         uiState.update { it.copy(loading = true, passwordError = null) }
 
         launchScoped {
@@ -158,6 +165,7 @@ internal class LockViewModel(
                 vaultKeysRepository.generateAndSaveVaultKeys(masterKey.encodeHex())
             }
                 .onSuccess {
+                    Flog.persist("Lock", "Unlock with master key: success")
                     resetFailedAttempts()
 
                     val appUpdateResult = appUpdateExecutor.execute()
@@ -169,11 +177,15 @@ internal class LockViewModel(
                         }
 
                         is AppUpdateResult.Failed -> {
+                            Flog.persist("Lock", "App update failed: ${appUpdateResult.error.message}")
+                            Flog.persist("Lock", appUpdateResult.error)
                             uiState.update { it.copy(loading = false, appUpdateError = appUpdateResult.error) }
                         }
                     }
                 }
-                .onFailure {
+                .onFailure { e ->
+                    Flog.persist("Lock", "Unlock with master key: failed (${e.message})")
+                    Flog.persist("Lock", e)
                     incrementFailedAttempt()
                     uiState.update { it.copy(loading = false, passwordError = strings.lockScreenUnlockBiometricsError) }
                 }
@@ -181,6 +193,7 @@ internal class LockViewModel(
     }
 
     fun biometricsInvalidated() {
+        Flog.persist("Lock", "Biometrics invalidated")
         launchScoped {
             securityRepository.saveBiometricsEnabled(false)
             securityRepository.saveMasterKeyEncryptedWithBiometrics(null)
@@ -202,6 +215,10 @@ internal class LockViewModel(
             val newFailedAttempts = minOf(currentFailedAppUnlocks.failedAttempts + 1, maxAttempts)
 
             val newFailedAppUnlocks = if (newFailedAttempts >= maxAttempts) {
+                Flog.persist(
+                    "Lock",
+                    "Lockout reached: attempts=$newFailedAttempts/$maxAttempts, lockoutCount=${currentFailedAppUnlocks.lockoutCount + 1}",
+                )
                 onLocked()
 
                 currentFailedAppUnlocks.copy(
@@ -210,6 +227,7 @@ internal class LockViewModel(
                     lastFailedAttemptSinceBoot = timeProvider.systemElapsedTime(),
                 )
             } else {
+                Flog.persist("Lock", "Failed attempt: $newFailedAttempts/$maxAttempts")
                 currentFailedAppUnlocks.copy(
                     lockoutCount = 0,
                     failedAttempts = currentFailedAppUnlocks.failedAttempts + 1,
@@ -235,12 +253,14 @@ internal class LockViewModel(
     }
 
     fun finishWithSuccess() {
+        Flog.persist("Lock", "Finish: success")
         launchScoped {
             authStatusTracker.authenticate()
         }
     }
 
     fun finishWithBiometricsEnabled(encryptedMasterKey: EncryptedBytes) {
+        Flog.persist("Lock", "Finish: biometrics enabled")
         launchScoped {
             securityRepository.saveMasterKeyEncryptedWithBiometrics(encryptedMasterKey)
             securityRepository.saveBiometricsEnabled(true)

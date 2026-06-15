@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Mon, 06 Apr 2026 09:49:23 -0700
+ Exported at: Tue, 02 Jun 2026 13:48:03 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -367,9 +367,6 @@
     <string name="about_libraries_we_use">Acknowledgments</string>
     <string name="about_rate_us_app_store">Rate us on the App Store</string>
     <string name="about_send_logs_cta">Send logs</string>
-    <string name="logs_title">Logs</string>
-    <string name="logs_share_title">Share logs</string>
-    <string name="logs_empty">No logs available</string>
     <string name="about_version_ios__0025_0040">Version: **%s**</string>
     <string name="autofill_no_vault_message">Go to the app for Vault setup.</string>
     <string name="common_close">Close</string>
@@ -431,8 +428,6 @@
     <string name="login_view_action_uris_title">URLs</string>
     <string name="master_password_min_length__0025lld">Use at least %d characters</string>
     <string name="master_password_not_match">The passwords don\'t match</string>
-    <string name="onboarding_create_master_password_guide_description">This simple tutorial will help you prepare and memorize your Master Password.</string>
-    <string name="onboarding_create_master_password_guide_title">A Simple Guide</string>
     <string name="password_generator_characters">Characters</string>
     <string name="password_generator_copy_cta">Copy</string>
     <string name="password_generator_digits">Digits</string>
@@ -445,7 +440,7 @@
     <string name="set_new_password_confirm_body_part2_ios">If you use this Vault on other devices, Sync will be disabled, and you\'ll need to re-enable it using your new Master Password.</string>
     <string name="set_new_password_success_title">Master Password successfully changed</string>
     <string name="settings_autofill_open_system_settings_description">Configure AutoFill: Settings → General → AutoFill &amp; Passwords</string>
-    <string name="settings_cloud_sync_description">Securely sync your 2FAS Pass Vault with iCloud or WebDAV to protect your data in case this device gets lost or damaged.</string>
+    <string name="settings_cloud_sync_description">Securely sync your 2FAS Pass Vault to protect your data in case this device gets lost or damaged.</string>
     <string name="settings_cloud_sync_icloud_label">iCloud Sync</string>
     <string name="settings_cloud_sync_last_sync__0025_0040">Last successful synchronization: **%s**</string>
     <string name="settings_cloud_sync_status__0025_0040">Status: **%s**</string>
@@ -744,10 +739,6 @@
     <string name="master_password_define">Now, define a Master Password and remember it by heart.</string>
     <string name="master_password_create_new">Now, define a new Master Password and remember it by heart.</string>
     <string name="sync_status_error_password_changed">Master Password was changed. To access this Vault, use the Decryption Kit.</string>
-    <string name="onboarding_guide_1">Look around and select 3 objects (e.g.: Flower, Candle, Bookshelf).</string>
-    <string name="onboarding_guide_2">Think about short story that connects these 3 objects (for example: A Flower and a Candle lays on the Bookshelf.)</string>
-    <string name="onboarding_guide_3">Selected objects are the words in your password. The story helps you remember them. Now think about the separator between the words (e.g.: # or $).</string>
-    <string name="onboarding_guide_4">The strong, unique, and easy-to-remember password looks like this Object1 #Object2 #Object3 (e.g. Flower#Candle#Bookshelf)</string>
     <string name="recovery_error_nothing_to_import">Nothing to import. Backup file has no Items.</string>
     <string name="recovery_error_newer_version">The existing backup was created using a newer version. Update the app.</string>
     <string name="recovery_error_index_damaged">Index file is damaged.</string>
@@ -788,7 +779,7 @@
     <string name="vault_recovery_wrong_decryption_kit_another_decryption_kit_cta">Use another Decryption Kit</string>
     <string name="settings_entry_manage_tags">Manage Tags</string>
     <string name="settings_entry_manage_tags_description">Tags enable you to assign and filter your Items.</string>
-    <string name="tag_delete_cta">Remove permanently</string>
+    <string name="tag_delete_cta">Remove</string>
     <string name="tag_description">Items assigned: %s</string>
     <string name="tag_delete_confirm_title">Delete Tag</string>
     <string name="tag_delete_confirm_description">Are you sure you want to permanently delete \"%s\"? This action cannot be undone.</string>
@@ -1116,7 +1107,7 @@
     <string name="item_details_title">Item Details</string>
     <string name="share_link_item_title">2FAS Share</string>
     <string name="share_link_item_link_generated">Link generated</string>
-    <string name="share_link_item_expiration_time">Link expiration time</string>
+    <string name="share_link_item_expiration_time">Link expiration</string>
     <string name="share_link_item_one_time_access">One time access</string>
     <string name="share_link_item_one_time_access_description">Link will expire after one use</string>
     <string name="share_link_item_access_password">Set access password</string>
@@ -1146,4 +1137,46 @@
     <string name="share_link_item_remove_password">Remove password</string>
     <string name="share_link_import_incorrect_password">Incorrect password</string>
     <string name="share_link_import_error_description">We couldn\'t decrypt the share link. It may have expired or the password is incorrect.</string>
+    <string name="logs_title">Logs</string>
+    <string name="logs_empty">No logs available</string>
+    <string name="logs_share_title">Share logs</string>
+    <string name="settings_entry_default_uri_match_rule">Default URI match rule</string>
+    <string name="settings_entry_default_uri_match_rule_description">Pre-selected matching rule when adding a new URI to a Login.</string>
+    <string name="backup_configs_add_cta">Add backup method</string>
+    <string name="backup_configs_allow_untrusted_certificates">Allow Untrusted Certificates</string>
+    <string name="backup_configs_cancel_sync_cta">Cancel sync</string>
+    <string name="backup_configs_empty_description">Add a backup method to start syncing your vault.</string>
+    <string name="backup_configs_last_synced">Synced %s</string>
+    <string name="backup_configs_never_synced">Not synced yet</string>
+    <string name="backup_configs_provider_icloud_description">Sync with your iCloud account.</string>
+    <string name="backup_configs_provider_icloud_title">iCloud</string>
+    <string name="backup_configs_provider_picker_subtitle">Choose where 2FAS Pass will back up your encrypted vault.</string>
+    <string name="backup_configs_provider_picker_title">Select backup method</string>
+    <string name="backup_configs_provider_s3_description">Use any S3-compatible storage.</string>
+    <string name="backup_configs_provider_s3_title">S3</string>
+    <string name="backup_configs_provider_webdav_description">Connect with your WebDAV server.</string>
+    <string name="backup_configs_provider_webdav_title">WebDAV</string>
+    <string name="backup_configs_remove_confirm_body">This will disable automatic sync of your Vault. Do you wish to continue?</string>
+    <string name="backup_configs_remove_confirm_title">Delete %s sync?</string>
+    <string name="backup_configs_security_header">Security</string>
+    <string name="backup_configs_sync_all_now_cta">Sync all now</string>
+    <string name="backup_configs_sync_now_cta">Sync now</string>
+    <string name="backup_configs_unsaved_changes_dialog_description">Do you want to discard your changes?</string>
+    <string name="backup_configs_unsaved_changes_dialog_title">Unsaved changes</string>
+    <string name="restore_vault_source_option_s3">S3</string>
+    <string name="restore_vault_source_option_s3_description">Recover your Vault from an S3 or S3-compatible storage.</string>
+    <string name="s3_access_key_id">Access Key ID</string>
+    <string name="s3_bucket">Bucket</string>
+    <string name="s3_connect">Connect</string>
+    <string name="s3_credentials">Credentials</string>
+    <string name="s3_csv_load_failed">Could not read access keys from this file.</string>
+    <string name="s3_load_from_csv_cta">Load from CSV</string>
+    <string name="s3_region">Region</string>
+    <string name="s3_secret_access_key">Secret Access Key</string>
+    <string name="sync_error_server">The server returned an error. Please try again later.</string>
+    <string name="sync_error_invalid_response">The server returned an unexpected response.</string>
+    <string name="sync_error_network">Couldn\'t reach the server. Check your network connection.</string>
+    <string name="sync_error_not_found">This location wasn\'t found.</string>
+    <string name="common_discard_changes">Discard changes</string>
+    <string name="s3_endpoint">Endpoint</string>
 </resources>

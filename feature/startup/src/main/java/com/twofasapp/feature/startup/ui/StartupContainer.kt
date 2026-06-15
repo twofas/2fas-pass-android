@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.design.MdtTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,19 +28,31 @@ import org.koin.androidx.compose.koinViewModel
 internal fun StartupContainer(
     viewModel: StartupViewModel = koinViewModel(),
 ) {
+    val navController = rememberNavController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LifecycleResumeEffect(Unit) {
+        viewModel.checkStartupDataValidity(
+            onExpired = {
+                navController.navigate(Screen.Welcome) {
+                    popUpTo(0)
+                }
+            },
+        )
+        onPauseOrDispose { }
+    }
+
     Content(
+        navController = navController,
         uiState = uiState,
     )
 }
 
 @Composable
 private fun Content(
+    navController: NavHostController,
     uiState: StartupUiState,
 ) {
-    val navController = rememberNavController()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -51,12 +65,4 @@ private fun Content(
             modifier = Modifier.fillMaxSize(),
         )
     }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    Content(
-        uiState = StartupUiState(),
-    )
 }

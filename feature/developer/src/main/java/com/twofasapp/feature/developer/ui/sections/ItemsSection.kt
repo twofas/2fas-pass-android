@@ -34,7 +34,12 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
+import com.twofasapp.feature.autofill.service.builders.AutofillActivityIntents
+import com.twofasapp.feature.autofill.service.domain.SaveLoginData
+import com.twofasapp.feature.autofill.service.parser.NodeStructure
 import com.twofasapp.feature.developer.ui.DeveloperUiState
+import org.koin.compose.koinInject
+import kotlin.random.Random
 
 @Composable
 internal fun ItemsSection(
@@ -51,6 +56,7 @@ internal fun ItemsSection(
     onInsertRandomWifi: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val autofillActivityIntents = koinInject<AutofillActivityIntents>()
     var showGenerateItemsMenu by remember { mutableStateOf(false) }
 
     Column(
@@ -152,6 +158,43 @@ internal fun ItemsSection(
             title = "Insert random tag",
             icon = MdtIcons.Tag,
             onClick = { onInsertRandomTag() },
+        )
+
+        OptionEntry(
+            title = "Open Autofill Save",
+            icon = MdtIcons.AutofillInput,
+            onClick = {
+                val random = Random.nextInt().toString().take(3)
+
+                context.startActivity(
+                    autofillActivityIntents.createSaveLoginIntent(
+                        context = context,
+                        saveLoginData = SaveLoginData(
+                            uri = "id$random.autofill.com",
+                            username = "user$random@mail.com",
+                            password = "pass$random",
+                        ),
+                    ),
+                )
+            },
+        )
+
+        OptionEntry(
+            title = "Open Autofill Picker",
+            icon = MdtIcons.Autofill,
+            onClick = {
+                val random = Random.nextInt().toString().take(3)
+
+                autofillActivityIntents.createPickerPendingIntent(
+                    context = context,
+                    nodeStructure = NodeStructure(
+                        packageName = "com.app",
+                        webDomain = "id$random.autofill.com",
+                        inputs = emptyList(),
+                    ),
+                    inlinePresentationSpec = null,
+                ).send()
+            },
         )
 
         OptionEntry(

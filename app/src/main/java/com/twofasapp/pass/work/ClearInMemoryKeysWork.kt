@@ -14,6 +14,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.twofasapp.core.android.ktx.cancel
 import com.twofasapp.core.android.ktx.enqueueUniqueAndReplace
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.VaultKeysRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -41,10 +42,15 @@ class ClearInMemoryKeysWork(
     }
 
     override suspend fun doWork(): Result {
-        if (isStopped) return Result.success()
+        Flog.persist("ClearKeys", "ClearInMemoryKeys: started")
+        if (isStopped) {
+            Flog.persist("ClearKeys", "ClearInMemoryKeys: stopped before run")
+            return Result.success()
+        }
 
         vaultKeysRepository.clearInMemoryVaultKeys()
 
+        Flog.persist("ClearKeys", "ClearInMemoryKeys: completed")
         return Result.success()
     }
 }

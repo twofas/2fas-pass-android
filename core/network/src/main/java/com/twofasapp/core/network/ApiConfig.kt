@@ -17,7 +17,8 @@ interface ApiConfig {
         const val ProductionWssUrl = "wss://pass.2fas.com"
         const val DevWssUrl = "wss://dev-pass.2fas.com"
 
-        const val ShareApiUrl = "https://share.2fas.com"
+        const val ProductionShareApiUrl = "https://share.2fas.com"
+        const val DevShareApiUrl = "https://dev-share.2fas.com"
     }
 
     val apiUrl: String

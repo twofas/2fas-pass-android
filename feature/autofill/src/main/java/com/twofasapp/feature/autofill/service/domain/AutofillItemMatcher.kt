@@ -17,7 +17,7 @@ import com.twofasapp.data.main.VaultCryptoScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-internal object AutofillItemMatcher {
+object AutofillItemMatcher {
 
     suspend fun matchByUri(
         itemsRepository: ItemsRepository,

@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -44,6 +44,7 @@ internal fun CloudSyncScreen(
         uiState = uiState,
         onGoogleDriveClick = { deeplinks.openScreen(Screen.GoogleDriveSync(openedFromQuickSetup = false, startAuth = false)) },
         onWebDavClick = { deeplinks.openScreen(Screen.WebDavSync) },
+        onS3Click = { deeplinks.openScreen(Screen.S3Sync) },
     )
 }
 
@@ -52,6 +53,7 @@ private fun Content(
     uiState: CloudSyncUiState,
     onGoogleDriveClick: () -> Unit = {},
     onWebDavClick: () -> Unit = {},
+    onS3Click: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
 
@@ -88,6 +90,12 @@ private fun Content(
                 title = strings.settingsEntryWebDav,
                 icon = MdtIcons.Lan,
                 onClick = { onWebDavClick() },
+            )
+
+            OptionEntry(
+                title = strings.settingsEntryS3,
+                icon = MdtIcons.Bucket,
+                onClick = { onS3Click() },
             )
         }
     }

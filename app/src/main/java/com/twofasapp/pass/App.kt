@@ -9,6 +9,8 @@
 package com.twofasapp.pass
 
 import android.app.Application
+import android.os.Build
+import android.view.autofill.AutofillManager
 import androidx.lifecycle.ProcessLifecycleOwner
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -30,6 +32,7 @@ import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.settings.SettingsRepository
+import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManager
 import com.twofasapp.pass.di.Modules
 import com.twofasapp.pass.lifecycle.AppLifecycleObserver
 import com.twofasapp.pass.logger.FlogSinkLogcat
@@ -44,6 +47,8 @@ import okhttp3.Response
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.time.ExperimentalTime
 
 class App : Application(), SingletonImageLoader.Factory {
@@ -57,6 +62,7 @@ class App : Application(), SingletonImageLoader.Factory {
     private val crashlyticsProvider: CrashlyticsProvider by inject()
     private val settingsRepository: SettingsRepository by inject()
     private val purchasesRepository: PurchasesRepository by inject()
+    private val browserAutofillManager: BrowserAutofillManager by inject()
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
@@ -77,6 +83,30 @@ class App : Application(), SingletonImageLoader.Factory {
         )
 
         CrashlyticsInstance.crashlytics = crashlyticsProvider
+
+        Flog.persist(
+            tag = "Launch",
+            message = "model=${Build.MANUFACTURER} ${Build.MODEL}" +
+                " android=${Build.VERSION.SDK_INT}" +
+                " app=${appBuild.versionName}(${appBuild.versionCode})" +
+                " variant=${appBuild.buildVariant}" +
+                " locale=${Locale.getDefault().toLanguageTag()}" +
+                " tz=${TimeZone.getDefault().id}",
+        )
+
+        val autofillManager = getSystemService(AutofillManager::class.java)
+        val browsers = browserAutofillManager.checkBrowsersStatus()
+            .map { "${it.name}=${it.autofillEnabled}" }
+
+        GlobalScope.launch {
+            val autofillInline = settingsRepository.observeAutofillSettings().first().useInlinePresentation
+            Flog.persist(
+                "Launch",
+                "autofill=${autofillManager.hasEnabledAutofillServices()}" +
+                    " inline=$autofillInline" +
+                    " browsers=$browsers",
+            )
+        }
 
         purchasesRepository.initialize()
 

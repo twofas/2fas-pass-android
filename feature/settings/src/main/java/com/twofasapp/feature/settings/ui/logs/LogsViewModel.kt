@@ -9,10 +9,10 @@
 package com.twofasapp.feature.settings.ui.logs
 
 import androidx.lifecycle.ViewModel
+import com.opencsv.CSVWriter
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.data.logs.LogsRepository
-import com.opencsv.CSVWriter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import java.io.StringWriter
@@ -41,11 +41,16 @@ internal class LogsViewModel(
         val logs = uiState.value.logs
         val stringWriter = StringWriter()
         CSVWriter(
-            /* writer = */ stringWriter,
-            /* separator = */ CSVWriter.DEFAULT_SEPARATOR,
-            /* quotechar = */ CSVWriter.NO_QUOTE_CHARACTER,
-            /* escapechar = */ CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-            /* lineEnd = */ CSVWriter.DEFAULT_LINE_END
+            /* writer = */
+            stringWriter,
+            /* separator = */
+            CSVWriter.DEFAULT_SEPARATOR,
+            /* quotechar = */
+            CSVWriter.NO_QUOTE_CHARACTER,
+            /* escapechar = */
+            CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+            /* lineEnd = */
+            CSVWriter.DEFAULT_LINE_END,
         ).use { csvWriter ->
             val utcFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             csvWriter.writeNext(arrayOf("timestamp", "tag", "message"))

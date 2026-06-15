@@ -9,20 +9,25 @@
 package com.twofasapp.data.push.internal
 
 import com.google.firebase.messaging.RemoteMessage
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.push.domain.Push
 import java.time.Instant
 
 internal object PushFactory {
     fun createPush(remoteMessage: RemoteMessage): Push? {
-        return when (remoteMessage.data["messageType"]?.lowercase()) {
+        val messageType = remoteMessage.data["messageType"]?.lowercase()
+        return when (messageType) {
             "be_request" -> createBrowserRequest(remoteMessage)
-            else -> null
+            else -> {
+                Flog.persist("Push", "Unsupported messageType=$messageType")
+                null
+            }
         }
     }
 
     private fun createBrowserRequest(remoteMessage: RemoteMessage): Push? {
         return try {
-            Push.BrowserRequest(
+            val push = Push.BrowserRequest(
                 notificationId = remoteMessage.data["notificationId"] ?: return null,
                 timestamp = Instant.ofEpochMilli(remoteMessage.data["timestamp"]!!.toLong()),
                 pkPersBe = remoteMessage.data["pkPersBe"]!!,
@@ -30,7 +35,11 @@ internal object PushFactory {
                 sigPush = remoteMessage.data["sigPush"]!!,
                 scheme = remoteMessage.data["scheme"]?.toInt(),
             )
+            Flog.persist("Push", "Parsed BrowserRequest (scheme=${push.scheme})")
+            push
         } catch (e: Exception) {
+            Flog.persist("Push", "Failed to parse BrowserRequest: ${e.message}")
+            Flog.persist("Push", e)
             PushLogger.log(e.message.orEmpty())
             e.printStackTrace()
             null

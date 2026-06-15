@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -21,6 +21,7 @@ import com.twofasapp.feature.startup.navigation.CreateSecretKeyRoute
 import com.twofasapp.feature.startup.navigation.CreateSecretKeySuccessRoute
 import com.twofasapp.feature.startup.navigation.DecryptVaultRoute
 import com.twofasapp.feature.startup.navigation.RestoreCloudFilesRoute
+import com.twofasapp.feature.startup.navigation.RestoreS3Route
 import com.twofasapp.feature.startup.navigation.RestoreVaultRoute
 import com.twofasapp.feature.startup.navigation.RestoreWebDavRoute
 import com.twofasapp.feature.startup.navigation.VaultSetupCompletedRoute
@@ -95,12 +96,19 @@ internal fun StartupNavHost(
             RestoreVaultRoute(
                 openRestoreCloudFiles = { navController.navigate(Screen.RestoreCloudFiles) },
                 openRestoreWebDavConfig = { navController.navigate(Screen.RestoreWebDav) },
+                openRestoreS3Config = { navController.navigate(Screen.RestoreS3) },
                 openDecryptVault = { navController.navigate(Screen.DecryptVault) },
             )
         }
 
         composable<Screen.RestoreWebDav> {
             RestoreWebDavRoute(
+                openRestoreCloudFiles = { navController.navigate(Screen.RestoreCloudFiles) },
+            )
+        }
+
+        composable<Screen.RestoreS3> {
+            RestoreS3Route(
                 openRestoreCloudFiles = { navController.navigate(Screen.RestoreCloudFiles) },
             )
         }

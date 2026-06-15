@@ -2,14 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
-        <activity
-            android:name=".ui.AutofillActivity"
-            android:configChanges="screenSize|orientation"
-            android:launchMode="singleInstance"
-            android:noHistory="false"
-            android:theme="@style/AppThemeTransparent"
-            android:windowSoftInputMode="adjustResize" />
-
         <service
             android:name=".service.PassAutofillService"
             android:exported="true"

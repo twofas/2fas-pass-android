@@ -10,9 +10,11 @@ plugins {
     alias(libs.plugins.twofasAndroidApplication)
     alias(libs.plugins.twofasCompose)
     alias(libs.plugins.twofasLint)
+    alias(libs.plugins.twofasArtifactsCopy)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.kotlinKsp)
     alias(libs.plugins.aboutLibraries)
+
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
@@ -23,15 +25,8 @@ android {
 
     defaultConfig {
         applicationId = "com.twofasapp.pass"
-        versionName = "1.7.0"
-        versionCode = 36
-    }
-
-    applicationVariants.all {
-        outputs.all {
-            val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            output?.outputFileName = "TwoFas-Pass-$versionName-${versionCode}.apk"
-        }
+        versionName = "1.8.0"
+        versionCode = 37
     }
 
     ksp {

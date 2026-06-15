@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.R
@@ -112,6 +113,7 @@ private fun Content(
                             showPaywall = true
                         } else {
                             onExternalImportClick(type)
+                            Flog.persist("Transfer", "Click ${type.displayName}")
                         }
                     },
                 )

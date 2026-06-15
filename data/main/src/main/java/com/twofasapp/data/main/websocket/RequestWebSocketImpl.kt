@@ -106,6 +106,7 @@ internal class RequestWebSocketImpl(
         try {
             withContext(dispatchers.io) {
                 Flog.d("Request: $requestData")
+                Flog.persist("ExtensionRequest", "Open: version=${requestData.version}")
 
                 version = requestData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
@@ -137,12 +138,17 @@ internal class RequestWebSocketImpl(
 
                 browserRequestsRemoteSource.openWebSocket(
                     sessionIdHex = sessionId,
-                    onOpened = { sendHelloMessage() },
+                    onOpened = {
+                        Flog.persist("ExtensionRequest", "WebSocket opened, sending: hello")
+                        sendHelloMessage()
+                    },
                     onMessageReceived = { message ->
                         try {
                             if (message == null) {
                                 throw WebSocketException(1003, "Message not supported.")
                             }
+
+                            Flog.persist("ExtensionRequest", "Received: ${message.action}")
 
                             if (message.id != expectedIncomingId) {
                                 throw WebSocketException(
@@ -158,6 +164,7 @@ internal class RequestWebSocketImpl(
                                         message = message,
                                     )
 
+                                    Flog.persist("ExtensionRequest", "Sending: challenge")
                                     sendChallengeMessage(
                                         pkEpheMa = pkEpheMa,
                                         hkdfSalt = hkdfSalt,
@@ -178,6 +185,7 @@ internal class RequestWebSocketImpl(
                                             data = newSessionId,
                                         )
 
+                                        Flog.persist("ExtensionRequest", "Sending: pullRequest")
                                         sendMessage(
                                             createOutgoingMessage(
                                                 OutgoingPayloadJson.PullRequest(
@@ -215,7 +223,11 @@ internal class RequestWebSocketImpl(
                                                     sessionKey = sessionKey,
                                                 )
 
+                                        Flog.persist("ExtensionRequest", "Action: ${action.type}")
+
                                         val response = onBrowserRequestAction(action)
+
+                                        Flog.persist("ExtensionRequest", "Response: ${response::class.simpleName}")
 
                                         val responseData = createRequestResponseData(
                                             hkdfSalt = hkdfSalt,
@@ -231,6 +243,7 @@ internal class RequestWebSocketImpl(
                                             data = responseData.encodeByteArray(),
                                         )
 
+                                        Flog.persist("ExtensionRequest", "Sending: pullRequestAction")
                                         sendMessage(
                                             createOutgoingMessage(
                                                 OutgoingPayloadJson.PullRequestAction(
@@ -256,6 +269,7 @@ internal class RequestWebSocketImpl(
                                         sessionId = newSessionId,
                                     )
 
+                                    Flog.persist("ExtensionRequest", "Sending: closeWithSuccess")
                                     sendMessage(
                                         createOutgoingMessage(
                                             payload = OutgoingPayloadJson.CloseWithSuccess,
@@ -264,6 +278,7 @@ internal class RequestWebSocketImpl(
                                 }
 
                                 is IncomingMessageJson.CloseWithError -> {
+                                    Flog.persist("ExtensionRequest", "Received closeWithError: code=${message.payload.errorCode}, message=${message.payload.errorMessage}")
                                     throw WebSocketException(
                                         errorCode = message.payload.errorCode,
                                         errorMessage = message.payload.errorMessage,
@@ -278,6 +293,7 @@ internal class RequestWebSocketImpl(
                                 }
 
                                 is IncomingMessageJson.InitTransferConfirmed -> {
+                                    Flog.persist("ExtensionRequest", "Sending: transferChunk index=0/${chunks.size}")
                                     sendMessage(
                                         createOutgoingMessage(
                                             payload = OutgoingPayloadJson.TransferChunk(
@@ -292,6 +308,7 @@ internal class RequestWebSocketImpl(
                                 is IncomingMessageJson.TransferChunkConfirmed -> {
                                     try {
                                         val chunkIndex = message.payload.chunkIndex + 1
+                                        Flog.persist("ExtensionRequest", "Sending: transferChunk index=$chunkIndex/${chunks.size}")
                                         sendMessage(
                                             createOutgoingMessage(
                                                 payload = OutgoingPayloadJson.TransferChunk(
@@ -312,6 +329,7 @@ internal class RequestWebSocketImpl(
                                         sessionId = newSessionId,
                                     )
 
+                                    Flog.persist("ExtensionRequest", "Sending: closeWithSuccess")
                                     sendMessage(
                                         createOutgoingMessage(
                                             payload = OutgoingPayloadJson.CloseWithSuccess,
@@ -320,6 +338,8 @@ internal class RequestWebSocketImpl(
                                 }
                             }
                         } catch (e: Exception) {
+                            Flog.persist("ExtensionRequest", "Error handling message: ${e.message}")
+                            Flog.persist("ExtensionRequest", e)
                             error = e
                             closeWithError(e)
                         }
@@ -328,20 +348,27 @@ internal class RequestWebSocketImpl(
             }
 
             return if (error != null) {
+                val errorCode = (error as? WebSocketException)?.errorCode ?: 1000
+                val errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message
+                    ?: "Unknown error."
+                Flog.persist("ExtensionRequest", "Failure: code=$errorCode, message=$errorMessage")
                 RequestWebSocketResult.Failure(
-                    errorCode = (error as? WebSocketException)?.errorCode ?: 1000,
-                    errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message
-                        ?: "Unknown error.",
+                    errorCode = errorCode,
+                    errorMessage = errorMessage,
                 )
             } else {
+                Flog.persist("ExtensionRequest", "Success")
                 RequestWebSocketResult.Success
             }
         } catch (e: CancellationException) {
+            Flog.persist("ExtensionRequest", "Cancelled: Browser extension request is no longer valid.")
             return RequestWebSocketResult.Failure(
                 1000,
                 "Browser extension request is no longer valid.",
             )
         } catch (e: Exception) {
+            Flog.persist("ExtensionRequest", "Failure: ${e.message}")
+            Flog.persist("ExtensionRequest", e)
             return RequestWebSocketResult.Failure(1000, e.message ?: "Unknown error.")
         }
     }

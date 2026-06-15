@@ -72,6 +72,7 @@ internal class ConnectWebSocketImpl(
         try {
             withContext(dispatchers.io) {
                 Flog.d("Connect: $connectData")
+                Flog.persist("ExtensionConnect", "Open: version=${connectData.version}")
 
                 version = connectData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
@@ -102,6 +103,7 @@ internal class ConnectWebSocketImpl(
                 browserRequestsRemoteSource.openWebSocket(
                     sessionIdHex = connectData.sessionId,
                     onOpened = {
+                        Flog.persist("ExtensionConnect", "WebSocket opened")
                         try {
                             SignatureVerifier.verify(
                                 key = connectData.pkPersBe,
@@ -109,8 +111,11 @@ internal class ConnectWebSocketImpl(
                                 signature = connectData.signature,
                             )
 
+                            Flog.persist("ExtensionConnect", "Sending: hello")
                             sendHelloMessage()
                         } catch (e: Exception) {
+                            Flog.persist("ExtensionConnect", "Signature verification failed: ${e.message}")
+                            Flog.persist("ExtensionConnect", e)
                             error = WebSocketException(1100, "Signature could not be verified.")
                             closeWithError(error!!)
                         }
@@ -120,6 +125,8 @@ internal class ConnectWebSocketImpl(
                             if (message == null) {
                                 throw WebSocketException(1003, "Message not supported.")
                             }
+
+                            Flog.persist("ExtensionConnect", "Received: ${message.action}")
 
                             if (message.id != expectedIncomingId) {
                                 throw WebSocketException(1001, "Message identifier could not be verified.")
@@ -132,6 +139,7 @@ internal class ConnectWebSocketImpl(
                                         message = message,
                                     )
 
+                                    Flog.persist("ExtensionConnect", "Sending: challenge")
                                     sendChallengeMessage(
                                         pkEpheMa = pkEpheMa,
                                         hkdfSalt = hkdfSalt,
@@ -204,6 +212,7 @@ internal class ConnectWebSocketImpl(
                                         val totalChunks = chunks.size
                                         val totalSize = vaultDataGzip.size // gzipped JSON before encryption
 
+                                        Flog.persist("ExtensionConnect", "Sending: initTransfer (chunks=$totalChunks, size=$totalSize)")
                                         sendMessage(
                                             createOutgoingMessage(
                                                 OutgoingPayloadJson.InitTransfer(
@@ -222,6 +231,7 @@ internal class ConnectWebSocketImpl(
                                 }
 
                                 is IncomingMessageJson.InitTransferConfirmed -> {
+                                    Flog.persist("ExtensionConnect", "Sending: transferChunk index=0/${chunks.size}")
                                     sendMessage(
                                         createOutgoingMessage(
                                             payload = OutgoingPayloadJson.TransferChunk(
@@ -236,6 +246,7 @@ internal class ConnectWebSocketImpl(
                                 is IncomingMessageJson.TransferChunkConfirmed -> {
                                     try {
                                         val chunkIndex = message.payload.chunkIndex + 1
+                                        Flog.persist("ExtensionConnect", "Sending: transferChunk index=$chunkIndex/${chunks.size}")
                                         sendMessage(
                                             createOutgoingMessage(
                                                 payload = OutgoingPayloadJson.TransferChunk(
@@ -256,6 +267,7 @@ internal class ConnectWebSocketImpl(
                                         sessionId = newSessionId,
                                     )
 
+                                    Flog.persist("ExtensionConnect", "Sending: closeWithSuccess")
                                     sendMessage(
                                         createOutgoingMessage(
                                             payload = OutgoingPayloadJson.CloseWithSuccess,
@@ -264,6 +276,7 @@ internal class ConnectWebSocketImpl(
                                 }
 
                                 is IncomingMessageJson.CloseWithError -> {
+                                    Flog.persist("ExtensionConnect", "Received closeWithError: code=${message.payload.errorCode}, message=${message.payload.errorMessage}")
                                     throw WebSocketException(
                                         errorCode = message.payload.errorCode,
                                         errorMessage = message.payload.errorMessage,
@@ -277,6 +290,8 @@ internal class ConnectWebSocketImpl(
                                 else -> Unit
                             }
                         } catch (e: Exception) {
+                            Flog.persist("ExtensionConnect", "Error handling message: ${e.message}")
+                            Flog.persist("ExtensionConnect", e)
                             error = e
                             closeWithError(e)
                         }
@@ -285,16 +300,23 @@ internal class ConnectWebSocketImpl(
             }
 
             return if (error != null) {
+                val errorCode = (error as? WebSocketException)?.errorCode ?: 1000
+                val errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message ?: "Unknown error."
+                Flog.persist("ExtensionConnect", "Failure: code=$errorCode, message=$errorMessage")
                 ConnectWebSocketResult.Failure(
-                    errorCode = (error as? WebSocketException)?.errorCode ?: 1000,
-                    errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message ?: "Unknown error.",
+                    errorCode = errorCode,
+                    errorMessage = errorMessage,
                 )
             } else {
+                Flog.persist("ExtensionConnect", "Success")
                 ConnectWebSocketResult.Success
             }
         } catch (e: CancellationException) {
+            Flog.persist("ExtensionConnect", "Cancelled: Browser extension has been closed.")
             return ConnectWebSocketResult.Failure(1000, "Browser extension has been closed.")
         } catch (e: Exception) {
+            Flog.persist("ExtensionConnect", "Failure: ${e.message}")
+            Flog.persist("ExtensionConnect", e)
             return ConnectWebSocketResult.Failure(1000, e.message ?: "Unknown error.")
         }
     }

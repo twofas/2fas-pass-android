@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Mon, 06 Apr 2026 09:49:23 -0700
+ Exported at: Tue, 02 Jun 2026 13:48:03 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -428,8 +428,6 @@
     <string name="login_view_action_uris_title">Adresy URL</string>
     <string name="master_password_min_length__0025lld">Użyj co najmniej %d znaków</string>
     <string name="master_password_not_match">Hasła nie są zgodne</string>
-    <string name="onboarding_create_master_password_guide_description">Ten prosty poradnik pomoże w przygotowaniu i zapamiętaniu hasła głównego.</string>
-    <string name="onboarding_create_master_password_guide_title">Poradnik</string>
     <string name="password_generator_characters">Znaki</string>
     <string name="password_generator_copy_cta">Kopiuj</string>
     <string name="password_generator_digits">Cyfry</string>
@@ -741,10 +739,6 @@
     <string name="master_password_define">Teraz ustaw hasło główne i zapamiętaj je.</string>
     <string name="master_password_create_new">Teraz ustaw nowe hasło główne i zapamiętaj je.</string>
     <string name="sync_status_error_password_changed">Hasło główne zostało zmienione. Aby uzyskać dostęp do tego sejfu użyj zestawu deszyfrującego.</string>
-    <string name="onboarding_guide_1">Look around and select 3 objects (e.g.: Flower, Candle, Bookshelf).</string>
-    <string name="onboarding_guide_2">Think about short story that connects these 3 objects (for example: A Flower and a Candle lays on the Bookshelf.)</string>
-    <string name="onboarding_guide_3">Selected objects are the words in your password. The story helps you remember them. Now think about the separator between the words (e.g.: # or $).</string>
-    <string name="onboarding_guide_4">The strong, unique, and easy-to-remember password looks like this Object1 #Object2 #Object3 (e.g. Flower#Candle#Bookshelf)</string>
     <string name="recovery_error_nothing_to_import">Brak danych do zaimportowania. Plik kopii zapasowej nie zawiera żadnych elementów.</string>
     <string name="recovery_error_newer_version">Istniejąca kopia zapasowa została utworzona w nowszej wersji. Zaktualizuj aplikację.</string>
     <string name="recovery_error_index_damaged">Plik indeksu jest uszkodzony.</string>
@@ -1117,7 +1111,7 @@
     <string name="item_details_title">Szczegóły elementu</string>
     <string name="share_link_item_title">2FAS Share</string>
     <string name="share_link_item_link_generated">Link wygenerowany</string>
-    <string name="share_link_item_expiration_time">Czas wygaśnięcia linku</string>
+    <string name="share_link_item_expiration_time">Wygaśnięcie linku</string>
     <string name="share_link_item_one_time_access">Jednorazowy dostęp</string>
     <string name="share_link_item_one_time_access_description">Link wygaśnie po jednym użyciu</string>
     <string name="share_link_item_access_password">Ustaw hasło dostępu</string>
@@ -1147,4 +1141,46 @@
     <string name="share_link_item_remove_password">Usuń hasło</string>
     <string name="share_link_import_incorrect_password">Nieprawidłowe hasło</string>
     <string name="share_link_import_error_description">Nie udało się odszyfrować linku. Mógł wygasnąć lub hasło jest nieprawidłowe.</string>
+    <string name="logs_title">Logi</string>
+    <string name="logs_empty">Brak dostępnych logów</string>
+    <string name="logs_share_title">Wyślij logi</string>
+    <string name="settings_entry_default_uri_match_rule">Domyślna reguła dopasowania URI</string>
+    <string name="settings_entry_default_uri_match_rule_description">Domyślna reguła dopasowania przy dodawaniu nowego URI do loginu.</string>
+    <string name="backup_configs_add_cta">Dodaj kopię zapasową</string>
+    <string name="backup_configs_allow_untrusted_certificates">Zezwalaj na niezaufane certyfikaty</string>
+    <string name="backup_configs_cancel_sync_cta">Anuluj synchronizację</string>
+    <string name="backup_configs_empty_description">Dodaj kopię zapasową, aby rozpocząć synchronizację swojego sejfu.</string>
+    <string name="backup_configs_last_synced">Zsynchronizowano %s</string>
+    <string name="backup_configs_never_synced">Jeszcze nie zsynchronizowano</string>
+    <string name="backup_configs_provider_icloud_description">Synchronizacja z kontem iCloud.</string>
+    <string name="backup_configs_provider_icloud_title">iCloud</string>
+    <string name="backup_configs_provider_picker_subtitle">Wybierz miejsce, w którym 2FAS Pass będzie tworzyć kopię zapasową zaszyfrowanego sejfu.</string>
+    <string name="backup_configs_provider_picker_title">Wybierz metodę tworzenia kopii zapasowej</string>
+    <string name="backup_configs_provider_s3_description">Użyj dowolnej pamięci zgodnej z S3.</string>
+    <string name="backup_configs_provider_s3_title">S3</string>
+    <string name="backup_configs_provider_webdav_description">Połącz się z własnym serwerem WebDAV.</string>
+    <string name="backup_configs_provider_webdav_title">WebDAV</string>
+    <string name="backup_configs_remove_confirm_body">Spowoduje to wyłączenie automatycznej synchronizacji Twojego sejfu. Czy chcesz kontynuować?</string>
+    <string name="backup_configs_remove_confirm_title">Usunąć %s?</string>
+    <string name="backup_configs_security_header">Bezpieczeństwo</string>
+    <string name="backup_configs_sync_all_now_cta">Synchronizuj wszystkie teraz</string>
+    <string name="backup_configs_sync_now_cta">Synchronizuj teraz</string>
+    <string name="backup_configs_unsaved_changes_dialog_description">Czy chcesz odrzucić wprowadzone zmiany?</string>
+    <string name="backup_configs_unsaved_changes_dialog_title">Niezapisane zmiany</string>
+    <string name="restore_vault_source_option_s3">S3</string>
+    <string name="restore_vault_source_option_s3_description">Odzyskaj swój sejf z pamięci S3 lub kompatybilnej z S3</string>
+    <string name="s3_access_key_id">Access Key ID</string>
+    <string name="s3_bucket">Bucket</string>
+    <string name="s3_connect">Połącz</string>
+    <string name="s3_credentials">Dane uwierzytelniające</string>
+    <string name="s3_csv_load_failed">Nie udało się odczytać kluczy dostępu z tego pliku.</string>
+    <string name="s3_load_from_csv_cta">Wczytaj z CSV</string>
+    <string name="s3_region">Region</string>
+    <string name="s3_secret_access_key">Secret Access Key</string>
+    <string name="sync_error_server">Błąd serwera. Spróbuj ponownie później.</string>
+    <string name="sync_error_invalid_response">Nieoczekiwana odpowiedź serwera.</string>
+    <string name="sync_error_network">Nie można połączyć się z serwerem. Sprawdź połączenie z Internetem.</string>
+    <string name="sync_error_not_found">Nie znaleziono lokalizacji.</string>
+    <string name="common_discard_changes">Odrzuć zmiany</string>
+    <string name="s3_endpoint">Urządzenie końcowe</string>
 </resources>

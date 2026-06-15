@@ -3,19 +3,20 @@ package com.twofasapp.data.share.mapper
 import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
-import com.twofasapp.core.common.domain.UriMatcher
 import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.data.main.mapper.PaymentCardValidator
+import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.share.domain.ShareItem
 import com.twofasapp.data.share.domain.ShareItemContent
 import kotlinx.serialization.json.Json
 
 internal class ShareMapper(
     private val json: Json,
+    private val uriMatcherMapper: UriMatcherMapper,
 ) {
 
     fun map(item: Item): ShareItem {
@@ -42,8 +43,8 @@ internal class ShareMapper(
                     notes = content.notes,
                     uris = content.uris.map { uri ->
                         ShareItemContent.Login.Uri(
-                            uri = uri.text,
-                            match = mapUriMatcher(uri.matcher),
+                            text = uri.text,
+                            matcher = uriMatcherMapper.mapToJson(uri.matcher),
                         )
                     }.ifEmpty { null },
                 ),
@@ -131,8 +132,8 @@ internal class ShareMapper(
             notes = content.notes,
             uris = content.uris?.map { uri ->
                 ItemUri(
-                    text = uri.uri,
-                    matcher = mapUriMatcher(uri.match),
+                    text = uri.text,
+                    matcher = uriMatcherMapper.mapToDomainFromJson(uri.matcher),
                 )
             }.orEmpty(),
             iconType = IconType.Icon,
@@ -185,24 +186,5 @@ internal class ShareMapper(
             text = SecretField.ClearText(content.text),
             additionalInfo = null,
         )
-    }
-
-    private fun mapUriMatcher(matcher: UriMatcher): String {
-        return when (matcher) {
-            UriMatcher.Domain -> "domain"
-            UriMatcher.Host -> "host"
-            UriMatcher.StartsWith -> "startsWith"
-            UriMatcher.Exact -> "exact"
-        }
-    }
-
-    private fun mapUriMatcher(match: String?): UriMatcher {
-        return when (match) {
-            "domain" -> UriMatcher.Domain
-            "host" -> UriMatcher.Host
-            "startsWith" -> UriMatcher.StartsWith
-            "exact" -> UriMatcher.Exact
-            else -> UriMatcher.Domain
-        }
     }
 }

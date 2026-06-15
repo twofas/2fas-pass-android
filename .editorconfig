@@ -13,3 +13,4 @@ ktlint_standard_enum-wrapping = disabled
 ktlint_standard_statement-wrapping = disabled
 ktlint_standard_value-parameter-comment = disabled
 ktlint_standard_function-signature = disabled
+ktlint_standard_blank-line-between-when-conditions = disabled

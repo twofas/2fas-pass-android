@@ -8,7 +8,6 @@
 
 plugins {
     alias(libs.plugins.twofasAndroidLibrary)
-    alias(libs.plugins.kotlinAndroid)
 }
 
 android {
@@ -19,6 +18,7 @@ dependencies {
     implementation(project(":core:android"))
     implementation(project(":core:common"))
     implementation(project(":core:design"))
+    api(platform(libs.composeBom))
     api(libs.bundles.ktor)
     api(libs.bundles.elmyr)
     api(libs.junit)

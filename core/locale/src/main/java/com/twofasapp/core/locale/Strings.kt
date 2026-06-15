@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -109,17 +109,6 @@ class Strings(private val c: Context) {
     val setupCreateMasterPasswordDescription =
         c.getString(R.string.onboarding_create_master_password_description)
 
-    val onboardingProgressStep2Description =
-        c.getString(R.string.onboarding_progress_step2_description)
-    val onboardingCreateMasterPasswordGuideTitle =
-        c.getString(R.string.onboarding_create_master_password_guide_title)
-    val onboardingCreateMasterPasswordGuideDescription =
-        c.getString(R.string.onboarding_create_master_password_guide_description)
-    val onboardingGuide1 = c.getString(R.string.onboarding_guide_1)
-    val onboardingGuide2 = c.getString(R.string.onboarding_guide_2)
-    val onboardingGuide3 = c.getString(R.string.onboarding_guide_3)
-    val onboardingGuide4 = c.getString(R.string.onboarding_guide_4)
-
     val generateSecretKeyTitle = c.getString(R.string.onboarding_generate_secret_key_title)
     val generateSecretKeyDescription =
         c.getString(R.string.onboarding_generate_secret_key_description)
@@ -172,12 +161,17 @@ class Strings(private val c: Context) {
     val restoreVaultSourceOptionWebdav = c.getString(R.string.restore_vault_source_option_webdav)
     val restoreVaultSourceOptionWebdavDescription =
         c.getString(R.string.restore_vault_source_option_webdav_description)
+    val restoreVaultSourceOptionS3 = c.getString(R.string.restore_vault_source_option_s3)
+    val restoreVaultSourceOptionS3Description = c.getString(R.string.restore_vault_source_option_s3_description)
     val restoreVaultSourceOptionFile = c.getString(R.string.restore_vault_source_option_file)
     val restoreVaultSourceOptionFileDescription =
         c.getString(R.string.restore_vault_source_option_file_description)
 
     val restoreWebdavTitle = c.getString(R.string.restore_webdav_title)
     val restoreWebdavDescription = c.getString(R.string.restore_webdav_description)
+
+    val restoreS3Title = c.getString(R.string.restore_vault_source_option_s3)
+    val restoreS3Description = c.getString(R.string.restore_vault_source_option_s3_description)
 
     val restoreCloudFilesTitle = c.getString(R.string.restore_cloud_files_title)
     val restoreCloudFilesDescription = c.getString(R.string.restore_cloud_files_description)
@@ -836,6 +830,18 @@ class Strings(private val c: Context) {
         c.getString(R.string.webdav_disable_icloud_confirm_body)
     val webdavDisableWebdavConfirmBody =
         c.getString(R.string.webdav_disable_webdav_confirm_body)
+
+    val s3Endpoint = c.getString(R.string.s3_endpoint)
+    val s3Region = c.getString(R.string.s3_region)
+    val s3Bucket = c.getString(R.string.s3_bucket)
+    val s3Credentials = c.getString(R.string.s3_credentials)
+    val s3AccessKeyId = c.getString(R.string.s3_access_key_id)
+    val s3SecretAccessKey = c.getString(R.string.s3_secret_access_key)
+    val s3AllowUntrustedCertificates = c.getString(R.string.webdav_allow_untrusted_certificates)
+    val s3Connect = c.getString(R.string.webdav_connect)
+    val s3Disconnect = c.getString(R.string.webdav_disconnect)
+    val settingsEntryS3 = c.getString(R.string.backup_configs_provider_s3_title)
+    val cloudSyncS3Title = c.getString(R.string.backup_configs_provider_s3_title)
 
     // Sync
     val syncStatusSynced = c.getString(R.string.sync_status_synced)
