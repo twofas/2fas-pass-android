@@ -6,12 +6,12 @@
  * See LICENSE file for full terms
  */
 
-package com.twofasapp.data.main.domain
+package com.twofasapp.data.cloud.domain
 
 import com.twofasapp.data.cloud.exceptions.CloudError
 
 sealed interface CloudSyncStatus {
-    data object Unspecified : CloudSyncStatus
+    data object Idle : CloudSyncStatus
     data object Syncing : CloudSyncStatus
     data object Synced : CloudSyncStatus
     data class Error(val error: CloudError) : CloudSyncStatus

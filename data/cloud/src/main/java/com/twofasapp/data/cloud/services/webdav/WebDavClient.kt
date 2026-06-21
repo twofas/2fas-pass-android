@@ -12,7 +12,7 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.time.TimeProvider
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.services.common.BackupStorage
 import com.twofasapp.data.cloud.services.common.CloudClient
 import com.twofasapp.data.cloud.services.common.model.CloudIndexJson
@@ -38,9 +38,13 @@ internal class WebDavClient(
     private val json: Json,
     private val timeProvider: TimeProvider,
     private val device: Device,
-) : CloudClient(appBuild, json), BackupStorage<CloudConfig.WebDav> {
+) : CloudClient(appBuild, json), BackupStorage<CloudConnection.WebDav> {
 
-    override suspend fun getIndex(config: CloudConfig.WebDav): CloudIndexJson {
+    override suspend fun testConnection(config: CloudConnection.WebDav) {
+        // no-op
+    }
+
+    override suspend fun getIndex(config: CloudConnection.WebDav): CloudIndexJson {
         return try {
             // Get index, decode it if exists
             val content = getHttpClient(config).get("${config.url}/$IndexFilename") {
@@ -76,7 +80,7 @@ internal class WebDavClient(
         }
     }
 
-    override suspend fun putIndex(config: CloudConfig.WebDav, index: CloudIndexJson) {
+    override suspend fun putIndex(config: CloudConnection.WebDav, index: CloudIndexJson) {
         getHttpClient(config).put("${config.url}/$IndexFilename") {
             basicAuth(config.username, config.password)
             contentType(ContentType.Application.Json)
@@ -84,7 +88,7 @@ internal class WebDavClient(
         }
     }
 
-    override suspend fun obtainLock(config: CloudConfig.WebDav): Boolean {
+    override suspend fun obtainLock(config: CloudConnection.WebDav): Boolean {
         return try {
             // Try to get lock
             val existingLockJson = getHttpClient(config).get("${config.url}/$IndexLockFilename") {
@@ -124,7 +128,7 @@ internal class WebDavClient(
         }
     }
 
-    override suspend fun releaseLock(config: CloudConfig.WebDav) {
+    override suspend fun releaseLock(config: CloudConnection.WebDav) {
         runSafely {
             getHttpClient(config).delete("${config.url}/$IndexLockFilename") {
                 basicAuth(config.username, config.password)
@@ -132,7 +136,7 @@ internal class WebDavClient(
         }
     }
 
-    private suspend fun createLock(config: CloudConfig.WebDav, body: CloudIndexLockJson): Boolean {
+    private suspend fun createLock(config: CloudConnection.WebDav, body: CloudIndexLockJson): Boolean {
         return try {
             getHttpClient(config).put("${config.url}/$IndexLockFilename") {
                 basicAuth(config.username, config.password)
@@ -147,7 +151,7 @@ internal class WebDavClient(
         }
     }
 
-    override suspend fun getFile(config: CloudConfig.WebDav, filename: String): String? {
+    override suspend fun getFile(config: CloudConnection.WebDav, filename: String): String? {
         return try {
             getHttpClient(config).get("${config.url}/$filename") {
                 basicAuth(config.username, config.password)
@@ -162,7 +166,7 @@ internal class WebDavClient(
         }
     }
 
-    override suspend fun putFile(config: CloudConfig.WebDav, filename: String, content: String) {
+    override suspend fun putFile(config: CloudConnection.WebDav, filename: String, content: String) {
         getHttpClient(config).put("${config.url}/$filename") {
             basicAuth(config.username, config.password)
             contentType(ContentType.Application.Json)
@@ -171,7 +175,7 @@ internal class WebDavClient(
         }
     }
 
-    override suspend fun moveFile(config: CloudConfig.WebDav, source: String, destination: String) {
+    override suspend fun moveFile(config: CloudConnection.WebDav, source: String, destination: String) {
         val destinationFullPath = "${config.url}/$destination"
 
         getHttpClient(config).request("${config.url}/$source") {
@@ -182,7 +186,7 @@ internal class WebDavClient(
         }
     }
 
-    suspend fun wipeOut(config: CloudConfig.WebDav) {
+    suspend fun wipeOut(config: CloudConnection.WebDav) {
         getHttpClient(config).delete("${config.url}/") {
             basicAuth(config.username, config.password)
         }
@@ -192,7 +196,7 @@ internal class WebDavClient(
         return (this as? ClientRequestException)?.response?.status == HttpStatusCode.NotFound
     }
 
-    private fun getHttpClient(config: CloudConfig.WebDav) =
+    private fun getHttpClient(config: CloudConnection.WebDav) =
         if (config.allowUntrustedCertificate) {
             untrustedHttpClient
         } else {

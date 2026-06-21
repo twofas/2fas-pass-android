@@ -10,7 +10,7 @@ package com.twofasapp.feature.startup.ui.restorevault.s3
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.data.cloud.services.CloudServiceProvider
@@ -58,7 +58,7 @@ internal class S3RestoreViewModel(
         uiState.update { it.copy(loading = true) }
 
         launchScoped {
-            val config = CloudConfig.S3(
+            val connection = CloudConnection.S3(
                 endpoint = uiState.value.endpoint.trim().normalizeUrl(),
                 region = uiState.value.region.trim(),
                 bucket = uiState.value.bucket.trim(),
@@ -67,10 +67,10 @@ internal class S3RestoreViewModel(
                 allowUntrustedCertificate = uiState.value.allowUntrustedCertificate,
             )
 
-            when (val result = cloudServiceProvider.provide(config).connect(config)) {
+            when (val result = cloudServiceProvider.provide(connection).connect(connection)) {
                 is CloudResult.Success -> {
                     uiState.update { it.copy(loading = false) }
-                    restoreState.cloudConfig = config
+                    restoreState.cloudConnection = connection
                     onConnectSuccess()
                 }
 

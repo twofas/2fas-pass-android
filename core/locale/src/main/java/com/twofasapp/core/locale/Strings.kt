@@ -57,6 +57,7 @@ class Strings(private val c: Context) {
     val commonSettings = c.getString(R.string.common_settings)
     val commonDone = c.getString(R.string.common_done)
     val commonLoading = c.getString(R.string.common_loading)
+    val commonInfo = c.getString(R.string.common_info)
 
     val generalNotAvailable = c.getString(R.string.general_not_available)
     val generalNetworkErrorDetails = c.getString(R.string.general_network_error_details)
@@ -796,7 +797,7 @@ class Strings(private val c: Context) {
     val settingsKnownBrowserPlaceholderBrowserName =
         c.getString(R.string.settings_known_browser_placeholder_browser_name)
     val settingsCloudSyncDescriptionLong =
-        c.getString(R.string.settings_cloud_sync_description_long)
+        c.getString(R.string.settings_cloud_sync_description)
     val settingsBackupSeedErrorMismatch =
         c.getString(R.string.settings_backup_seed_error_mismatch)
     val settingsBackupErrorReadingKit =
@@ -842,6 +843,18 @@ class Strings(private val c: Context) {
     val s3Disconnect = c.getString(R.string.webdav_disconnect)
     val settingsEntryS3 = c.getString(R.string.backup_configs_provider_s3_title)
     val cloudSyncS3Title = c.getString(R.string.backup_configs_provider_s3_title)
+    val backupConfigsEmptyDescription = c.getString(R.string.backup_configs_empty_description)
+    val backupConfigsProviderPickerTitle = c.getString(R.string.backup_configs_provider_picker_title)
+    val backupConfigsProviderPickerSubtitle = c.getString(R.string.backup_configs_provider_picker_subtitle)
+    val backupConfigsProviderGoogleDriveTitle = c.getString(R.string.backup_configs_provider_googledrive_title)
+    val backupConfigsProviderGoogleDriveDescription = c.getString(R.string.backup_configs_provider_googledrive_description)
+    val backupConfigsProviderGoogleDriveNotice = c.getString(R.string.backup_configs_provider_googledrive_notice)
+    val backupConfigsProviderWebDavTitle = c.getString(R.string.backup_configs_provider_webdav_title)
+    val backupConfigsProviderWebDavDescription = c.getString(R.string.backup_configs_provider_webdav_description)
+    val backupConfigsProviderS3Title = c.getString(R.string.backup_configs_provider_s3_title)
+    val backupConfigsProviderS3Description = c.getString(R.string.backup_configs_provider_s3_description)
+    val backupConfigsRemoveConfirmBody = c.getString(R.string.backup_configs_remove_confirm_body)
+    fun backupConfigsRemoveConfirmTitle(arg: String) = c.getString(R.string.backup_configs_remove_confirm_title, arg)
 
     // Sync
     val syncStatusSynced = c.getString(R.string.sync_status_synced)

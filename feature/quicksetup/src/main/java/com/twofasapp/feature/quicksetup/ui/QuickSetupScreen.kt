@@ -66,7 +66,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun QuickSetupRoute(
     openAutofill: () -> Unit,
-    openSync: (syncEnabled: Boolean) -> Unit,
+    openSync: () -> Unit,
     openSecurityType: () -> Unit,
     openImport: () -> Unit,
     openTransfer: () -> Unit,
@@ -86,7 +86,7 @@ fun QuickSetupRoute(
 private fun QuickSetupScreen(
     viewModel: QuickSetupViewModel = koinViewModel(),
     openAutofill: () -> Unit = {},
-    openSync: (syncEnabled: Boolean) -> Unit = {},
+    openSync: () -> Unit = {},
     openSecurityType: () -> Unit = {},
     openImport: () -> Unit = {},
     openTransfer: () -> Unit = {},
@@ -114,7 +114,7 @@ private fun Content(
     uiState: QuickSetupUiState,
     autofillEnabled: Boolean = false,
     onAutofillClick: () -> Unit = {},
-    onSyncClick: (syncEnabled: Boolean) -> Unit = {},
+    onSyncClick: () -> Unit = {},
     onSecurityTypeClick: () -> Unit = {},
     onImportClick: () -> Unit = {},
     onTransferClick: () -> Unit = {},
@@ -226,7 +226,7 @@ private fun Content(
                         .padding(horizontal = ScreenPadding)
                         .clip(RoundedShape12)
                         .background(MdtTheme.color.surfaceContainer)
-                        .clickable { onSyncClick(uiState.syncEnabled) }
+                        .clickable { onSyncClick() }
                         .padding(start = 16.dp, end = 12.dp, top = 16.dp, bottom = 16.dp),
                 ) {
                     Column(
@@ -250,7 +250,7 @@ private fun Content(
 
                     Switch(
                         checked = uiState.syncEnabled,
-                        onCheckedChange = { onSyncClick(uiState.syncEnabled) },
+                        onCheckedChange = { onSyncClick() },
                     )
                 }
 

@@ -15,11 +15,11 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.auth.AuthStatusTracker
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.data.cloud.domain.CloudSyncStatus
 import com.twofasapp.data.main.BrowserExtensionRepository
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.domain.BrowserRequestData
-import com.twofasapp.data.main.domain.CloudSyncStatus
 import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.main.domain.UpdateAppException
 import com.twofasapp.data.purchases.PurchasesRepository
@@ -64,12 +64,8 @@ internal class MainViewModel(
         }
 
         launchScoped {
-            cloudRepository.observeSyncStatus().collect { syncStatus ->
-                if (cloudRepository.getSyncInfo().enabled && syncStatus is CloudSyncStatus.Error) {
-                    uiState.update { it.copy(cloudSyncError = true) }
-                } else {
-                    uiState.update { it.copy(cloudSyncError = false) }
-                }
+            cloudRepository.observeAggregateStatus().collect { syncStatus ->
+                uiState.update { it.copy(cloudSyncError = syncStatus is CloudSyncStatus.Error) }
             }
         }
 
@@ -147,7 +143,8 @@ internal class MainViewModel(
 
         syncJob = launchScoped {
             authStatusTracker.observeIsAuthenticated().distinctUntilChanged().collect { isAuthenticated ->
-                if (isAuthenticated && cloudRepository.getSyncInfo().lastSuccessfulSyncTime > 0) {
+                val anySynced = cloudRepository.getConfigs().any { it.syncedAt > 0 }
+                if (isAuthenticated && anySynced) {
                     runSafely { cloudRepository.sync() }
                         .onSuccess { syncJob?.cancel() }
                         .onFailure { syncJob?.cancel() }

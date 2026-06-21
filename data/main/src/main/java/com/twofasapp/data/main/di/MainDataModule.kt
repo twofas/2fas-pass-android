@@ -19,6 +19,8 @@ import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepositoryImpl
 import com.twofasapp.data.main.DeletedItemsRepository
 import com.twofasapp.data.main.DeletedItemsRepositoryImpl
+import com.twofasapp.data.main.DerivedKeysRepository
+import com.twofasapp.data.main.DerivedKeysRepositoryImpl
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.ItemsRepositoryImpl
 import com.twofasapp.data.main.SecurityItemRepository
@@ -38,14 +40,16 @@ import com.twofasapp.data.main.VaultKeysRepositoryImpl
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.VaultsRepositoryImpl
 import com.twofasapp.data.main.domain.CloudMerger
+import com.twofasapp.data.main.local.CloudConfigsLocalSource
 import com.twofasapp.data.main.local.ConnectedBrowsersLocalSource
 import com.twofasapp.data.main.local.DeletedItemsLocalSource
+import com.twofasapp.data.main.local.DerivedKeysLocalSource
 import com.twofasapp.data.main.local.ItemsLocalSource
 import com.twofasapp.data.main.local.SecurityLocalSource
 import com.twofasapp.data.main.local.TagsLocalSource
 import com.twofasapp.data.main.local.VaultKeysLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
-import com.twofasapp.data.main.mapper.CloudMapper
+import com.twofasapp.data.main.mapper.CloudConfigMapper
 import com.twofasapp.data.main.mapper.ConnectedBrowserMapper
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
 import com.twofasapp.data.main.mapper.IconTypeMapper
@@ -87,7 +91,7 @@ class MainDataModule : KoinModule {
         singleOf(::SecureNoteEncryptionMapperStrategy)
         singleOf(::WifiEncryptionMapperStrategy)
         singleOf(::UnknownEncryptionMapperStrategy)
-        singleOf(::CloudMapper)
+        singleOf(::CloudConfigMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)
         singleOf(::IconTypeMapper)
@@ -108,6 +112,9 @@ class MainDataModule : KoinModule {
         singleOf(::VaultKeysLocalSource)
         singleOf(::VaultKeysRepositoryImpl) { bind<VaultKeysRepository>() }
 
+        singleOf(::DerivedKeysLocalSource)
+        singleOf(::DerivedKeysRepositoryImpl) { bind<DerivedKeysRepository>() }
+
         singleOf(::DeletedItemsLocalSource)
         singleOf(::DeletedItemsRepositoryImpl) { bind<DeletedItemsRepository>() }
 
@@ -123,6 +130,7 @@ class MainDataModule : KoinModule {
         singleOf(::BackupRepositoryImpl) { bind<BackupRepository>() }
 
         singleOf(::CloudMerger)
+        singleOf(::CloudConfigsLocalSource)
         singleOf(::CloudRepositoryImpl) { bind<CloudRepository>() }
 
         singleOf(::SecurityLocalSource)

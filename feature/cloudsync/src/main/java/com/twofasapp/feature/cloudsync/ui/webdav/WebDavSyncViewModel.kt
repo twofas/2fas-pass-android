@@ -8,41 +8,45 @@
 
 package com.twofasapp.feature.cloudsync.ui.webdav
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.core.common.time.TimeProvider
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.core.android.navigation.Screen
+import com.twofasapp.data.cloud.domain.CloudConnection
+import com.twofasapp.data.cloud.domain.CloudResult
+import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.data.main.CloudRepository
-import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.domain.CloudSyncStatus
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 
 internal class WebDavSyncViewModel(
+    savedStateHandle: SavedStateHandle,
     private val cloudRepository: CloudRepository,
-    private val vaultsRepository: VaultsRepository,
-    private val timeProvider: TimeProvider,
 ) : ViewModel() {
-    val uiState = MutableStateFlow(
-        WebDavSyncUiState(),
-    )
+    private val initialConfigId: String? = savedStateHandle.toRoute<Screen.WebDavSync>().configId
+
+    val uiState = MutableStateFlow(WebDavSyncUiState(configId = initialConfigId))
+
+    private var observeJob: Job? = null
 
     init {
-        launchScoped {
-            combine(
-                cloudRepository.observeSyncInfo(),
-                cloudRepository.observeSyncStatus(),
-            ) { a, b -> Pair(a, b) }.collect { (syncInfo, syncStatus) ->
+        initialConfigId?.let(::observeConfig)
+    }
+
+    private fun observeConfig(id: String) {
+        observeJob?.cancel()
+        observeJob = launchScoped {
+            cloudRepository.observeConfig(id).collect { config ->
+                val spec = config?.connection as? CloudConnection.WebDav
                 uiState.update { state ->
                     state.copy(
-                        syncEnabled = syncInfo.enabled,
-                        syncing = syncStatus == CloudSyncStatus.Syncing,
-                        url = syncInfo.config?.let { (it as CloudConfig.WebDav).url } ?: state.url,
-                        username = syncInfo.config?.let { (it as CloudConfig.WebDav).username } ?: state.username,
-                        password = syncInfo.config?.let { (it as CloudConfig.WebDav).password } ?: state.password,
-                        allowUntrustedCertificate = syncInfo.config?.let { (it as CloudConfig.WebDav).allowUntrustedCertificate }
-                            ?: state.allowUntrustedCertificate,
+                        configId = config?.id,
+                        url = spec?.url ?: state.url,
+                        username = spec?.username ?: state.username,
+                        password = spec?.password ?: state.password,
+                        allowUntrustedCertificate = spec?.allowUntrustedCertificate ?: state.allowUntrustedCertificate,
                     )
                 }
             }
@@ -67,29 +71,30 @@ internal class WebDavSyncViewModel(
 
     fun connect() {
         launchScoped {
-            cloudRepository.enableSync(
-                CloudConfig.WebDav(
-                    url = uiState.value.url.trim().normalizeUrl(),
-                    username = uiState.value.username.trim(),
-                    password = uiState.value.password.trim(),
-                    allowUntrustedCertificate = uiState.value.allowUntrustedCertificate,
-                ),
+            uiState.update { it.copy(connecting = true, error = null) }
+
+            val spec = CloudConnection.WebDav(
+                url = uiState.value.url.trim().normalizeUrl(),
+                username = uiState.value.username.trim(),
+                password = uiState.value.password.trim(),
+                allowUntrustedCertificate = uiState.value.allowUntrustedCertificate,
             )
-        }
-    }
 
-    fun disconnect() {
-        launchScoped { cloudRepository.disableSync() }
-    }
+            when (val result = cloudRepository.testConnection(spec)) {
+                is CloudResult.Success -> {
+                    val existingId = uiState.value.configId
+                    if (existingId != null) {
+                        cloudRepository.updateConfig(existingId, spec)
+                    } else {
+                        cloudRepository.addConfig(spec)
+                    }
+                    uiState.update { it.copy(connecting = false, closeScreen = true) }
+                }
 
-    fun sync() {
-        launchScoped {
-            cloudRepository.sync(forceReplace = false)
-
-            vaultsRepository.setUpdatedTimestamp(
-                id = vaultsRepository.getVault().id,
-                timestamp = timeProvider.currentTimeUtc(),
-            )
+                is CloudResult.Failure -> {
+                    uiState.update { it.copy(connecting = false, error = result.error.asMessage()) }
+                }
+            }
         }
     }
 

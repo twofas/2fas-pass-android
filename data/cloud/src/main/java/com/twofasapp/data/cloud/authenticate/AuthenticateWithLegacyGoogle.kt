@@ -21,12 +21,12 @@ import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.common.services.CrashlyticsInstance
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 
 @Composable
 internal fun AuthenticateWithLegacyGoogle(
     onDismissRequest: () -> Unit = {},
-    onSuccess: (CloudConfig.GoogleDrive) -> Unit = {},
+    onSuccess: (CloudConnection.GoogleDrive) -> Unit = {},
     onError: (Exception) -> Unit = {},
 ) {
     val activity = LocalContext.currentActivity
@@ -39,8 +39,8 @@ internal fun AuthenticateWithLegacyGoogle(
                         .addOnSuccessListener {
                             if (it.grantedScopes.contains(Scope(DriveScopes.DRIVE_APPDATA))) {
                                 onSuccess(
-                                    CloudConfig.GoogleDrive(
-                                        id = it.email.orEmpty(),
+                                    CloudConnection.GoogleDrive(
+                                        accountId = it.email.orEmpty(),
                                         credentialType = it.account?.type.orEmpty(),
                                     ),
                                 )

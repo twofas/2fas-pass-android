@@ -12,7 +12,7 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.time.TimeProvider
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.services.common.BackupStorage
 import com.twofasapp.data.cloud.services.common.CloudClient
 import com.twofasapp.data.cloud.services.common.model.CloudIndexJson
@@ -35,9 +35,9 @@ internal class S3Client(
     private val json: Json,
     private val timeProvider: TimeProvider,
     private val device: Device,
-) : CloudClient(appBuild, json), BackupStorage<CloudConfig.S3> {
+) : CloudClient(appBuild, json), BackupStorage<CloudConnection.S3> {
 
-    override suspend fun testConnection(config: CloudConfig.S3) {
+    override suspend fun testConnection(config: CloudConnection.S3) {
         // HEAD against the bucket root: a 404 unambiguously means the bucket is missing.
         executeRequest(
             config = config,
@@ -48,7 +48,7 @@ internal class S3Client(
         )
     }
 
-    override suspend fun getIndex(config: CloudConfig.S3): CloudIndexJson {
+    override suspend fun getIndex(config: CloudConnection.S3): CloudIndexJson {
         return try {
             val response = executeRequest(
                 config = config,
@@ -71,7 +71,7 @@ internal class S3Client(
         }
     }
 
-    override suspend fun putIndex(config: CloudConfig.S3, index: CloudIndexJson) {
+    override suspend fun putIndex(config: CloudConnection.S3, index: CloudIndexJson) {
         val body = json.encodeToString(CloudIndexJson.serializer(), index).toByteArray(Charsets.UTF_8)
         executeRequest(
             config = config,
@@ -82,7 +82,7 @@ internal class S3Client(
         )
     }
 
-    override suspend fun obtainLock(config: CloudConfig.S3): Boolean {
+    override suspend fun obtainLock(config: CloudConnection.S3): Boolean {
         return try {
             val response = executeRequest(
                 config = config,
@@ -123,7 +123,7 @@ internal class S3Client(
         }
     }
 
-    override suspend fun releaseLock(config: CloudConfig.S3) {
+    override suspend fun releaseLock(config: CloudConnection.S3) {
         runSafely {
             executeRequest(
                 config = config,
@@ -135,7 +135,7 @@ internal class S3Client(
         }
     }
 
-    private suspend fun createLock(config: CloudConfig.S3, body: CloudIndexLockJson): Boolean {
+    private suspend fun createLock(config: CloudConnection.S3, body: CloudIndexLockJson): Boolean {
         val bytes = json.encodeToString(CloudIndexLockJson.serializer(), body).toByteArray(Charsets.UTF_8)
         executeRequest(
             config = config,
@@ -147,7 +147,7 @@ internal class S3Client(
         return true
     }
 
-    override suspend fun getFile(config: CloudConfig.S3, filename: String): String? {
+    override suspend fun getFile(config: CloudConnection.S3, filename: String): String? {
         return try {
             val response = executeRequest(
                 config = config,
@@ -166,7 +166,7 @@ internal class S3Client(
         }
     }
 
-    override suspend fun putFile(config: CloudConfig.S3, filename: String, content: String) {
+    override suspend fun putFile(config: CloudConnection.S3, filename: String, content: String) {
         val bytes = content.toByteArray(Charsets.UTF_8)
         executeRequest(
             config = config,
@@ -177,7 +177,7 @@ internal class S3Client(
         )
     }
 
-    override suspend fun moveFile(config: CloudConfig.S3, source: String, destination: String) {
+    override suspend fun moveFile(config: CloudConnection.S3, source: String, destination: String) {
         // S3 has no native move: copy via x-amz-copy-source, then delete the source.
         val encodedBucket = S3SigV4Signer.percentEncodePathSegment(config.bucket)
         val encodedKey = S3SigV4Signer.percentEncodePathSegment(source)
@@ -204,7 +204,7 @@ internal class S3Client(
     }
 
     private suspend fun executeRequest(
-        config: CloudConfig.S3,
+        config: CloudConnection.S3,
         method: String,
         objectKey: String,
         body: ByteArray?,

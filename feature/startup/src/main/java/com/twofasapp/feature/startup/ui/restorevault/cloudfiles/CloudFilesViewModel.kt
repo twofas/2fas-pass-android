@@ -30,8 +30,8 @@ internal class CloudFilesViewModel(
 
     init {
         launchScoped(Dispatchers.IO) {
-            restoreState.cloudConfig?.let { config ->
-                runSafely { cloudServiceProvider.provide(config).fetchFiles(config) }
+            restoreState.cloudConnection?.let { connection ->
+                runSafely { cloudServiceProvider.provide(connection).fetchFiles(connection) }
                     .onSuccess { files ->
                         uiState.update {
                             it.copy(

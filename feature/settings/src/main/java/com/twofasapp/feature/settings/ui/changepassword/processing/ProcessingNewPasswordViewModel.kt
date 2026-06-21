@@ -22,6 +22,7 @@ import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.CloudRepository
+import com.twofasapp.data.main.DerivedKeysRepository
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
@@ -42,6 +43,7 @@ internal class ProcessingNewPasswordViewModel(
     private val vaultsRepository: VaultsRepository,
     private val tagsRepository: TagsRepository,
     private val vaultKeysRepository: VaultKeysRepository,
+    private val derivedKeysRepository: DerivedKeysRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val cloudRepository: CloudRepository,
     private val itemEncryptionMapper: ItemEncryptionMapper,
@@ -81,11 +83,12 @@ internal class ProcessingNewPasswordViewModel(
                 itemsRepository.saveItems(newItems)
                 tagsRepository.reencryptTags(newVaultKeys)
                 vaultKeysRepository.generateAndSaveVaultKeys(masterKeyHex = masterKey.hashHex)
+                derivedKeysRepository.generateAndSaveDerivedKeys(masterKeyHex = masterKey.hashHex)
                 securityRepository.saveEncryptionReference(masterKey)
                 securityRepository.saveBiometricsEnabled(false)
                 itemsRepository.unlockItems()
 
-                if (cloudRepository.getSyncInfo().enabled.not()) {
+                if (cloudRepository.getConfigs().isEmpty()) {
                     delay(1500)
                     uiState.update { it.copy(step = ProcessingNewPasswordUiState.Step.Success) }
                     return@launchScoped

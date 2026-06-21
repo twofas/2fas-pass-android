@@ -32,7 +32,6 @@ import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultKeysRepository
-import com.twofasapp.data.main.domain.CloudSyncInfo
 import com.twofasapp.data.security.crypto.MasterKey
 import com.twofasapp.data.security.crypto.Seed
 import com.twofasapp.data.settings.SessionRepository
@@ -47,7 +46,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import java.time.Instant
 import javax.crypto.AEADBadTagException
 
 internal class DecryptVaultViewModel(
@@ -78,8 +76,9 @@ internal class DecryptVaultViewModel(
 
                 when (restoreState.restoreFile) {
                     is RestoreFile.Cloud -> {
-                        val backupContent = cloudServiceProvider.provide(restoreState.cloudConfig!!).fetchFile(
-                            config = restoreState.cloudConfig!!,
+                        val connection = restoreState.cloudConnection!!
+                        val backupContent = cloudServiceProvider.provide(connection).fetchFile(
+                            connection = connection,
                             info = (restoreState.restoreFile as RestoreFile.Cloud).fileInfo,
                         )
 
@@ -258,14 +257,7 @@ internal class DecryptVaultViewModel(
                         RestoreSource.WebDav,
                         RestoreSource.S3,
                         -> {
-                            cloudRepository.setSyncInfo(
-                                CloudSyncInfo(
-                                    enabled = true,
-                                    config = restoreState.cloudConfig!!,
-                                    lastSuccessfulSyncTime = Instant.now().toEpochMilli(),
-                                ),
-                            )
-
+                            cloudRepository.addConfig(restoreState.cloudConnection!!)
                             cloudRepository.sync(forceReplace = true)
                         }
                     }

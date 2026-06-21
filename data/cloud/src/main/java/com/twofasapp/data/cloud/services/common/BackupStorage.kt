@@ -8,10 +8,10 @@
 
 package com.twofasapp.data.cloud.services.common
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.services.common.model.CloudIndexJson
 
-internal interface BackupStorage<C : CloudConfig> {
+internal interface BackupStorage<C : CloudConnection> {
     suspend fun testConnection(config: C) = Unit
     suspend fun getIndex(config: C): CloudIndexJson
     suspend fun putIndex(config: C, index: CloudIndexJson)

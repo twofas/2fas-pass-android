@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: BUSL-1.1
  *
- * Copyright © 2025 Two Factor Authentication Service, Inc.
+ * Copyright © 2026 Two Factor Authentication Service, Inc.
  * Licensed under the Business Source License 1.1
  * See LICENSE file for full terms
  */
@@ -29,117 +29,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
-import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.design.MdtTheme
-import com.twofasapp.core.design.feature.settings.OptionEntry
-import com.twofasapp.core.design.feature.settings.OptionHeader
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.TextButton
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.cloud.exceptions.CloudError
 import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.feature.purchases.PurchasesDialog
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 @Composable
-internal fun SyncStatus(
-    viewModel: SyncStatusViewModel = koinViewModel(),
-    deeplinks: Deeplinks = koinInject(),
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    Content(
-        uiState = uiState,
-        onReSync = { viewModel.sync() },
-        onChangePasswordClick = { deeplinks.openScreen(Screen.Security) },
-        onReplaceBackupClick = { viewModel.sync(forceReplace = true) },
-    )
-}
-
-@Composable
-private fun Content(
-    uiState: SyncStatusUiState,
+fun CloudErrorStatus(
+    modifier: Modifier = Modifier,
+    errorType: CloudError? = null,
+    errorCause: Throwable? = null,
+    errorDetails: String? = null,
+    errorTitle: String? = null,
     onReSync: () -> Unit = {},
     onChangePasswordClick: () -> Unit = {},
     onReplaceBackupClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val strings = MdtLocale.strings
-    var showErrorDetailsDialog by remember { mutableStateOf(false) }
-
-    if (uiState.enabled.not()) return
-
-    Column {
-        OptionHeader(
-            text = strings.settingsEntrySyncInfo,
-        )
-
-        when (uiState.config) {
-            is CloudConfig.GoogleDrive -> {
-                OptionEntry(
-                    title = strings.settingsEntrySyncAccount,
-                    subtitle = uiState.config.id,
-                )
-            }
-
-            is CloudConfig.WebDav -> Unit
-            else -> Unit
-        }
-
-        OptionEntry(
-            title = strings.commonStatus,
-            subtitle = uiState.status,
-            subtitleColor = if (uiState.error) MdtTheme.color.error else MdtTheme.color.onSurfaceVariant,
-        )
-
-        if (uiState.error) {
-            ErrorStatus(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp),
-                errorType = uiState.cloudError,
-                errorCause = uiState.cloudError?.cause,
-                errorDetails = uiState.errorDetails,
-                onReSync = onReSync,
-                onShowErrorDetailsClick = { showErrorDetailsDialog = true },
-                onChangePasswordClick = onChangePasswordClick,
-                onReplaceBackupClick = onReplaceBackupClick,
-            )
-        }
-    }
-
-    if (showErrorDetailsDialog) {
-        InfoDialog(
-            onDismissRequest = { showErrorDetailsDialog = false },
-            title = uiState.status,
-            positive = strings.commonOk,
-            negative = strings.commonCopy,
-            onNegative = { context.copyToClipboard(uiState.errorDetails.orEmpty()) },
-            body = uiState.errorDetails,
-        )
-    }
-}
-
-@Composable
-private fun ErrorStatus(
-    modifier: Modifier = Modifier,
-    errorType: CloudError? = null,
-    errorCause: Throwable? = null,
-    errorDetails: String? = null,
-    onReSync: () -> Unit = {},
-    onShowErrorDetailsClick: () -> Unit = {},
-    onChangePasswordClick: () -> Unit = {},
-    onReplaceBackupClick: () -> Unit = {},
-) {
     val authLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
@@ -148,6 +61,7 @@ private fun ErrorStatus(
         }
     }
     var showPaywall by remember { mutableStateOf(false) }
+    var showErrorDetailsDialog by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val strings = MdtLocale.strings
 
@@ -180,7 +94,7 @@ private fun ErrorStatus(
                     TextButton(
                         text = strings.cloudSyncShowErrorDetails,
                         modifier = Modifier.padding(top = 8.dp),
-                        onClick = onShowErrorDetailsClick,
+                        onClick = { showErrorDetailsDialog = true },
                     )
                 }
 
@@ -205,7 +119,7 @@ private fun ErrorStatus(
                     TextButton(
                         text = strings.cloudSyncShowErrorDetails,
                         modifier = Modifier.padding(top = 4.dp),
-                        onClick = onShowErrorDetailsClick,
+                        onClick = { showErrorDetailsDialog = true },
                     )
                 }
             }
@@ -269,6 +183,17 @@ private fun ErrorStatus(
         }
     }
 
+    if (showErrorDetailsDialog) {
+        InfoDialog(
+            onDismissRequest = { showErrorDetailsDialog = false },
+            title = errorTitle ?: errorType.asMessage(),
+            positive = strings.commonOk,
+            negative = strings.commonCopy,
+            onNegative = { context.copyToClipboard(errorDetails.orEmpty()) },
+            body = errorDetails,
+        )
+    }
+
     if (showPaywall) {
         PurchasesDialog(
             onDismissRequest = { showPaywall = false },
@@ -277,16 +202,25 @@ private fun ErrorStatus(
     }
 }
 
+fun Throwable.formatCloudErrorDetails(): String = buildString {
+    append("Fatal Exception: ${this@formatCloudErrorDetails.javaClass.name}")
+    append("\n")
+    append(message)
+    append("\n")
+    append("\n")
+    append(stackTrace.joinToString("\n"))
+}
+
 @Preview
 @Composable
-private fun PreviewError() {
+private fun Preview() {
     PreviewColumn {
-        ErrorStatus(
+        CloudErrorStatus(
             modifier = Modifier.fillMaxWidth(),
             errorType = CloudError.Unknown(null),
         )
 
-        ErrorStatus(
+        CloudErrorStatus(
             modifier = Modifier.fillMaxWidth(),
             errorType = CloudError.WrongBackupPassword(null),
         )

@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: de-DE, German (Germany)
  Exported by: rafakob
- Exported at: Tue, 02 Jun 2026 13:48:03 -0700
+ Exported at: Sun, 21 Jun 2026 12:08:49 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -189,7 +189,7 @@
     <string name="settings_entry_biometrics">Biometrie</string>
     <string name="settings_entry_biometrics_description">Nutze Biometrie, um die App zu entsperren anstelle des Masterkennwortes.</string>
     <string name="settings_entry_lockout_settings">App-Sperreinstellungen</string>
-    <string name="settings_entry_lockout_settings_description">Ändere die App-Sperreinstellungen.</string>
+    <string name="settings_entry_lockout_settings_description">Bearbeite die App-Sperreinstellungen.</string>
     <string name="settings_entry_decryption_kit">Entschlüsselungskit</string>
     <string name="settings_entry_app_lock_time">App-Sperrzeit</string>
     <string name="settings_entry_app_lock_time_description">Stelle die Zeit ein, nach welcher die App erneut nach dem Masterkennwort fragt.</string>
@@ -323,15 +323,15 @@
     <string name="security_biometrics_enable_title">Erlaube Biometrie</string>
     <string name="security_biometrics_enable_description">Das Masterkennwort wird benötigt, um die Biometriefunktion zu aktivieren.</string>
     <string name="security_biometrics_enable_cta">Erlaube Biometrie</string>
-    <string name="security_lockout_settings_title">Ändere die App-Abriegelungseinstellungen</string>
+    <string name="security_lockout_settings_title">Ändere die App-Sperreinstellungen.</string>
     <string name="security_lockout_settings_description">Verifikation wird benötigt, um die App-Abriegelungseinstellungen zu ändern</string>
-    <string name="security_lockout_settings_cta">Verifiziere</string>
+    <string name="security_lockout_settings_cta">Verifizieren</string>
     <string name="security_screen_capture_enable_title">Erlaube Bildschirmaufnahmen</string>
     <string name="security_screen_capture_enable_description">Verifikation wird benötigt, um Bildschirmaufnahmen zu erlauben</string>
     <string name="security_screen_capture_enable_cta">Erlaube Bildschirmaufnahmen</string>
     <string name="security_decryption_kit_access_title">Neues Entschlüsselungskit</string>
     <string name="security_decryption_kit_access_description">Das Masterkennwort wird benötigt, um das Entschlüsselungskit herunterzuladen.</string>
-    <string name="security_decryption_kit_access_cta">Verifiziere</string>
+    <string name="security_decryption_kit_access_cta">Verifizieren</string>
     <string name="biometrics_modal_title">Biometrie</string>
     <string name="biometrics_modal_subtitle_enable">Erlaube Zugang durch Biometrie</string>
     <string name="biometrics_modal_error_too_many_attempts">Zu viele Versuche. Versuche es später erneut.</string>
@@ -1179,4 +1179,8 @@
     <string name="sync_error_not_found">Dieser Speicherort wurde nicht gefunden.</string>
     <string name="common_discard_changes">Änderungen verwerfen</string>
     <string name="s3_endpoint">Endpunkt</string>
+    <string name="backup_configs_provider_googledrive_description">Sync with your Google Drive</string>
+    <string name="backup_configs_provider_googledrive_title">Google Drive</string>
+    <string name="common_info">Info</string>
+    <string name="backup_configs_provider_googledrive_notice">Only one Google Drive account is supported.</string>
 </resources>

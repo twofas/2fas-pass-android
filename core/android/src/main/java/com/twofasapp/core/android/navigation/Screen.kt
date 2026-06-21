@@ -144,16 +144,14 @@ sealed class Screen(
     data object CloudSync : Screen()
 
     @Serializable
-    data class GoogleDriveSync(
-        val openedFromQuickSetup: Boolean,
-        val startAuth: Boolean,
+    data class WebDavSync(
+        val configId: String? = null,
     ) : Screen()
 
     @Serializable
-    data object WebDavSync : Screen()
-
-    @Serializable
-    data object S3Sync : Screen()
+    data class S3Sync(
+        val configId: String? = null,
+    ) : Screen()
 
     @Serializable
     data object ImportExport : Screen()

@@ -27,7 +27,7 @@ import com.google.api.services.drive.model.File
 import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.cloud.authenticate.CloudServiceType
 import com.twofasapp.data.cloud.authenticate.DefaultCloudServiceType
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudFileInfo
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.domain.VaultMergeResult
@@ -69,16 +69,16 @@ internal class GoogleDriveCloudService(
         return "${BackupFileMetadata.Prefix}_${request.seedHashHex}_${request.vaultId}_v1.2faspass"
     }
 
-    override suspend fun connect(config: CloudConfig): CloudResult {
+    override suspend fun connect(connection: CloudConnection): CloudResult {
         return CloudResult.Success
     }
 
-    override suspend fun fetchFiles(config: CloudConfig): List<CloudFileInfo> {
-        if (config !is CloudConfig.GoogleDrive) {
+    override suspend fun fetchFiles(connection: CloudConnection): List<CloudFileInfo> {
+        if (connection !is CloudConnection.GoogleDrive) {
             return emptyList()
         }
 
-        return config.drive().getAllFiles().map { file ->
+        return connection.drive().getAllFiles().map { file ->
             CloudFileInfo.GoogleDrive(
                 fileId = file.id,
                 deviceId = file.properties?.get(BackupFileMetadata.PropertyDeviceId) ?: "",
@@ -92,25 +92,25 @@ internal class GoogleDriveCloudService(
         }
     }
 
-    override suspend fun fetchFile(config: CloudConfig, info: CloudFileInfo): String {
-        if (config !is CloudConfig.GoogleDrive || info !is CloudFileInfo.GoogleDrive) {
+    override suspend fun fetchFile(connection: CloudConnection, info: CloudFileInfo): String {
+        if (connection !is CloudConnection.GoogleDrive || info !is CloudFileInfo.GoogleDrive) {
             throw RuntimeException("Invalid config!")
         }
 
-        return config.drive().getBackupFileContent(id = info.fileId)
+        return connection.drive().getBackupFileContent(id = info.fileId)
     }
 
     override suspend fun sync(
-        config: CloudConfig,
+        connection: CloudConnection,
         request: VaultSyncRequest,
         mergeVaultContent: suspend (String?) -> VaultMergeResult,
     ): CloudResult {
-        if (config !is CloudConfig.GoogleDrive) {
+        if (connection !is CloudConnection.GoogleDrive) {
             return CloudResult.Failure(CloudError.Unknown())
         }
 
         return try {
-            val drive = config.drive()
+            val drive = connection.drive()
             val requestedFilename = generateFilename(request)
             val backupFileMetadata = drive.findBackupFile(requestedFilename)
 
@@ -334,12 +334,12 @@ internal class GoogleDriveCloudService(
         }
     }
 
-    private fun CloudConfig.GoogleDrive.drive(): Drive {
+    private fun CloudConnection.GoogleDrive.drive(): Drive {
         val googleAccountCredential = GoogleAccountCredential
             .usingOAuth2(context, Collections.singleton(DriveScopes.DRIVE_APPDATA))
             .apply {
                 selectedAccount = Account(
-                    this@drive.id,
+                    this@drive.accountId,
                     this@drive.credentialType,
                 )
             }

@@ -14,12 +14,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.twofasapp.data.logs.local.dao.LogsDao
 import com.twofasapp.data.logs.local.model.LogEntryEntity
+import com.twofasapp.data.main.local.dao.CloudConfigsDao
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
 import com.twofasapp.data.main.local.dao.ItemsDao
 import com.twofasapp.data.main.local.dao.TagsDao
 import com.twofasapp.data.main.local.dao.VaultKeysDao
 import com.twofasapp.data.main.local.dao.VaultsDao
+import com.twofasapp.data.main.local.model.CloudConfigEntity
 import com.twofasapp.data.main.local.model.ConnectedBrowserEntity
 import com.twofasapp.data.main.local.model.DeletedItemEntity
 import com.twofasapp.data.main.local.model.ItemEntity
@@ -39,10 +41,12 @@ import com.twofasapp.pass.storage.converters.StringListConverter
         DeletedItemEntity::class,
         ConnectedBrowserEntity::class,
         TagEntity::class,
+        CloudConfigEntity::class,
     ],
-    version = 3,
+    version = 4,
     autoMigrations = [
         AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
     ],
 )
 @TypeConverters(
@@ -58,4 +62,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun deletedItemsDao(): DeletedItemsDao
     abstract fun connectedBrowsersDao(): ConnectedBrowsersDao
     abstract fun tagsDao(): TagsDao
+    abstract fun cloudConfigsDao(): CloudConfigsDao
 }

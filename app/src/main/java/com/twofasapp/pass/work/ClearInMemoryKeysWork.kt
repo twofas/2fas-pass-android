@@ -15,6 +15,7 @@ import androidx.work.WorkerParameters
 import com.twofasapp.core.android.ktx.cancel
 import com.twofasapp.core.android.ktx.enqueueUniqueAndReplace
 import com.twofasapp.core.common.logger.Flog
+import com.twofasapp.data.main.DerivedKeysRepository
 import com.twofasapp.data.main.VaultKeysRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -26,6 +27,7 @@ class ClearInMemoryKeysWork(
 ) : CoroutineWorker(context, workerParams), KoinComponent {
 
     private val vaultKeysRepository: VaultKeysRepository by inject()
+    private val derivedKeysRepository: DerivedKeysRepository by inject()
 
     companion object {
         fun dispatch(context: Context, delayMillis: Long) {
@@ -49,6 +51,7 @@ class ClearInMemoryKeysWork(
         }
 
         vaultKeysRepository.clearInMemoryVaultKeys()
+        derivedKeysRepository.clearInMemoryDerivedKeys()
 
         Flog.persist("ClearKeys", "ClearInMemoryKeys: completed")
         return Result.success()

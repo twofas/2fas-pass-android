@@ -25,8 +25,8 @@ internal class QuickSetupViewModel(
 
     init {
         launchScoped {
-            cloudRepository.observeSyncInfo().collect { syncInfo ->
-                uiState.update { it.copy(syncEnabled = syncInfo.enabled) }
+            cloudRepository.observeConfigs().collect { configs ->
+                uiState.update { it.copy(syncEnabled = configs.isNotEmpty()) }
             }
         }
 

@@ -10,8 +10,8 @@ package com.twofasapp.feature.settings.ui.settings
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
+import com.twofasapp.data.cloud.domain.CloudSyncStatus
 import com.twofasapp.data.main.CloudRepository
-import com.twofasapp.data.main.domain.CloudSyncStatus
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.settings.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,18 +27,8 @@ internal class SettingsViewModel(
 
     init {
         launchScoped {
-            cloudRepository.observeSyncStatus().collect { syncStatus ->
-                if (cloudRepository.getSyncInfo().enabled && syncStatus is CloudSyncStatus.Error) {
-                    uiState.update { it.copy(cloudSyncError = true) }
-                } else {
-                    uiState.update { it.copy(cloudSyncError = false) }
-                }
-            }
-        }
-
-        launchScoped {
-            cloudRepository.observeSyncInfo().collect { syncInfo ->
-                uiState.update { it.copy(cloudConfig = syncInfo.config) }
+            cloudRepository.observeAggregateStatus().collect { syncStatus ->
+                uiState.update { it.copy(cloudSyncError = syncStatus is CloudSyncStatus.Error) }
             }
         }
 

@@ -9,7 +9,7 @@
 package com.twofasapp.data.cloud.authenticate
 
 import androidx.compose.runtime.Composable
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 
 enum class CloudServiceType {
     GoogleDrive, LegacyGoogleDrive
@@ -21,7 +21,7 @@ val DefaultCloudServiceType = CloudServiceType.LegacyGoogleDrive
 fun AuthenticateCloudService(
     type: CloudServiceType,
     onDismissRequest: () -> Unit = {},
-    onSuccess: (CloudConfig) -> Unit = {},
+    onSuccess: (CloudConnection.GoogleDrive) -> Unit = {},
     onError: (Exception) -> Unit = {},
 ) {
     when (type) {

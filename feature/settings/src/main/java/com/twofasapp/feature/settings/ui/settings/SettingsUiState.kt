@@ -8,11 +8,9 @@
 
 package com.twofasapp.feature.settings.ui.settings
 
-import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 
 internal data class SettingsUiState(
     val cloudSyncError: Boolean = false,
-    val cloudConfig: CloudConfig? = null,
     val subscriptionPlan: SubscriptionPlan = SubscriptionPlan.Free(),
 )

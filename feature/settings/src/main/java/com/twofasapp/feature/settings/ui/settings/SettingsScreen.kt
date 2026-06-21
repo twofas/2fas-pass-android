@@ -40,7 +40,6 @@ import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
-import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.feature.purchases.PurchasesDialog
 import org.koin.androidx.compose.koinViewModel
@@ -166,14 +165,7 @@ private fun Content(
                     title = strings.settingsEntryCloudSync,
                     subtitle = strings.settingsEntryCloudSyncDesc,
                     icon = MdtIcons.CloudSync,
-                    onClick = {
-                        when (uiState.cloudConfig) {
-                            is CloudConfig.GoogleDrive -> deeplinks.openScreen(Screen.GoogleDriveSync(openedFromQuickSetup = false, startAuth = false))
-                            is CloudConfig.WebDav -> deeplinks.openScreen(Screen.WebDavSync)
-                            is CloudConfig.S3 -> deeplinks.openScreen(Screen.S3Sync)
-                            null -> deeplinks.openScreen(Screen.CloudSync)
-                        }
-                    },
+                    onClick = { deeplinks.openScreen(Screen.CloudSync) },
                     content = {
                         if (uiState.cloudSyncError) {
                             Icon(

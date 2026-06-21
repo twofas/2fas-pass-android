@@ -26,6 +26,7 @@ dependencies {
 
     implementation(project(":data:settings"))
     implementation(project(":data:main"))
+    implementation(project(":data:cloud"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

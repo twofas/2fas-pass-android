@@ -8,7 +8,7 @@
 
 package com.twofasapp.data.cloud.services.s3
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -37,7 +37,7 @@ internal object S3SigV4Signer {
         headersToSign: Map<String, String>,
         bodySha256Hex: String,
         now: Date,
-        config: CloudConfig.S3,
+        config: CloudConnection.S3,
     ): SignedHeaders {
         val amzDate = amzDate(now)
         val dateStamp = amzDate.substring(0, 8)

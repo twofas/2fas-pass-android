@@ -6,6 +6,7 @@ import com.twofasapp.core.common.build.AppUpdateResult
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.settings.SessionRepository
+import com.twofasapp.pass.storage.migrations.data.MigrateLegacyCloudConfig
 import com.twofasapp.pass.storage.migrations.data.MigrateLoginsToItems
 import kotlinx.coroutines.withContext
 
@@ -14,6 +15,7 @@ class AppUpdateExecutorImpl(
     private val appBuild: AppBuild,
     private val sessionRepository: SessionRepository,
     private val migrateLoginsToItems: MigrateLoginsToItems,
+    private val migrateLegacyCloudConfig: MigrateLegacyCloudConfig,
 ) : AppUpdateExecutor {
 
     companion object {
@@ -44,5 +46,6 @@ class AppUpdateExecutorImpl(
 
     private suspend fun runMigrations() {
         migrateLoginsToItems.execute()
+        migrateLegacyCloudConfig.execute()
     }
 }

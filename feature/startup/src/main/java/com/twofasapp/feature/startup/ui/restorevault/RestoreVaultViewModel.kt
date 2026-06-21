@@ -11,7 +11,7 @@ package com.twofasapp.feature.startup.ui.restorevault
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.feature.startup.ui.StartupProcessor
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -28,8 +28,8 @@ internal class RestoreVaultViewModel(
         }
     }
 
-    fun updateRestoreCloudConfig(config: CloudConfig) {
-        restoreState.cloudConfig = config
+    fun updateRestoreCloudConfig(connection: CloudConnection) {
+        restoreState.cloudConnection = connection
     }
 
     fun updateRestoreSource(source: RestoreSource) {

@@ -8,16 +8,16 @@
 
 package com.twofasapp.feature.startup.ui.restorevault
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 
 internal class RestoreState {
     var restoreSource: RestoreSource = RestoreSource.GoogleDrive
     var restoreFile: RestoreFile? = null
-    var cloudConfig: CloudConfig? = null
+    var cloudConnection: CloudConnection? = null
 
     fun reset() {
         restoreSource = RestoreSource.GoogleDrive
-        cloudConfig = null
+        cloudConnection = null
         restoreFile = null
     }
 }

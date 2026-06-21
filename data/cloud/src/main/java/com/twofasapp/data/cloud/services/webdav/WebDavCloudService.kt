@@ -8,7 +8,7 @@
 
 package com.twofasapp.data.cloud.services.webdav
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudFileInfo
 import com.twofasapp.data.cloud.services.common.BackupCloudService
 import com.twofasapp.data.cloud.services.common.model.CloudIndexBackupJson
@@ -16,7 +16,7 @@ import java.time.Instant
 
 internal class WebDavCloudService(
     webDavClient: WebDavClient,
-) : BackupCloudService<CloudConfig.WebDav>(webDavClient) {
+) : BackupCloudService<CloudConnection.WebDav>(webDavClient) {
 
     override fun toFileInfo(backup: CloudIndexBackupJson): CloudFileInfo = CloudFileInfo.WebDav(
         deviceId = backup.deviceId,

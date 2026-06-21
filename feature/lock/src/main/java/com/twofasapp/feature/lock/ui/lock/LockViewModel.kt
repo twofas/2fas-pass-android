@@ -23,6 +23,7 @@ import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.core.locale.Strings
+import com.twofasapp.data.main.DerivedKeysRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.VaultKeysRepository
 import com.twofasapp.data.settings.SessionRepository
@@ -39,6 +40,7 @@ internal class LockViewModel(
     private val sessionRepository: SessionRepository,
     private val securityRepository: SecurityRepository,
     private val vaultKeysRepository: VaultKeysRepository,
+    private val derivedKeysRepository: DerivedKeysRepository,
     private val authStatusTracker: AuthStatusTracker,
     private val timeProvider: TimeProvider,
     private val appUpdateExecutor: AppUpdateExecutor,
@@ -127,6 +129,7 @@ internal class LockViewModel(
             runSafely {
                 val masterKey = securityRepository.getMasterKeyWithPassword(password)
                 vaultKeysRepository.generateAndSaveVaultKeys(masterKey)
+                derivedKeysRepository.generateAndSaveDerivedKeys(masterKey)
                 masterKey
             }
                 .onSuccess { masterKey ->
@@ -162,7 +165,9 @@ internal class LockViewModel(
 
         launchScoped {
             runSafely {
-                vaultKeysRepository.generateAndSaveVaultKeys(masterKey.encodeHex())
+                val masterKeyHex = masterKey.encodeHex()
+                vaultKeysRepository.generateAndSaveVaultKeys(masterKeyHex)
+                derivedKeysRepository.generateAndSaveDerivedKeys(masterKeyHex)
             }
                 .onSuccess {
                     Flog.persist("Lock", "Unlock with master key: success")
