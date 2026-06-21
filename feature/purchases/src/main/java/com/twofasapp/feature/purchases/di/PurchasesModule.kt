@@ -9,10 +9,13 @@
 package com.twofasapp.feature.purchases.di
 
 import com.twofasapp.core.di.KoinModule
+import com.twofasapp.feature.purchases.appreview.AppReviewViewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 class PurchasesModule : KoinModule {
 
     override fun provide() = module {
+        viewModelOf(::AppReviewViewModel)
     }
 }

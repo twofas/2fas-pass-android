@@ -13,14 +13,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import com.revenuecat.purchases.CustomerInfo
 import com.revenuecat.purchases.models.StoreTransaction
 import com.revenuecat.purchases.ui.revenuecatui.PaywallDialog
 import com.revenuecat.purchases.ui.revenuecatui.PaywallDialogOptions
 import com.revenuecat.purchases.ui.revenuecatui.PaywallListener
+import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
 import com.twofasapp.core.locale.MdtLocale
+import com.twofasapp.feature.purchases.appreview.AppReviewViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PurchasesDialog(
@@ -59,11 +63,15 @@ fun PurchasesDialog(
     onDismissRequest: () -> Unit,
     onSuccess: () -> Unit = {},
 ) {
+    val activity = LocalContext.currentActivity
+    val appReviewViewModel: AppReviewViewModel = koinViewModel()
+
     PaywallDialog(
         paywallDialogOptions = PaywallDialogOptions.Builder()
             .setListener(
                 object : PaywallListener {
                     override fun onPurchaseCompleted(customerInfo: CustomerInfo, storeTransaction: StoreTransaction) {
+                        appReviewViewModel.maybeRequestReview(activity)
                         onDismissRequest()
                         onSuccess()
                     }

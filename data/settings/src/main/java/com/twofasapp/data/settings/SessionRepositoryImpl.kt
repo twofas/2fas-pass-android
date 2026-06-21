@@ -35,6 +35,7 @@ internal class SessionRepositoryImpl(
     private val connectOnboardingPrompted by booleanPref(default = false)
     private val quickSetupPrompted by booleanPref(default = true)
     private val appUpdatePromptedTimestamp by longPref(default = 0L)
+    private val appReviewPromptedTimestamp by longPref(default = 0L)
     private val failedAppUnlocks by serializedPrefNullable(
         serializer = FailedAppUnlocksEntity.serializer(),
         name = "failedAppUnlocks",
@@ -97,5 +98,15 @@ internal class SessionRepositoryImpl(
 
     override suspend fun markAppUpdatePrompted() {
         withContext(dispatchers.io) { appUpdatePromptedTimestamp.set(timeProvider.currentTimeUtc()) }
+    }
+
+    override suspend fun getAppReviewPromptedAt(): Instant {
+        return withContext(dispatchers.io) {
+            Instant.ofEpochMilli(appReviewPromptedTimestamp.get())
+        }
+    }
+
+    override suspend fun markAppReviewPrompted() {
+        withContext(dispatchers.io) { appReviewPromptedTimestamp.set(timeProvider.currentTimeUtc()) }
     }
 }
