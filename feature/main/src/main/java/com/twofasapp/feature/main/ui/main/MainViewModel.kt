@@ -143,8 +143,7 @@ internal class MainViewModel(
 
         syncJob = launchScoped {
             authStatusTracker.observeIsAuthenticated().distinctUntilChanged().collect { isAuthenticated ->
-                val anySynced = cloudRepository.getConfigs().any { it.syncedAt > 0 }
-                if (isAuthenticated && anySynced) {
+                if (isAuthenticated && cloudRepository.getConfigs().any { it.syncedAt > 0 }) {
                     runSafely { cloudRepository.sync() }
                         .onSuccess { syncJob?.cancel() }
                         .onFailure { syncJob?.cancel() }

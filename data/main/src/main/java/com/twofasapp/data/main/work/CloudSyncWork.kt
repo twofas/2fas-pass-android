@@ -15,6 +15,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.twofasapp.core.android.ktx.enqueueUniqueIfNotScheduled
 import com.twofasapp.core.android.ktx.runSafely
+import com.twofasapp.core.common.auth.AuthStatusTracker
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.logger.Flog
@@ -50,6 +51,7 @@ internal class CloudSyncWork(
 ) : CoroutineWorker(context, workerParams), KoinComponent {
 
     private val cloudRepository: CloudRepository by inject()
+    private val authStatusTracker: AuthStatusTracker by inject()
     private val vaultRepository: VaultsRepository by inject()
     private val vaultKeysRepository: VaultKeysRepository by inject()
     private val backupRepository: BackupRepository by inject()
@@ -85,6 +87,12 @@ internal class CloudSyncWork(
 
     override suspend fun doWork(): Result {
         val forceReplace = inputData.getBoolean(ArgForceReplace, false)
+
+        if (authStatusTracker.isAuthenticated().not()) {
+            logBoth("Vault is locked, skipping cloud sync")
+            return Result.failure()
+        }
+
         val configs = cloudRepository.getConfigs()
 
         if (configs.isEmpty()) {
