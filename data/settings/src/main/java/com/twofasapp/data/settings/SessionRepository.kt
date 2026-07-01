@@ -27,6 +27,6 @@ interface SessionRepository {
     suspend fun setQuickSetupPrompted(prompted: Boolean)
     suspend fun getAppUpdatePromptedAt(): Instant
     suspend fun markAppUpdatePrompted()
-    suspend fun getAppReviewPromptedAt(): Instant
+    fun observeAppReviewPrompted(): Flow<Boolean>
     suspend fun markAppReviewPrompted()
 }

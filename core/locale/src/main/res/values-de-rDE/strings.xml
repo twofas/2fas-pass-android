@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: de-DE, German (Germany)
  Exported by: rafakob
- Exported at: Sun, 21 Jun 2026 12:08:49 -0700
+ Exported at: Wed, 01 Jul 2026 13:35:09 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1183,4 +1183,8 @@
     <string name="backup_configs_provider_googledrive_title">Google Drive</string>
     <string name="common_info">Info</string>
     <string name="backup_configs_provider_googledrive_notice">Only one Google Drive account is supported.</string>
+    <string name="home_app_review_title">Enjoying 2FAS Pass?</string>
+    <string name="home_app_review_msg">Your feedback helps us improve and reach more people who care about their security.</string>
+    <string name="home_app_review_dismiss">Not now</string>
+    <string name="home_app_review_rate">Rate app</string>
 </resources>

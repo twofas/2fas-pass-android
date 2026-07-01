@@ -100,10 +100,8 @@ internal class SessionRepositoryImpl(
         withContext(dispatchers.io) { appUpdatePromptedTimestamp.set(timeProvider.currentTimeUtc()) }
     }
 
-    override suspend fun getAppReviewPromptedAt(): Instant {
-        return withContext(dispatchers.io) {
-            Instant.ofEpochMilli(appReviewPromptedTimestamp.get())
-        }
+    override fun observeAppReviewPrompted(): Flow<Boolean> {
+        return appReviewPromptedTimestamp.asFlow().map { it > 0L }
     }
 
     override suspend fun markAppReviewPrompted() {
