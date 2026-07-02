@@ -41,7 +41,12 @@ internal class DeletedItemsMapper {
             DeletedItemJson(
                 id = id,
                 deletedAt = deletedAt,
-                type = type,
+                type = if (type.equals("tag", true)) {
+                    "tag"
+                } else {
+                    // Fallback to "login" if type is not "tag" for backward compatibility with iOS app
+                    "login"
+                },
             )
         }
     }
