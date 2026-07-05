@@ -21,6 +21,7 @@ interface CloudRepository {
     suspend fun removeConfig(id: String)
     suspend fun getConfig(id: String): CloudConfig?
     suspend fun getConfigs(): List<CloudConfig>
+    suspend fun reencryptConfigs(configs: List<CloudConfig>)
     suspend fun setSyncStatus(id: String, status: CloudSyncStatus)
     suspend fun setSyncLastTime(id: String, timestamp: Long)
     suspend fun sync(forceReplace: Boolean = false)

@@ -110,6 +110,15 @@ internal class CloudRepositoryImpl(
         }
     }
 
+    override suspend fun reencryptConfigs(configs: List<CloudConfig>) {
+        withContext(dispatchers.io) {
+            configs.forEach { config ->
+                val existing = cloudConfigsLocalSource.get(config.id) ?: return@forEach
+                cloudConfigsLocalSource.save(cloudConfigMapper.mapToEntity(domain = config, createdAt = existing.createdAt))
+            }
+        }
+    }
+
     override suspend fun setSyncStatus(id: String, status: CloudSyncStatus) {
         withContext(dispatchers.io) {
             cloudConfigsLocalSource.updateStatus(

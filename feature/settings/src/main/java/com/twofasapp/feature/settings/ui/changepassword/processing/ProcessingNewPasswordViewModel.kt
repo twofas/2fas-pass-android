@@ -64,6 +64,7 @@ internal class ProcessingNewPasswordViewModel(
                 // Re-encrypt local database
                 val vault = vaultsRepository.getVault()
                 val items = itemsRepository.getItemsDecryptedWithDeleted()
+                val cloudConfigs = cloudRepository.getConfigs()
 
                 val encryptedPassword: String = savedStateHandle.toRoute<Screen.ProcessingNewPassword>().encryptedPassword
                 val password = decrypt(androidKeyStore.appKey, EncryptedBytes(encryptedPassword.decodeBase64())).decodeToString()
@@ -84,6 +85,7 @@ internal class ProcessingNewPasswordViewModel(
                 tagsRepository.reencryptTags(newVaultKeys)
                 vaultKeysRepository.generateAndSaveVaultKeys(masterKeyHex = masterKey.hashHex)
                 derivedKeysRepository.generateAndSaveDerivedKeys(masterKeyHex = masterKey.hashHex)
+                cloudRepository.reencryptConfigs(configs = cloudConfigs)
                 securityRepository.saveEncryptionReference(masterKey)
                 securityRepository.saveBiometricsEnabled(false)
                 itemsRepository.unlockItems()
