@@ -9,6 +9,7 @@
 package com.twofasapp.data.main
 
 import android.content.Context
+import com.twofasapp.core.android.ktx.cancel
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.logger.Flog
@@ -37,6 +38,9 @@ internal class CloudRepositoryImpl(
     private val cloudConfigsLocalSource: CloudConfigsLocalSource,
     dataStoreOwner: DataStoreOwner,
 ) : CloudRepository, DataStoreOwner by dataStoreOwner {
+
+    @Volatile
+    private var syncPaused = false
 
     init {
         CoroutineScope(dispatchers.io + SupervisorJob()).launch {
@@ -112,10 +116,11 @@ internal class CloudRepositoryImpl(
 
     override suspend fun reencryptConfigs(configs: List<CloudConfig>) {
         withContext(dispatchers.io) {
-            configs.forEach { config ->
-                val existing = cloudConfigsLocalSource.get(config.id) ?: return@forEach
-                cloudConfigsLocalSource.save(cloudConfigMapper.mapToEntity(domain = config, createdAt = existing.createdAt))
+            val entities = configs.mapNotNull { config ->
+                val existing = cloudConfigsLocalSource.get(config.id) ?: return@mapNotNull null
+                cloudConfigMapper.mapToEntity(domain = config, createdAt = existing.createdAt)
             }
+            cloudConfigsLocalSource.save(entities)
         }
     }
 
@@ -136,6 +141,10 @@ internal class CloudRepositoryImpl(
     }
 
     override suspend fun sync(forceReplace: Boolean) {
+        if (syncPaused) {
+            Flog.persist(tag = "CloudSync", message = "Sync is paused, skipping dispatch")
+            return
+        }
         if (cloudConfigsLocalSource.getAll().isNotEmpty()) {
             CloudSyncWork.dispatch(
                 context = context,
@@ -144,15 +153,40 @@ internal class CloudRepositoryImpl(
         }
     }
 
+    override fun pauseSync() {
+        Flog.persist(tag = "CloudSync", message = "Sync paused")
+        syncPaused = true
+        context.cancel<CloudSyncWork>()
+    }
+
+    override fun resumeSync() {
+        if (syncPaused) {
+            Flog.persist(tag = "CloudSync", message = "Sync resumed")
+        }
+        syncPaused = false
+    }
+
+    override fun isSyncPaused(): Boolean {
+        return syncPaused
+    }
+
     override fun observeConfigs(): Flow<List<CloudConfig>> {
         return cloudConfigsLocalSource.observeAll().map { entities ->
-            entities.map { cloudConfigMapper.mapToDomain(it) }
+            entities.mapNotNull { entity ->
+                runSafely { cloudConfigMapper.mapToDomain(entity) }
+                    .onFailure { Flog.persist(tag = "CloudSync", message = "Skipping config ${entity.id} in observer - decryption failed") }
+                    .getOrNull()
+            }
         }
     }
 
     override fun observeConfig(id: String): Flow<CloudConfig?> {
         return cloudConfigsLocalSource.observe(id).map { entity ->
-            entity?.let { cloudConfigMapper.mapToDomain(it) }
+            entity?.let {
+                runSafely { cloudConfigMapper.mapToDomain(it) }
+                    .onFailure { Flog.persist(tag = "CloudSync", message = "Skipping config ${entity.id} in observer - decryption failed") }
+                    .getOrNull()
+            }
         }
     }
 

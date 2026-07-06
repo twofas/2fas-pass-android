@@ -35,6 +35,10 @@ class CloudConfigsLocalSource(
         dao.save(entity)
     }
 
+    suspend fun save(entities: List<CloudConfigEntity>) {
+        dao.save(entities)
+    }
+
     suspend fun updateStatus(id: String, status: String, errorCode: String?) {
         dao.updateStatus(id, status, errorCode)
     }

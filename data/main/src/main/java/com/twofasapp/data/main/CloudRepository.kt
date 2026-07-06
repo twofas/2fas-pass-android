@@ -25,6 +25,9 @@ interface CloudRepository {
     suspend fun setSyncStatus(id: String, status: CloudSyncStatus)
     suspend fun setSyncLastTime(id: String, timestamp: Long)
     suspend fun sync(forceReplace: Boolean = false)
+    fun pauseSync()
+    fun resumeSync()
+    fun isSyncPaused(): Boolean
     fun observeConfigs(): Flow<List<CloudConfig>>
     fun observeConfig(id: String): Flow<CloudConfig?>
     fun observeAggregateStatus(): Flow<CloudSyncStatus>

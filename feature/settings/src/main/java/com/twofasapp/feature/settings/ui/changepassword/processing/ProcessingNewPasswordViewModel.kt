@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 internal class ProcessingNewPasswordViewModel(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     dispatchers: Dispatchers,
     private val securityRepository: SecurityRepository,
     private val androidKeyStore: AndroidKeyStore,
@@ -53,63 +53,75 @@ internal class ProcessingNewPasswordViewModel(
 
     init {
         launchScoped(dispatchers.io) {
-            runSafely {
-                uiState.update {
-                    it.copy(
-                        step = ProcessingNewPasswordUiState.Step.Processing,
-                        processingMessage = strings.settingsChangePasswordProcessingMessageLocal,
-                    )
-                }
+            try {
+                changePassword()
+            } finally {
+                cloudRepository.resumeSync()
+            }
+        }
+    }
 
-                // Re-encrypt local database
-                val vault = vaultsRepository.getVault()
-                val items = itemsRepository.getItemsDecryptedWithDeleted()
-                val cloudConfigs = cloudRepository.getConfigs()
-
-                val encryptedPassword: String = savedStateHandle.toRoute<Screen.ProcessingNewPassword>().encryptedPassword
-                val password = decrypt(androidKeyStore.appKey, EncryptedBytes(encryptedPassword.decodeBase64())).decodeToString()
-                val masterKey = securityRepository.generateMasterKey(
-                    password = password,
-                    seed = securityRepository.getSeed(),
-                    kdfSpec = securityRepository.getMasterKeyKdfSpec(),
+    private suspend fun changePassword() {
+        runSafely {
+            uiState.update {
+                it.copy(
+                    step = ProcessingNewPasswordUiState.Step.Processing,
+                    processingMessage = strings.settingsChangePasswordProcessingMessageLocal,
                 )
-                uiState.update { it.copy(newMasterKeyHex = masterKey.hashHex) }
+            }
 
-                val newVaultKeys = vaultKeysRepository.generateVaultKeys(masterKeyHex = masterKey.hashHex, vaultId = vault.id)
-                val newItems = vaultCryptoScope.withVaultCipher(vaultKeys = newVaultKeys) {
-                    itemEncryptionMapper.encryptItems(items = items, vaultCipher = this)
-                }
+            // Re-encrypt local database
+            cloudRepository.pauseSync()
 
-                itemsRepository.lockItems()
-                itemsRepository.saveItems(newItems)
-                tagsRepository.reencryptTags(newVaultKeys)
-                vaultKeysRepository.generateAndSaveVaultKeys(masterKeyHex = masterKey.hashHex)
-                derivedKeysRepository.generateAndSaveDerivedKeys(masterKeyHex = masterKey.hashHex)
-                cloudRepository.reencryptConfigs(configs = cloudConfigs)
-                securityRepository.saveEncryptionReference(masterKey)
-                securityRepository.saveBiometricsEnabled(false)
-                itemsRepository.unlockItems()
+            val vault = vaultsRepository.getVault()
+            val items = itemsRepository.getItemsDecryptedWithDeleted()
+            val cloudConfigs = cloudRepository.getConfigs()
 
-                if (cloudRepository.getConfigs().isEmpty()) {
-                    delay(1500)
-                    uiState.update { it.copy(step = ProcessingNewPasswordUiState.Step.Success) }
-                    return@launchScoped
-                }
+            val encryptedPassword: String = savedStateHandle.toRoute<Screen.ProcessingNewPassword>().encryptedPassword
+            val password = decrypt(androidKeyStore.appKey, EncryptedBytes(encryptedPassword.decodeBase64())).decodeToString()
+            val masterKey = securityRepository.generateMasterKey(
+                password = password,
+                seed = securityRepository.getSeed(),
+                kdfSpec = securityRepository.getMasterKeyKdfSpec(),
+            )
+            uiState.update { it.copy(newMasterKeyHex = masterKey.hashHex) }
 
-                uiState.update {
-                    it.copy(
-                        step = ProcessingNewPasswordUiState.Step.Processing,
-                        processingMessage = strings.settingsChangePasswordProcessingMessageCloud,
-                    )
-                }
-                cloudRepository.sync(forceReplace = true)
+            val newVaultKeys = vaultKeysRepository.generateVaultKeys(masterKeyHex = masterKey.hashHex, vaultId = vault.id)
+            val newItems = vaultCryptoScope.withVaultCipher(vaultKeys = newVaultKeys) {
+                itemEncryptionMapper.encryptItems(items = items, vaultCipher = this)
+            }
+
+            itemsRepository.lockItems()
+            itemsRepository.saveItems(newItems)
+            tagsRepository.reencryptTags(newVaultKeys)
+            vaultKeysRepository.generateAndSaveVaultKeys(masterKeyHex = masterKey.hashHex)
+            derivedKeysRepository.generateAndSaveDerivedKeys(masterKeyHex = masterKey.hashHex)
+            cloudRepository.reencryptConfigs(configs = cloudConfigs)
+            securityRepository.saveEncryptionReference(masterKey)
+            securityRepository.saveBiometricsEnabled(false)
+            itemsRepository.unlockItems()
+
+            if (cloudRepository.getConfigs().isEmpty()) {
+                cloudRepository.resumeSync()
                 delay(1500)
                 uiState.update { it.copy(step = ProcessingNewPasswordUiState.Step.Success) }
+                return@runSafely
             }
-                .onFailure { e ->
-                    uiState.update { state -> state.copy(step = ProcessingNewPasswordUiState.Step.Error(e.message.orEmpty())) }
-                    CrashlyticsInstance.logException(e)
-                }
+
+            uiState.update {
+                it.copy(
+                    step = ProcessingNewPasswordUiState.Step.Processing,
+                    processingMessage = strings.settingsChangePasswordProcessingMessageCloud,
+                )
+            }
+            cloudRepository.resumeSync()
+            cloudRepository.sync(forceReplace = true)
+            delay(1500)
+            uiState.update { it.copy(step = ProcessingNewPasswordUiState.Step.Success) }
         }
+            .onFailure { e ->
+                uiState.update { state -> state.copy(step = ProcessingNewPasswordUiState.Step.Error(e.message.orEmpty())) }
+                CrashlyticsInstance.logException(e)
+            }
     }
 }

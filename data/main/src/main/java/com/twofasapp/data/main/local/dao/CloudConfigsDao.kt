@@ -32,6 +32,9 @@ interface CloudConfigsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(entity: CloudConfigEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun save(entities: List<CloudConfigEntity>)
+
     @Query("UPDATE cloud_configs SET status = :status, error_code = :errorCode WHERE id = :id")
     suspend fun updateStatus(id: String, status: String, errorCode: String?)
 

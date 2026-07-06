@@ -86,12 +86,17 @@ internal class CloudSyncWork(
     }
 
     override suspend fun doWork(): Result {
-        val forceReplace = inputData.getBoolean(ArgForceReplace, false)
+        if (cloudRepository.isSyncPaused()) {
+            logBoth("Sync is paused, skipping cloud sync")
+            return Result.failure()
+        }
 
         if (authStatusTracker.isAuthenticated().not()) {
             logBoth("Vault is locked, skipping cloud sync")
             return Result.failure()
         }
+
+        val forceReplace = inputData.getBoolean(ArgForceReplace, false)
 
         val configs = cloudRepository.getConfigs()
 
