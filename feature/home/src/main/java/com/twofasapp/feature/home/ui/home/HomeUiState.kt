@@ -39,8 +39,22 @@ internal data class HomeUiState(
     val itemClickAction: ItemClickAction = ItemClickAction.View,
     val sortingMethod: SortingMethod = SortingMethod.NameAsc,
     val maxItems: Int = 0,
+    val appReviewPrompted: Boolean = false,
     val events: List<HomeUiEvent> = emptyList(),
 ) {
+    val filtersActive: Boolean
+        get() = searchQuery.isNotEmpty() ||
+            selectedItemType != null ||
+            selectedTag != null ||
+            selectedSecurityItem != null
+
+    val showAppReview: Boolean
+        get() = appReviewPrompted.not() &&
+            filtersActive.not() &&
+            searchFocused.not() &&
+            editMode.not() &&
+            items.size >= AppReviewItemsThreshold
+
     val itemsFiltered: List<Item>
         get() = items
             .filter { it.content !is ItemContent.Unknown }
@@ -76,6 +90,8 @@ internal data class HomeUiState(
     val allFilteredSelected =
         itemsFiltered.all { it.id in selectedItemIds }
 }
+
+private const val AppReviewItemsThreshold = 3
 
 internal sealed interface HomeUiEvent {
     data object OpenQuickSetup : HomeUiEvent

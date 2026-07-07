@@ -8,7 +8,7 @@
 
 package com.twofasapp.data.cloud.services
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.services.googledrive.GoogleDriveCloudService
 import com.twofasapp.data.cloud.services.s3.S3CloudService
 import com.twofasapp.data.cloud.services.webdav.WebDavCloudService
@@ -19,11 +19,11 @@ internal class CloudServiceProviderImpl(
     private val s3CloudService: S3CloudService,
 ) : CloudServiceProvider {
 
-    override fun provide(cloudConfig: CloudConfig): CloudService {
-        return when (cloudConfig) {
-            is CloudConfig.GoogleDrive -> googleDriveCloudService
-            is CloudConfig.WebDav -> webDavCloudService
-            is CloudConfig.S3 -> s3CloudService
+    override fun provide(spec: CloudConnection): CloudService {
+        return when (spec) {
+            is CloudConnection.GoogleDrive -> googleDriveCloudService
+            is CloudConnection.WebDav -> webDavCloudService
+            is CloudConnection.S3 -> s3CloudService
         }
     }
 }

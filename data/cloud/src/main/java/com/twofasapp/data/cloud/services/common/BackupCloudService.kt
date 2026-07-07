@@ -9,7 +9,7 @@
 package com.twofasapp.data.cloud.services.common
 
 import com.twofasapp.core.common.logger.Flog
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudFileInfo
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.domain.VaultMergeResult
@@ -21,7 +21,7 @@ import com.twofasapp.data.cloud.services.common.model.CloudIndexBackupJson
 import com.twofasapp.data.cloud.services.common.model.CloudIndexJson
 import java.net.UnknownServiceException
 
-internal abstract class BackupCloudService<C : CloudConfig>(
+internal abstract class BackupCloudService<C : CloudConnection>(
     private val storage: BackupStorage<C>,
 ) : CloudService {
 
@@ -33,12 +33,12 @@ internal abstract class BackupCloudService<C : CloudConfig>(
     protected abstract fun toFileInfo(backup: CloudIndexBackupJson): CloudFileInfo
 
     @Suppress("UNCHECKED_CAST")
-    private fun CloudConfig.typed(): C = this as C
+    private fun CloudConnection.typed(): C = this as C
 
     private fun filename(vaultId: String): String = "${vaultId}_v1.2faspass"
 
-    override suspend fun connect(config: CloudConfig): CloudResult {
-        val typed = config.typed()
+    override suspend fun connect(connection: CloudConnection): CloudResult {
+        val typed = connection.typed()
         return try {
             storage.testConnection(typed)
             storage.getIndex(typed)
@@ -50,19 +50,19 @@ internal abstract class BackupCloudService<C : CloudConfig>(
         }
     }
 
-    override suspend fun fetchFiles(config: CloudConfig): List<CloudFileInfo> =
-        storage.getIndex(config.typed()).backups.map(::toFileInfo)
+    override suspend fun fetchFiles(connection: CloudConnection): List<CloudFileInfo> =
+        storage.getIndex(connection.typed()).backups.map(::toFileInfo)
 
-    override suspend fun fetchFile(config: CloudConfig, info: CloudFileInfo): String =
-        storage.getFile(config.typed(), filename(info.vaultId))
+    override suspend fun fetchFile(connection: CloudConnection, info: CloudFileInfo): String =
+        storage.getFile(connection.typed(), filename(info.vaultId))
             ?: throw RuntimeException("File not found!")
 
     override suspend fun sync(
-        config: CloudConfig,
+        connection: CloudConnection,
         request: VaultSyncRequest,
         mergeVaultContent: suspend (String?) -> VaultMergeResult,
     ): CloudResult {
-        val typed = config.typed()
+        val typed = connection.typed()
         return try {
             val (index, metadata) = findBackupFile(typed, request)
 

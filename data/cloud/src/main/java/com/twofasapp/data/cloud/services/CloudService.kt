@@ -8,18 +8,18 @@
 
 package com.twofasapp.data.cloud.services
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudFileInfo
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.domain.VaultMergeResult
 import com.twofasapp.data.cloud.domain.VaultSyncRequest
 
 interface CloudService {
-    suspend fun connect(config: CloudConfig): CloudResult
-    suspend fun fetchFiles(config: CloudConfig): List<CloudFileInfo>
-    suspend fun fetchFile(config: CloudConfig, info: CloudFileInfo): String
+    suspend fun connect(connection: CloudConnection): CloudResult
+    suspend fun fetchFiles(connection: CloudConnection): List<CloudFileInfo>
+    suspend fun fetchFile(connection: CloudConnection, info: CloudFileInfo): String
     suspend fun sync(
-        config: CloudConfig,
+        connection: CloudConnection,
         request: VaultSyncRequest,
         mergeVaultContent: suspend (String?) -> VaultMergeResult,
     ): CloudResult

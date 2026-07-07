@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":data:push"))
     implementation(project(":data:purchases"))
     implementation(project(":data:settings"))
+    implementation(project(":data:cloud"))
 
     implementation(project(":feature:home"))
     implementation(project(":feature:share"))

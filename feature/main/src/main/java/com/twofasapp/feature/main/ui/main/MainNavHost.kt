@@ -21,7 +21,6 @@ import androidx.navigation.compose.composable
 import com.twofasapp.core.android.ktx.navigateTopLevel
 import com.twofasapp.core.android.navigation.NavAnimation
 import com.twofasapp.core.android.navigation.Screen
-import com.twofasapp.feature.cloudsync.navigation.GoogleDriveSyncRoute
 import com.twofasapp.feature.cloudsync.navigation.S3SyncRoute
 import com.twofasapp.feature.cloudsync.navigation.WebDavSyncRoute
 import com.twofasapp.feature.connect.navigation.ConnectRoute
@@ -124,7 +123,7 @@ internal fun MainNavHost(
         ) {
             QuickSetupRoute(
                 openAutofill = { navController.navigate(Screen.Autofill) },
-                openSync = { syncEnabled -> navController.navigate(Screen.GoogleDriveSync(openedFromQuickSetup = true, startAuth = syncEnabled.not())) },
+                openSync = { navController.navigate(Screen.CloudSync) },
                 openSecurityType = { navController.navigate(Screen.SecurityType) },
                 openImport = { navController.navigate(Screen.ImportExport) },
                 openTransfer = { navController.navigate(Screen.TransferFromOtherApps) },
@@ -234,19 +233,6 @@ internal fun MainNavHost(
             CloudSyncRoute()
         }
 
-        composable<Screen.GoogleDriveSync> {
-            GoogleDriveSyncRoute(
-                goBackToQuickSetup = { navController.popBackStack<Screen.QuickSetup>(false) },
-                goBackToSettings = { navController.popBackStack<Screen.Settings>(false) },
-                goBackToSync = {
-                    if (navController.popBackStack<Screen.CloudSync>(false).not()) {
-                        navController.popBackStack()
-                        navController.navigate(Screen.CloudSync)
-                    }
-                },
-            )
-        }
-
         composable<Screen.WebDavSync> {
             WebDavSyncRoute(
                 goBackToSync = {
@@ -255,7 +241,6 @@ internal fun MainNavHost(
                         navController.navigate(Screen.CloudSync)
                     }
                 },
-                goBackToSettings = { navController.popBackStack<Screen.Settings>(false) },
             )
         }
 
@@ -267,7 +252,6 @@ internal fun MainNavHost(
                         navController.navigate(Screen.CloudSync)
                     }
                 },
-                goBackToSettings = { navController.popBackStack<Screen.Settings>(false) },
             )
         }
 

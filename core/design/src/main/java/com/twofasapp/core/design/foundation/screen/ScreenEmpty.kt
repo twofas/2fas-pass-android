@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
@@ -31,6 +32,7 @@ fun ScreenEmpty(
     modifier: Modifier = Modifier,
     text: String,
     icon: Painter,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Column(
         modifier = modifier,
@@ -50,6 +52,7 @@ fun ScreenEmpty(
             text = text,
             color = MdtTheme.color.onSurfaceVariant,
             style = MdtTheme.typo.regular.base,
+            textAlign = textAlign,
         )
     }
 }

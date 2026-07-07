@@ -10,7 +10,7 @@ package com.twofasapp.feature.startup.ui.restorevault.webdav
 
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.data.cloud.services.CloudServiceProvider
@@ -50,17 +50,17 @@ internal class WebDavRestoreViewModel(
         uiState.update { it.copy(loading = true) }
 
         launchScoped {
-            val config = CloudConfig.WebDav(
+            val connection = CloudConnection.WebDav(
                 url = uiState.value.url.trim().normalizeUrl(),
                 username = uiState.value.username.trim(),
                 password = uiState.value.password.trim(),
                 allowUntrustedCertificate = uiState.value.allowUntrustedCertificate,
             )
 
-            when (val result = cloudServiceProvider.provide(config).connect(config)) {
+            when (val result = cloudServiceProvider.provide(connection).connect(connection)) {
                 is CloudResult.Success -> {
                     uiState.update { it.copy(loading = false) }
-                    restoreState.cloudConfig = config
+                    restoreState.cloudConnection = connection
                     onConnectSuccess()
                 }
 

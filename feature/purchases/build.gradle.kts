@@ -18,14 +18,18 @@ android {
 
 dependencies {
     implementation(project(":core:di"))
+    implementation(project(":core:android"))
     implementation(project(":core:common"))
     implementation(project(":core:locale"))
     implementation(project(":core:design"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:settings"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.viewModel)
     implementation(libs.revenuecat)
     implementation(libs.revenuecatUi)
+    implementation(libs.playReview)
+    implementation(libs.playServicesCorutines)
 }

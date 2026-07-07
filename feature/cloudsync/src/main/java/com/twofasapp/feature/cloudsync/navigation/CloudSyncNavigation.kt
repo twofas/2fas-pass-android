@@ -9,41 +9,23 @@
 package com.twofasapp.feature.cloudsync.navigation
 
 import androidx.compose.runtime.Composable
-import com.twofasapp.feature.cloudsync.ui.googledrive.GoogleDriveSyncScreen
 import com.twofasapp.feature.cloudsync.ui.s3.S3SyncScreen
 import com.twofasapp.feature.cloudsync.ui.webdav.WebDavSyncScreen
 
 @Composable
-fun GoogleDriveSyncRoute(
-    goBackToQuickSetup: () -> Unit,
-    goBackToSync: () -> Unit,
-    goBackToSettings: () -> Unit,
-) {
-    GoogleDriveSyncScreen(
-        goBackToQuickSetup = goBackToQuickSetup,
-        goBackToSync = goBackToSync,
-        goBackToSettings = goBackToSettings,
-    )
-}
-
-@Composable
 fun WebDavSyncRoute(
     goBackToSync: () -> Unit,
-    goBackToSettings: () -> Unit,
 ) {
     WebDavSyncScreen(
         goBackToSync = goBackToSync,
-        goBackToSettings = goBackToSettings,
     )
 }
 
 @Composable
 fun S3SyncRoute(
     goBackToSync: () -> Unit,
-    goBackToSettings: () -> Unit,
 ) {
     S3SyncScreen(
         goBackToSync = goBackToSync,
-        goBackToSettings = goBackToSettings,
     )
 }

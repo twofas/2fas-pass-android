@@ -9,8 +9,10 @@
 package com.twofasapp.feature.cloudsync.ui.webdav
 
 internal data class WebDavSyncUiState(
-    val syncEnabled: Boolean = false,
-    val syncing: Boolean = false,
+    val configId: String? = null,
+    val connecting: Boolean = false,
+    val error: String? = null,
+    val closeScreen: Boolean = false,
     val url: String = "",
     val username: String = "",
     val password: String = "",

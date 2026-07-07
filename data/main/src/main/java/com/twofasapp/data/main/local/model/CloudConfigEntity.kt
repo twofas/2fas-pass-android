@@ -8,31 +8,23 @@
 
 package com.twofasapp.data.main.local.model
 
-import kotlinx.serialization.Serializable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Serializable
-sealed interface CloudConfigEntity {
-    @Serializable
-    data class GoogleDrive(
-        val id: String,
-        val credentialType: String,
-    ) : CloudConfigEntity
-
-    @Serializable
-    data class WebDav(
-        val username: String,
-        val password: String,
-        val url: String,
-        val allowUntrustedCertificate: Boolean,
-    ) : CloudConfigEntity
-
-    @Serializable
-    data class S3(
-        val endpoint: String,
-        val region: String,
-        val bucket: String,
-        val accessKeyId: String,
-        val secretAccessKey: String,
-        val allowUntrustedCertificate: Boolean,
-    ) : CloudConfigEntity
-}
+@Entity(tableName = "cloud_configs")
+data class CloudConfigEntity(
+    @PrimaryKey
+    @ColumnInfo("id")
+    val id: String,
+    @ColumnInfo("created_at")
+    val createdAt: Long,
+    @ColumnInfo("synced_at")
+    val syncedAt: Long,
+    @ColumnInfo("status")
+    val status: String,
+    @ColumnInfo("error_code")
+    val errorCode: String?,
+    @ColumnInfo("connection")
+    val connection: String,
+)

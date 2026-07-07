@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 02 Jun 2026 13:48:03 -0700
+ Exported at: Tue, 07 Jul 2026 12:10:39 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1179,4 +1179,12 @@
     <string name="sync_error_not_found">This location wasn\'t found.</string>
     <string name="common_discard_changes">Discard changes</string>
     <string name="s3_endpoint">Endpoint</string>
+    <string name="backup_configs_provider_googledrive_description">Sync with your Google Drive</string>
+    <string name="backup_configs_provider_googledrive_title">Google Drive</string>
+    <string name="common_info">Info</string>
+    <string name="backup_configs_provider_googledrive_notice">Only one Google Drive account is supported.</string>
+    <string name="home_app_review_title">Enjoying 2FAS Pass?</string>
+    <string name="home_app_review_msg">Your feedback helps us improve the app and reach more people who value online security.</string>
+    <string name="home_app_review_dismiss">Not now</string>
+    <string name="home_app_review_rate">Rate the app</string>
 </resources>

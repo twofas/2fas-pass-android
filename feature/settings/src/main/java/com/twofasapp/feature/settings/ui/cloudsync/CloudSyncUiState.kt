@@ -9,7 +9,12 @@
 package com.twofasapp.feature.settings.ui.cloudsync
 
 import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 
 internal data class CloudSyncUiState(
-    val config: CloudConfig? = null,
-)
+    val configs: List<CloudConfig> = emptyList(),
+    val startGoogleAuth: Boolean = false,
+) {
+    val hasGoogleDrive: Boolean
+        get() = configs.any { it.connection is CloudConnection.GoogleDrive }
+}

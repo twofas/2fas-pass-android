@@ -8,41 +8,51 @@
 
 package com.twofasapp.feature.cloudsync.ui.s3
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
 import com.twofasapp.core.android.ktx.launchScoped
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.time.TimeProvider
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
+import com.twofasapp.data.cloud.domain.CloudResult
+import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.VaultsRepository
-import com.twofasapp.data.main.domain.CloudSyncStatus
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 
 internal class S3SyncViewModel(
+    savedStateHandle: SavedStateHandle,
     private val cloudRepository: CloudRepository,
     private val vaultsRepository: VaultsRepository,
     private val timeProvider: TimeProvider,
 ) : ViewModel() {
-    val uiState = MutableStateFlow(S3SyncUiState())
+    private val initialConfigId: String? = savedStateHandle.toRoute<Screen.S3Sync>().configId
+
+    val uiState = MutableStateFlow(S3SyncUiState(configId = initialConfigId))
+
+    private var observeJob: Job? = null
 
     init {
-        launchScoped {
-            combine(
-                cloudRepository.observeSyncInfo(),
-                cloudRepository.observeSyncStatus(),
-            ) { a, b -> Pair(a, b) }.collect { (syncInfo, syncStatus) ->
+        initialConfigId?.let(::observeConfig)
+    }
+
+    private fun observeConfig(id: String) {
+        observeJob?.cancel()
+        observeJob = launchScoped {
+            cloudRepository.observeConfig(id).collect { config ->
+                val spec = config?.connection as? CloudConnection.S3
                 uiState.update { state ->
-                    val config = syncInfo.config as? CloudConfig.S3
                     state.copy(
-                        syncEnabled = syncInfo.enabled,
-                        syncing = syncStatus == CloudSyncStatus.Syncing,
-                        endpoint = config?.endpoint ?: state.endpoint,
-                        region = config?.region ?: state.region,
-                        bucket = config?.bucket ?: state.bucket,
-                        accessKeyId = config?.accessKeyId ?: state.accessKeyId,
-                        secretAccessKey = config?.secretAccessKey ?: state.secretAccessKey,
-                        allowUntrustedCertificate = config?.allowUntrustedCertificate
+                        configId = config?.id,
+                        endpoint = spec?.endpoint ?: state.endpoint,
+                        region = spec?.region ?: state.region,
+                        bucket = spec?.bucket ?: state.bucket,
+                        accessKeyId = spec?.accessKeyId ?: state.accessKeyId,
+                        secretAccessKey = spec?.secretAccessKey ?: state.secretAccessKey,
+                        allowUntrustedCertificate = spec?.allowUntrustedCertificate
                             ?: state.allowUntrustedCertificate,
                     )
                 }
@@ -76,31 +86,32 @@ internal class S3SyncViewModel(
 
     fun connect() {
         launchScoped {
-            cloudRepository.enableSync(
-                CloudConfig.S3(
-                    endpoint = uiState.value.endpoint.trim().normalizeUrl(),
-                    region = uiState.value.region.trim(),
-                    bucket = uiState.value.bucket.trim(),
-                    accessKeyId = uiState.value.accessKeyId.trim(),
-                    secretAccessKey = uiState.value.secretAccessKey.trim(),
-                    allowUntrustedCertificate = uiState.value.allowUntrustedCertificate,
-                ),
+            uiState.update { it.copy(connecting = true, error = null) }
+
+            val spec = CloudConnection.S3(
+                endpoint = uiState.value.endpoint.trim().normalizeUrl(),
+                region = uiState.value.region.trim(),
+                bucket = uiState.value.bucket.trim(),
+                accessKeyId = uiState.value.accessKeyId.trim(),
+                secretAccessKey = uiState.value.secretAccessKey.trim(),
+                allowUntrustedCertificate = uiState.value.allowUntrustedCertificate,
             )
-        }
-    }
 
-    fun disconnect() {
-        launchScoped { cloudRepository.disableSync() }
-    }
+            when (val result = cloudRepository.testConnection(spec)) {
+                is CloudResult.Success -> {
+                    val existingId = uiState.value.configId
+                    if (existingId != null) {
+                        cloudRepository.updateConfig(existingId, spec)
+                    } else {
+                        cloudRepository.addConfig(spec)
+                    }
+                    uiState.update { it.copy(connecting = false, closeScreen = true) }
+                }
 
-    fun sync() {
-        launchScoped {
-            cloudRepository.sync(forceReplace = false)
-
-            vaultsRepository.setUpdatedTimestamp(
-                id = vaultsRepository.getVault().id,
-                timestamp = timeProvider.currentTimeUtc(),
-            )
+                is CloudResult.Failure -> {
+                    uiState.update { it.copy(connecting = false, error = result.error.asMessage()) }
+                }
+            }
         }
     }
 

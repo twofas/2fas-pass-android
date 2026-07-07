@@ -9,18 +9,26 @@
 package com.twofasapp.data.main
 
 import com.twofasapp.data.cloud.domain.CloudConfig
-import com.twofasapp.data.main.domain.CloudSyncInfo
-import com.twofasapp.data.main.domain.CloudSyncStatus
+import com.twofasapp.data.cloud.domain.CloudConnection
+import com.twofasapp.data.cloud.domain.CloudResult
+import com.twofasapp.data.cloud.domain.CloudSyncStatus
 import kotlinx.coroutines.flow.Flow
 
 interface CloudRepository {
-    suspend fun enableSync(cloudConfig: CloudConfig)
-    suspend fun disableSync()
-    suspend fun setSyncStatus(syncStatus: CloudSyncStatus)
-    suspend fun setSyncInfo(syncInfo: CloudSyncInfo)
-    suspend fun setSyncLastTime(timestamp: Long)
-    suspend fun getSyncInfo(): CloudSyncInfo
+    suspend fun testConnection(connection: CloudConnection): CloudResult
+    suspend fun addConfig(connection: CloudConnection): String
+    suspend fun updateConfig(id: String, connection: CloudConnection)
+    suspend fun removeConfig(id: String)
+    suspend fun getConfig(id: String): CloudConfig?
+    suspend fun getConfigs(): List<CloudConfig>
+    suspend fun reencryptConfigs(configs: List<CloudConfig>)
+    suspend fun setSyncStatus(id: String, status: CloudSyncStatus)
+    suspend fun setSyncLastTime(id: String, timestamp: Long)
     suspend fun sync(forceReplace: Boolean = false)
-    fun observeSyncInfo(): Flow<CloudSyncInfo>
-    fun observeSyncStatus(): Flow<CloudSyncStatus>
+    fun pauseSync()
+    fun resumeSync()
+    fun isSyncPaused(): Boolean
+    fun observeConfigs(): Flow<List<CloudConfig>>
+    fun observeConfig(id: String): Flow<CloudConfig?>
+    fun observeAggregateStatus(): Flow<CloudSyncStatus>
 }

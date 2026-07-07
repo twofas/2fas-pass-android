@@ -8,11 +8,8 @@
 
 package com.twofasapp.data.main.local.model
 
-import kotlinx.serialization.Serializable
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 
-@Serializable
-data class CloudSyncInfoEntity(
-    val enabled: Boolean = false,
-    val config: CloudConfigEntity? = null,
-    val lastSuccessfulSyncTime: Long = 0,
+data class DerivedKeysEntity(
+    val metadata: EncryptedBytes?,
 )

@@ -34,7 +34,7 @@ import com.google.api.services.drive.DriveScopes
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.common.build.LocalConfig
 import com.twofasapp.core.common.services.CrashlyticsInstance
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -42,13 +42,13 @@ import org.koin.compose.koinInject
 internal fun AuthenticateWithGoogle(
     localConfig: LocalConfig = koinInject(),
     onDismissRequest: () -> Unit = {},
-    onSuccess: (CloudConfig.GoogleDrive) -> Unit = {},
+    onSuccess: (CloudConnection.GoogleDrive) -> Unit = {},
     onError: (Exception) -> Unit = {},
 ) {
     val activity = LocalContext.currentActivity
     val scope = rememberCoroutineScope()
     val credentialManager = remember { CredentialManager.create(activity) }
-    var googleDriveConfig: CloudConfig.GoogleDrive? by remember { mutableStateOf(null) }
+    var googleDriveConfig: CloudConnection.GoogleDrive? by remember { mutableStateOf(null) }
     var authenticated by remember { mutableStateOf(false) }
 
     DisposableEffect(authenticated) {
@@ -105,8 +105,8 @@ internal fun AuthenticateWithGoogle(
                 )
 
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credentialResponse.credential.data)
-                googleDriveConfig = CloudConfig.GoogleDrive(
-                    id = googleIdTokenCredential.id,
+                googleDriveConfig = CloudConnection.GoogleDrive(
+                    accountId = googleIdTokenCredential.id,
                     credentialType = googleIdTokenCredential.type,
                 )
 

@@ -16,6 +16,7 @@ import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.common.storage.serializedPrefNullable
 import com.twofasapp.core.common.time.TimeProvider
+import com.twofasapp.data.main.DerivedKeysRepository
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.VaultKeysRepository
 import com.twofasapp.data.main.VaultsRepository
@@ -28,6 +29,7 @@ internal class StartupProcessor(
     private val securityRepository: SecurityRepository,
     private val vaultsRepository: VaultsRepository,
     private val vaultKeysRepository: VaultKeysRepository,
+    private val derivedKeysRepository: DerivedKeysRepository,
     private val timeProvider: TimeProvider,
 ) : DataStoreOwner by dataStoreOwner {
 
@@ -111,6 +113,7 @@ internal class StartupProcessor(
         val data = startupData.get()!!
 
         vaultKeysRepository.generateAndSaveVaultKeys(data.masterKeyHashHex)
+        derivedKeysRepository.generateAndSaveDerivedKeys(data.masterKeyHashHex)
 
         securityRepository.saveMasterKeyEntropy(entropy = data.entropyHex.decodeHex())
         securityRepository.saveMasterKeyKdfSpec(KdfSpec.Argon2id())
@@ -125,6 +128,7 @@ internal class StartupProcessor(
         vaultsRepository.deleteAll()
         vaultKeysRepository.clearInMemoryVaultKeys()
         vaultKeysRepository.clearPersistedVaultKeys()
+        derivedKeysRepository.clearInMemoryDerivedKeys()
         securityRepository.resetData()
     }
 }

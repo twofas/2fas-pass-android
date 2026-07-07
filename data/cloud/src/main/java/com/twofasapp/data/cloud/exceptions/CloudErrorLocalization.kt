@@ -10,7 +10,13 @@ package com.twofasapp.data.cloud.exceptions
 
 fun CloudError?.asMessage(): String {
     return when (this) {
-        is CloudError.Unknown -> "Unknown error, please try again.${this.cause?.let { " (${it.message})" }}"
+        is CloudError.Unknown -> buildString {
+            append("Unknown error, please try again.")
+            if (cause != null) {
+                append(" (${cause.message})")
+            }
+        }
+
         is CloudError.AuthenticationError -> "Cloud authentication error, please try again."
         is CloudError.NoNetwork -> "No connection, please turn your Internet and try again."
         is CloudError.GetFile -> "Error when fetching backup file from cloud."

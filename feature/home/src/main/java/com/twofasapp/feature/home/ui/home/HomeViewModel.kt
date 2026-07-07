@@ -176,6 +176,12 @@ internal class HomeViewModel(
         }
 
         launchScoped {
+            sessionRepository.observeAppReviewPrompted().collect { prompted ->
+                uiState.update { it.copy(appReviewPrompted = prompted) }
+            }
+        }
+
+        launchScoped {
             sessionRepository.observeQuickSetupPrompted().collect { quickSetupPrompted ->
                 if (quickSetupPrompted.not()) {
                     delay(500)

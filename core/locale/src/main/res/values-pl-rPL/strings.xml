@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Tue, 02 Jun 2026 13:48:03 -0700
+ Exported at: Tue, 07 Jul 2026 12:10:40 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -382,7 +382,7 @@
     <string name="connect_connection_failed_description">Spróbuj zeskanować ponownie.</string>
     <string name="connect_connection_failed_title">Błąd połączenia</string>
     <string name="connect_connection_header">Połączono z rozszerzeniem przeglądarki</string>
-    <string name="connect_connection_security_check_accept_cta">Tak, kontynuuj</string>
+    <string name="connect_connection_security_check_accept_cta">Kontynuuj</string>
     <string name="connect_connection_security_check_description">Czy łączysz się z przeglądarką na komputerze, któremu ufasz?</string>
     <string name="connect_connection_security_check_title">Weryfikacja</string>
     <string name="connect_connection_success_description__0025_0040">Rozszerzenie przeglądarki 2FAS Pass połączone z %s.</string>
@@ -468,7 +468,7 @@
     <string name="connect_modal_loading">Łączenie...</string>
     <string name="connect_modal_unknown_browser_title">Weryfikacja</string>
     <string name="connect_modal_unknown_browser_subtitle">Czy łączysz się z przeglądarką na komputerze, któremu ufasz?</string>
-    <string name="connect_modal_unknown_browser_cta_positive">Tak, kontynuuj</string>
+    <string name="connect_modal_unknown_browser_cta_positive">Kontynuuj</string>
     <string name="connect_modal_unknown_browser_cta_negative">Anuluj</string>
     <string name="connect_modal_success_title">Połączono</string>
     <string name="connect_modal_success_subtitle">Rozszerzenie przeglądarki 2FAS Pass połączone z %s.</string>
@@ -1183,4 +1183,12 @@
     <string name="sync_error_not_found">Nie znaleziono lokalizacji.</string>
     <string name="common_discard_changes">Odrzuć zmiany</string>
     <string name="s3_endpoint">Urządzenie końcowe</string>
+    <string name="backup_configs_provider_googledrive_description">Synchronizacja z Google Drive</string>
+    <string name="backup_configs_provider_googledrive_title">Google Drive</string>
+    <string name="common_info">Info</string>
+    <string name="backup_configs_provider_googledrive_notice">Obsługiwane jest tylko jedno konto Google.</string>
+    <string name="home_app_review_title">Podoba Ci się 2FAS Pass?</string>
+    <string name="home_app_review_msg">Twoja opinia pomoże nam ulepszyć aplikację i dotrzeć do większej liczby osób, którym zależy na bezpieczeństwie w sieci.</string>
+    <string name="home_app_review_dismiss">Nie teraz</string>
+    <string name="home_app_review_rate">Oceń aplikację</string>
 </resources>

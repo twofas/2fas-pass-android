@@ -9,90 +9,143 @@
 package com.twofasapp.data.main
 
 import android.content.Context
+import com.twofasapp.core.android.ktx.cancel
+import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.coroutines.Dispatchers
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.storage.DataStoreOwner
-import com.twofasapp.core.common.storage.serializedPref
 import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
+import com.twofasapp.data.cloud.domain.CloudResult
+import com.twofasapp.data.cloud.domain.CloudSyncStatus
 import com.twofasapp.data.cloud.services.CloudServiceProvider
-import com.twofasapp.data.main.domain.CloudSyncInfo
-import com.twofasapp.data.main.domain.CloudSyncStatus
-import com.twofasapp.data.main.local.model.CloudSyncInfoEntity
-import com.twofasapp.data.main.mapper.CloudMapper
+import com.twofasapp.data.main.local.CloudConfigsLocalSource
+import com.twofasapp.data.main.mapper.CloudConfigMapper
 import com.twofasapp.data.main.work.CloudSyncWork
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 internal class CloudRepositoryImpl(
     private val context: Context,
     private val dispatchers: Dispatchers,
-    private val cloudMapper: CloudMapper,
+    private val cloudConfigMapper: CloudConfigMapper,
     private val cloudServiceProvider: CloudServiceProvider,
+    private val cloudConfigsLocalSource: CloudConfigsLocalSource,
     dataStoreOwner: DataStoreOwner,
 ) : CloudRepository, DataStoreOwner by dataStoreOwner {
 
-    private val cloudSyncInfo by serializedPref(
-        serializer = CloudSyncInfoEntity.serializer(),
-        default = CloudSyncInfoEntity(),
-        encrypted = true,
-    )
-    private val cloudSyncStatusFlow = MutableStateFlow<CloudSyncStatus>(CloudSyncStatus.Unspecified)
+    @Volatile
+    private var syncPaused = false
 
-    override suspend fun enableSync(cloudConfig: CloudConfig) {
-        withContext(dispatchers.io) {
-            cloudSyncInfo.set(
-                CloudSyncInfo(
-                    enabled = true,
-                    config = cloudConfig,
-                    lastSuccessfulSyncTime = 0L,
-                ).let(cloudMapper::mapToEntity),
+    init {
+        CoroutineScope(dispatchers.io + SupervisorJob()).launch {
+            runSafely { clearStaleSyncingStatuses() }
+                .onFailure { Flog.persist(tag = "CloudSync", message = "clearStaleSyncingStatuses failed: ${it.message}") }
+        }
+    }
+
+    override suspend fun testConnection(connection: CloudConnection): CloudResult {
+        return withContext(dispatchers.io) {
+            cloudServiceProvider.provide(connection).connect(connection)
+        }
+    }
+
+    override suspend fun addConfig(connection: CloudConnection): String {
+        return withContext(dispatchers.io) {
+            val id = UUID.randomUUID().toString()
+            cloudConfigsLocalSource.save(
+                cloudConfigMapper.mapToEntity(
+                    domain = CloudConfig(
+                        id = id,
+                        syncedAt = 0L,
+                        status = CloudSyncStatus.Idle,
+                        connection = connection,
+                    ),
+                    createdAt = System.currentTimeMillis(),
+                ),
             )
+            sync()
+            id
+        }
+    }
 
+    override suspend fun updateConfig(id: String, connection: CloudConnection) {
+        withContext(dispatchers.io) {
+            val existing = cloudConfigsLocalSource.get(id) ?: return@withContext
+            cloudConfigsLocalSource.save(
+                cloudConfigMapper.mapToEntity(
+                    domain = CloudConfig(
+                        id = id,
+                        syncedAt = existing.syncedAt,
+                        status = CloudSyncStatus.Idle,
+                        connection = connection,
+                    ),
+                    createdAt = existing.createdAt,
+                ),
+            )
             sync()
         }
     }
 
-    override suspend fun disableSync() {
+    override suspend fun removeConfig(id: String) {
         withContext(dispatchers.io) {
-            val config = cloudSyncInfo.get().config
-            cloudSyncInfo.delete()
-
-            config?.let {
-                cloudServiceProvider.provide(it.let(cloudMapper::mapToDomain)).disconnect()
-            }
+            val entity = cloudConfigsLocalSource.get(id) ?: return@withContext
+            cloudConfigsLocalSource.delete(id)
+            val config = cloudConfigMapper.mapToDomain(entity)
+            runSafely { cloudServiceProvider.provide(config.connection).disconnect() }
+                .onFailure { Flog.persist(tag = "CloudSync", message = "disconnect() failed for $id: ${it.message}") }
         }
     }
 
-    override suspend fun setSyncLastTime(timestamp: Long) {
+    override suspend fun getConfig(id: String): CloudConfig? {
+        return withContext(dispatchers.io) {
+            cloudConfigsLocalSource.get(id)?.let { cloudConfigMapper.mapToDomain(it) }
+        }
+    }
+
+    override suspend fun getConfigs(): List<CloudConfig> {
+        return withContext(dispatchers.io) {
+            cloudConfigsLocalSource.getAll().map { cloudConfigMapper.mapToDomain(it) }
+        }
+    }
+
+    override suspend fun reencryptConfigs(configs: List<CloudConfig>) {
         withContext(dispatchers.io) {
-            setSyncInfo(
-                cloudSyncInfo.get().copy(
-                    lastSuccessfulSyncTime = timestamp,
-                ).let(cloudMapper::mapToDomain),
+            val entities = configs.mapNotNull { config ->
+                val existing = cloudConfigsLocalSource.get(config.id) ?: return@mapNotNull null
+                cloudConfigMapper.mapToEntity(domain = config, createdAt = existing.createdAt)
+            }
+            cloudConfigsLocalSource.save(entities)
+        }
+    }
+
+    override suspend fun setSyncStatus(id: String, status: CloudSyncStatus) {
+        withContext(dispatchers.io) {
+            cloudConfigsLocalSource.updateStatus(
+                id = id,
+                status = cloudConfigMapper.statusName(status),
+                errorCode = cloudConfigMapper.errorCode(status),
             )
         }
     }
 
-    override suspend fun setSyncStatus(syncStatus: CloudSyncStatus) {
-        cloudSyncStatusFlow.update { syncStatus }
-    }
-
-    override suspend fun setSyncInfo(syncInfo: CloudSyncInfo) {
+    override suspend fun setSyncLastTime(id: String, timestamp: Long) {
         withContext(dispatchers.io) {
-            cloudSyncInfo.set(syncInfo.let(cloudMapper::mapToEntity))
-        }
-    }
-
-    override suspend fun getSyncInfo(): CloudSyncInfo {
-        return withContext(dispatchers.io) {
-            cloudSyncInfo.get().let(cloudMapper::mapToDomain)
+            cloudConfigsLocalSource.updateLastSyncTime(id, timestamp)
         }
     }
 
     override suspend fun sync(forceReplace: Boolean) {
-        if (cloudSyncInfo.get().enabled) {
+        if (syncPaused) {
+            Flog.persist(tag = "CloudSync", message = "Sync is paused, skipping dispatch")
+            return
+        }
+        if (cloudConfigsLocalSource.getAll().isNotEmpty()) {
             CloudSyncWork.dispatch(
                 context = context,
                 forceReplace = forceReplace,
@@ -100,11 +153,65 @@ internal class CloudRepositoryImpl(
         }
     }
 
-    override fun observeSyncInfo(): Flow<CloudSyncInfo> {
-        return cloudSyncInfo.asFlow().map { it.let(cloudMapper::mapToDomain) }
+    override fun pauseSync() {
+        Flog.persist(tag = "CloudSync", message = "Sync paused")
+        syncPaused = true
+        context.cancel<CloudSyncWork>()
     }
 
-    override fun observeSyncStatus(): Flow<CloudSyncStatus> {
-        return cloudSyncStatusFlow
+    override fun resumeSync() {
+        if (syncPaused) {
+            Flog.persist(tag = "CloudSync", message = "Sync resumed")
+        }
+        syncPaused = false
+    }
+
+    override fun isSyncPaused(): Boolean {
+        return syncPaused
+    }
+
+    override fun observeConfigs(): Flow<List<CloudConfig>> {
+        return cloudConfigsLocalSource.observeAll().map { entities ->
+            entities.mapNotNull { entity ->
+                runSafely { cloudConfigMapper.mapToDomain(entity) }
+                    .onFailure { Flog.persist(tag = "CloudSync", message = "Skipping config ${entity.id} in observer - decryption failed") }
+                    .getOrNull()
+            }
+        }
+    }
+
+    override fun observeConfig(id: String): Flow<CloudConfig?> {
+        return cloudConfigsLocalSource.observe(id).map { entity ->
+            entity?.let {
+                runSafely { cloudConfigMapper.mapToDomain(it) }
+                    .onFailure { Flog.persist(tag = "CloudSync", message = "Skipping config ${entity.id} in observer - decryption failed") }
+                    .getOrNull()
+            }
+        }
+    }
+
+    override fun observeAggregateStatus(): Flow<CloudSyncStatus> {
+        return observeConfigs().map { configs ->
+            val statuses = configs.map { it.status }
+            when {
+                statuses.any { it is CloudSyncStatus.Syncing } -> CloudSyncStatus.Syncing
+                statuses.any { it is CloudSyncStatus.Error } ->
+                    statuses.first { it is CloudSyncStatus.Error }
+                statuses.any { it is CloudSyncStatus.Synced } -> CloudSyncStatus.Synced
+                else -> CloudSyncStatus.Idle
+            }
+        }
+    }
+
+    private suspend fun clearStaleSyncingStatuses() {
+        cloudConfigsLocalSource.getAll()
+            .filter { it.status == CloudConfigMapper.StatusSyncing }
+            .forEach { entity ->
+                cloudConfigsLocalSource.updateStatus(
+                    id = entity.id,
+                    status = CloudConfigMapper.StatusIdle,
+                    errorCode = null,
+                )
+            }
     }
 }

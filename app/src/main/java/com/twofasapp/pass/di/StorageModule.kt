@@ -20,6 +20,7 @@ import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.data.logs.local.dao.LogsDao
+import com.twofasapp.data.main.local.dao.CloudConfigsDao
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
 import com.twofasapp.data.main.local.dao.ItemsDao
@@ -28,6 +29,7 @@ import com.twofasapp.data.main.local.dao.VaultKeysDao
 import com.twofasapp.data.main.local.dao.VaultsDao
 import com.twofasapp.pass.storage.AppDatabase
 import com.twofasapp.pass.storage.DataStoreOwnerImpl
+import com.twofasapp.pass.storage.migrations.data.MigrateLegacyCloudConfig
 import com.twofasapp.pass.storage.migrations.data.MigrateLoginsToItems
 import com.twofasapp.pass.storage.migrations.schema.AppDatabaseMigrations
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +96,9 @@ class StorageModule : KoinModule {
         single<ConnectedBrowsersDao> { get<AppDatabase>().connectedBrowsersDao() }
         single<TagsDao> { get<AppDatabase>().tagsDao() }
         single<LogsDao> { get<AppDatabase>().logsDao() }
+        single<CloudConfigsDao> { get<AppDatabase>().cloudConfigsDao() }
 
         singleOf(::MigrateLoginsToItems)
+        singleOf(::MigrateLegacyCloudConfig)
     }
 }

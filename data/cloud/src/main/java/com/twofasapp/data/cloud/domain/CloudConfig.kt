@@ -8,25 +8,9 @@
 
 package com.twofasapp.data.cloud.domain
 
-sealed interface CloudConfig {
-    data class GoogleDrive(
-        val id: String,
-        val credentialType: String,
-    ) : CloudConfig
-
-    data class WebDav(
-        val url: String,
-        val username: String,
-        val password: String,
-        val allowUntrustedCertificate: Boolean,
-    ) : CloudConfig
-
-    data class S3(
-        val endpoint: String,
-        val region: String,
-        val bucket: String,
-        val accessKeyId: String,
-        val secretAccessKey: String,
-        val allowUntrustedCertificate: Boolean,
-    ) : CloudConfig
-}
+data class CloudConfig(
+    val id: String,
+    val syncedAt: Long,
+    val status: CloudSyncStatus,
+    val connection: CloudConnection,
+)

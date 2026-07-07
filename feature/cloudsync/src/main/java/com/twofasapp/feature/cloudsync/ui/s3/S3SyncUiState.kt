@@ -9,8 +9,10 @@
 package com.twofasapp.feature.cloudsync.ui.s3
 
 internal data class S3SyncUiState(
-    val syncEnabled: Boolean = false,
-    val syncing: Boolean = false,
+    val configId: String? = null,
+    val connecting: Boolean = false,
+    val error: String? = null,
+    val closeScreen: Boolean = false,
     val endpoint: String = "",
     val region: String = "",
     val bucket: String = "",

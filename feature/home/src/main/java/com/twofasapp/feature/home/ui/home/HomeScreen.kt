@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
+import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityItem
@@ -65,6 +66,7 @@ import com.twofasapp.core.design.window.DeviceType
 import com.twofasapp.core.design.window.currentDeviceType
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.SortingMethod
+import com.twofasapp.feature.home.ui.home.components.AppReviewItem
 import com.twofasapp.feature.home.ui.home.components.HomeAppBar
 import com.twofasapp.feature.home.ui.home.components.HomeFab
 import com.twofasapp.feature.home.ui.home.components.HomeItem
@@ -73,6 +75,7 @@ import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
+import com.twofasapp.feature.purchases.appreview.AppReviewViewModel
 import com.twofasapp.feature.share.ui.ShareItemModal
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.androidx.compose.koinViewModel
@@ -80,6 +83,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 internal fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
+    appReviewViewModel: AppReviewViewModel = koinViewModel(),
     openAddItem: (vaultId: String, itemContentType: ItemContentType) -> Unit,
     openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
     openItemDetails: (itemId: String, vaultId: String) -> Unit,
@@ -92,6 +96,7 @@ internal fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+    val activity = LocalContext.currentActivity
 
     LaunchedEffect(uiState.editMode) {
         onHomeInEditModeChanged(uiState.editMode)
@@ -136,6 +141,8 @@ internal fun HomeScreen(
         onDeleteSelectedItemsClick = { viewModel.trashSelectedItems() },
         onChangeSelectedItemsSecurityType = { viewModel.changeSelectedItemsSecurityType(it) },
         onChangeSelectedItemsTags = { viewModel.changeSelectedItemsTags(it) },
+        onRateClick = { appReviewViewModel.rate(activity) },
+        onRateDismiss = { appReviewViewModel.dismiss() },
     )
 }
 
@@ -169,6 +176,8 @@ private fun Content(
     onDeleteSelectedItemsClick: () -> Unit = {},
     onChangeSelectedItemsSecurityType: (SecurityType) -> Unit = {},
     onChangeSelectedItemsTags: (Map<Item, Set<String>>) -> Unit = {},
+    onRateClick: () -> Unit = {},
+    onRateDismiss: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
@@ -271,6 +280,16 @@ private fun Content(
                             onClearTagFilter = onClearTagFilterClick,
                             onClearSecurityItemFilter = onClearSecurityItemFilterClick,
                         )
+                    }
+
+                    if (uiState.showAppReview) {
+                        listItem(HomeListItem.AppReview) {
+                            AppReviewItem(
+                                modifier = Modifier.animateItem(),
+                                onRateClick = { onRateClick() },
+                                onDismissClick = { onRateDismiss() },
+                            )
+                        }
                     }
 
                     if (uiState.itemsFiltered.isEmpty()) {

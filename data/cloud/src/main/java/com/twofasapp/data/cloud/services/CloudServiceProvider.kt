@@ -8,8 +8,8 @@
 
 package com.twofasapp.data.cloud.services
 
-import com.twofasapp.data.cloud.domain.CloudConfig
+import com.twofasapp.data.cloud.domain.CloudConnection
 
 interface CloudServiceProvider {
-    fun provide(cloudConfig: CloudConfig): CloudService
+    fun provide(spec: CloudConnection): CloudService
 }
