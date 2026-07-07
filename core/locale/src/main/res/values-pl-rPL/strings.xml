@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Thu, 02 Jul 2026 11:08:26 -0700
+ Exported at: Tue, 07 Jul 2026 12:10:40 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -382,7 +382,7 @@
     <string name="connect_connection_failed_description">Spróbuj zeskanować ponownie.</string>
     <string name="connect_connection_failed_title">Błąd połączenia</string>
     <string name="connect_connection_header">Połączono z rozszerzeniem przeglądarki</string>
-    <string name="connect_connection_security_check_accept_cta">Tak, kontynuuj</string>
+    <string name="connect_connection_security_check_accept_cta">Kontynuuj</string>
     <string name="connect_connection_security_check_description">Czy łączysz się z przeglądarką na komputerze, któremu ufasz?</string>
     <string name="connect_connection_security_check_title">Weryfikacja</string>
     <string name="connect_connection_success_description__0025_0040">Rozszerzenie przeglądarki 2FAS Pass połączone z %s.</string>
@@ -468,7 +468,7 @@
     <string name="connect_modal_loading">Łączenie...</string>
     <string name="connect_modal_unknown_browser_title">Weryfikacja</string>
     <string name="connect_modal_unknown_browser_subtitle">Czy łączysz się z przeglądarką na komputerze, któremu ufasz?</string>
-    <string name="connect_modal_unknown_browser_cta_positive">Tak, kontynuuj</string>
+    <string name="connect_modal_unknown_browser_cta_positive">Kontynuuj</string>
     <string name="connect_modal_unknown_browser_cta_negative">Anuluj</string>
     <string name="connect_modal_success_title">Połączono</string>
     <string name="connect_modal_success_subtitle">Rozszerzenie przeglądarki 2FAS Pass połączone z %s.</string>
