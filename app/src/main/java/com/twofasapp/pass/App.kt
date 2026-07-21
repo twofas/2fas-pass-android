@@ -24,6 +24,7 @@ import com.pluto.Pluto
 import com.pluto.plugins.datastore.pref.PlutoDatastorePreferencesPlugin
 import com.pluto.plugins.logger.PlutoLoggerPlugin
 import com.pluto.plugins.rooms.db.PlutoRoomsDatabasePlugin
+import com.twofasapp.core.android.ktx.hasEnabledAutofillServicesSafely
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.logger.Flog
@@ -102,7 +103,7 @@ class App : Application(), SingletonImageLoader.Factory {
             val autofillInline = settingsRepository.observeAutofillSettings().first().useInlinePresentation
             Flog.persist(
                 "Launch",
-                "autofill=${autofillManager.hasEnabledAutofillServices()}" +
+                "autofill=${autofillManager.hasEnabledAutofillServicesSafely()}" +
                     " inline=$autofillInline" +
                     " browsers=$browsers",
             )
