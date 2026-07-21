@@ -19,6 +19,7 @@ import com.revenuecat.purchases.restorePurchasesWith
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.build.LocalConfig
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -46,13 +47,21 @@ internal class PurchasesRepositoryImpl(
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        Purchases.configure(
-            configuration = PurchasesConfiguration.Builder(
-                context = context,
-                apiKey = localConfig.revenueCatPublicKey,
+        try {
+            Purchases.configure(
+                configuration = PurchasesConfiguration.Builder(
+                    context = context,
+                    apiKey = localConfig.revenueCatPublicKey,
+                )
+                    .build(),
             )
-                .build(),
-        )
+        } catch (e: Throwable) {
+            // Some Google test farm devices run pre-release firmware where Play Services
+            // throws NoSuchMethodError (e.g. Context.getAttributionSource) during configure.
+            // Skip purchases on such devices instead of crashing the app.
+            Flog.e(e)
+            return
+        }
 
         GlobalScope.launch {
             observeCustomerInfo().collect { customerInfo ->
@@ -64,12 +73,16 @@ internal class PurchasesRepositoryImpl(
     }
 
     override suspend fun fetchSubscriptionInfo() {
+        if (Purchases.isConfigured.not()) return
+
         Purchases.sharedInstance.getCustomerInfoWith { info ->
             subscriptionPlanFlow.update { info.mapToSubscriptionPlan() }
         }
     }
 
     override suspend fun restorePurchase() {
+        if (Purchases.isConfigured.not()) return
+
         Purchases.sharedInstance.restorePurchasesWith { customerInfo ->
             subscriptionPlanFlow.update { customerInfo.mapToSubscriptionPlan() }
         }
