@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = TestApp::class)
+@Config(application = TestApp::class, sdk = [36])
 open class RobolectricComposeTest {
 
     @get:Rule
