@@ -248,22 +248,30 @@ val uriPrefixAndroidApp = "androidapp://"
 val uriPrefixWebsite = "https://"
 
 inline fun <reified T> Bundle?.getSafelyParcelable(key: String): T? {
+    if (this == null) return null
+
+    // Use the call-site (app) classloader, not T's. Reading any value unparcels the whole
+    // bundle, which may contain app classes even when T is a framework class — the framework
+    // BootClassLoader cannot resolve them (e.g. ClassNotFoundException on Android 12).
+    classLoader = object {}.javaClass.classLoader ?: T::class.java.classLoader
+
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         try {
-            this?.classLoader = T::class.java.classLoader
-            this?.getParcelable(key, T::class.java)
+            getParcelable(key, T::class.java)
         } catch (e: Exception) {
             try {
                 @Suppress("DEPRECATION")
-                this?.getParcelable(key)
+                getParcelable(key)
             } catch (e: Exception) {
                 null
             }
         }
     } else {
-        // Set classLoader for Android 12+ to fix cross-process Parcelable unmarshalling
-        this?.classLoader = T::class.java.classLoader
-        @Suppress("DEPRECATION")
-        this?.getParcelable(key)
+        try {
+            @Suppress("DEPRECATION")
+            getParcelable(key)
+        } catch (e: Exception) {
+            null
+        }
     }
 }
