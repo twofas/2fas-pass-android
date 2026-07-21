@@ -143,7 +143,15 @@ internal class MainViewModel(
 
         syncJob = launchScoped {
             authStatusTracker.observeIsAuthenticated().distinctUntilChanged().collect { isAuthenticated ->
-                if (isAuthenticated && cloudRepository.getConfigs().any { it.syncedAt > 0 }) {
+                // getConfigs() decrypts with the in-memory metadata key, which may already be
+                // cleared when the vault locks right after the auth emission - skip this emission
+                val configs = if (isAuthenticated) {
+                    runSafely { cloudRepository.getConfigs() }.getOrElse { emptyList() }
+                } else {
+                    emptyList()
+                }
+
+                if (configs.any { it.syncedAt > 0 }) {
                     runSafely { cloudRepository.sync() }
                         .onSuccess { syncJob?.cancel() }
                         .onFailure { syncJob?.cancel() }
