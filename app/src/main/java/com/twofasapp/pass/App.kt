@@ -31,6 +31,7 @@ import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
+import com.twofasapp.data.logs.LogsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManager
@@ -42,6 +43,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -50,6 +53,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
 
 class App : Application(), SingletonImageLoader.Factory {
@@ -61,6 +65,7 @@ class App : Application(), SingletonImageLoader.Factory {
     private val appBuild: AppBuild by inject()
     private val timeProvider: TimeProvider by inject()
     private val crashlyticsProvider: CrashlyticsProvider by inject()
+    private val logsRepository: LogsRepository by inject()
     private val settingsRepository: SettingsRepository by inject()
     private val purchasesRepository: PurchasesRepository by inject()
     private val browserAutofillManager: BrowserAutofillManager by inject()
@@ -84,6 +89,8 @@ class App : Application(), SingletonImageLoader.Factory {
         )
 
         CrashlyticsInstance.crashlytics = crashlyticsProvider
+
+        installUncaughtExceptionHandler()
 
         Flog.persist(
             tag = "Launch",
@@ -129,6 +136,26 @@ class App : Application(), SingletonImageLoader.Factory {
                 }
             }
             .install()
+    }
+
+    private fun installUncaughtExceptionHandler() {
+        // Crashlytics installs its handler before Application.onCreate, so delegating
+        // to the previous handler keeps fatal crash reporting intact.
+        val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            try {
+                Flog.persist(tag = "Crash", message = "Uncaught exception on thread=${thread.name}")
+                Flog.persist(tag = "Crash", throwable = throwable)
+                // Timeout so a wedged flush (e.g. the crash itself is DB-related) can't
+                // hang the process and prevent Crashlytics from receiving the fatal.
+                runBlocking { withTimeoutOrNull(2_000.milliseconds) { logsRepository.flush() } }
+            } catch (_: Throwable) {
+                // Never block crash reporting
+            } finally {
+                previousHandler?.uncaughtException(thread, throwable)
+            }
+        }
     }
 
     @OptIn(ExperimentalCoilApi::class, ExperimentalTime::class)

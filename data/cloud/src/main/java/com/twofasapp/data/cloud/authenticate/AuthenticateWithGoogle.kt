@@ -33,6 +33,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.api.services.drive.DriveScopes
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.common.build.LocalConfig
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.data.cloud.domain.CloudConnection
 import kotlinx.coroutines.launch
@@ -70,14 +71,17 @@ internal fun AuthenticateWithGoogle(
                         authenticated = true
                     } else {
                         CrashlyticsInstance.logException(IllegalStateException("Authorization token is empty."))
+                        Flog.e(IllegalStateException("Authorization token is empty."))
                         onDismissRequest()
                     }
                 } else {
                     CrashlyticsInstance.logException(IllegalStateException("Authorization data is empty."))
+                    Flog.e(IllegalStateException("Authorization data is empty."))
                     onDismissRequest()
                 }
             } else {
                 CrashlyticsInstance.logException(IllegalStateException("Authorization result failed."))
+                Flog.e(IllegalStateException("Authorization result failed."))
                 onDismissRequest()
             }
         }
@@ -130,12 +134,14 @@ internal fun AuthenticateWithGoogle(
                     }
                     .addOnFailureListener { e ->
                         CrashlyticsInstance.logException(e)
+                        Flog.e(e)
                         e.printStackTrace()
                         onError(e)
                         onDismissRequest()
                     }
             } catch (e: Exception) {
                 CrashlyticsInstance.logException(e)
+                Flog.e(e)
 
                 e.printStackTrace()
 

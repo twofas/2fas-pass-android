@@ -48,6 +48,10 @@ internal class LogsRepositoryImpl(
         }
     }
 
+    override suspend fun flush() {
+        flushPending()
+    }
+
     override suspend fun getAll(): List<LogEntry> {
         flushPending()
 

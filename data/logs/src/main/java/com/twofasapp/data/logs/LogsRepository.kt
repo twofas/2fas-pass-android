@@ -12,6 +12,7 @@ import com.twofasapp.data.logs.domain.LogEntry
 
 interface LogsRepository {
     fun save(tag: String, message: String)
+    suspend fun flush()
     suspend fun getAll(): List<LogEntry>
     suspend fun deleteAll()
 }
