@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 07 Jul 2026 12:10:39 -0700
+ Exported at: Tue, 21 Jul 2026 12:20:05 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1187,4 +1187,10 @@
     <string name="home_app_review_msg">Your feedback helps us improve the app and reach more people who value online security.</string>
     <string name="home_app_review_dismiss">Not now</string>
     <string name="home_app_review_rate">Rate the app</string>
+    <plurals name="home_multiselect_detail_count">
+        <item quantity="one">%d item selected</item>
+        <item quantity="other">%d items selected</item>
+    </plurals>
+    <string name="common_clear">Clear</string>
+    <string name="item_detail_empty_placeholder">Select an Item to view its details.</string>
 </resources>
