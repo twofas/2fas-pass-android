@@ -17,6 +17,7 @@ import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.exceptions.asMessage
+import com.twofasapp.data.cloud.services.s3.S3EndpointDetector
 import com.twofasapp.data.main.CloudRepository
 import com.twofasapp.data.main.VaultsRepository
 import kotlinx.coroutines.Job
@@ -61,7 +62,14 @@ internal class S3SyncViewModel(
     }
 
     fun updateEndpoint(endpoint: String) {
-        uiState.update { it.copy(endpoint = endpoint) }
+        val detection = S3EndpointDetector.detect(endpoint)
+        uiState.update {
+            it.copy(
+                endpoint = endpoint,
+                region = detection?.region ?: it.region,
+                bucket = detection?.bucket ?: it.bucket,
+            )
+        }
     }
 
     fun updateRegion(region: String) {
