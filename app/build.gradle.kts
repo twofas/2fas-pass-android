@@ -25,8 +25,8 @@ android {
 
     defaultConfig {
         applicationId = "com.twofasapp.pass"
-        versionName = "1.9.0"
-        versionCode = 38
+        versionName = "1.10.0"
+        versionCode = 39
     }
 
     ksp {
