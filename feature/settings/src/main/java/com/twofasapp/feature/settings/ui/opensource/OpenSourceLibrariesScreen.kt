@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.core.text.parseAsHtml
 import com.mikepenz.aboutlibraries.entity.Library
-import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.util.htmlReadyLicenseContent
 import com.twofasapp.core.design.MdtTheme
@@ -31,7 +31,7 @@ import org.koin.compose.koinInject
 internal fun OpenSourceLibrariesScreen(
     openSourceLibrariesProvider: OpenSourceLibrariesProvider = koinInject(),
 ) {
-    val libraries by rememberLibraries(openSourceLibrariesProvider.aboutLibrariesResId)
+    val libraries by produceLibraries(openSourceLibrariesProvider.aboutLibrariesResId)
     Scaffold(
         topBar = { TopAppBar(title = MdtLocale.strings.aboutOpenSourceLicenses) },
     ) { padding ->

@@ -34,6 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.currentActivity
+import com.twofasapp.core.android.ktx.hasEnabledAutofillServicesSafely
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionHeader
@@ -68,10 +69,10 @@ private fun Content(
     val context = LocalContext.current
     val strings = MdtLocale.strings
     val autofillManager: AutofillManager = activity.getSystemService(AutofillManager::class.java)
-    var autofillServiceEnabled: Boolean by remember { mutableStateOf(autofillManager.hasEnabledAutofillServices()) }
+    var autofillServiceEnabled: Boolean by remember { mutableStateOf(autofillManager.hasEnabledAutofillServicesSafely()) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        autofillServiceEnabled = autofillManager.hasEnabledAutofillServices()
+        autofillServiceEnabled = autofillManager.hasEnabledAutofillServicesSafely()
         onCheckBrowsersStatus()
     }
 

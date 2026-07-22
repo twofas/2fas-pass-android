@@ -47,4 +47,6 @@ dependencies {
         exclude("com.google.http-client", "google-http-client")
     }
     implementation(libs.googleApiHttpClientFork)
+
+    testImplementation(project(":testing:core"))
 }

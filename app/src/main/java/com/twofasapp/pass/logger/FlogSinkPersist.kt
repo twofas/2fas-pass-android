@@ -20,10 +20,33 @@ class FlogSinkPersist(
         logsRepository.save(
             tag = tag,
             message = if (throwable != null) {
-                "${throwable::class.simpleName}: ${throwable.message}\n${throwable.stackTrace.take(3).joinToString("\n") { "  at $it" }}"
+                listOfNotNull(
+                    message.takeIf { it.isNotEmpty() && it != throwable.message },
+                    throwable.format(),
+                ).joinToString("\n")
             } else {
                 message
             },
         )
+    }
+
+    private fun Throwable.format(): String {
+        return buildString {
+            var current: Throwable? = this@format
+            var depth = 0
+
+            while (current != null && depth < MaxCauseDepth) {
+                if (depth > 0) append("\nCaused by: ")
+                append("${current::class.simpleName}: ${current.message}")
+                current.stackTrace.take(MaxStackFrames).forEach { append("\n  at $it") }
+                current = current.cause
+                depth++
+            }
+        }
+    }
+
+    companion object {
+        private const val MaxCauseDepth = 5
+        private const val MaxStackFrames = 10
     }
 }

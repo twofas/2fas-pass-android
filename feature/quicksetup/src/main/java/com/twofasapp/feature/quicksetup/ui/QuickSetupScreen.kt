@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.ktx.hasEnabledAutofillServicesSafely
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.MdtIcons
@@ -95,7 +96,7 @@ private fun QuickSetupScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activity = LocalActivity.current
     val autofillManager: AutofillManager = activity!!.getSystemService(AutofillManager::class.java)
-    var autofillServiceEnabled: Boolean by remember { mutableStateOf(autofillManager.hasEnabledAutofillServices()) }
+    var autofillServiceEnabled: Boolean by remember { mutableStateOf(autofillManager.hasEnabledAutofillServicesSafely()) }
 
     Content(
         uiState = uiState,

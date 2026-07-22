@@ -48,6 +48,7 @@ import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.foundation.textfield.passwordColorized
 import com.twofasapp.core.design.theme.RoundedShape12
+import com.twofasapp.core.locale.MdtLocale
 import kotlin.math.roundToInt
 
 @Composable
@@ -105,14 +106,14 @@ fun PasswordGeneratorForm(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Button(
-                text = "Copy",
+                text = MdtLocale.strings.passwordGeneratorCopyCta,
                 modifier = Modifier.weight(1f),
                 leadingIcon = MdtIcons.Copy,
                 height = 36.dp,
                 onClick = { context.copyToClipboard(text = password, label = "Generated Password", isSensitive = true) },
             )
             Button(
-                text = "Generate",
+                text = MdtLocale.strings.passwordGeneratorGenerateCta,
                 modifier = Modifier.weight(1f),
                 leadingIcon = MdtIcons.Refresh,
                 height = 36.dp,
@@ -130,7 +131,7 @@ fun PasswordGeneratorForm(
                     .padding(end = 8.dp),
             ) {
                 Text(
-                    text = "Characters",
+                    text = MdtLocale.strings.passwordGeneratorCharacters,
                     style = MdtTheme.typo.medium.base,
                 )
 
@@ -163,7 +164,7 @@ fun PasswordGeneratorForm(
         }
 
         OptionSwitch(
-            title = "Digits (0-9)",
+            title = MdtLocale.strings.passwordGeneratorDigits,
             checked = requireDigits,
             onToggle = {
                 requireDigits = it
@@ -173,7 +174,7 @@ fun PasswordGeneratorForm(
         )
 
         OptionSwitch(
-            title = "Uppercase characters",
+            title = MdtLocale.strings.passwordGeneratorUppercaseCharacters,
             checked = requireUppercase,
             onToggle = {
                 requireUppercase = it
@@ -183,7 +184,7 @@ fun PasswordGeneratorForm(
         )
 
         OptionSwitch(
-            title = "Special characters",
+            title = MdtLocale.strings.passwordGeneratorSpecialCharacters,
             checked = requireSpecial,
             onToggle = {
                 requireSpecial = it

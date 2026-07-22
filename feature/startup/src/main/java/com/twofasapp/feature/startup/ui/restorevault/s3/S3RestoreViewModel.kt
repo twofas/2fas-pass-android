@@ -14,6 +14,7 @@ import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudResult
 import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.data.cloud.services.CloudServiceProvider
+import com.twofasapp.data.cloud.services.s3.S3EndpointDetector
 import com.twofasapp.feature.startup.ui.restorevault.RestoreState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -28,7 +29,14 @@ internal class S3RestoreViewModel(
     )
 
     fun updateEndpoint(endpoint: String) {
-        uiState.update { it.copy(endpoint = endpoint) }
+        val detection = S3EndpointDetector.detect(endpoint)
+        uiState.update {
+            it.copy(
+                endpoint = endpoint,
+                region = detection?.region ?: it.region,
+                bucket = detection?.bucket ?: it.bucket,
+            )
+        }
     }
 
     fun updateRegion(region: String) {

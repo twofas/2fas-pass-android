@@ -20,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import com.twofasapp.core.android.ktx.currentActivity
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.data.cloud.domain.CloudConnection
 
@@ -53,10 +54,12 @@ internal fun AuthenticateWithLegacyGoogle(
                         .addOnFailureListener { onError(it) }
                 } else {
                     CrashlyticsInstance.logException(IllegalStateException("Legacy Authorization data is empty."))
+                    Flog.e(IllegalStateException("Legacy Authorization data is empty."))
                     onDismissRequest()
                 }
             } else {
                 CrashlyticsInstance.logException(IllegalStateException("Legacy Authorization result failed."))
+                Flog.e(IllegalStateException("Legacy Authorization result failed."))
                 onDismissRequest()
             }
         }

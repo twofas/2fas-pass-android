@@ -332,8 +332,7 @@ internal class CloudSyncWork(
         type: CloudError,
     ) {
         logBoth("Error (id=$id): ${type::class.simpleName}")
-        Flog.persist(tag = "CloudSync", throwable = type.cause)
-        Flog.e(type.cause)
+        Flog.tag("CloudSync").e(type.cause)
 
         runSafely { CrashlyticsInstance.logException(type.cause) }
         publishStatus(id, CloudSyncStatus.Error(error = type))

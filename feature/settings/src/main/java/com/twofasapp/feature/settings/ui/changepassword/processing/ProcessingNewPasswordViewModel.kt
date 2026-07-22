@@ -19,6 +19,7 @@ import com.twofasapp.core.common.crypto.AndroidKeyStore
 import com.twofasapp.core.common.crypto.decrypt
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.CloudRepository
@@ -122,6 +123,7 @@ internal class ProcessingNewPasswordViewModel(
             .onFailure { e ->
                 uiState.update { state -> state.copy(step = ProcessingNewPasswordUiState.Step.Error(e.message.orEmpty())) }
                 CrashlyticsInstance.logException(e)
+                Flog.e(e)
             }
     }
 }
