@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 21 Jul 2026 12:20:05 -0700
+ Exported at: Wed, 05 Aug 2026 12:00:21 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1118,7 +1118,7 @@
     <string name="common_password">Password</string>
     <string name="share_link_item_password_min_length__0025d">Password must be at least %d characters</string>
     <string name="common_share">Share</string>
-    <string name="item_view_action_share_link">Share link</string>
+    <string name="item_view_action_share_link">Share Item</string>
     <string name="share_link_import_error_title">Failed to load shared Item</string>
     <string name="share_link_import_password_title">Enter Password</string>
     <string name="share_link_import_password_subtitle">2FAS Share link password</string>
@@ -1193,4 +1193,12 @@
     </plurals>
     <string name="common_clear">Clear</string>
     <string name="item_detail_empty_placeholder">Select an Item to view its details.</string>
+    <string name="trash_restore_all">Restore all</string>
+    <string name="trash_remove_all">Delete all</string>
+    <string name="trash_remove_all_confirm_title">Delete all Items?</string>
+    <string name="trash_remove_all_confirm_body">Are you sure you want to permanently delete all Items in the Trash? This cannot be undone!</string>
+    <string name="lock_screen_change_password_prompt_title">Do you want to change your Master Password?</string>
+    <string name="lock_screen_change_password_prompt_body">You signed in using your Decryption Kit. Set a new Master Password now to unlock the app.</string>
+    <string name="lock_screen_change_password_prompt_accept">Change Master Password</string>
+    <string name="lock_screen_change_password_prompt_cancel">Maybe later</string>
 </resources>

@@ -1116,6 +1116,14 @@ class Strings(private val c: Context) {
         c.getString(R.string.lock_screen_biometrics_prompt_accept)
     val lockScreenBiometricsPromptCancel =
         c.getString(R.string.lock_screen_biometrics_prompt_cancel)
+    val lockScreenChangePasswordPromptTitle =
+        c.getString(R.string.lock_screen_change_password_prompt_title)
+    val lockScreenChangePasswordPromptBody =
+        c.getString(R.string.lock_screen_change_password_prompt_body)
+    val lockScreenChangePasswordPromptAccept =
+        c.getString(R.string.lock_screen_change_password_prompt_accept)
+    val lockScreenChangePasswordPromptCancel =
+        c.getString(R.string.lock_screen_change_password_prompt_cancel)
     val biometryReason = c.getString(R.string.biometry_reason)
     val iosLockScreenUnlockTitle = c.getString(R.string.ios_lock_screen_unlock_title)
 

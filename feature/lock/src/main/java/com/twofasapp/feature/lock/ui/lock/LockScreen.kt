@@ -31,11 +31,13 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.compose.BiometricsState
 import com.twofasapp.core.android.compose.biometricsState
+import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.android.ktx.restartApp
 import com.twofasapp.core.android.ktx.toastLong
 import com.twofasapp.core.android.ktx.toastShort
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.core.common.logger.Flog
@@ -45,6 +47,7 @@ import com.twofasapp.core.design.LocalDynamicColors
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.button.IconButton
+import com.twofasapp.core.design.foundation.dialog.ActionsAlignment
 import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
@@ -54,10 +57,12 @@ import com.twofasapp.feature.lock.ui.composables.AuthenticationForm
 import com.twofasapp.feature.lock.ui.composables.BiometricsModal
 import com.twofasapp.feature.lock.ui.forgotpassword.ForgotPasswordModal
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 internal fun LockScreen(
     viewModel: LockViewModel = koinViewModel(),
+    deeplinks: Deeplinks = koinInject(),
 ) {
     val activity = LocalContext.currentActivity
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,6 +71,7 @@ internal fun LockScreen(
     var showForgotPasswordModal by remember { mutableStateOf(false) }
     var showBiometricsModal by remember { mutableStateOf(false) }
     var showBiometricsPromptDialog by remember { mutableStateOf(false) }
+    var showChangePasswordPromptDialog by remember { mutableStateOf(false) }
     var showBiometricsError by remember { mutableStateOf(false) }
     var biometricsHasBeenPrompted by remember { mutableStateOf(false) }
     var biometricsError by remember { mutableStateOf("") }
@@ -137,6 +143,34 @@ internal fun LockScreen(
                         onNegative = {
                             Flog.persist("Lock", "Biometrics prompt: declined")
                             showBiometricsPromptDialog = false
+                            viewModel.finishWithSuccess()
+                        },
+                    )
+                }
+
+                if (showChangePasswordPromptDialog) {
+                    ConfirmDialog(
+                        onDismissRequest = {
+                            Flog.persist("Lock", "Change password prompt: dismissed")
+                            showChangePasswordPromptDialog = false
+                            viewModel.finishWithSuccess()
+                        },
+                        title = strings.lockScreenChangePasswordPromptTitle,
+                        body = strings.lockScreenChangePasswordPromptBody,
+                        icon = MdtIcons.Password,
+                        positive = strings.lockScreenChangePasswordPromptCancel,
+                        negative = strings.lockScreenChangePasswordPromptAccept,
+                        actionsAlignment = ActionsAlignment.Vertical,
+                        shouldAutoHideOnLock = false,
+                        onPositive = {
+                            Flog.persist("Lock", "Change password prompt: declined")
+                            showChangePasswordPromptDialog = false
+                            viewModel.finishWithSuccess()
+                        },
+                        onNegative = {
+                            Flog.persist("Lock", "Change password prompt: accepted")
+                            showChangePasswordPromptDialog = false
+                            deeplinks.openScreen(Screen.SetNewPassword)
                             viewModel.finishWithSuccess()
                         },
                     )
@@ -225,7 +259,9 @@ internal fun LockScreen(
                     },
                     onSuccess = { masterKey ->
                         Flog.persist("Lock", "Forgot password: verified")
-                        viewModel.unlockWithMasterKey(masterKey)
+                        viewModel.unlockWithMasterKey(masterKey) {
+                            showChangePasswordPromptDialog = true
+                        }
                         showForgotPasswordModal = false
                         context.toastShort(strings.forgotPasswordVerificationSuccessTitle)
                     },

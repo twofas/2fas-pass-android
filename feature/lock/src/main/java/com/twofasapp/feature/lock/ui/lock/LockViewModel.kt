@@ -159,7 +159,7 @@ internal class LockViewModel(
         }
     }
 
-    fun unlockWithMasterKey(masterKey: ByteArray) {
+    fun unlockWithMasterKey(masterKey: ByteArray, onSuccess: (() -> Unit)? = null) {
         Flog.persist("Lock", "Unlock with master key: started")
         uiState.update { it.copy(loading = true, passwordError = null) }
 
@@ -178,7 +178,7 @@ internal class LockViewModel(
                     when (appUpdateResult) {
                         is AppUpdateResult.Completed -> {
                             uiState.update { it.copy(loading = false) }
-                            finishWithSuccess()
+                            onSuccess?.invoke() ?: finishWithSuccess()
                         }
 
                         is AppUpdateResult.Failed -> {
