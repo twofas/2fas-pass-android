@@ -32,13 +32,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import com.twofasapp.core.android.ktx.copyToClipboard
+import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.foundation.button.Button
+import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.button.IconButton
+import com.twofasapp.core.design.foundation.dialog.InfoDialog
 import com.twofasapp.core.design.foundation.menu.DropdownMenu
 import com.twofasapp.core.design.foundation.menu.DropdownMenuItem
 import com.twofasapp.core.design.foundation.other.Space
@@ -51,7 +62,7 @@ import com.twofasapp.data.cloud.domain.CloudConnection
 import com.twofasapp.data.cloud.domain.CloudSyncStatus
 import com.twofasapp.data.cloud.exceptions.CloudError
 import com.twofasapp.data.cloud.exceptions.asCode
-import com.twofasapp.feature.cloudsync.ui.common.CloudErrorStatus
+import com.twofasapp.data.cloud.exceptions.asMessage
 import com.twofasapp.feature.cloudsync.ui.common.formatCloudErrorDetails
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -61,7 +72,6 @@ internal fun ConfigEntry(
     config: CloudConfig,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onReSync: () -> Unit,
     onChangePassword: () -> Unit,
     onReplaceBackup: () -> Unit,
 ) {
@@ -88,17 +98,93 @@ internal fun ConfigEntry(
         if (errorStatus != null) {
             Space(12.dp)
 
-            CloudErrorStatus(
-                modifier = Modifier.fillMaxWidth(),
-                errorType = errorStatus.error,
-                errorCause = errorStatus.error.cause,
-                errorDetails = errorStatus.error.cause?.formatCloudErrorDetails(),
-                errorTitle = "Sync failed! (Error ${errorStatus.error.asCode()})",
-                onReSync = onReSync,
-                onChangePasswordClick = onChangePassword,
-                onReplaceBackupClick = onReplaceBackup,
+            ErrorActions(
+                error = errorStatus.error,
+                onChangePassword = onChangePassword,
+                onReplaceBackup = onReplaceBackup,
             )
         }
+    }
+}
+
+@Composable
+private fun ErrorActions(
+    error: CloudError,
+    onChangePassword: () -> Unit,
+    onReplaceBackup: () -> Unit,
+) {
+    val strings = MdtLocale.strings
+    val uriHandler = LocalUriHandler.current
+
+    when (error) {
+        is CloudError.WrongBackupPassword -> {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(
+                    text = strings.cloudSyncActionReplaceBackup,
+                    modifier = Modifier.weight(1f),
+                    height = 40.dp,
+                    onClick = onReplaceBackup,
+                )
+
+                Button(
+                    text = strings.cloudSyncActionChangePassword,
+                    modifier = Modifier.weight(1f),
+                    height = 40.dp,
+                    onClick = onChangePassword,
+                )
+            }
+        }
+
+        is CloudError.InvalidSchemaVersion -> {
+            Button(
+                text = strings.cloudSyncInvalidSchemaErrorCta,
+                modifier = Modifier.fillMaxWidth(),
+                height = 40.dp,
+                onClick = { uriHandler.openSafely(MdtLocale.links.playStore) },
+            )
+        }
+
+        else -> {
+            ErrorDetails(error = error)
+        }
+    }
+}
+
+@Composable
+private fun ErrorDetails(error: CloudError) {
+    val cause = error.cause ?: return
+    val context = LocalContext.current
+    val strings = MdtLocale.strings
+    var showDialog by remember { mutableStateOf(false) }
+
+    val details = buildString {
+        append(error.asMessage())
+        append("\n\n")
+        append(cause.formatCloudErrorDetails())
+    }
+
+    Button(
+        text = strings.cloudSyncShowErrorDetails,
+        style = ButtonStyle.Text,
+        modifier = Modifier.fillMaxWidth(),
+        onClick = { showDialog = true },
+    )
+
+    if (showDialog) {
+        InfoDialog(
+            onDismissRequest = { showDialog = false },
+            title = "Sync failed! (Error ${error.asCode()})",
+            bodyAnnotated = AnnotatedString(
+                text = details,
+                spanStyle = SpanStyle(fontSize = 11.sp, fontFamily = FontFamily.Monospace),
+            ),
+            positive = strings.commonOk,
+            negative = strings.commonCopy,
+            onNegative = { context.copyToClipboard(details) },
+        )
     }
 }
 
@@ -430,9 +516,9 @@ private fun PreviewSynced() {
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
         ) {
-            ConfigEntry(previewGoogleDrive(), {}, {}, {}, {}, {})
-            ConfigEntry(previewWebDav(), {}, {}, {}, {}, {})
-            ConfigEntry(previewS3(), {}, {}, {}, {}, {})
+            ConfigEntry(previewGoogleDrive(), {}, {}, {}, {})
+            ConfigEntry(previewWebDav(), {}, {}, {}, {})
+            ConfigEntry(previewS3(), {}, {}, {}, {})
         }
     }
 }
@@ -447,9 +533,9 @@ private fun PreviewNotSyncedYet() {
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
         ) {
-            ConfigEntry(previewGoogleDrive(syncedAt = 0L, status = CloudSyncStatus.Idle), {}, {}, {}, {}, {})
-            ConfigEntry(previewWebDav(syncedAt = 0L, status = CloudSyncStatus.Idle), {}, {}, {}, {}, {})
-            ConfigEntry(previewS3(syncedAt = 0L, status = CloudSyncStatus.Idle), {}, {}, {}, {}, {})
+            ConfigEntry(previewGoogleDrive(syncedAt = 0L, status = CloudSyncStatus.Idle), {}, {}, {}, {})
+            ConfigEntry(previewWebDav(syncedAt = 0L, status = CloudSyncStatus.Idle), {}, {}, {}, {})
+            ConfigEntry(previewS3(syncedAt = 0L, status = CloudSyncStatus.Idle), {}, {}, {}, {})
         }
     }
 }
@@ -464,9 +550,9 @@ private fun PreviewSyncing() {
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
         ) {
-            ConfigEntry(previewGoogleDrive(status = CloudSyncStatus.Syncing), {}, {}, {}, {}, {})
-            ConfigEntry(previewWebDav(status = CloudSyncStatus.Syncing), {}, {}, {}, {}, {})
-            ConfigEntry(previewS3(status = CloudSyncStatus.Syncing), {}, {}, {}, {}, {})
+            ConfigEntry(previewGoogleDrive(status = CloudSyncStatus.Syncing), {}, {}, {}, {})
+            ConfigEntry(previewWebDav(status = CloudSyncStatus.Syncing), {}, {}, {}, {})
+            ConfigEntry(previewS3(status = CloudSyncStatus.Syncing), {}, {}, {}, {})
         }
     }
 }
@@ -485,7 +571,6 @@ private fun PreviewErrorWrongPassword() {
                 config = previewGoogleDrive(status = CloudSyncStatus.Error(CloudError.WrongBackupPassword(null))),
                 onEditClick = {},
                 onDeleteClick = {},
-                onReSync = {},
                 onChangePassword = {},
                 onReplaceBackup = {},
             )
@@ -504,10 +589,13 @@ private fun PreviewErrorNoNetwork() {
                 .padding(vertical = 12.dp),
         ) {
             ConfigEntry(
-                config = previewWebDav(status = CloudSyncStatus.Error(CloudError.NoNetwork(null))),
+                config = previewWebDav(
+                    status = CloudSyncStatus.Error(
+                        CloudError.NoNetwork(RuntimeException("Unable to resolve host")),
+                    ),
+                ),
                 onEditClick = {},
                 onDeleteClick = {},
-                onReSync = {},
                 onChangePassword = {},
                 onReplaceBackup = {},
             )
@@ -537,7 +625,6 @@ private fun PreviewErrorInvalidSchema() {
                 ),
                 onEditClick = {},
                 onDeleteClick = {},
-                onReSync = {},
                 onChangePassword = {},
                 onReplaceBackup = {},
             )
