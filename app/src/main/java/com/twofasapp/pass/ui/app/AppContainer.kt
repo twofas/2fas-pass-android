@@ -28,6 +28,7 @@ import com.twofasapp.core.design.LocalAuthStatus
 import com.twofasapp.core.design.LocalDynamicColors
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
+import com.twofasapp.core.design.foundation.modifiers.testTagsAsResourceId
 import com.twofasapp.feature.lock.navigation.LockRoute
 import com.twofasapp.feature.main.navigation.MainRoute
 import com.twofasapp.feature.startup.navigation.StartupRoute
@@ -51,7 +52,9 @@ internal fun AppContainer(
     ) {
         AppTheme {
             Surface(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTagsAsResourceId(),
                 color = MdtTheme.color.background,
             ) {
                 uiState.startDestination?.let { startDestination ->

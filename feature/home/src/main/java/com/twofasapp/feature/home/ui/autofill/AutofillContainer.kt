@@ -28,6 +28,7 @@ import com.twofasapp.core.design.LocalAuthStatus
 import com.twofasapp.core.design.LocalDynamicColors
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.anim.AnimatedFadeVisibility
+import com.twofasapp.core.design.foundation.modifiers.testTagsAsResourceId
 import com.twofasapp.feature.home.navigation.EditItemRoute
 import com.twofasapp.feature.home.ui.autofill.auth.AutofillAuthScreen
 import com.twofasapp.feature.home.ui.autofill.picker.AutofillPickerScreen
@@ -54,7 +55,9 @@ internal fun AutofillContainer(
     ) {
         AppTheme {
             Surface(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTagsAsResourceId(),
                 color = MdtTheme.color.background,
             ) {
                 when (startScreen) {
