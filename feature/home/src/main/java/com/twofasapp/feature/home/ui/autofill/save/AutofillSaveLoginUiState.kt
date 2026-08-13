@@ -14,4 +14,9 @@ internal data class AutofillSaveLoginUiState(
     val initialItem: Item? = null,
     val item: Item = Item.Empty,
     val isValid: Boolean = false,
-)
+    val hasUnsavedChanges: Boolean = false,
+    val edited: Boolean = false,
+) {
+    val canSave: Boolean
+        get() = isValid && (!edited || hasUnsavedChanges)
+}

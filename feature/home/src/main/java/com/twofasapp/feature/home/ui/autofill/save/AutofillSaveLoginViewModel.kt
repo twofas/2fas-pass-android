@@ -103,6 +103,15 @@ internal class AutofillSaveLoginViewModel(
         uiState.update { it.copy(isValid = isValid) }
     }
 
+    fun updateHasUnsavedChanges(hasUnsavedChanges: Boolean) {
+        uiState.update {
+            it.copy(
+                hasUnsavedChanges = hasUnsavedChanges,
+                edited = it.edited || hasUnsavedChanges,
+            )
+        }
+    }
+
     fun save(onComplete: (Item) -> Unit) {
         launchScoped {
             val vaultId = vaultsRepository.getVault().id

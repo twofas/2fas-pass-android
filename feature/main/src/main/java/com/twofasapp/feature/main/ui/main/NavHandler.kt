@@ -34,33 +34,25 @@ internal fun NavHandler(
             currentBackStackEntry?.destination?.screenRoute
         }
     }
-    val currentScreenRouteArguments by remember {
-        derivedStateOf {
-            currentBackStackEntry?.arguments ?: Bundle.EMPTY
-        }
-    }
-
-    val bottomBarVisible by remember {
-        derivedStateOf {
-            @Suppress("DEPRECATION")
-            when (currentScreenRouteArguments.getSerializable(NavArgKey.ScreenType) as? ScreenType) {
-                ScreenType.Standard -> false
-                ScreenType.TopLevel -> true
-                ScreenType.WithBottomBar -> true
-                null -> false
-            }
-        }
-    }
 
     LaunchedEffect(Unit) {
         navController.addOnDestinationChangedListener(mainNavListener)
     }
 
-    LaunchedEffect(bottomBarVisible) {
-        onBottomBarVisibilityChanged(bottomBarVisible)
-    }
-
     LaunchedEffect(currentScreenRoute) {
         onCurrentRouteChanged(currentScreenRoute)
+
+        @Suppress("DEPRECATION")
+        val screenType = currentBackStackEntry?.arguments
+            ?.getSerializable(NavArgKey.ScreenType) as? ScreenType
+
+        onBottomBarVisibilityChanged(
+            when (screenType) {
+                ScreenType.TopLevel -> true
+                ScreenType.WithBottomBar -> true
+                ScreenType.Standard -> false
+                null -> false
+            },
+        )
     }
 }

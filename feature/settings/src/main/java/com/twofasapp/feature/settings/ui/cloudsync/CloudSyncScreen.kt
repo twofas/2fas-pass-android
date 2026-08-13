@@ -163,7 +163,6 @@ private fun Content(
                             config = config,
                             onEditClick = { onConfigEditClick(config) },
                             onDeleteClick = { configPendingRemoval = config },
-                            onReSync = onReSync,
                             onChangePassword = onChangePassword,
                             onReplaceBackup = onReplaceBackup,
                         )

@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Tue, 21 Jul 2026 12:20:05 -0700
+ Exported at: Wed, 05 Aug 2026 12:00:21 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -435,7 +435,7 @@
     <string name="password_generator_header">Generator haseł</string>
     <string name="password_generator_special_characters">Znaki specjalne</string>
     <string name="password_generator_uppercase_characters">Duże litery</string>
-    <string name="password_generator_use_cta">Użyj to hasło</string>
+    <string name="password_generator_use_cta">Użyj tego hasła</string>
     <string name="set_new_password_confirm_body_part1_ios">Zmiana hasła głównego spowoduje aktualizację szyfrowania sejfu. Konieczne będzie **pobranie nowego zestawu deszyfrującego oraz utworzenie nowej lokalnej kopii zapasowej.**</string>
     <string name="set_new_password_confirm_body_part2_ios">Jeśli używasz tego sejfu na innych urządzeniach, synchronizacja zostanie wyłączona i będziesz musiał ją ponownie włączyć, używając nowego hasła głównego.</string>
     <string name="set_new_password_success_title">Hasło główne zmienione pomyślnie</string>
@@ -1122,7 +1122,7 @@
     <string name="common_password">Hasło</string>
     <string name="share_link_item_password_min_length__0025d">Hasło musi mieć co najmniej %d znaków</string>
     <string name="common_share">Udostępnij</string>
-    <string name="item_view_action_share_link">Udostępnij link</string>
+    <string name="item_view_action_share_link">Udostępnij</string>
     <string name="share_link_import_error_title">Nie udało się wczytać udostępnionego elementu</string>
     <string name="share_link_import_password_title">Wprowadź hasło</string>
     <string name="share_link_import_password_subtitle">Hasło do linku 2FAS Share</string>
@@ -1198,4 +1198,12 @@
     </plurals>
     <string name="common_clear">Wyczyść</string>
     <string name="item_detail_empty_placeholder">Wybierz element, aby zobaczyć jego szczegóły.</string>
+    <string name="trash_restore_all">Przywróć wszystkie</string>
+    <string name="trash_remove_all">Skasuj wszystkie</string>
+    <string name="trash_remove_all_confirm_title">Skasować wszystkie elementy?</string>
+    <string name="trash_remove_all_confirm_body">Na pewno chcesz trwale skasować wszystkie elementy z kosza? Tej akcji nie można cofnąć!</string>
+    <string name="lock_screen_change_password_prompt_title">Czy chcesz zmienić hasło główne?</string>
+    <string name="lock_screen_change_password_prompt_body">Zalogowałeś się przy użyciu zestawu deszyfrującego. Ustaw nowe hasło główne do odblokowywania aplikacji.</string>
+    <string name="lock_screen_change_password_prompt_accept">Zmień hasło główne</string>
+    <string name="lock_screen_change_password_prompt_cancel">Może później</string>
 </resources>

@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: de-DE, German (Germany)
  Exported by: rafakob
- Exported at: Tue, 21 Jul 2026 12:20:05 -0700
+ Exported at: Wed, 05 Aug 2026 12:00:21 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1193,4 +1193,12 @@
     </plurals>
     <string name="common_clear">Zurücksetzen</string>
     <string name="item_detail_empty_placeholder">Wähle einen Eintrag aus, um die Details anzuzeigen.</string>
+    <string name="trash_restore_all">Alle wiederherstellen</string>
+    <string name="trash_remove_all">Alle löschen</string>
+    <string name="trash_remove_all_confirm_title">Alle Einträge löschen?</string>
+    <string name="trash_remove_all_confirm_body">Bist du sicher, dass du alle Einträge im Papierkorb dauerhaft löschen möchtest? Du kannst das Ganze nicht rückgängig machen!</string>
+    <string name="lock_screen_change_password_prompt_title">Möchtest du dein Masterkennwort ändern?</string>
+    <string name="lock_screen_change_password_prompt_body">Du hast dich mit deinem Entschlüsselungskit angemeldet. Lege jetzt ein neues Masterkennwort fest, um die App ohne das Kit entsperren zu können.</string>
+    <string name="lock_screen_change_password_prompt_accept">Masterkennwort ändern</string>
+    <string name="lock_screen_change_password_prompt_cancel">Vielleicht später</string>
 </resources>

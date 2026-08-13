@@ -33,6 +33,7 @@ fun ConfirmDialog(
     shouldAutoHideOnLock: Boolean = true,
     positiveColor: Color = Color.Unspecified,
     negativeColor: Color = Color.Unspecified,
+    actionsAlignment: ActionsAlignment = ActionsAlignment.Horizontal,
     properties: DialogProperties = DialogProperties(),
 ) {
     InfoDialog(
@@ -49,6 +50,7 @@ fun ConfirmDialog(
         positiveColor = positiveColor,
         negativeColor = negativeColor,
         properties = properties,
+        actionsAlignment = actionsAlignment,
         shouldAutoHideOnLock = shouldAutoHideOnLock,
     )
 }

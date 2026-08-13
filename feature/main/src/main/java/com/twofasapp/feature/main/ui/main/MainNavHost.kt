@@ -184,7 +184,7 @@ internal fun MainNavHost(
                     navController.navigate(
                         Screen.ProcessingNewPassword(encryptedPassword = password),
                     ) {
-                        popUpTo<Screen.Security>()
+                        popUpTo<Screen.Home>()
                     }
                 },
             )
@@ -194,7 +194,7 @@ internal fun MainNavHost(
             ProcessingNewPasswordRoute(
                 onOpenDecryptionKit = { keyHex ->
                     navController.navigate(Screen.SaveDecryptionKit(masterKeyHex = keyHex)) {
-                        popUpTo<Screen.Security>()
+                        popUpTo<Screen.Home>()
                     }
                 },
                 onClose = { navController.popBackStack() },

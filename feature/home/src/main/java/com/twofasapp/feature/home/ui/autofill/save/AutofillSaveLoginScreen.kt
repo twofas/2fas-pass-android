@@ -62,6 +62,8 @@ internal fun AutofillSaveLoginScreen(
             uiState = uiState,
             onItemUpdated = viewModel::updateItem,
             onIsValidUpdated = viewModel::updateIsValid,
+            onHasUnsavedChangesUpdated = viewModel::updateHasUnsavedChanges,
+            onCloseWithoutSaving = { activity.finishAndRemoveTask() },
             onSaveClick = {
                 viewModel.save(
                     onComplete = { savedItem ->
@@ -85,6 +87,8 @@ private fun Content(
     uiState: AutofillSaveLoginUiState,
     onItemUpdated: (Item) -> Unit = {},
     onIsValidUpdated: (Boolean) -> Unit = {},
+    onHasUnsavedChangesUpdated: (Boolean) -> Unit = {},
+    onCloseWithoutSaving: () -> Unit = {},
     onSaveClick: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
@@ -98,7 +102,7 @@ private fun Content(
                         text = strings.commonSave,
                         style = ButtonStyle.Text,
                         onClick = onSaveClick,
-                        enabled = uiState.isValid,
+                        enabled = uiState.canSave,
                     )
                 },
             )
@@ -115,6 +119,14 @@ private fun Content(
 
                     override fun onIsValidUpdated(valid: Boolean) {
                         onIsValidUpdated(valid)
+                    }
+
+                    override fun onHasUnsavedChangesUpdated(hasUnsavedChanges: Boolean) {
+                        onHasUnsavedChangesUpdated(hasUnsavedChanges)
+                    }
+
+                    override fun onCloseWithoutSaving() {
+                        onCloseWithoutSaving()
                     }
                 },
             )
