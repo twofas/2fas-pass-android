@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -408,7 +409,7 @@ private fun ConfigEntryMenu(
                 icon = MdtIcons.More,
                 iconTint = MdtTheme.color.outline,
                 enabled = loading.not(),
-                modifier = Modifier.offset(x = 8.dp),
+                modifier = Modifier.offset(x = 8.dp).testTag("cloudConfigMenuButton"),
                 onClick = { showDropdown = true },
             )
         },

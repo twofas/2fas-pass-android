@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -61,7 +62,10 @@ fun TopAppBar(
 fun BackButton(onBackClick: (() -> Unit)? = null) {
     val onBackDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    IconButton(onClick = { onBackClick?.invoke() ?: onBackDispatcher?.onBackPressed() }) {
+    IconButton(
+        modifier = Modifier.testTag("backButton"),
+        onClick = { onBackClick?.invoke() ?: onBackDispatcher?.onBackPressed() },
+    ) {
         Icon(
             painter = MdtIcons.ArrowBack,
             contentDescription = null,

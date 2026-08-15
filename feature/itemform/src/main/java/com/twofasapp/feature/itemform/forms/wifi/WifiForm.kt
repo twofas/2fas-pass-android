@@ -324,6 +324,7 @@ private fun LazyListScope.wifiSecurityTypePicker(
             value = uiState.itemContent?.securityType?.formatName() ?: "",
             label = MdtLocale.strings.wifiSecurityTypeLabel,
             dropdownVisible = dropdownVisible,
+            testTag = "wifiSecurityTypeDropdown",
             onShowDropdown = onClick,
             onDismissDropdown = onDropdownDismiss,
         ) {
@@ -397,6 +398,7 @@ private fun LazyListScope.hiddenSwitch(
         OptionSwitch(
             title = MdtLocale.strings.wifiHiddenNetworkLabel,
             checked = uiState.itemContent?.hidden ?: false,
+            testTag = "wifiHiddenNetworkSwitch",
             onToggle = onValueChange,
         )
     }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -308,7 +309,8 @@ private fun Content(
                         iconTint = MdtTheme.color.onBackground,
                         modifier = Modifier
                             .padding(end = 8.dp)
-                            .align(Alignment.CenterEnd),
+                            .align(Alignment.CenterEnd)
+                            .testTag("lockCloseButton"),
                         onClick = onCloseClick,
                     )
                 }

@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.LocalBackDispatcher
@@ -169,7 +170,8 @@ private fun Content(
                         iconTint = MdtTheme.color.onBackground,
                         modifier = Modifier
                             .padding(end = 8.dp)
-                            .align(Alignment.CenterEnd),
+                            .align(Alignment.CenterEnd)
+                            .testTag("backupDecryptionCloseButton"),
                         onClick = onDismissRequest,
                     )
                 }

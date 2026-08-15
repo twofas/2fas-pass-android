@@ -275,6 +275,7 @@ private fun Content(
                     title = strings.aboutSendCrashReports,
                     icon = MdtIcons.Warning,
                     checked = uiState.crashLogsEnabled,
+                    testTag = "crashReportsSwitch",
                     onToggle = { onCrashLogsToggle() },
                 )
             }

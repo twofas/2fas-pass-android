@@ -79,6 +79,7 @@ private fun Content(
                     title = strings.exportBackupModalEncryptedTitle,
                     subtitle = strings.exportBackupModalEncryptedDescription,
                     checked = encrypted,
+                    testTag = "exportEncryptedSwitch",
                     onToggle = { encrypted = encrypted.not() },
                 )
 

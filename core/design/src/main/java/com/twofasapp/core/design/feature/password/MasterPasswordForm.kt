@@ -86,6 +86,7 @@ fun MasterPasswordForm(
                 SecretFieldTrailingIcon(
                     visible = passwordVisible,
                     onToggle = { passwordVisible = passwordVisible.not() },
+                    testTag = "masterPasswordRevealButton",
                 )
             },
         )
@@ -115,6 +116,7 @@ fun MasterPasswordForm(
                 SecretFieldTrailingIcon(
                     visible = passwordConfirmVisible,
                     onToggle = { passwordConfirmVisible = passwordConfirmVisible.not() },
+                    testTag = "masterPasswordConfirmRevealButton",
                 )
             },
         )

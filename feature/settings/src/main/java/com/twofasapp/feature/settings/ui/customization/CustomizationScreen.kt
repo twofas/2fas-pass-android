@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -127,6 +128,7 @@ private fun Content(
                 title = strings.settingsEntryDynamicColors,
                 subtitle = strings.settingsEntryDynamicColorsDesc,
                 icon = MdtIcons.Palette,
+                testTag = "dynamicColorsSwitch",
                 onToggle = onDynamicColorsChange,
             )
 
@@ -218,6 +220,7 @@ private fun ThemeOption(
             modifier = Modifier
                 .clip(RoundedCornerShape(14.dp))
                 .border(2.dp, if (selected) MdtTheme.color.primary else MdtTheme.color.transparent, RoundedCornerShape(14.dp))
+                .testTag("themeOption${theme.name}")
                 .clickable { onClick() }
                 .padding(4.dp),
         )

@@ -9,6 +9,8 @@
 package com.twofasapp.core.design.foundation.textfield
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -47,8 +49,10 @@ private class PasswordColorized(
 fun SecretFieldTrailingIcon(
     visible: Boolean,
     onToggle: () -> Unit = {},
+    testTag: String? = "revealSecretButton",
 ) {
     IconButton(
+        modifier = if (testTag != null) Modifier.testTag(testTag) else Modifier,
         onClick = onToggle,
         icon = if (visible) {
             MdtIcons.VisibilityOff

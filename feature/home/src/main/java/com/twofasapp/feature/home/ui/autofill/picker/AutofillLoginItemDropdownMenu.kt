@@ -13,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.MdtIcons
@@ -37,6 +39,7 @@ internal fun AutofillLoginItemDropdownMenu(
         onDismissRequest = { showDropdown = false },
         anchor = {
             IconButton(
+                modifier = Modifier.testTag("autofillLoginItemMenuButton"),
                 icon = MdtIcons.More,
                 iconTint = MdtTheme.color.outline,
                 onClick = { showDropdown = true },

@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityType
@@ -109,7 +110,7 @@ internal fun HomeAppBar(
                                 onChangeEditMode(false)
                                 focusManager.clearFocus()
                             },
-                            modifier = Modifier.offset(x = (-10).dp),
+                            modifier = Modifier.offset(x = (-10).dp).testTag("homeSelectionCloseButton"),
                         )
 
                         Text(
@@ -123,11 +124,13 @@ internal fun HomeAppBar(
                         spacing = 8.dp,
                     ) {
                         IconButton(
+                            modifier = Modifier.testTag("homeSelectionSelectAllButton"),
                             icon = if (uiState.allFilteredSelected) MdtIcons.Deselect else MdtIcons.SelectAll,
                             onClick = if (uiState.allFilteredSelected) onDeselectClick else onSelectAllClick,
                         )
 
                         IconButton(
+                            modifier = Modifier.testTag("homeSelectionDeleteButton"),
                             icon = MdtIcons.Delete,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
                             onClick = {
@@ -137,6 +140,7 @@ internal fun HomeAppBar(
                         )
 
                         IconButton(
+                            modifier = Modifier.testTag("homeSelectionSecurityTypeButton"),
                             icon = MdtIcons.Tier2,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
                             onClick = {
@@ -146,6 +150,7 @@ internal fun HomeAppBar(
                         )
 
                         IconButton(
+                            modifier = Modifier.testTag("homeSelectionTagButton"),
                             icon = MdtIcons.Tag,
                             enabled = uiState.selectedItemIds.isNotEmpty(),
                             onClick = {
@@ -187,7 +192,7 @@ internal fun HomeAppBar(
                             IconButton(
                                 icon = MdtIcons.Placeholder,
                                 onClick = onDeveloperClick,
-                                modifier = Modifier.alpha(0.1f),
+                                modifier = Modifier.alpha(0.1f).testTag("homeDeveloperButton"),
                             )
                         }
 

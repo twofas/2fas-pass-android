@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.common.domain.SecretField
@@ -65,6 +66,7 @@ internal fun SecureNoteContent(
                     )
 
                     IconButton(
+                        modifier = Modifier.testTag("secureNoteContentCopyTextButton"),
                         icon = MdtIcons.Copy,
                         onClick = {
                             onCopySecretField(text) { decrypted ->
@@ -83,6 +85,7 @@ internal fun SecureNoteContent(
                 isCompact = true,
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("secureNoteContentCopyAdditionalInfoButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(content.additionalInfo.orEmpty()) },
                     )

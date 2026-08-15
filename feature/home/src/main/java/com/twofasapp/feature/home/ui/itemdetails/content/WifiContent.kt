@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -116,6 +117,7 @@ internal fun ColumnScope.WifiContent(
                 subtitle = ssid,
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("wifiContentCopySsidButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(ssid) },
                     )
@@ -136,6 +138,7 @@ internal fun ColumnScope.WifiContent(
                     )
 
                     IconButton(
+                        modifier = Modifier.testTag("wifiContentCopyPasswordButton"),
                         icon = MdtIcons.Copy,
                         onClick = {
                             onCopySecretField(password) { decrypted ->
@@ -159,6 +162,7 @@ internal fun ColumnScope.WifiContent(
                 isCompact = true,
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("wifiContentCopyNotesButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(content.notes.orEmpty()) },
                     )

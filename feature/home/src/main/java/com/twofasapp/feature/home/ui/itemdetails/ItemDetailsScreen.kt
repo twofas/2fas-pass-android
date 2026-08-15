@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -94,11 +95,13 @@ private fun Content(
                         spacing = 8.dp,
                     ) {
                         IconButton(
+                            modifier = Modifier.testTag("itemDetailsShareButton"),
                             icon = MdtIcons.Share,
                             onClick = { showShareModal = true },
                         )
 
                         IconButton(
+                            modifier = Modifier.testTag("itemDetailsEditButton"),
                             icon = MdtIcons.Edit,
                             onClick = { onEditClick() },
                         )

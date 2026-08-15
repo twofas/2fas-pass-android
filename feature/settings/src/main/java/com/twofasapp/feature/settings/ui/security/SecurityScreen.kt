@@ -111,6 +111,7 @@ private fun Content(
                 checked = uiState.biometricsEnabled,
                 icon = MdtIcons.Fingerprint,
                 enabled = biometricsState == BiometricsState.Available,
+                testTag = "biometricsSwitch",
                 onToggle = { checked ->
                     if (checked) {
                         showBiometricsAuthenticationPrompt = true
@@ -152,6 +153,7 @@ private fun Content(
                 subtitle = strings.settingsEntryScreenCaptureDesc,
                 icon = MdtIcons.Screenshot,
                 checked = uiState.screenCaptureEnabled,
+                testTag = "screenCaptureSwitch",
                 onToggle = {
                     if (it) {
                         showScreenCaptureConfirm = true

@@ -166,6 +166,7 @@ fun PasswordGeneratorForm(
         OptionSwitch(
             title = MdtLocale.strings.passwordGeneratorDigits,
             checked = requireDigits,
+            testTag = "passwordGeneratorDigitsSwitch",
             onToggle = {
                 requireDigits = it
                 generate += 1
@@ -176,6 +177,7 @@ fun PasswordGeneratorForm(
         OptionSwitch(
             title = MdtLocale.strings.passwordGeneratorUppercaseCharacters,
             checked = requireUppercase,
+            testTag = "passwordGeneratorUppercaseSwitch",
             onToggle = {
                 requireUppercase = it
                 generate += 1
@@ -186,6 +188,7 @@ fun PasswordGeneratorForm(
         OptionSwitch(
             title = MdtLocale.strings.passwordGeneratorSpecialCharacters,
             checked = requireSpecial,
+            testTag = "passwordGeneratorSpecialSwitch",
             onToggle = {
                 requireSpecial = it
                 generate += 1

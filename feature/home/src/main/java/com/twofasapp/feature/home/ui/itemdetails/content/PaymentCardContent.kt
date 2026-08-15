@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -164,6 +165,7 @@ internal fun PaymentCardContent(
                 subtitle = content.cardHolder,
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("paymentCardContentCopyCardHolderButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(content.cardHolder.orEmpty()) },
                     )
@@ -179,9 +181,11 @@ internal fun PaymentCardContent(
                     SecretFieldTrailingIcon(
                         visible = decryptedFields[SecretFieldType.PaymentCardNumber] != null,
                         onToggle = { onToggleSecretField(SecretFieldType.PaymentCardNumber, cardNumber) },
+                        testTag = "paymentCardContentRevealCardNumberButton",
                     )
 
                     IconButton(
+                        modifier = Modifier.testTag("paymentCardContentCopyCardNumberButton"),
                         icon = MdtIcons.Copy,
                         onClick = {
                             onCopySecretField(cardNumber) { decrypted ->
@@ -201,9 +205,11 @@ internal fun PaymentCardContent(
                     SecretFieldTrailingIcon(
                         visible = decryptedFields[SecretFieldType.PaymentCardExpiration] != null,
                         onToggle = { onToggleSecretField(SecretFieldType.PaymentCardExpiration, expirationDate) },
+                        testTag = "paymentCardContentRevealExpirationButton",
                     )
 
                     IconButton(
+                        modifier = Modifier.testTag("paymentCardContentCopyExpirationButton"),
                         icon = MdtIcons.Copy,
                         onClick = {
                             onCopySecretField(expirationDate) { decrypted ->
@@ -223,9 +229,11 @@ internal fun PaymentCardContent(
                     SecretFieldTrailingIcon(
                         visible = decryptedFields[SecretFieldType.PaymentCardSecurityCode] != null,
                         onToggle = { onToggleSecretField(SecretFieldType.PaymentCardSecurityCode, securityCode) },
+                        testTag = "paymentCardContentRevealSecurityCodeButton",
                     )
 
                     IconButton(
+                        modifier = Modifier.testTag("paymentCardContentCopySecurityCodeButton"),
                         icon = MdtIcons.Copy,
                         onClick = {
                             onCopySecretField(securityCode) { decrypted ->
@@ -244,6 +252,7 @@ internal fun PaymentCardContent(
                 isCompact = true,
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("paymentCardContentCopyNotesButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(content.notes.orEmpty()) },
                     )

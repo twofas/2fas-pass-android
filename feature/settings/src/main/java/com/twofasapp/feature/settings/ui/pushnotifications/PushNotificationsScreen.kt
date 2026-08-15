@@ -86,6 +86,8 @@ private fun Content(
 
             Space(8.dp)
 
+            val allowSwitchTestTag = "pushNotificationsAllowSwitch"
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val permissionState = rememberPermissionStatus(Manifest.permission.POST_NOTIFICATIONS)
 
@@ -97,6 +99,7 @@ private fun Content(
                         is PermissionStatus.Granted -> true
                         is PermissionStatus.Denied -> false
                     },
+                    testTag = allowSwitchTestTag,
                     onToggle = {
                         when (permissionState.status) {
                             is PermissionStatus.Granted -> {
@@ -119,6 +122,7 @@ private fun Content(
                     subtitle = strings.settingsPushNotificationsAllowSubtitle,
                     icon = MdtIcons.Notifications,
                     checked = enabled,
+                    testTag = allowSwitchTestTag,
                     onToggle = { context.openAppNotificationSettings() },
                 )
             }

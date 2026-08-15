@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -100,6 +101,7 @@ private fun Content(
                 title = if (uiState.hasSelections) strings.trashSelectedItems.format(uiState.selected.size) else strings.settingsEntryTrash,
                 navigationIcon = {
                     IconButton(
+                        modifier = Modifier.testTag("trashNavigationButton"),
                         onClick = {
                             if (uiState.hasSelections) {
                                 onClearSelections()
@@ -119,6 +121,7 @@ private fun Content(
                         ActionsRow {
                             IconButton(
                                 icon = MdtIcons.CheckAll,
+                                modifier = Modifier.testTag("trashSelectAllButton"),
                                 onClick = onSelectAll,
                             )
                         }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ fun DropdownPicker(
     label: String,
     dropdownVisible: Boolean,
     modifier: Modifier = Modifier,
+    testTag: String? = null,
     onShowDropdown: () -> Unit,
     onDismissDropdown: () -> Unit,
     dropdownContent: @Composable ColumnScope.() -> Unit,
@@ -60,6 +62,7 @@ fun DropdownPicker(
                 .matchParentSize()
                 .padding(top = (sizeResult.size.height.toDp() / 2))
                 .clip(TextFieldDefaults.shape)
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier)
                 .clickable(onClick = onShowDropdown),
         )
         Box(

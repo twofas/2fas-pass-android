@@ -16,6 +16,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.twofasapp.core.design.MdtIcons
 
@@ -32,6 +33,7 @@ internal fun CloudSyncFab(
         exit = scaleOut(tween(150)),
     ) {
         FloatingActionButton(
+            modifier = Modifier.testTag("cloudSyncFab"),
             onClick = onClick,
             content = { Icon(painter = MdtIcons.Add, contentDescription = null) },
         )

@@ -96,6 +96,7 @@ private fun Content(
                 subtitle = strings.settingsAutofillServiceDesc,
                 icon = MdtIcons.Autofill,
                 checked = autofillServiceEnabled,
+                testTag = "autofillServiceSwitch",
                 onToggle = {
                     if (autofillServiceEnabled) {
                         autofillManager.disableAutofillServices()
@@ -114,6 +115,7 @@ private fun Content(
                 icon = MdtIcons.AutofillInline,
                 checked = uiState.autofillInline,
                 enabled = autofillServiceEnabled,
+                testTag = "autofillKeyboardSwitch",
                 onToggle = { onAutofillInlineToggle() },
             )
 
@@ -135,6 +137,7 @@ private fun Content(
                         image = browser.icon ?: MdtIcons.Autofill,
                         checked = browser.autofillEnabled,
                         enabled = browser.alwaysEnabled.not(),
+                        testTag = "autofillBrowserSwitch_${browser.packageName}",
                         onToggle = {
                             if (browser.alwaysEnabled.not()) {
                                 context.openBrowserAutofillSettings(browser.packageName)

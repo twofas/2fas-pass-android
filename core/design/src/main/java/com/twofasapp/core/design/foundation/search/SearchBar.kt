@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
@@ -113,6 +114,7 @@ fun SearchBar(
             visible = focused || query.isNotEmpty(),
         ) {
             IconButton(
+                modifier = Modifier.testTag("searchClearButton"),
                 icon = MdtIcons.Close,
                 iconSize = 20.dp,
                 onClick = {

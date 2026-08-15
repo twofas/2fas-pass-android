@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -35,6 +36,7 @@ fun OptionSwitch(
     descriptionColor: Color = MdtTheme.color.onSurfaceVariant,
     external: Boolean = false,
     enabled: Boolean = true,
+    testTag: String? = null,
     onToggle: ((Boolean) -> Unit)? = null,
 ) {
     OptionEntry(
@@ -51,11 +53,15 @@ fun OptionSwitch(
         enabled = enabled,
         onClick = { onToggle?.invoke(checked.not()) },
         content = {
-            Switch(checked = checked, onCheckedChange = {
-                if (enabled) {
-                    onToggle?.invoke(it)
-                }
-            })
+            Switch(
+                checked = checked,
+                modifier = if (testTag != null) Modifier.testTag(testTag) else Modifier,
+                onCheckedChange = {
+                    if (enabled) {
+                        onToggle?.invoke(it)
+                    }
+                },
+            )
         },
     )
 }

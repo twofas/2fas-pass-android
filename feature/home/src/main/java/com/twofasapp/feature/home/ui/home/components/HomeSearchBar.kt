@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityItem
@@ -220,6 +221,7 @@ private fun LazyListScope.securityItemFilter(
                 icon = securityItem.type.asIcon(),
                 name = securityItem.type.asTitle(),
                 count = count,
+                clearTestTag = "homeSearchClearSecurityFilterButton",
                 onClearClick = onClearClick,
             )
         }
@@ -238,6 +240,7 @@ private fun LazyListScope.tagItemFilter(
                 iconTint = tag.iconTint(),
                 name = tag.name,
                 count = count,
+                clearTestTag = "homeSearchClearTagFilterButton",
                 onClearClick = onClearClick,
             )
         }
@@ -250,6 +253,7 @@ private fun FilterItem(
     icon: Painter,
     name: String,
     count: Int,
+    clearTestTag: String,
     onClearClick: () -> Unit,
 ) {
     val strings = MdtLocale.strings
@@ -270,6 +274,7 @@ private fun FilterItem(
         )
 
         IconButton(
+            modifier = Modifier.testTag(clearTestTag),
             icon = MdtIcons.Close,
             iconSize = 20.dp,
             onClick = onClearClick,

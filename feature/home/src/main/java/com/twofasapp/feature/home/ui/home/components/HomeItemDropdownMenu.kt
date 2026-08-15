@@ -5,8 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.common.domain.SecretField
@@ -37,6 +39,7 @@ internal fun HomeItemDropdownMenu(
         onDismissRequest = { showDropdown = false },
         anchor = {
             IconButton(
+                modifier = Modifier.testTag("homeItemMenuButton"),
                 icon = MdtIcons.More,
                 iconTint = MdtTheme.color.outline,
                 onClick = { showDropdown = true },

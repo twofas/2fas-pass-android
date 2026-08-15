@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.openSafely
@@ -64,6 +65,7 @@ internal fun LoginContent(
                 subtitle = content.username.orEmpty(),
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("loginContentCopyUsernameButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(content.username.orEmpty()) },
                     )
@@ -84,6 +86,7 @@ internal fun LoginContent(
                     )
 
                     IconButton(
+                        modifier = Modifier.testTag("loginContentCopyPasswordButton"),
                         icon = MdtIcons.Copy,
                         onClick = {
                             onCopySecretField(password) { decrypted ->
@@ -104,6 +107,7 @@ internal fun LoginContent(
                     maxLines = 3,
                     actions = {
                         IconButton(
+                            modifier = Modifier.testTag("loginContentOpenUriButton${index + 1}"),
                             icon = MdtIcons.Open,
                             onClick = {
                                 uriHandler.openSafely(uri.text, context)
@@ -111,6 +115,7 @@ internal fun LoginContent(
                         )
 
                         IconButton(
+                            modifier = Modifier.testTag("loginContentCopyUriButton${index + 1}"),
                             icon = MdtIcons.Copy,
                             onClick = { context.copyToClipboard(uri.text) },
                         )
@@ -126,6 +131,7 @@ internal fun LoginContent(
                 isCompact = true,
                 actions = {
                     IconButton(
+                        modifier = Modifier.testTag("loginContentCopyNotesButton"),
                         icon = MdtIcons.Copy,
                         onClick = { context.copyToClipboard(content.notes.orEmpty()) },
                     )

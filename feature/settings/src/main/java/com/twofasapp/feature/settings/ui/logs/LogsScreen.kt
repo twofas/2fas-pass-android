@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -69,7 +70,10 @@ internal fun LogsScreen(
                 actions = {
                     if (uiState.logs.isNotEmpty()) {
                         if (uiState.isDebuggable) {
-                            IconButton(onClick = { viewModel.clearLogs() }) {
+                            IconButton(
+                                modifier = Modifier.testTag("logsClearButton"),
+                                onClick = { viewModel.clearLogs() },
+                            ) {
                                 Icon(
                                     painter = MdtIcons.Delete,
                                     contentDescription = null,
@@ -77,26 +81,32 @@ internal fun LogsScreen(
                             }
                         }
 
-                        IconButton(onClick = {
-                            saveLauncher.launch(viewModel.generateFilename())
-                        }) {
+                        IconButton(
+                            modifier = Modifier.testTag("logsSaveButton"),
+                            onClick = {
+                                saveLauncher.launch(viewModel.generateFilename())
+                            },
+                        ) {
                             Icon(
                                 painter = MdtIcons.Save,
                                 contentDescription = null,
                             )
                         }
 
-                        IconButton(onClick = {
-                            val filename = viewModel.generateFilename()
-                            val content = viewModel.generateShareContent()
-                            context.showShareFilePicker(
-                                filename = filename,
-                                title = strings.logsShareTitle,
-                                save = { outputStream ->
-                                    outputStream.write(content.toByteArray(Charsets.UTF_8))
-                                },
-                            )
-                        }) {
+                        IconButton(
+                            modifier = Modifier.testTag("logsShareButton"),
+                            onClick = {
+                                val filename = viewModel.generateFilename()
+                                val content = viewModel.generateShareContent()
+                                context.showShareFilePicker(
+                                    filename = filename,
+                                    title = strings.logsShareTitle,
+                                    save = { outputStream ->
+                                        outputStream.write(content.toByteArray(Charsets.UTF_8))
+                                    },
+                                )
+                            },
+                        ) {
                             Icon(
                                 painter = MdtIcons.Share,
                                 contentDescription = strings.logsShareTitle,

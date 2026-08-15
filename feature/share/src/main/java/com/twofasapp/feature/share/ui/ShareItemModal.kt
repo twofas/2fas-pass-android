@@ -38,6 +38,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -283,6 +284,7 @@ private fun ColumnScope.ShareFormContent(
         subtitle = strings.shareLinkItemOneTimeAccessDescription,
         icon = MdtIcons.Refresh,
         iconTint = MdtTheme.color.onSurface,
+        testTag = "shareOneTimeAccessSwitch",
         onToggle = { onOneTimeAccessToggle() },
     )
 
@@ -436,7 +438,9 @@ private fun ColumnScope.ShareSuccessContent(
 
             ActionsRow {
                 IconButton(
-                    modifier = Modifier.offset(x = 4.dp),
+                    modifier = Modifier
+                        .offset(x = 4.dp)
+                        .testTag("shareLinkCopyButton"),
                     iconSize = 20.dp,
                     icon = MdtIcons.Copy,
                     onClick = { context.copyToClipboard(uiState.link) },
@@ -508,6 +512,7 @@ private fun ColumnScope.ShareSuccessContent(
 
             ActionsRow {
                 IconButton(
+                    modifier = Modifier.testTag("sharePasswordCopyButton"),
                     iconSize = 20.dp,
                     icon = MdtIcons.Copy,
                     onClick = { context.copyToClipboard(text = uiState.password, isSensitive = true) },
