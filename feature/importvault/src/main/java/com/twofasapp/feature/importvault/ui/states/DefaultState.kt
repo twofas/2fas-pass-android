@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -67,6 +68,7 @@ fun DefaultState(
                     .fillMaxWidth()
                     .clip(RoundedShape16)
                     .background(MdtTheme.color.surfaceContainer)
+                    .testTag("defaultStateSource${item.name}Row")
                     .clickable {
                         when (item) {
                             DecryptionKitSource.LocalFile -> decryptionFilePicker.launch("*/*")

@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -181,6 +182,7 @@ private fun Content(
                                 .fillMaxSize()
                                 .clip(RoundedShape16)
                                 .background(MdtTheme.color.surfaceContainer)
+                                .testTag("secureNoteRevealTextButton")
                                 .clickable { revealTextClicked = true },
                         ) {
                             TextIcon(

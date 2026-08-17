@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +58,7 @@ internal fun PasswordSuggestionsBar(
             modifier = Modifier
                 .weight(1f)
                 .clip(CircleShape)
+                .testTag("passwordSuggestionsOpenGeneratorRow")
                 .clickable { onOpenGeneratorClick() }
                 .padding(vertical = 8.dp),
         )
@@ -77,6 +79,7 @@ internal fun PasswordSuggestionsBar(
             modifier = Modifier
                 .weight(1f)
                 .clip(CircleShape)
+                .testTag("passwordSuggestionsGenerateRow")
                 .clickable { onGenerateClick() }
                 .padding(vertical = 8.dp),
         )

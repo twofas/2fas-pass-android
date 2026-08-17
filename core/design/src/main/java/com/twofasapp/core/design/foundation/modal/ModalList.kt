@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtTheme
@@ -79,6 +80,7 @@ private fun Content(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .testTag("modalListOption_${option.key}")
                         .clickable { onSelectChanged(option) }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,

@@ -317,6 +317,7 @@ private fun Tab(
             .fillMaxWidth()
             .clip(CircleShape)
             .background(containerColor)
+            .testTag("homeSearchBarTab${type?.key ?: "all"}Row")
             .clickable { onClick() }
             .padding(start = 16.dp, end = 20.dp, top = 6.dp, bottom = 6.dp),
     )

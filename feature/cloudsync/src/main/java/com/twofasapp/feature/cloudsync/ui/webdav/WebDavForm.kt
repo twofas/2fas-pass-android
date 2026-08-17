@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -93,6 +94,7 @@ fun WebDavForm(
                 checked = allowUntrustedCertificate,
                 enabled = enabled,
                 onCheckedChange = { onAllowUntrustedCertificateToggle() },
+                modifier = Modifier.testTag("webDavAllowUntrustedCertificateSwitch"),
             )
         }
 

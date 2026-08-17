@@ -142,6 +142,7 @@ fun DecryptionKitScreen(
                     .fillMaxWidth()
                     .clip(RoundedShape16)
                     .background(MdtTheme.color.surfaceContainer)
+                    .testTag("decryptionKitNoticeRow")
                     .clickable { noticeChecked = noticeChecked.not() }
                     .padding(16.dp),
             ) {
@@ -171,6 +172,7 @@ fun DecryptionKitScreen(
                 }
 
                 Switch(
+                    modifier = Modifier.testTag("decryptionKitNoticeSwitch"),
                     checked = noticeChecked,
                     onCheckedChange = { noticeChecked = noticeChecked.not() },
                 )

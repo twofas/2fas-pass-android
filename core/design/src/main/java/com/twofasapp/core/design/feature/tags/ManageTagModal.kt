@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -185,6 +186,7 @@ private fun LazyListScope.colors(
             modifier = Modifier
                 .size(30.dp)
                 .clip(CircleShape)
+                .testTag("tagColorOption_${item.value}")
                 .clickable(onClick = { onClick(item) })
                 .background(if (item == selectedColor) Color(0xFF30CFBB) else MdtTheme.color.outlineVariant)
                 .padding(1.dp)

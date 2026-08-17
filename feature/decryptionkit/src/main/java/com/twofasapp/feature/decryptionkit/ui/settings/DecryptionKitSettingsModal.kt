@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -136,6 +137,7 @@ private fun Content(
                 .fillMaxWidth()
                 .clip(RoundedShape16)
                 .background(MdtTheme.color.surfaceContainer)
+                .testTag("decryptionKitSettingsIncludeMasterKeyRow")
                 .clickable { onIncludeMasterKeyToggle() }
                 .padding(16.dp),
         ) {
@@ -161,6 +163,7 @@ private fun Content(
             Switch(
                 checked = includeMasterKey,
                 onCheckedChange = { onIncludeMasterKeyToggle() },
+                modifier = Modifier.testTag("decryptionKitSettingsIncludeMasterKeySwitch"),
             )
         }
 

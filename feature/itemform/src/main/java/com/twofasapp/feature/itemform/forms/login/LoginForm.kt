@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
@@ -199,6 +200,7 @@ private fun Content(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .clip(RoundedShape12)
+                                .testTag("loginChangeIconButton")
                                 .clickable {
                                     focusManager.clearFocus()
                                     showChangeIconModal = true

@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtTheme
 
@@ -59,6 +60,7 @@ fun DropdownMenu(
 fun DropdownMenuItem(
     text: String? = null,
     textContent: (@Composable () -> Unit)? = null,
+    testTag: String? = null,
     onClick: () -> Unit = {},
     leadingIcon: Painter? = null,
     leadingContent: (@Composable () -> Unit)? = null,
@@ -73,6 +75,7 @@ fun DropdownMenuItem(
     Row(
         Modifier
             .fillMaxWidth()
+            .then(if (testTag != null) Modifier.testTag(testTag) else Modifier)
             .clickable { onClick() }
             .padding(contentPadding),
     ) {

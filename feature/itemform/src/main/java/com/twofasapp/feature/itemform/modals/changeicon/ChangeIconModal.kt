@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -157,6 +158,7 @@ private fun Content(
             ) {
                 SegmentedButton(
                     text = strings.customizeIconIcon,
+                    testTag = "changeIconSegmentIconButton",
                     checked = iconType == IconType.Icon,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -169,6 +171,7 @@ private fun Content(
 
                 SegmentedButton(
                     text = strings.customizeIconLabelKey,
+                    testTag = "changeIconSegmentLabelButton",
                     checked = iconType == IconType.Label,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -181,6 +184,7 @@ private fun Content(
 
                 SegmentedButton(
                     text = strings.changeIconSegmentImageUrl,
+                    testTag = "changeIconSegmentImageUrlButton",
                     checked = iconType == IconType.CustomImageUrl,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -240,6 +244,7 @@ private fun Content(
 private fun SegmentedButton(
     modifier: Modifier = Modifier,
     text: String,
+    testTag: String,
     checked: Boolean,
     onClick: () -> Unit = {},
 ) {
@@ -247,6 +252,7 @@ private fun SegmentedButton(
         modifier = modifier
             .fillMaxHeight()
             .background(if (checked) MdtTheme.color.secondaryContainer else MdtTheme.color.surface)
+            .testTag(testTag)
             .clickable { onClick() },
     ) {
         TextIcon(

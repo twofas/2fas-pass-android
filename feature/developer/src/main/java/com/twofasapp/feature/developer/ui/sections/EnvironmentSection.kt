@@ -19,6 +19,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
@@ -62,6 +63,7 @@ internal fun EnvironmentSection(
                     RadioButton(
                         selected = uiState.selectedEnvironment == ApiEnvironment.Production,
                         onClick = null,
+                        modifier = Modifier.testTag("developerEnvironmentRadioProduction"),
                     )
                 },
             )
@@ -78,6 +80,7 @@ internal fun EnvironmentSection(
                     RadioButton(
                         selected = uiState.selectedEnvironment == ApiEnvironment.Dev,
                         onClick = null,
+                        modifier = Modifier.testTag("developerEnvironmentRadioDev"),
                     )
                 },
             )

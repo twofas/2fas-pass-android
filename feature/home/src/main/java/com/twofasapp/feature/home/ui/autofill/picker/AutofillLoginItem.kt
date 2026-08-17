@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,7 @@ internal fun AutofillLoginItem(
 
     Row(
         modifier = modifier
+            .testTag("autofillLoginItemRow")
             .clickable {
                 if (suggested) {
                     onFillClick(item)
