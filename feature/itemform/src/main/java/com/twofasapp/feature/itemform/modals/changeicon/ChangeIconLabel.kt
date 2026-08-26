@@ -73,7 +73,8 @@ internal fun ChangeIconLabel(
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .testTag("changeIconLabelField"),
     )
 
     OptionHeader(text = strings.changeIconBackgroundHeader)

@@ -188,7 +188,8 @@ private fun Content(
                     labelText = strings.loginName,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItem(),
+                        .animateItem()
+                        .testTag("loginNameField"),
                     singleLine = true,
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
@@ -227,7 +228,8 @@ private fun Content(
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateItem()
-                        .onFocusChanged { usernameFocused = it.isFocused },
+                        .onFocusChanged { usernameFocused = it.isFocused }
+                        .testTag("loginUsernameField"),
                     singleLine = true,
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
@@ -248,7 +250,8 @@ private fun Content(
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateItem()
-                        .onFocusChanged { passwordFocused = it.isFocused },
+                        .onFocusChanged { passwordFocused = it.isFocused }
+                        .testTag("loginPasswordField"),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
                     visualTransformation = VisualTransformation.SecretField(passwordVisible, passwordColors),
                     trailingIcon = {
@@ -267,7 +270,7 @@ private fun Content(
             uiState.itemContent.uris.forEachIndexed { index, uri ->
                 listItem(FormListItem.Field("Uri$index")) {
                     UriField(
-                        modifier = Modifier.animateItem(),
+                        modifier = Modifier.animateItem().testTag("loginUriField_$index"),
                         index = index,
                         itemUri = uri,
                         totalCount = uiState.itemContent.uris.size,

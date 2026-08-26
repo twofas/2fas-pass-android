@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -139,7 +140,8 @@ private fun Content(
                     labelText = strings.secureNoteName,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItem(),
+                        .animateItem()
+                        .testTag("paymentCardNameField"),
                     singleLine = true,
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
@@ -165,7 +167,8 @@ private fun Content(
                     labelText = strings.creditCardCardholder,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateItem(),
+                        .animateItem()
+                        .testTag("paymentCardHolderField"),
                     singleLine = true,
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(
@@ -207,7 +210,8 @@ private fun Content(
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateItem()
-                        .onFocusChanged { cardNumberFocused = it.isFocused },
+                        .onFocusChanged { cardNumberFocused = it.isFocused }
+                        .testTag("paymentCardNumberField"),
                     singleLine = true,
                     maxLines = 1,
                     visualTransformation = if (cardNumberFocused) VisualTransformation.PaymentCard(grouping) else VisualTransformation.None,
@@ -237,7 +241,9 @@ private fun Content(
                         },
                         labelText = strings.creditCardExpiration,
                         placeholderText = "MM / YY",
-                        modifier = Modifier.weight(0.6f),
+                        modifier = Modifier
+                            .weight(0.6f)
+                            .testTag("paymentCardExpirationField"),
                         singleLine = true,
                         maxLines = 1,
                         isError = uiState.itemContent.expirationDate.clearTextOrNull?.let {
@@ -265,7 +271,9 @@ private fun Content(
                         },
                         textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
                         labelText = strings.creditCardCvv,
-                        modifier = Modifier.weight(0.4f),
+                        modifier = Modifier
+                            .weight(0.4f)
+                            .testTag("paymentCardCvvField"),
                         singleLine = true,
                         maxLines = 1,
                         isError = uiState.itemContent.securityCode.clearTextOrNull?.let {

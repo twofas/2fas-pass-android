@@ -59,7 +59,9 @@ internal fun UriField(
             } else {
                 "${MdtLocale.strings.loginUri} ${index + 1}"
             },
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("loginUriField_$index"),
             singleLine = true,
             maxLines = 1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),

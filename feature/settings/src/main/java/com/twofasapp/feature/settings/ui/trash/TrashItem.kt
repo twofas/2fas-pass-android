@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.items.Item
@@ -36,6 +37,7 @@ internal fun TrashItem(
 ) {
     Row(
         modifier = modifier
+            .testTag("trashItem_${item.id}")
             .clickable { onCheckedChange.invoke(checked.not()) }
             .background(if (checked) MdtTheme.color.surfaceContainer else MdtTheme.color.background)
             .padding(vertical = 16.dp, horizontal = 16.dp),

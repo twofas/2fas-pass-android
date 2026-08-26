@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.common.build.BuildVariant
@@ -103,6 +104,7 @@ internal fun ItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("developerRow_$label")
             .clickable { onClick?.invoke() ?: context.copyToClipboard(value) },
     ) {
         Text(
@@ -130,6 +132,7 @@ internal fun ItemColumn(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("developerColumn_$label")
             .clickable { onClick?.invoke() ?: context.copyToClipboard(value) }
             .padding(bottom = 4.dp),
     ) {

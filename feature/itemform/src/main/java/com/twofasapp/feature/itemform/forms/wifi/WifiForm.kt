@@ -230,7 +230,8 @@ private fun LazyListScope.nameTextField(
             labelText = MdtLocale.strings.wifiNameLabel,
             modifier = Modifier
                 .fillMaxWidth()
-                .animateItem(),
+                .animateItem()
+                .testTag("wifiNameField"),
             singleLine = true,
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
@@ -261,7 +262,8 @@ private fun LazyListScope.ssidTextField(
             labelText = MdtLocale.strings.wifiSsidLabel,
             modifier = Modifier
                 .fillMaxWidth()
-                .animateItem(),
+                .animateItem()
+                .testTag("wifiSsidField"),
             singleLine = true,
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
@@ -287,7 +289,8 @@ private fun LazyListScope.passwordTextField(
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
-                .animateItem(),
+                .animateItem()
+                .testTag("wifiPasswordField"),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next,

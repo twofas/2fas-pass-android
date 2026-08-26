@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +52,7 @@ fun CloudFilInfoItem(
             .fillMaxWidth()
             .clip(RoundedShape12)
             .background(MdtTheme.color.surfaceContainer)
+            .testTag("cloudFileItem_${item.vaultId}")
             .clickable { onClick() }
             .padding(start = 16.dp, end = 12.dp, top = 16.dp, bottom = 16.dp),
     ) {
